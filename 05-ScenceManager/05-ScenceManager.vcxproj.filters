@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Mario">
+      <UniqueIdentifier>{c8bb9764-a58a-41fb-bab8-a1a6bbe9c678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{9bc4c98e-7e1c-4b82-afac-f499ce75ad1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{850d4f8d-a73a-4af8-bcd3-103c1284dd88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{bfe35d19-5f15-4d8e-804d-39ea65dfc16b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Picture/Scene">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Picture/Scene\Scene">
+      <UniqueIdentifier>{951dbc83-8e5e-4977-b4ed-d89585e9a32d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Picture/Scene\Koopas/Goomba">
+      <UniqueIdentifier>{023d1485-dcf9-4064-a93d-c900c9c8ad6d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprites.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="FireBullet.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="FirePiranhaPlant.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Goomba.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopas.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Mario.cpp">
+      <Filter>Mario</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestionBrick.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestionBrickItem.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="WarpPipe.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Cloud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenKoopas.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprites.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Portal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="FirePiranhaPlant.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Goomba.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Koopas.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Mario.h">
+      <Filter>Mario</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestionBrick.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="WarpPipe.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="FireBullet.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestionBrickItem.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Cloud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenKoopas.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="mario-sample.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="scene1.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="scene1_SoCua.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="scene11.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="scene-test.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="textures\map1.1.txt">
+      <Filter>Map</Filter>
+    </Text>
+    <Text Include="textures\map1.txt">
+      <Filter>Map</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\enemies.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\enemies1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\enemies-2.1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\enemies-2.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\enemies3.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\enemies4.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\EnemiesFull.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\gameover.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\map1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\mario.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\mario1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\misc.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\misc1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\sprites.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\title.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Koopas.png">
+      <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+    <Image Include="textures\Goomba_Koopas\Left.png">
+      <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+    <Image Include="textures\Goomba_Koopas\LeftUp.png">
+      <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+    <Image Include="textures\Goomba_Koopas\Right.png">
+      <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+    <Image Include="textures\Goomba_Koopas\RightUp.png">
+      <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

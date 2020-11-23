@@ -1,0 +1,771 @@
+# id	file_path	transparent_color_r	g	b
+[TEXTURES]
+0	textures\mario.png	255	255	255
+20	textures\misc.png	176	224	248
+10	textures\enemies.png	3	26	110
+30	textures\enemies3.png	153	209	223
+40	textures\enemies1.png	3	26	110
+50	textures\enemies-2.png	0	128	128
+60	textures\mario1.png	255	255	255
+70	textures\enemies-2.1.png	0	128	128
+[MAP]
+300	textures\map1.png	255	255	255	textures\map1.txt
+
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+# BIG MARIO 
+# idle right
+1	246	154	259	181	0
+# walk
+2	275	154	290	181	0
+3	305	155	321	181	0
+
+# idle left
+4	186	154	200	181	0
+#walk
+5	155	154	170	181	0
+6	125	155	141	181	0
+
+#big jump right
+7	395	275	411	301	0
+#big jump left
+8	35	275	51	301	0
+
+# big stop right
+9	5	154	21	182	0
+# big stop left
+10	425	154	441	182	0
+
+# big running right
+11	334	154	353	181	0
+12	362	154	381	181	0
+13	392	155	411	181	0
+
+# big running left
+14	93	154	114	181	0
+15	65	154	84	181	0
+16	35	155	54	181	0
+
+#big sitting right
+17	426	239	440	257	0
+#big sitting left
+18	6	239	20	257	0
+
+# die
+19	215	120	231	135	0
+
+# Kick Koopas Right
+20	423	274	444	301	0
+# Kick Koopas Left
+21	2	274	23	301	0
+
+# hold koopas
+# IDLE RIGHT
+22	336	234	350	261	0
+# WALK RIGHT
+23	276	314	291	341	0
+24	305	315	321	341	0
+# IDLE LEFT
+25	96	234	110	261	0
+# WALK LEFT
+26	155	314	170	341	0
+27	125	315	141	341	0
+
+# SMALL MARIO
+# idle small right
+51	247	0	259	16	0
+#walk right/ max walk right lv2
+52	275	0	291	16	0
+#walk right
+53	306	0	320	16	0
+#max walk right lv1
+54	335	0	351	16	0
+
+# idle small left
+55	187	0	198	15	0
+#walk left/ max walk left lv2
+56	155	0	170	15	0
+#walk left
+57	125	0	139	15	0
+#max walk left lv1
+58	95	0	111	16	0
+
+#small jump right
+59	395	80	411	96	0
+#small jump left
+60	35	80	51	96	0
+
+#stop right
+61	6	0	20	16	0
+#stop left
+62	426	0	440	16	0
+
+# kick koopas right
+63	425	80	441	96	0
+# kick koopas left
+64	5	80	21	96	0
+
+# hold koopas
+# IDLE RIGHT
+65	246	120	260	136	0
+# Walk/Jump RIGHT
+66	276	120	291	136	0
+
+# IDLE LEFT
+67	186	120	200	136	0
+# Walk/Jump LEFT
+68	155	120	170	136	0
+
+
+# TAIL MARIO
+# tail idle right
+#100	243	634	264	662	0
+100	212	443	233	471	60
+# tail walking right
+#101	272	634	294	662	0
+101	262	443	284	471	60
+#102	303	634	324	661	0
+102	291	443	314	470	60
+
+# tail idle left
+#103	182	634	203	662	0
+103	173	443	194	471	60
+# tail walking left
+#104	152	634	174	662	0
+104	122	443	144	471	60
+#105	122	634	143	661	0
+105	92	443	115	470	60
+
+# tail running right
+#106	331	634	355	662	0
+106	211	523	235	551	60
+#107	362	634	385	662	0
+107	251	523	275	551	60
+#108	393	634	414	661	0
+108	291	523	315	551	60
+# tail running left
+#109	91	634	115	662	0
+109	171	523	195	551	60
+#110	61	634	84	662	0
+110	131	523	155	551	60
+#111	32	634	53	661	0
+111	91	523	115	551	60
+
+# tail stop right
+#112	5	633	21	663	0
+112	215	482	231	512	60
+# tail stop left
+#113	425	633	441	663	0
+113	175	482	191	512	60
+# tail jump right
+#114	392	754	415	781	0
+114	331	443	354	470	60
+# tail jump left
+#115	31	754	54	781	0
+115	52	443	75	470	60
+
+# tail falling right
+#116	362	794	385	822	0
+116	211	603	234	630	60
+# tail falling left
+#117	61	794	84	822	0
+117	172	603	195	630	60
+
+# tail flying right lv1
+#118	392	754	415	781	0
+118	291	443	314	470	60
+# tail flying right lv2
+#119	302	874	324	902	0
+119	252	603	274	631	60
+# tail flying left lv1
+#120	31	754	54	781	0
+120	92	443	115	470	60
+# tail flying left lv2
+#121	122	874	144	902	0
+121	132	603	154	631	60
+
+# tail flying max running right lv1
+#122	331	714	355	741	0
+122	331	603	355	630	60
+# tail flying max running right lv2
+#123	361	714	385	742	0
+123	371	603	395	630	60
+
+# tail flying max running left lv1
+#124	91	714	115	741	0
+124	51	603	75	630	60
+# tail flying max running left lv2
+#125	61	714	85	742	0
+125	11	603	35	630	60
+
+# tail sitdown right
+#126	392	719	414	737	0
+126	372	448	394	466	60
+# tail sitdown left
+#127	32	719	54	737	0
+127	12	448	34	466	60
+
+# tail attack 
+#128	331	634	355	662	0
+128	236	443	259	471	60
+#129	215	633	231	662	0
+129	355	483	371	511	60
+#130	91	634	115	662	0
+130	147	443	170	471	60
+#131	215	674	231	702	0
+131	390	483	406	511	60
+
+# Tail Hold Koopas Idle Right
+132	322	523	343	551	60
+# Tail Hold Koopas Walk Right
+133	351	523	373	551	60
+134	381	523	404	550	60
+
+# Tail Hold Koopas Idle Left
+135	63	523	84	551	60
+# Tail Hold Koopas Walk Left
+136	33	523	55	551	60
+137	2	523	25	550	60
+
+# Tail Kick Koopas Right
+138	247	483	269	511	60
+# Tail Kick Koopas Right
+139	137	483	159	511	60
+
+#FIREMARIO
+# idle right
+151	246	394	260	421	0
+# walk
+152	275	394	291	421	0		
+153	305	395	321	421	0
+# idle left
+154	186	394	200	421	0
+#walk
+155	155	394	171	421	0
+156	125	395	141	421	0
+#stop right 
+157	5	394	21	422	0
+#stop left
+158	425	394	441	422	0
+
+#jumpright
+159	395	515	411	541	0
+#jumpleft
+160	35	515	51	541	0
+
+# fire running right
+161	334	394	353	421	0	
+162	362	394	381	421	0
+163	392	395	411	421	0
+# fire running left
+164	93	394	112	421	0
+165	65	394	84	421	0
+166	35	395	54	421	0
+# fire sit right
+167	426	479	440	497	0
+#fire sit left
+168	6	479	20	497	0
+
+# fire attack right
+169	396	474	410	501	0
+170	366	474	380	501	0
+# fire attack left
+171	36	474	50	501	0
+172	66	474	80	501	0
+
+#BRICK
+200	408	225	424	241	20
+
+#GOOMBA
+300	5	14	21	29	10
+301	25	14	41	29	10
+#die
+302	45	21	61	29	10
+#die 2
+303	439	870	455	886	40
+
+#KOOPAS
+#walk left
+50001	205	191	221	217	50
+50002	222	191	238	217	50
+#walk right
+50011	187	191	202	217	50
+50012	170	191	185	217	50
+#shell
+50013	239	202	255	218	50
+# shell right
+50014	290	202	306	218	50
+# shell middle
+50015	256	202	272	218	50
+# shell left 
+50016	273	202	289	218	50
+
+
+
+
+# Shell 2
+50017	279	198	295	214	70
+# shell 2 right
+50018	245	198	261	214	70
+# shell 2 middle
+50019	262	198	278	214	70
+# shell 2 left 
+50020	228	198	244	214	70
+
+
+
+#question brick normal
+400	300	117	316	133	20
+401	318	117	334	133	20
+402	336	117	352	133	20
+403	355	117	370	133	20
+#question brick collision
+404	372	117	388	133	20
+
+#WarpPipe
+500	5	86	21	102	10
+501	21	86	37	102	10
+502	5	102	21	118	10
+503	21	102	37	118	10
+
+#block
+600	5	86	21	102	10
+
+# ===== Question Brick ========
+# MushRoom
+800	300	189	316	205	20
+#Money
+801	303	99	313	115	20
+802	322	99	330	115	20
+803	341	99	347	115	20
+# Leaf
+804	300	208	316	222	20
+#=====  Fire Plant ========
+# Up Right
+900	8	188	24	220	30
+# Up Mouth Right
+901	28	188	44	220	30
+# Down Right
+902	48	188	64	220	30
+#  Down Mouth Right
+903	68	188	84	220	30
+
+# Up Left
+904	104	99	120	131	30
+# Up Mouth Left
+905	84	99	100	131	30
+# Down Left
+906	64	99	80	131	30
+#  Down Mouth Left
+907	44	99	60	131	30
+
+
+#===== Fire Bullet ========
+# Right
+1000	240	554	248	562	0
+1001	258	553	264	562	0
+1002	258	574	264	582	0
+1003	240	573	248	582	0
+# Left
+1004	198	554	206	562	0
+1005	180	553	188	562	0
+1006	180	574	188	582	0
+1007	198	573	206	582	0
+
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
+
+# ==== MARIO =========
+#idle BIG right
+0	1	100
+
+#idle BIG left
+1	4	100
+
+#idle small right
+2	51	100
+
+#idle small left
+3	55	100
+
+#walk right big
+4	1	100	2	100	3	100
+
+#walk left big
+5	4	100	5	100	6	100
+
+#walk right small
+6	51	100	52	100	53	100
+
+#walk left small
+7	55	100	56	100	57	100
+
+#die
+8	19	100
+
+# big JUMP right
+9	7	100
+
+# big JUMP left
+10	8	100
+
+# small JUMP right
+11	59	100
+
+# small JUMP left
+12	60	100
+
+# small stop right
+13	61	100
+
+# small stop left
+14	62	100
+
+# small max running right
+15	54	50	52	50
+
+# small max running left
+16	58	50	56	50
+
+# big stop right
+17	9	100
+
+# big stop left
+18	10	100
+
+# big running right
+19	11	50	12	50	13	50
+# big running left
+20	14	50	15	50	16	50
+
+# tail idle right
+21	100	100
+
+# tail idle left
+22	103	100
+
+#tail walking right 
+23	100	100	101	100	102	100
+
+#tail walking left
+24	103	100	104	100	105	100
+
+# tail JUMP right
+25	114	100
+
+# tail JUMP left
+26	115	100
+
+# tail stop right
+27	112	100
+
+# tail stop left
+28	113	100
+
+# tail running right
+29	106	50	107	50	108	50
+
+# tail running left
+30	109	50	110	50	111	50
+
+# tail fall right
+31	116	100
+
+# tail fall left
+32	117	100
+
+# tail flying right
+33	118	100	119	100
+
+# tail flying left
+34	120	100	121	100
+
+# tail flying right
+35	122	100	123	100
+
+# tail flying left
+36	124	100	125	100
+
+# tail sitdown right
+37	126	100
+
+# tail sitdown left
+38	127	100
+
+# tail attack 
+39	128	150
+40	129	150
+41	130	150
+42	131	150
+
+# big sitdown right
+43	17	100
+
+# big sitdown left
+44	18	100
+
+# fire idle right
+45	151	100
+
+# fire idle left
+46	154	100
+
+# fire walk right 
+47	151	100	152	100	153	100
+
+# fire walk left 
+48	154	100	155	100	156	100
+
+# fire stop right
+49	157	100
+# fire stop left
+50	158	100
+# fire JUMP right
+51	159	100
+# fire JUMP left
+52	160	100
+# fire running right 
+53	161	100	162	100	163	100
+# fire running left 
+54	164	100	165	100	166	100
+# fire sit right
+55	167	100
+# fire sit left
+56	168	100
+
+# fire attack right 1
+57	169	100
+# fire attack right 2
+58	170	100
+# fire attack left 1
+59	171	100
+# fire attack left 2
+60	172	100
+
+# Small Kick Koopas Right
+61	63	200
+# Small Kick Koopas Left
+62	64	200
+# Small Hold Koopas Idle Right
+63	65	100
+# Small Hold Koopas Walk Right
+64	65	100	66	100
+# Small Hold Koopas Idle Left
+65	67	100
+# Small Hold Koopas Walk Left
+66	67	100	68	100
+# Big Kick Koopas Right
+67	20	200
+# Big Kick Koopas Left
+68	21	200
+# Big Hold Koopas Idle Right
+69	22	100
+# Big Hold Koopas Walk Right
+70	22	100	23	100	24	100
+# Big Hold Koopas Idle Left
+71	25	100
+# Big Hold Koopas Walk Left
+72	25	100	26	100	27	100
+# Small Hold Koopas Jump Right
+73	66	100
+# Small Hold Koopas Jump Left
+74	68	100
+# Big Hold Koopas Jump Right
+75	24	100
+# Big Hold Koopas Jump Left
+76	27	100
+# Big Fall Right
+77	3	100
+# Big Fall Left
+78	6	100
+
+# Tail Kick Koopas Right
+79	138	200
+# Tail Kick Koopas Left
+80	139	200
+
+# Tail Hold Koopas Idle Right
+81	132	100
+# Tail Hold Koopas Walk Right
+82	132	100	133	100	134	100
+# Tail Hold Koopas Idle Left
+83	135	100
+# Tail Hold Koopas Walk Left
+84	135	100	136	100	137	100
+# Tail Hold Koopas Jump Right
+85	134	100
+# Tail Hold Koopas Jump Left
+86	137	100
+
+# ==== BRICK =========
+200	200	100
+
+# ==== GOOMBA  =========
+# walk
+300	300	100	301	100
+# die
+301	302	100
+# die 2
+302	303	100
+
+# ==== KOOPAS  =========
+#walk left
+350	50001	100	50002	100
+#walk right
+351	50011	100	50012	100
+#shell
+352	50013	100
+# shell 2
+353	50017	100
+# shell right
+354	50013	150	50014	200	50015	150	50016	150
+# shell left
+355	50013	150	50016	200	50015	150	50014	150
+
+# shell 2 right
+356	50017	150	50018	200	50019	150	50020	150
+# shell 2 left
+357	50017	150	50020	200	50019	150	50018	150
+
+#WarpPipe
+500	500	100
+501	501	100
+502	502	100
+503	503	100
+
+
+
+# ==== QUESTION MARK BRICK =========
+602	400	1000	400	100	401	100	402	100	403	100
+603	404	100
+
+
+
+# ==== Question Brick Item =====
+800	801	50	802	50	803	50	802	50
+801	800	100
+802	804	100
+#==== Fire Plant ====
+# Appear/Hide Up Right
+900	900	100	901	100
+# Appear/Hide Down Right
+901	902	100	903	100
+# Appear/Hide Up Left
+902	904	100	905	100
+# Appear/Hide Down Left
+903	906	100	907	100
+# Attack Up Right
+904	901	100
+# Attack Down Right
+905	903	100
+# Attack Up Left
+906	905	100
+# Attack Down Left
+907	907	100
+
+# ====  Fire Bullet ======
+# Right
+1000	1000	500	1001	500	1002	500	1003	500
+# Left
+1001	1004	100	1005	100	1006	100	1007	100
+
+
+# id	ani1	ani2	ani3
+[ANIMATION_SETS]
+# MARIO
+0	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36	37	38	39	40	41	42	43	44	45	46	47	48	49	50	51	52	53	54	55	56	57	58	59	60	61	62	63	64	65	66	67	68	69	70	71	72	73	74	75	76	77	78	79	80	81	82	83	84	85	86
+# BRICK 
+1	200
+
+# GOOMBA
+2	300	301	302
+
+# KOOPAS
+3	350	351	352	353	354	355	356	357
+
+# QUESTION MARK BRICK 
+4	602	603
+#WARPPIPE
+5	500	501	502	503
+#BLOCK
+6	200
+#QuestionBrickItem
+8	800	801	802
+#FirePlant
+9	900	901	902	903	904	905	906	907
+# Fire Bullet
+100	1000	1001
+[OBJECTS]
+# type	x	y	ani_set_id	extra_settings per object type
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
+# MARIO
+#0	176	330	0
+0	500	350	0
+# BRICK 
+# --- platform (hint: I created the list using Excel!) ----
+
+
+# GOOMBA
+2	100	400	2
+2	120	400	2
+2	140	400	2
+2	160	400	2
+2	180	400	2
+2	200	400	2
+
+
+2	400	400	2
+2	410	400	2
+2	420	400	2
+2	430	400	2
+2	440	400	2
+2	450	400	2
+# KOOPAS
+#3	300	350	3
+3	544	300	3
+#3	544	350	3
+
+# ---- Question Brick----
+4	176	352	4	0
+4	192	352	4	0
+4	224	304	4	0
+4	240	304	4	1
+4	416	320	4	0
+4	656	384	4	1
+4	704	352	4	0		
+#----WarpPipe----
+5	352	368	5	32	48
+5	1792	384	5	32	32
+5	1856	368	5	32	48
+5	2256	112	5	32	192
+5	2256	384	5	32	32
+5	2320	384	5	32	32
+#----Block----
+6	240	368	6	48	48
+6	272	336	6	48	80
+6	400	368	6	80	48
+6	464	336	6	64	80
+6	512	304	6	64	112
+6	512	384	6	96	32
+6	1264	384	6	112	32
+6	1296	352	6	112	64
+6	1328	320	6	112	96
+6	1312	144	6	64	32
+6	2144	368	6	48	48
+6	2176	272	6	48	144
+#---- Ground-----
+7	0	416	400	624	16
+7	624	400	400	464	32
+7	1152	416	400	352	16
+7	1536	416	400	80	16
+7	1664	416	400	576	16
+7	2256	416	400	560	16
+7	1408	192	400	64	16
+7	1488	176	400	208	16
+# ====  Fire Plant  ======
+9	360	369	9
+
+# --- SCENE PORTAL ----
+# type	l	t	ani_set_id	r	b	scene_id
+#50	300	98	0	316	150	2
+
