@@ -130,6 +130,7 @@
     <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
+    <ClCompile Include="FlyKoopas.cpp" />
     <ClCompile Include="GreenKoopas.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Koopas.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
+    <ClInclude Include="FlyKoopas.h" />
     <ClInclude Include="GreenKoopas.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Koopas.h" />
