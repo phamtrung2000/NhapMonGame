@@ -27,7 +27,7 @@ void Map::_ParseSection_ROWS(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 176) return; // skip invalid lines
+	//if (tokens.size() < 176) return; // skip invalid lines
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		int ID = atoi(tokens[i].c_str());
@@ -100,7 +100,7 @@ void Map::DrawMap()
 	for (int i = 0; i < MaxRow; i++)
 		for (int j = 0; j < MaxColumn; j++)
 		{
-			int Id = TiledID[i][j] - 1;
+			int Id = TiledID[i][j] ;
 			RECT r;
 
 			r.left = Id % TileCollum * TileWidth;

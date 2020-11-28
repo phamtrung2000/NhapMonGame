@@ -14,6 +14,7 @@
 #include"Ground.h"
 #include "QuestionBrickItem.h"
 #include "FirePiranhaPlant.h"
+#include "BrickItem.h"
 
 #define MAP_MAX_WIDTH	2816
 
@@ -22,7 +23,7 @@ using namespace std;
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	CScene(id, filePath)
 {
-	player = new Mario();
+	player = NULL;
 	map = new Map();
 	key_handler = new CPlayScenceKeyHandler(this);
 }
@@ -31,8 +32,6 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	Load scene resources from scene file (textures, sprites, animations and objects)
 	See scene1.txt, scene2.txt for detail format specification
 */
-
-
 
 void CPlayScene::_ParseSection_MAP(string line)
 {
@@ -154,7 +153,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		width = atof(tokens[4].c_str());
 		height = atof(tokens[5].c_str());
 	}
-	else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK)
+	else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK || object_type == OBJECT_TYPE_ITEMBRICK)
 	{
 		Item = atof(tokens[4].c_str());
 	}
@@ -167,38 +166,53 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
-		if (player!=NULL) 
+		case OBJECT_TYPE_MARIO:
 		{
-			DebugOut(L"[ERROR] MARIO object was created before!\n");
+			if (player != NULL)
+			{
+				DebugOut(L"[ERROR] MARIO object was created before!\n");
+				return;
+			}
+			obj = new Mario(x, y);
+			player = (Mario*)obj;
+
+			DebugOut(L"[INFO] Player object created!\n");
+		}break;
+
+		case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
+		case OBJECT_TYPE_GOOMBA: obj = new CGoomba(); break;
+		case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
+		case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item,x,y); break;
+		case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height); break;
+		case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
+		case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
+		case OBJECT_TYPE_FIREPIRANHAPLANT: obj = new FirePiranhaPlant(); break;
+		case OBJECT_TYPE_GREENPLANT:
+		{
+			obj = new GreenPlant();
+			x += GREENPLANT_BBOX_WIDTH/2;
+		} break;
+		case OBJECT_TYPE_GREENFIREPLANT:
+		{
+			obj = new GreenFirePlant();
+			x += GREENPLANT_BBOX_WIDTH / 2;
+		} break;
+		case OBJECT_TYPE_GREENKOOPAS: obj = new GreenKoopas(); break;
+		case OBJECT_TYPE_GREENFLYKOOPAS: obj = new GreenFlyKoopas(); break;
+		case OBJECT_TYPE_COIN: obj = new Coin(); break;
+		case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
+		case OBJECT_TYPE_PORTAL:
+			{	
+				float r = atof(tokens[4].c_str());
+				float b = atof(tokens[5].c_str());
+				int scene_id = atoi(tokens[6].c_str());
+				obj = new CPortal(x, y, r, b, scene_id);
+			}
+			break;
+
+		default:
+			DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 			return;
-		}
-		obj = new Mario(x,y); 
-		player = (Mario*)obj;  
-
-		DebugOut(L"[INFO] Player object created!\n");
-		break;
-	case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
-	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(); break;
-	case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
-	case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item,x,y); break;
-	case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height); break;
-	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
-	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
-	case OBJECT_TYPE_FIREPIRANHAPLANT: obj = new FirePiranhaPlant(); break;
-	case OBJECT_TYPE_PORTAL:
-		{	
-			float r = atof(tokens[4].c_str());
-			float b = atof(tokens[5].c_str());
-			int scene_id = atoi(tokens[6].c_str());
-			obj = new CPortal(x, y, r, b, scene_id);
-		}
-		break;
-
-	
-	default:
-		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
-		return;
 	}
 
 	// General object setup
@@ -243,9 +257,6 @@ void CPlayScene::Load()
 			section = SCENE_SECTION_OBJECTS; continue; }
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }	
 
-		//
-		// data section
-		//
 		switch (section)
 		{ 
 			case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
@@ -258,9 +269,7 @@ void CPlayScene::Load()
 	}
 
 	f.close();
-
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
-	//CTextures::GetInstance()->Add(300, L"textures/map1.png", D3DCOLOR_XRGB(255, 255, 255));
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
@@ -270,21 +279,6 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-	
-
-
-	/*for (size_t i = 1; i < objects.size(); i++)
-	{
-		if (objects[i]->isDie != true)
-		{
-			coObjects.push_back(objects[i]);
-		}
-		
-	}
-	if (player->isAttacking == true)
-		DebugOut(L"player->isAttacking == true\n");
-	else
-		DebugOut(L"player->isAttacking == false\n");*/
 
 	// mario bắn lửa
 	if (player->level == MARIO_LEVEL_FIRE && player->isAttacking == true && (player->ani == MARIO_ANI_FIRE_ATTACK_RIGHT_2 || player->ani == MARIO_ANI_FIRE_ATTACK_LEFT_2))
@@ -311,7 +305,6 @@ void CPlayScene::Update(DWORD dt)
 			player->isAttacking = false;
 		//	DebugOut(L"Them dan lua -> objects.size = %i \n", objects.size());
 		}
-
 	}
 	
 	for (size_t i = 1; i < objects.size(); i++)
@@ -319,9 +312,105 @@ void CPlayScene::Update(DWORD dt)
 		if (objects[i]->isDie == false)
 		{
 			coObjects.push_back(objects[i]);
-			//DebugOut(L"1.i=%i,	state=%i, tyle=%i\n", i, objects[i]->GetState(), objects[i]->ObjType);
-			//DebugOut(L"size=%i\n", objects.size());
-		
+			if (objects[i]->ObjType == OBJECT_TYPE_QUESTIONBRICK && objects[i]->state == BRICK_STATE_EMPTY)
+			{
+				QuestionBrick* a = (QuestionBrick*)objects[i];
+
+				if (a->hasItem == 0)
+				{
+					float x = objects[i]->x;
+					float y = objects[i]->y;
+					if (a->Item > MONEY)
+					{
+						switch (player->level)
+						{
+						case MARIO_LEVEL_SMALL:
+						{
+							a->Item = MUSHROOM;
+						}break;
+
+						case MARIO_LEVEL_BIG:
+						{
+							a->Item = LEAF;
+						}break;
+						default:
+							break;
+						}
+					}
+					QuestionBrickItem* questionbrickitem = new QuestionBrickItem(a->Item, x, y);
+					questionbrickitem->CaclVx(player->x);
+					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+					LPANIMATION_SET ani_set = animation_sets->Get(QBI_MUSHROOM_ANISET_ID);
+					questionbrickitem->SetAnimationSet(ani_set);
+					objects.push_back(questionbrickitem);
+					a->hasItem = 1;
+				}
+			}
+			else if (objects[i]->ObjType == OBJECT_TYPE_ITEMBRICK && objects[i]->state == BRICK_STATE_EMPTY)
+			{
+				ItemBrick* itembrick = (ItemBrick*)objects[i];
+
+				if (itembrick->hasItem == 0 && itembrick->Item == MUSHROOM)
+				{
+					float x = objects[i]->x;
+					float y = objects[i]->y;
+					BrickItem* brickitem = new BrickItem(itembrick->Item, x, y);
+					brickitem->CaclVx(player->x);
+					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+					LPANIMATION_SET ani_set = animation_sets->Get(BI_MUSHROOM_ANISET_ID);
+					brickitem->SetAnimationSet(ani_set);
+					objects.push_back(brickitem);
+					itembrick->hasItem = 1;
+				}
+			}
+			else if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
+			{
+				FirePiranhaPlant* a = (FirePiranhaPlant*)objects[i];
+
+				if (a->NumberBullet == 1)
+				{
+					FireBullet* fb = new FireBullet(a->x, a->y);
+					fb->SetSpeed(a->VxBullet, a->VyBullet);
+					// chiều của viên đạn
+					if (a->nx == 1)
+						fb->nx = 1;
+					else
+						fb->nx = -1;
+
+					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
+					fb->SetAnimationSet(ani_set);
+					objects.push_back(fb);
+					// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
+					a->NumberBullet--;
+
+					//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
+				}
+			}
+			else if (objects[i]->ObjType == OBJECT_TYPE_GREENFIREPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
+			{
+				GreenFirePlant* a = (GreenFirePlant*)objects[i];
+
+				if (a->NumberBullet == 1)
+				{
+					FireBullet* fb = new FireBullet(a->x, a->y);
+					fb->SetSpeed(a->VxBullet, a->VyBullet);
+					// chiều của viên đạn
+					if (a->nx == 1)
+						fb->nx = 1;
+					else
+						fb->nx = -1;
+
+					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
+					fb->SetAnimationSet(ani_set);
+					objects.push_back(fb);
+					// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
+					a->NumberBullet--;
+
+					//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
+				}
+			}
 		}
 		else
 		{
@@ -335,70 +424,10 @@ void CPlayScene::Update(DWORD dt)
 				objects.erase(objects.begin() + i);
 				continue;
 			}
-				
 		}
 			
-		if (objects[i]->ObjType == OBJECT_TYPE_QUESTIONBRICK && objects[i]->state == BRICK_STATE_EMPTY)
-		{
-			QuestionBrick* a = (QuestionBrick*)objects[i];
-
-			if (a->hasItem == 0)
-			{
-				float x = objects[i]->x;
-				float y = objects[i]->y;
-				if (a->Item > MONEY)
-				{
-					switch (player->level)
-					{
-					case MARIO_LEVEL_SMALL:
-					{
-						a->Item = MUSHROOM;
-					}break;
-
-					case MARIO_LEVEL_BIG:
-					{
-						a->Item = LEAF;
-					}break;
-					default:
-						break;
-					}
-				}
-				QuestionBrickItem* questionbrickitem = new QuestionBrickItem(a->Item,x, y);
-				questionbrickitem->CaclVx(player->x);
-				CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-				LPANIMATION_SET ani_set = animation_sets->Get(MUSHROOM_ANISET_ID);
-				questionbrickitem->SetAnimationSet(ani_set);
-				objects.push_back(questionbrickitem);
-				a->hasItem = 1;
-			}
-		}
-
-		if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
-		{
-			FirePiranhaPlant* a = (FirePiranhaPlant*)objects[i];
-
-			if (a->NumberBullet == 1)
-			{
-				FireBullet* fb = new FireBullet(a->x, a->y);
-				fb->SetSpeed(a->VxBullet, a->VyBullet);
-				// chiều của viên đạn
-				if (a->nx == 1)
-					fb->nx = 1;
-				else
-					fb->nx = -1;
-
-				CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-				LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-				fb->SetAnimationSet(ani_set);
-				objects.push_back(fb);
-				// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-				a->NumberBullet--;
-				
-				//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
-			}
-		}
 		
-	}
+}
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -414,7 +443,33 @@ void CPlayScene::Update(DWORD dt)
 				fireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
 				fireplant->Stop = false;
 			}
-			DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+		}
+		else if (objects[i]->ObjType == OBJECT_TYPE_GREENPLANT)
+		{
+			GreenPlant* greenplant = (GreenPlant*)objects[i];
+			greenplant->GetEnemyPos(player->x, player->y);
+			if (abs(player->x - greenplant->x) <= 20 && greenplant->isBlocked == true)
+				greenplant->SetState(GREENPLANT_STATE_STOP);
+			else if (greenplant->isBlocked == true)
+			{
+				greenplant->SetState(GREENPLANT_STATE_APPEAR);
+				greenplant->isBlocked = false;
+			}
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+		}
+		else if (objects[i]->ObjType == OBJECT_TYPE_GREENFIREPLANT)
+		{
+			GreenFirePlant* greenfireplant = (GreenFirePlant*)objects[i];
+			greenfireplant->GetEnemyPos(player->x, player->y);
+			if (abs(player->x - greenfireplant->x) <= 20 && greenfireplant->Stop == true)
+				greenfireplant->SetState(FIREPIRANHAPLANT_STATE_STOP);
+			else if (greenfireplant->Stop == true)
+			{
+				greenfireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
+				greenfireplant->Stop = false;
+			}
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
 		}
 		else if (objects[i]->ObjType == OBJECT_TYPE_KOOPAS && objects[i]->GetState() == KOOPAS_STATE_SHELL_HOLD )
 		{
@@ -473,6 +528,68 @@ void CPlayScene::Update(DWORD dt)
 			}
 			
 		}
+		else if (objects[i]->ObjType == OBJECT_TYPE_GREENKOOPAS && objects[i]->GetState() == GREENKOOPAS_STATE_SHELL_HOLD)
+		{
+			GreenKoopas* greenkoopas = (GreenKoopas*)objects[i];
+			if (player->pressA == false)
+			{
+				greenkoopas->isHold = false;
+				if (player->nx == 1)
+					greenkoopas->SetState(GREENKOOPAS_STATE_SHELL_WALKING_RIGHT);
+				else
+					greenkoopas->SetState(GREENKOOPAS_STATE_SHELL_WALKING_LEFT);
+			}
+			else
+			{
+				if (player->nx == RIGHT)
+				{
+					if (player->level == MARIO_LEVEL_SMALL)
+					{
+						//greenkoopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						greenkoopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y - 2;
+					}
+					else if (player->level == MARIO_LEVEL_TAIL)
+					{
+						greenkoopas->x = player->x + MARIO_TAIL_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y + 7;
+					}
+					else
+					{
+						greenkoopas->x = player->x + MARIO_BIG_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y + 6;
+					}
+					greenkoopas->dx = player->dx;
+					greenkoopas->nx = player->nx;
+					//	DebugOut(L"player x = %f, greenkoopas x = %f, player right = %f\n", player->x, greenkoopas->x);
+				}
+				else
+				{
+
+					//greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH - 1;
+					//DebugOut(L"vao day, vx=%f\n", player->vx);
+					if (player->level == MARIO_LEVEL_SMALL)
+					{
+						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y - 2;
+					}
+					else if (player->level == MARIO_LEVEL_TAIL)
+					{
+						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y + 7;
+					}
+					else
+					{
+						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = player->y + 6;
+					}
+					greenkoopas->dx = player->dx;
+					greenkoopas->nx = player->nx;
+
+				}
+			}
+
+		}
 		
 	}
 
@@ -520,11 +637,10 @@ void CPlayScene::Render()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
-		
-			if(objects[i]->isDie!=true)
-			{
-				objects[i]->Render();
-			}
+		if (objects[i]->isDie != true)
+		{
+			objects[i]->Render();
+		}
 	}
 }
 
@@ -674,7 +790,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_RIGHT:
 	{
-		//DebugOut(L"DIK_RIGHT	\n");
+		//DebugOut(L"DIK_RIGHT\n");
 		mario->level_of_stopping = 1;
 		mario->level_of_walking = 0;
 	}
@@ -729,6 +845,12 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->isFlyingHigh = mario->isFlyingLow = false;
 	}break;
 		
+
+	case DIK_RIGHT:
+	{
+		//DebugOut(L"DIK_RIGHT\n");
+	}
+	break;
 	}
 
 }
@@ -736,6 +858,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE *states)
 {
 	CGame *game = CGame::GetInstance();
+	//if (filePath == L"scene1_SoCua.txt")
 	Mario *mario = ((CPlayScene*)scence)->GetPlayer();
 
 	// disable control key when Mario die 
@@ -822,4 +945,3 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 		}
 	}*/
 }
-

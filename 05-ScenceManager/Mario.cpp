@@ -16,10 +16,8 @@
 #include "Ground.h"
 #include "WarpPipe.h"
 #include "FirePiranhaPlant.h"
+#include "BrickItem.h"
 
-#define TIME_ATTACK 5
-#define TIME_FLY 200
-#define TIME_FLY_S 5
 
 Mario::Mario(float x, float y) : CGameObject()
 {
@@ -164,21 +162,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		/*if (rdx != 0 && rdx!=dx)
 			x += 2*nx*abs(5); */
 	
-		// block every object first!
-		//x += min_tx * dx + nx * 0.4f;
-		
-		if (ny != 0 && untouchable == false) vy = 0;
-
+		//if (ny != 0 && untouchable == false) vy = 0;
 		/*x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 		if (nx != 0) vx = 0;
 		if (ny != 0) vy = 0;*/
 	
+		//DebugOut(L"size = %i\n", coEventsResult.size());
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
-	
 			LPCOLLISIONEVENT e = coEventsResult[i];
-	
+			//DebugOut(L"type = %i\n", e->obj->ObjType);
 			// xử lý tạm vụ chạm đất
 			if (e->ny < 0)
 			{
@@ -189,29 +183,42 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	
 			if (dynamic_cast<Ground*>(e->obj))
 			{
+				if (ny != 0 && untouchable == false) vy = 0;
 				Ground* ground = dynamic_cast<Ground*>(e->obj);
-				/*if (y + min_ty * dy + ny * 0.4f + Height < ground->y)
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+					if (GetState() != MARIO_STATE_DIE) // nếu k có đk này thì khi chết sẽ k bị nhảy lên vì gán trực tiếp vy = 0
+						vy = 0;
+				}
+				else
 					y += min_ty * dy + ny * 0.4f;
-				else*/
-				x += min_tx * dx + nx * 0.4f;
-				if(GetState() != MARIO_STATE_DIE) // nếu k có đk này thì khi chết sẽ k bị nhảy lên vì gán trực tiếp vy = 0
-					vy = 0;
+				
 			}
 			else if (dynamic_cast<WarpPipe*>(e->obj))
 			{
-				if(e->nx != 0)
+				if (ny != 0) vy = 0;
+				if (nx != 0) vx = 0;
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+					vy = 0;
+				}
+				else if (e->nx != 0)
+				{
 					y += min_ty * dy + ny * 0.4f;
+				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
+				if (ny != 0) vy = 0;
 				x += dx;
 				if (isFlyingHigh == true)
-				{
 					y += dy;
-				}
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
 			{
+				if (ny != 0) vy = 0;
 				Brick* brick = dynamic_cast<Brick*>(e->obj);
 				if (brick->Type == CLOUD) // mây
 				{
@@ -238,6 +245,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<QuestionBrick*>(e->obj))
 			{
+				if (ny != 0) vy = 0;
 				// mario nhảy từ dưới lên va chạm gạch 
 				if (e->ny > 0)
 				{
@@ -255,6 +263,230 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					level_of_running = level_of_walking = 1; // không hiện vụ giảm vận tốc khi thả nút di chuyện
 					y += min_ty * dy + ny * 0.4f;
+				}
+			}
+			else if (dynamic_cast<ItemBrick*>(e->obj))
+			{
+				ItemBrick* brick = dynamic_cast<ItemBrick*>(e->obj);
+				if (ny != 0) vy = 0;
+				if (nx != 0) vx = 0;
+				// mario nhảy từ dưới lên va chạm gạch 
+				if (e->ny > 0)
+				{
+					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
+					// cả 2 đều làm cho mario k nhảy đươc tiếp + rớt xuống
+					if (e->obj->GetState() == BRICK_STATE_NORMAL && brick->Item == MUSHROOM)
+						e->obj->SetState(BRICK_STATE_COLLISION);
+				}
+				else if (e->ny < 0) // mario đi trên gạch "?"
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
+				else if (e->nx != 0)
+				{
+					if (level == MARIO_LEVEL_TAIL && isAttacking == true)
+						brick->isDie = true;
+					else
+					{
+						y += min_ty * dy + ny * 0.4f;
+					}
+				}
+			//	DebugOut(L"state =%i,vx = %f, vy = %f,level walk = %i, level running = %i, time fly = %i\n", state, vx, vy, level_of_walking, level_of_running, time_fly);
+			}
+			else if (dynamic_cast<QuestionBrickItem*>(e->obj))
+			{
+				QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
+				////va chạm nấm khi đi hoặc nấm rớt từ trên xuống
+				//if (e->nx != 0 || e->ny > 0)
+				//{
+				//	//if (questionbrickitem->GetState() == QUESTIONBRICKITEM_STATE_MOVE)
+				//	if (questionbrickitem->vx != 0)
+				//	{
+				//		questionbrickitem->isDie = true;
+				//		switch (level)
+				//		{
+				//		case MARIO_LEVEL_SMALL:
+				//		{
+				//			level++;
+				//			y -= static_cast<__int64>(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) + 2;
+				//		}
+				//		break;
+				//
+				//		case MARIO_LEVEL_BIG:
+				//		{
+				//			level++;
+				//			y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
+				//		}
+				//		break;
+				//
+				//		case MARIO_LEVEL_TAIL:
+				//		{
+				//			level++;
+				//			y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
+				//		}
+				//		break;
+				//
+				//		default:
+				//		{
+				//			y -= 2;
+				//			break;
+				//		}
+				//		}
+				//	}
+				//}
+				questionbrickitem->isDie = true;
+				switch (level)
+				{
+				case MARIO_LEVEL_SMALL:
+				{
+					level++;
+					y -= static_cast<__int64>(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) + 2;
+				}
+				break;
+				case MARIO_LEVEL_BIG:
+				{
+					level++;
+					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
+				}
+				break;
+				case MARIO_LEVEL_TAIL:
+				{
+					level++;
+					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
+				}
+				break;
+				default:
+				{
+					y -= 2;
+					break;
+				}
+				}
+			}
+			else if (dynamic_cast<BrickItem*>(e->obj))
+			{
+				BrickItem* brickitem = dynamic_cast<BrickItem*>(e->obj);
+				brickitem->isDie = true;
+			}
+			else if (dynamic_cast<FirePiranhaPlant*>(e->obj))
+			{
+				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(e->obj);
+				if (e->ny < 0)
+				{
+					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - FIREPIRANHAPLANT_BBOX_HEIGHT))
+					{
+						// cho cây thụt xuống ngang với miệng cống
+						plant->y += 1;
+						plant->Stop = true;
+					}
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+			}
+			else if (dynamic_cast<GreenFirePlant*>(e->obj))
+			{
+				GreenFirePlant* plant = dynamic_cast<GreenFirePlant*>(e->obj);
+				if (e->ny < 0)
+				{
+					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENFIREPLANT_BBOX_HEIGHT))
+					{
+						// cho cây thụt xuống ngang với miệng cống
+						plant->y += 1;
+						plant->Stop = true;
+					}	
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+			}
+			else if (dynamic_cast<GreenPlant*>(e->obj))
+			{
+				GreenPlant* plant = dynamic_cast<GreenPlant*>(e->obj);
+				if (e->ny < 0)
+				{
+					//plant->vy = 0;
+					//DebugOut(L"aaaaaaaaaa %i\n", INT(plant->Startposy - plant->y));
+					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENPLANT_BBOX_HEIGHT))
+					{
+						// cho cây thụt xuống ngang với miệng cống
+						plant->y += 1;
+						//DebugOut(L"1111111111111111111111\n");
+						plant->isBlocked = true;
+					}
+					/*else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}*/
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+			}
+			else if (dynamic_cast<FireBullet*>(e->obj))
+			{
+				FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
+				// jump on top >> kill firebullet and deflect a bit 
+				//if ( firebullet->FireMario == false && (e->nx != 0 || e->ny != 0))
+				if (firebullet->FireMario == false)
+				{
+					if (untouchable == false)
+					{
+						switch (level)
+						{
+						case MARIO_LEVEL_FIRE:
+						{
+							y = (int)(y - abs(MARIO_BIG_BBOX_HEIGHT - MARIO_TAIL_BBOX_HEIGHT) * 2);
+							level--;
+							StartUntouchable();
+
+						}
+						break;
+
+						case MARIO_LEVEL_TAIL:
+						{
+							level--;
+							StartUntouchable();
+						}
+						break;
+						case MARIO_LEVEL_BIG:
+						{
+							y = (int)(y + abs(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT - 1));
+							level--;
+							StartUntouchable();
+						}
+						break;
+						case MARIO_LEVEL_SMALL:
+						{
+							SetState(MARIO_STATE_DIE);
+						}
+						break;
+						}
+					}
+					else
+					{
+						if (level == MARIO_LEVEL_SMALL)
+							y -= 1;
+					}
+				}
+				else
+				{
 				}
 			}
 			else if (dynamic_cast<CPortal*>(e->obj))
@@ -377,148 +609,204 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 			}
-			else if (dynamic_cast<FireBullet*>(e->obj))
+			else if (dynamic_cast<GreenKoopas*>(e->obj)) // if e->obj is Goomba 
 			{
-				FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
-				// jump on top >> kill firebullet and deflect a bit 
-				//if ( firebullet->FireMario == false && (e->nx != 0 || e->ny != 0))
-				if (firebullet->FireMario == false)
+				GreenKoopas* greenkoopas = dynamic_cast<GreenKoopas*>(e->obj);
+				if (e->ny < 0) // nhảy lên đầu rùa
 				{
-					if (untouchable == false)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_FIRE:
-						{
-							y = (int)(y - abs(MARIO_BIG_BBOX_HEIGHT - MARIO_TAIL_BBOX_HEIGHT) * 2);
-							level--;
-							StartUntouchable();
-	
-						}
-						break;
-	
-						case MARIO_LEVEL_TAIL:
-						{
-							level--;
-							StartUntouchable();
-						}
-						break;
-						case MARIO_LEVEL_BIG:
-						{
-							y = (int)(y + abs(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT - 1));
-							level--;
-							StartUntouchable();
-						}
-						break;
-						case MARIO_LEVEL_SMALL:
-						{
-							SetState(MARIO_STATE_DIE);
-						}
-						break;
-						}
-					}
+				//if (greenkoopas->GetState() == KOOPAS_STATE_WALKING_RIGHT || greenkoopas->GetState() == KOOPAS_STATE_WALKING_LEFT) // rùa đang di chuyển
+				if (greenkoopas->vx != 0 && greenkoopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+				{
+					greenkoopas->SetState(KOOPAS_STATE_SHELL);
+					greenkoopas->ReviveTime = GetTickCount64();
+
+				}
+				else if (greenkoopas->vx != 0 && greenkoopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+				{
+					greenkoopas->SetState(KOOPAS_STATE_SHELL_2);
+					greenkoopas->ReviveTime = GetTickCount64();
+
+				}
+				else if (greenkoopas->GetState() == KOOPAS_STATE_SHELL || greenkoopas->GetState() == KOOPAS_STATE_SHELL_2 || greenkoopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
+				{
+					if (this->x <= greenkoopas->x)
+						greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 					else
+						greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+				}
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+			else
+			{
+				if (untouchable == false)
+				{
+					if (e->ny > 0) 	// mario nhảy lên chạm chân rùa
 					{
-						if (level == MARIO_LEVEL_SMALL)
-							y -= 1;
+						//if (greenkoopas->GetState()== KOOPAS_STATE_WALKING_RIGHT || greenkoopas->GetState()==KOOPAS_STATE_WALKING_LEFT)
+						if (greenkoopas->vx != 0)
+							DownLevel();
+					}
+					else if (e->nx != 0) // va chạm rùa
+					{
+						if (greenkoopas->vx != 0)
+						{
+							if (level == MARIO_LEVEL_TAIL && isAttacking == true)
+							{
+								greenkoopas->SetState(KOOPAS_STATE_SHELL_2);
+								greenkoopas->ReviveTime = GetTickCount64();
+							}
+							else
+								DownLevel();
+						}
+						else if ((greenkoopas->GetState() == KOOPAS_STATE_SHELL || greenkoopas->GetState() == KOOPAS_STATE_SHELL_2) && greenkoopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+						{
+							if (e->nx < 0)
+							{
+								if (pressA == true)
+								{
+									isHolding = true;
+									greenkoopas->nx = 1;
+									greenkoopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+								}
+								else if (greenkoopas->vy >= 0)
+								{
+									canKick = true;
+									greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+								}
+							}
+							else if (e->nx == RIGHT)
+							{
+								if (pressA == true)
+								{
+									isHolding = true;
+									greenkoopas->nx = -1;
+									greenkoopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+								}
+								else if (greenkoopas->vy >= 0)
+								{
+									canKick = true;
+									greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+								}
+							}
+						}
 					}
 				}
 				else
 				{
+					y += min_ty * dy + ny * 0.4f;
+					//y += dy;
+					x += min_tx * dx + nx * 0.4f;
 				}
 			}
-			else if (dynamic_cast<QuestionBrickItem*>(e->obj))
-			{
-				QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
-				////va chạm nấm khi đi hoặc nấm rớt từ trên xuống
-				//if (e->nx != 0 || e->ny > 0)
-				//{
-				//	//if (questionbrickitem->GetState() == QUESTIONBRICKITEM_STATE_MOVE)
-				//	if (questionbrickitem->vx != 0)
-				//	{
-				//		questionbrickitem->isDie = true;
-				//		switch (level)
-				//		{
-				//		case MARIO_LEVEL_SMALL:
-				//		{
-				//			level++;
-				//			y -= static_cast<__int64>(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) + 2;
-				//		}
-				//		break;
-				//
-				//		case MARIO_LEVEL_BIG:
-				//		{
-				//			level++;
-				//			y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
-				//		}
-				//		break;
-				//
-				//		case MARIO_LEVEL_TAIL:
-				//		{
-				//			level++;
-				//			y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
-				//		}
-				//		break;
-				//
-				//		default:
-				//		{
-				//			y -= 2;
-				//			break;
-				//		}
-				//		}
-				//	}
-				//}
-				questionbrickitem->isDie = true;
-				switch (level)
-				{
-				case MARIO_LEVEL_SMALL:
-				{
-					level++;
-					y -= static_cast<__int64>(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) + 2;
-				}
-				break;
-				case MARIO_LEVEL_BIG:
-				{
-					level++;
-					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
-				}
-				break;
-				case MARIO_LEVEL_TAIL:
-				{
-					level++;
-					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
-				}
-				break;
-				default:
-				{
-					y -= 2;
-					break;
-				}
-				}
 			}
-			else if (dynamic_cast<FirePiranhaPlant*>(e->obj))
+			else if (dynamic_cast<GreenFlyKoopas*>(e->obj)) // if e->obj is Goomba 
 			{
-				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(e->obj);
-				if (e->ny < 0)
+				GreenFlyKoopas* greenflykoopas = dynamic_cast<GreenFlyKoopas*>(e->obj);
+				if (e->ny < 0) // nhảy lên đầu rùa
 				{
-					if ( INT16(plant->y - plant->Startposy) >= -16)
-						plant->Stop = true;
+					if (greenflykoopas->Health == 2)
+					{
+						greenflykoopas->Health--;
+						greenflykoopas->vy = 0;
+					}
 					else
 					{
-						if (untouchable == false)
-							DownLevel();
+						//if (greenflykoopas->GetState() == KOOPAS_STATE_WALKING_RIGHT || greenflykoopas->GetState() == KOOPAS_STATE_WALKING_LEFT) // rùa đang di chuyển
+						if (greenflykoopas->vx != 0 && greenflykoopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+						{
+							greenflykoopas->SetState(KOOPAS_STATE_SHELL);
+							greenflykoopas->ReviveTime = GetTickCount64();
+
+						}
+						else if (greenflykoopas->vx != 0 && greenflykoopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+						{
+							greenflykoopas->SetState(KOOPAS_STATE_SHELL_2);
+							greenflykoopas->ReviveTime = GetTickCount64();
+
+						}
+						else if (greenflykoopas->GetState() == KOOPAS_STATE_SHELL || greenflykoopas->GetState() == KOOPAS_STATE_SHELL_2 || greenflykoopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
+						{
+							if (this->x <= greenflykoopas->x)
+								greenflykoopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							else
+								greenflykoopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+						}
+
 					}
+					vy = -MARIO_JUMP_DEFLECT_SPEED;
 				}
-				else if (e->nx != 0)
+				else
 				{
 					if (untouchable == false)
-						DownLevel();
+					{
+						if (e->ny > 0) 	// mario nhảy lên chạm chân rùa
+						{
+							//if (greenflykoopas->GetState()== KOOPAS_STATE_WALKING_RIGHT || greenflykoopas->GetState()==KOOPAS_STATE_WALKING_LEFT)
+							if (greenflykoopas->vx != 0)
+								DownLevel();
+						}
+						else if (e->nx != 0) // va chạm rùa
+						{
+							if (greenflykoopas->vx != 0)
+							{
+								if (level == MARIO_LEVEL_TAIL && isAttacking == true)
+								{
+									greenflykoopas->SetState(KOOPAS_STATE_SHELL_2);
+									greenflykoopas->ReviveTime = GetTickCount64();
+								}
+								else
+									DownLevel();
+							}
+							else if ((greenflykoopas->GetState() == KOOPAS_STATE_SHELL || greenflykoopas->GetState() == KOOPAS_STATE_SHELL_2) && greenflykoopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+							{
+								if (e->nx < 0)
+								{
+									if (pressA == true)
+									{
+										isHolding = true;
+										greenflykoopas->nx = 1;
+										greenflykoopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+									}
+									else if (greenflykoopas->vy >= 0)
+									{
+										canKick = true;
+										greenflykoopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+									}
+								}
+								else if (e->nx == RIGHT)
+								{
+									if (pressA == true)
+									{
+										isHolding = true;
+										greenflykoopas->nx = -1;
+										greenflykoopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+									}
+									else if (greenflykoopas->vy >= 0)
+									{
+										canKick = true;
+										greenflykoopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						y += min_ty * dy + ny * 0.4f;
+						//y += dy;
+						x += min_tx * dx + nx * 0.4f;
+					}
 				}
+			}
+			else if (dynamic_cast<Coin*>(e->obj))
+			{
+				Coin* coin = dynamic_cast<Coin*>(e->obj);
+				x += dx;
+				y += dy;
+				coin->isDie = true;
 			}
 		}
 	}
-	
-
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -1357,8 +1645,7 @@ void Mario::Render()
 	//	DebugOut(L"isMaxRunning == true\t");
 
 	//DebugOut(L"5.Render	Ani: %i\n", ani);
-	//DebugOut(L"state =%i,vx = %f, vy = %f,level walk = %i, level running = %i, time fly = %i\n", state, vx, vy, level_of_walking, level_of_running, time_fly);
-
+	
 	animation_set->at(ani)->Render(x, y, alpha);
 	RenderBoundingBox();
 	//DebugOut(L"\n");

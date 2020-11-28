@@ -14,7 +14,8 @@
 90	textures\Goomba_Koopas\Right.png	19	36	36
 100	textures\Goomba_Koopas\LeftUp.png	19	36	36
 110	textures\Goomba_Koopas\RightUp.png	19	36	36
-
+# plant
+120	textures\Plant\GreenFirePlant.png	156	219	239
 [MAP]
 300	textures\map1.png	255	255	255	textures\map1.txt
 # id	left	top	right	bottom	texture_id
@@ -283,9 +284,14 @@
 171	36	474	50	501	0
 172	66	474	80	501	0
 
-#BRICK
+#======= BRICK =========
 200	408	225	424	241	5
-
+#======= ITEM BRICK =========
+201	372	135	388	151	5
+202	354	135	370	151	5
+203	336	135	352	151	5
+204	318	135	334	151	5
+205	300	135	316	151	5
 #GOOMBA
 300	9	11	25	27	80
 301	32	11	48	27	80
@@ -327,7 +333,7 @@
 50024	50	118	66	145	80
 #walk right
 50025	277	119	293	145	90
-50026	258	118	274	93	90
+50026	258	118	274	145	90
 #shell
 50027	32	149	48	165	80
 # shell right
@@ -348,9 +354,15 @@
 50035	74	127	92	143	80
 # shell 2 revive 
 50036	74	225	92	241	110
-
-
-
+# ======= GREEN FLY KOOPAS=========
+# jump left
+50037	105	129	121	156	80
+50038	126	130	142	156	80
+50039	147	129	163	156	80
+#walk right
+50040	203	129	219	156	90
+50041	182	130	198	156	90
+50042	161	129	177	156	90
 
 #question brick normal
 400	300	117	316	133	5
@@ -369,7 +381,7 @@
 #block
 600	5	86	21	102	10
 
-# ===== Question Brick ========
+# ===== QUESTION BRICK ITEM ========
 # MushRoom
 800	300	189	316	205	5
 #Money
@@ -380,7 +392,12 @@
 804	300	208	316	222	5
 # Leaf Right 
 805	323	208	339	222	6
-#=====  Fire Plant ========
+
+# ===== BRICK ITEM ========
+# Green MushRoom
+810	318	189	334	205	5
+
+#=====  RED FIRE PLANT ========
 # Up Right
 900	8	188	24	220	30
 # Up Mouth Right
@@ -389,7 +406,6 @@
 902	48	188	64	220	30
 #  Down Mouth Right
 903	68	188	84	220	30
-
 # Up Left
 904	104	99	120	131	30
 # Up Mouth Left
@@ -399,6 +415,21 @@
 #  Down Mouth Left
 907	44	99	60	131	30
 
+#===== GREEN PLANT ========
+# Mouth Open
+910	7	108	23	131	80
+# Mouth Close
+911	7	137	23	161	80
+
+#=====  GREEN FIRE PLANT ========
+# Up Left
+912	104	99	120	123	120
+# Up Mouth Left
+913	84	99	100	123	120
+# Down Left
+914	64	99	80	123	120
+#  Down Mouth Left
+915	44	99	60	123	120
 
 #===== Fire Bullet ========
 # Right
@@ -414,88 +445,61 @@
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
-
 # ==== MARIO =========
 #idle BIG right
 0	1	100
-
 #idle BIG left
 1	4	100
-
 #idle small right
 2	51	100
-
 #idle small left
 3	55	100
-
 #walk right big
 4	1	100	2	100	3	100
-
 #walk left big
 5	4	100	5	100	6	100
-
 #walk right small
 6	51	100	52	100	53	100
-
 #walk left small
 7	55	100	56	100	57	100
-
 #die
 8	19	100
-
 # big JUMP right
 9	7	100
-
 # big JUMP left
 10	8	100
-
 # small JUMP right
 11	59	100
-
 # small JUMP left
 12	60	100
-
 # small stop right
 13	61	100
-
 # small stop left
 14	62	100
-
 # small max running right
 15	54	50	52	50
-
 # small max running left
 16	58	50	56	50
-
 # big stop right
 17	9	100
-
 # big stop left
 18	10	100
-
 # big running right
 19	11	50	12	50	13	50
 # big running left
 20	14	50	15	50	16	50
-
 # tail idle right
 21	100	100
-
 # tail idle left
 22	103	100
-
 #tail walking right 
 23	100	100	101	100	102	100
-
 #tail walking left
 24	103	100	104	100	105	100
-
 # tail JUMP right
 25	114	100
-
 # tail JUMP left
 26	115	100
-
 # tail stop right
 27	112	100
 
@@ -641,9 +645,10 @@
 87	140	100
 # Tail Fly Fall Left
 88	141	100
-# ==== BRICK =========
+# ====== BRICK =========
 200	200	100
-
+# ====== ITEM BRICK =========
+201	201	100	202	100	203	100	204	100	205	100
 # ==== GOOMBA  =========
 # walk
 300	300	100	301	100
@@ -694,6 +699,11 @@
 368	50027	150	50035	150
 # shell 2 revive
 #369	50031	150	50036	150
+# ======= GREEN FLY KOOPAS =========
+#walk left
+370	50037	100	50038	100	50039	100
+#walk right
+371	50040	100	50041	100	50042	100
 #WarpPipe
 500	500	100
 501	501	100
@@ -701,6 +711,7 @@
 503	503	100
 # ==== QUESTION MARK BRICK =========
 602	400	1000	400	100	401	100	402	100	403	100
+# Empty
 603	404	100
 # ==== Question Brick Item =====
 # Money
@@ -711,7 +722,10 @@
 802	804	100
 # Leaf Right 
 803	805	100
-#==== Fire Plant ====
+# ===== BRICK ITEM =====
+# Green MushRoom
+810	810	100
+#==== RED FIRE PLANT ====
 # Appear/Hide Up Right
 900	900	100	901	100
 # Appear/Hide Down Right
@@ -728,6 +742,18 @@
 906	905	100
 # Attack Down Left
 907	907	100
+#===== GREEN PLANT ========
+# HIDE/APPEAR
+910	910	100	911	100
+#=====  GREEN FIRE PLANT ========
+# Appear/Hide Up Left
+911	912	100	913	100
+# Appear/Hide Down Left
+912	914	100	915	100
+# Attack Up Left
+913	913	100
+# Attack Down Left
+914	915	100
 # ====  Fire Bullet ======
 # Right
 1000	1000	500	1001	500	1002	500	1003	500
@@ -743,7 +769,7 @@
 2	300	301	302
 # ======= RED KOOPAS =========
 3	350	351	352	353	354	355	356	357	358	359
-# QUESTION MARK BRICK 
+# QUESTION BRICK 
 4	602	603
 #WARPPIPE
 5	500	501	502	503
@@ -753,17 +779,32 @@
 8	800	801	802	803
 #FirePlant
 9	900	901	902	903	904	905	906	907
+#===== GREEN PLANT ========
+15	910
+#=====  GREEN FIRE PLANT ========
+16	911	912	913	914
 # ======= GREEN KOOPAS =========
 10	360	361	362	363	364	365	366	367	368	369
+# ======= GREEN FLY KOOPAS =========
+11	360	361	362	363	364	365	366	367	368	369	370	371
+# ======= COIN ========
+12	800
+# ======= ITEM BRICK ========
+13	201	603
+# ===== BRICK ITEM =====
+14	810
 # Fire Bullet
 100	1000	1001
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-#0	120	330	0
+#0	16	16	0
 #0	300	250	0
-0	704	368	0
+#0	1400	368	0
+#0	1700	350	0
+#0	2064	350	0
+0	2256	64	0
 # BRICK 
 #type	x	y	ani_set_id	type_brick( 0: normal, 1: cloud)
 1	1504	336	1	0
@@ -797,16 +838,17 @@
 1	1648	176	1	1
 1	1664	176	1	1
 1	1680	176	1	1
-1	1440	128	1	2
-
 # GOOMBA
 2	220	400	2
 2	400	400	2
 #2	725	368	2
 # ======= RED KOOPAS =========
-3	544	350	3
+#3	544	350	3
+3	2088	350	3
 # ======= GREEN KOOPAS =========
-10	1472	400	10
+10	1472	370	10
+# ======= GREEN FLY KOOPAS =========
+11	1408	272	11
 # ---- Question Brick----
 4	176	352	4	0
 4	192	352	4	0
@@ -849,12 +891,59 @@
 7	2256	416	400	560	16
 7	1408	192	400	64	16
 7	1488	176	400	208	16
-# ====  Fire Plant  ======
+# =====  Fire Plant  ======
 #9	360	380	9
-
 #9	360	410	9
 9	360	300	9
+# =====  GREEN PLANT  ======
+15	1792	336	15
+# =====  GREEN FIRE PLANT  ======
+16	1856	320	16
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
 #50	300	98	0	316	150	2
-
+# ===== COIN ======
+12	1072	320	12
+12	1104	304	12
+12	1136	288	12
+12	1168	272	12
+12	1200	256	12
+12	1328	80	12
+12	1344	80	12
+12	1360	80	12
+12	1472	112	12
+12	1488	112	12
+12	1536	128	12
+12	1552	128	12
+12	1568	128	12
+12	1584	128	12
+12	1616	112	12
+12	1632	112	12
+12	1648	112	12
+12	1664	112	12
+12	1696	144	12
+12	1728	112	12
+12	1760	128	12
+12	1808	96	12
+12	1840	128	12
+# =====  ITEM BRICK ======
+13	1440	128	13	1
+13	1952	400	13	0
+13	1968	400	13	0
+13	1984	400	13	0
+13	2000	400	13	0
+13	2016	400	13	0
+13	2032	400	13	0
+13	2048	400	13	0
+13	1968	384	13	0
+13	1984	384	13	0
+13	2000	384	13	0
+13	2016	384	13	0
+13	2032	384	13	0
+13	1984	368	13	0
+13	2000	368	13	0
+13	2016	368	13	0
+13	2032	368	13	2
+13	2096	400	13	0
+13	2112	400	13	0
+13	2096	384	13	0

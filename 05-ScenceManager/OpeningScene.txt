@@ -1,0 +1,25 @@
+# id	file_path	transparent_color_r	g	b
+[TEXTURES]
+# Option
+0	textures\Opening\title.png	255	255	255
+[MAP]
+300	textures\Opening\MapOpening.png	255	255	255	textures\Opening\MapOpening.txt
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+# 1 player
+0	30	307	142	331	0
+# 2 player
+1	155	307	267	331	0
+[ANIMATIONS]
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+# 1 PLAYER
+0	0	100
+# 2 PLAYER
+1	1	100
+[ANIMATION_SETS]
+# Option
+0	0	1
+[OBJECTS]
+# type	x	y	ani_set_id	extra_settings per object type
+# Option
+0	72	144	0

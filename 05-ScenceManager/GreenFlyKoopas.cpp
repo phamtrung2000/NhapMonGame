@@ -1,17 +1,18 @@
-﻿#include "GreenKoopas.h"
+﻿#include "GreenFlyKoopas.h"
 
-GreenKoopas::GreenKoopas()
+GreenFlyKoopas::GreenFlyKoopas()
 {
 	SetState(GREENKOOPAS_STATE_WALKING_LEFT);
 	Revive = isHold = isShell = isShell_2 = false;
-	ObjType = OBJECT_TYPE_GREENKOOPAS;
+	ObjType = OBJECT_TYPE_GREENFLYKOOPAS;
+	Health = 2;
 }
 
-GreenKoopas::~GreenKoopas()
+GreenFlyKoopas::~GreenFlyKoopas()
 {
 }
 
-void GreenKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void GreenFlyKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -27,7 +28,7 @@ void GreenKoopas::GetBoundingBox(float& left, float& top, float& right, float& b
 	}
 }
 
-void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 
@@ -49,7 +50,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (y > 450)
 			isDie = true;
 	}
-
+	
 	if ((GetState() == GREENKOOPAS_STATE_SHELL || GetState() == GREENKOOPAS_STATE_SHELL_2 || GetState() == GREENKOOPAS_STATE_SHELL_HOLD)
 		&& GetTickCount64() - ReviveTime > GREENKOOPAS_START_REVIVE_TIME)
 	{
@@ -93,7 +94,8 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-
+			if (e->ny < 0 && Health == 2)
+				vy = -0.2;
 			if (dynamic_cast<WarpPipe*>(e->obj))
 			{
 				if (e->nx != 0)
@@ -153,14 +155,14 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 					this->x += min_tx * dx + nx * 0.4f;
-				else 
+				else
 					this->y += min_ty * dy + ny * 0.4f;
 			}
 			else if (dynamic_cast<CGoomba*>(e->obj))
 			{
 				x += dx;
 			}
-			else if (dynamic_cast<GreenKoopas*>(e->obj))
+			else if (dynamic_cast<GreenFlyKoopas*>(e->obj))
 			{
 				x += dx;
 			}
@@ -176,44 +178,54 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
-void GreenKoopas::Render()
+void GreenFlyKoopas::Render()
 {
 	int ani = 0;
-
-	if (isShell == true)
+	if (Health == 2)
 	{
-		ani = GREENKOOPAS_ANI_SHELL;
-		if (Revive == true)
-			ani = GREENKOOPAS_ANI_SHELL_REVIVE;
+		if (nx == LEFT)
+			ani = GREENFLYKOOPAS_ANI_WALKING_LEFT;
+		else
+			ani = GREENFLYKOOPAS_ANI_WALKING_RIGHT;
 	}
-	else if (isShell_2 == true)
+	else
 	{
-		ani = GREENKOOPAS_ANI_SHELL_2;
-	}
-	if (vx > 0)
-	{
-		ani = GREENKOOPAS_ANI_WALKING_RIGHT;
 		if (isShell == true)
 		{
-			ani = GREENKOOPAS_ANI_SHELL_WALKING_RIGHT;
+			ani = GREENKOOPAS_ANI_SHELL;
+			if (Revive == true)
+				ani = GREENKOOPAS_ANI_SHELL_REVIVE;
 		}
 		else if (isShell_2 == true)
 		{
-			ani = GREENKOOPAS_ANI_SHELL_2_WALKING_RIGHT;
+			ani = GREENKOOPAS_ANI_SHELL_2;
+		}
+		if (vx > 0)
+		{
+			ani = GREENKOOPAS_ANI_WALKING_RIGHT;
+			if (isShell == true)
+			{
+				ani = GREENKOOPAS_ANI_SHELL_WALKING_RIGHT;
+			}
+			else if (isShell_2 == true)
+			{
+				ani = GREENKOOPAS_ANI_SHELL_2_WALKING_RIGHT;
+			}
+		}
+		else if (vx < 0)
+		{
+			ani = GREENKOOPAS_ANI_WALKING_LEFT;
+			if (isShell == true)
+			{
+				ani = GREENKOOPAS_ANI_SHELL_WALKING_LEFT;
+			}
+			else if (isShell_2 == true)
+			{
+				ani = GREENKOOPAS_ANI_SHELL_2_WALKING_LEFT;
+			}
 		}
 	}
-	else if (vx < 0)
-	{
-		ani = GREENKOOPAS_ANI_WALKING_LEFT;
-		if (isShell == true)
-		{
-			ani = GREENKOOPAS_ANI_SHELL_WALKING_LEFT;
-		}
-		else if (isShell_2 == true)
-		{
-			ani = GREENKOOPAS_ANI_SHELL_2_WALKING_LEFT;
-		}
-	}
+	
 
 	//DebugOut(L"state=%i, ani = %i, vx=%f,vy=%f, nx=%i, y = %f, type %i\n", state, ani, vx, vy, nx, y,ObjType);
 	animation_set->at(ani)->Render(x, y);
@@ -221,82 +233,82 @@ void GreenKoopas::Render()
 	RenderBoundingBox();
 }
 
-void GreenKoopas::SetState(int state)
+void GreenFlyKoopas::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)
 	{
-		case GREENKOOPAS_STATE_SHELL:
-		{
-			// nếu k phải mai rùa thì mới tính lại y, vì có trường hợp mai rùa di chuyển bị đạp xuống thì dừng lại
-			if (isShell == false && isShell_2 == false)
-				y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
-			isShell = true;
-			isShell_2 = false;
-			vx = 0;
-		}
-		break;
-
-		case GREENKOOPAS_STATE_SHELL_2:
-		{
-			if (isShell_2 == false && isShell == false)
-			{
-				y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
-				vy = -0.2f;
-			}
-			isShell = false;
-			isShell_2 = true;
-			vx = 0;
-		}
-		break;
-
-		case GREENKOOPAS_STATE_SHELL_HOLD:
-		{
-			isHold = true;
+	case GREENKOOPAS_STATE_SHELL:
+	{
+		// nếu k phải mai rùa thì mới tính lại y, vì có trường hợp mai rùa di chuyển bị đạp xuống thì dừng lại
+		if (isShell == false && isShell_2 == false)
 			y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
-			vx = 0;
-			vy = 0;
-		}
-		break;
+		isShell = true;
+		isShell_2 = false;
+		vx = 0;
+	}
+	break;
 
-		case GREENKOOPAS_STATE_DIE:
+	case GREENKOOPAS_STATE_SHELL_2:
+	{
+		if (isShell_2 == false && isShell == false)
 		{
-			isShell = false;
-			isShell_2 = true;
 			y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
-			vx = 0;
 			vy = -0.2f;
 		}
-		break;
+		isShell = false;
+		isShell_2 = true;
+		vx = 0;
+	}
+	break;
 
-		case GREENKOOPAS_STATE_WALKING_RIGHT:
-		{
-			isShell = isShell_2 = false;
-			vx = GREENKOOPAS_WALKING_SPEED;
-			vy = 0;
-			nx = 1;
-		}break;
+	case GREENKOOPAS_STATE_SHELL_HOLD:
+	{
+		isHold = true;
+		y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
+		vx = 0;
+		vy = 0;
+	}
+	break;
 
-		case GREENKOOPAS_STATE_WALKING_LEFT:
-		{
-			isShell = isShell_2 = false;
-			vx = -GREENKOOPAS_WALKING_SPEED;
-			nx = -1;
-		}break;
+	case GREENKOOPAS_STATE_DIE:
+	{
+		isShell = false;
+		isShell_2 = true;
+		y = (INT16)(y + GREENKOOPAS_BBOX_HEIGHT - GREENKOOPAS_BBOX_HEIGHT_SHELL - 1);
+		vx = 0;
+		vy = -0.2f;
+	}
+	break;
+
+	case GREENKOOPAS_STATE_WALKING_RIGHT:
+	{
+		isShell = isShell_2 = false;
+		vx = GREENKOOPAS_WALKING_SPEED;
+		vy = 0;
+		nx = 1;
+	}break;
+
+	case GREENKOOPAS_STATE_WALKING_LEFT:
+	{
+		isShell = isShell_2 = false;
+		vx = -GREENKOOPAS_WALKING_SPEED;
+		nx = -1;
+	}break;
 
 
-		case GREENKOOPAS_STATE_SHELL_WALKING_RIGHT:
-		{
-			vx = GREENKOOPAS_SHELL_SPEED;
-			nx = 1;
-			isHold = false;
-		}break;
+	case GREENKOOPAS_STATE_SHELL_WALKING_RIGHT:
+	{
+		vx = GREENKOOPAS_SHELL_SPEED;
+		nx = 1;
+		isHold = false;
+	}break;
 
-		case GREENKOOPAS_STATE_SHELL_WALKING_LEFT:
-		{
-			vx = -GREENKOOPAS_SHELL_SPEED;
-			nx = -1;
-			isHold = false;
-		}break;
-		}
+	case GREENKOOPAS_STATE_SHELL_WALKING_LEFT:
+	{
+		vx = -GREENKOOPAS_SHELL_SPEED;
+		nx = -1;
+		isHold = false;
+	}break;
+	}
 }

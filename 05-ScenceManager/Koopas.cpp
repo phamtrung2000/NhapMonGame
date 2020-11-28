@@ -1,4 +1,5 @@
 ﻿#include "Koopas.h"
+#include "ItemBrick.h"
 
 Koopas::Koopas()
 {
@@ -205,7 +206,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 
 	//DebugOut(L"state=%i, vx=%f,vy=%f, nx=%i, y = %f\n", state, vx, vy, nx, y);
-
+	DebugOut(L"x max %f, x min %f, x %f, state %i\n", X_max, X_min, x, state);
 	if (isShell == false && isShell_2 == false)
 	{
 		vy += KOOPAS_GRAVITY * dt;
@@ -298,6 +299,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
 							SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 					}
+					//this->y += min_ty * dy + ny * 0.4f;
 				}
 			}
 			else if (dynamic_cast<QuestionBrick*>(e->obj))
@@ -341,11 +343,45 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					x += dx;
 				}
 			}
+			else if (dynamic_cast<ItemBrick*>(e->obj))
+			{
+				ItemBrick* brick = dynamic_cast<ItemBrick*>(e->obj);
+				if (e->ny < 0)
+				{
+					this->x += min_tx * dx + nx * 0.4f;
+					if (CountXmaxXmin == false)
+					{
+						X_min = brick->x - ITEMBRICK_WIDTH / 2;
+						X_max = X_min + ITEMBRICK_WIDTH;
+						CountXmaxXmin = true;
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (isShell == false && isShell_2 == false)
+					{
+						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
+							SetState(KOOPAS_STATE_WALKING_LEFT);
+						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
+							SetState(KOOPAS_STATE_WALKING_RIGHT);
+					}
+					else
+					{
+						brick->isDie = true;
+						if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+							SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+						else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+							SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					}
+				}
+				
+			}
 			else if (dynamic_cast<Ground*>(e->obj))
 			{
 				X_min = MIN;
 				X_max = MAX;
 				this->x += min_tx * dx + nx * 0.4f;
+				
 			}
 			else if (dynamic_cast<CGoomba*>(e->obj))
 			{
@@ -355,7 +391,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<Koopas*>(e->obj))
 			{
 				x += dx;
-				//this->y += min_ty * dy + ny * 0.4f;
+				
 			}
 			else if (dynamic_cast<FireBullet*>(e->obj))
 			{
@@ -500,3 +536,4 @@ void Koopas::SetState(int state)
 // x start: 512
 // x max: 592
 // width : 96
+

@@ -12,6 +12,8 @@
 
 #include "Scence.h"
 
+#define OpeningScene "OpeningScene.txt"
+
 using namespace std;
 
 #define KEYBOARD_BUFFER_SIZE 1024

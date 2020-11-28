@@ -10,8 +10,8 @@
 #define MAX_LEVEL_OF_WALKING	32
 #define MAX_LEVEL_OF_RUNNING	64
 
-#define MARIO_JUMP_SPEED_FAST		0.22f // chuẩn
-#define MARIO_JUMP_SPEED_SLOW		0.17f // chuẩn
+#define MARIO_JUMP_SPEED_FAST		0.25f // chuẩn
+#define MARIO_JUMP_SPEED_SLOW		0.18f // chuẩn
 #define MARIO_FLY_SPEED				0.1f // chuẩn
 #define MARIO_JUMP_DEFLECT_SPEED 0.17f
 #define MARIO_GRAVITY			0.0005f
@@ -173,6 +173,10 @@
 #define LEFT -1
 #define RIGHT 1
 
+
+#define TIME_ATTACK 5
+#define TIME_FLY 200000 //200
+#define TIME_FLY_S 5
 class Mario : public CGameObject
 {
 public:

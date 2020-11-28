@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <d3dx9.h>
 #include <vector>
-
 #include "Sprites.h"
 #include "Animations.h"
 
@@ -44,31 +43,20 @@ struct CCollisionEvent
 class CGameObject
 {
 public:
-
 	float x; 
 	float y;
-
 	float dx;	// dx = vx*dt
 	float dy;	// dy = vy*dt
-
 	float vx;
 	float vy;
-
 	int nx;	 
-
 	int state;
-
 	int time_die;
 	int ObjType;
-
 	bool isDie;
 	bool isInit;
-	
-
 	DWORD dt; 
-
 	LPANIMATION_SET animation_set;
-
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }

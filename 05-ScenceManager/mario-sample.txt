@@ -2,4 +2,5 @@
 start	1
 #scene list
 [SCENES]
-1	scene1_SoCua.txt
+1	OpeningScene.txt
+2	scene1_SoCua.txt

@@ -31,6 +31,24 @@
     <Filter Include="Picture/Scene\Koopas/Goomba">
       <UniqueIdentifier>{023d1485-dcf9-4064-a93d-c900c9c8ad6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PlayScene">
+      <UniqueIdentifier>{a7bda07e-7202-4f8f-9250-a5794d2960bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Item">
+      <UniqueIdentifier>{2aa10810-226b-4f10-9a35-ce6e35b1826a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy\Plant">
+      <UniqueIdentifier>{ebc0494f-32fa-41e9-93d6-2fe70bfa4ee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy\Koopas">
+      <UniqueIdentifier>{dfd3103f-6796-4d0a-b751-c90f435201a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy\Goomba">
+      <UniqueIdentifier>{a20d0f29-2b7b-487a-9722-bc70d9d3f100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Menu">
+      <UniqueIdentifier>{c0e16d56-f599-4064-9a03-2ce2a7d7316a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -51,9 +69,6 @@
     <ClCompile Include="Scence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayScence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,22 +87,10 @@
     <ClCompile Include="FireBullet.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="FirePiranhaPlant.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Goomba.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Koopas.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Mario.cpp">
       <Filter>Mario</Filter>
     </ClCompile>
     <ClCompile Include="QuestionBrick.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="QuestionBrickItem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="WarpPipe.cpp">
@@ -102,11 +105,47 @@
     <ClCompile Include="Ground.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="GreenKoopas.cpp">
-      <Filter>Enemy</Filter>
+    <ClCompile Include="PlayScence.cpp">
+      <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="FlyKoopas.cpp">
+    <ClCompile Include="Coin.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestionBrickItem.cpp">
+      <Filter>Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBrick.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="BrickItem.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFirePlant.cpp">
+      <Filter>Enemy\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenPlant.cpp">
+      <Filter>Enemy\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="FirePiranhaPlant.cpp">
+      <Filter>Enemy\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFlyKoopas.cpp">
+      <Filter>Enemy\Koopas</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenKoopas.cpp">
+      <Filter>Enemy\Koopas</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopas.cpp">
+      <Filter>Enemy\Koopas</Filter>
+    </ClCompile>
+    <ClCompile Include="Goomba.cpp">
+      <Filter>Enemy\Goomba</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuOption.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +162,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayScence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Animations.h">
@@ -146,15 +182,6 @@
     <ClInclude Include="Brick.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="FirePiranhaPlant.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Goomba.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Koopas.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Ground.h">
       <Filter>Object</Filter>
     </ClInclude>
@@ -170,20 +197,53 @@
     <ClInclude Include="FireBullet.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="QuestionBrickItem.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Cloud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GreenKoopas.h">
-      <Filter>Enemy</Filter>
+    <ClInclude Include="PlayScence.h">
+      <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="FlyKoopas.h">
+    <ClInclude Include="Coin.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBrick.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestionBrickItem.h">
+      <Filter>Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickItem.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FirePiranhaPlant.h">
+      <Filter>Enemy\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFirePlant.h">
+      <Filter>Enemy\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenPlant.h">
+      <Filter>Enemy\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFlyKoopas.h">
+      <Filter>Enemy\Koopas</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenKoopas.h">
+      <Filter>Enemy\Koopas</Filter>
+    </ClInclude>
+    <ClInclude Include="Koopas.h">
+      <Filter>Enemy\Koopas</Filter>
+    </ClInclude>
+    <ClInclude Include="Goomba.h">
+      <Filter>Enemy\Goomba</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuOption.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,17 +256,17 @@
     <Text Include="scene1_SoCua.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
-    <Text Include="scene11.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
     <Text Include="scene-test.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
-    <Text Include="textures\map1.1.txt">
-      <Filter>Map</Filter>
-    </Text>
     <Text Include="textures\map1.txt">
       <Filter>Map</Filter>
+    </Text>
+    <Text Include="OpeningScene.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="textures\Opening\MapOpening.txt">
+      <Filter>Picture/Scene\Scene</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -252,9 +312,6 @@
     <Image Include="textures\sprites.png">
       <Filter>Picture/Scene</Filter>
     </Image>
-    <Image Include="textures\title.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
     <Image Include="textures\Koopas.png">
       <Filter>Picture/Scene\Koopas/Goomba</Filter>
     </Image>
@@ -269,6 +326,12 @@
     </Image>
     <Image Include="textures\Goomba_Koopas\RightUp.png">
       <Filter>Picture/Scene\Koopas/Goomba</Filter>
+    </Image>
+    <Image Include="textures\bbox.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Opening\MapOpening.png">
+      <Filter>Picture/Scene</Filter>
     </Image>
   </ItemGroup>
 </Project>

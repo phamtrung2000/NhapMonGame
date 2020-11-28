@@ -1,5 +1,10 @@
-
 #include "GameObject.h"
+#include "Utils.h"
+#include "Block.h"
+#include "Goomba.h"
+#include "Brick.h"
+#include "WarpPipe.h"
+
 #define MONEY							0
 #define QUESTIONBRICKITEM_MONEY_ANI		0
 #define MONEY_GRAVITY					0.0007f
@@ -19,6 +24,7 @@
 #define LEAF_SPEED_Y					0.1f
 
 #define QUESTIONBRICKITEM__BBOX			16
+#define MONEY_BBOX_WIDTH				8
 #define QUESTIONBRICKITEM_STATE_INIT	1
 #define	QUESTIONBRICKITEM_STATE_MOVE	2
 #define	QUESTIONBRICKITEM_STATE_MOVE_RIGHT	3

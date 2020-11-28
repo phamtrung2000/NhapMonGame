@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 #include "Block.h"
 #include "WarpPipe.h"
@@ -16,7 +16,7 @@
 #define GREENKOOPAS_SHELL_GRAVITY				0.002f
 #define GREENKOOPAS_SHELL_2_GRAVITY				0.0003f
 #define GREENKOOPAS_BBOX_WIDTH					16
-#define GREENKOOPAS_BBOX_HEIGHT					26
+#define GREENKOOPAS_BBOX_HEIGHT					27
 #define GREENKOOPAS_BBOX_HEIGHT_SHELL			16
 #define GREENKOOPAS_STATE_WALKING_RIGHT			100
 #define GREENKOOPAS_STATE_WALKING_LEFT			200
@@ -35,21 +35,24 @@
 #define GREENKOOPAS_ANI_SHELL_2_WALKING_RIGHT	6
 #define GREENKOOPAS_ANI_SHELL_2_WALKING_LEFT	7
 #define GREENKOOPAS_ANI_SHELL_REVIVE			8
+#define GREENKOOPAS_ANI_SHELL2_REVIVE			9
+#define GREENFLYKOOPAS_ANI_WALKING_LEFT			10
+#define GREENFLYKOOPAS_ANI_WALKING_RIGHT		11
 #define GREENKOOPAS_REVIVE_TIME					800000
 #define GREENKOOPAS_START_REVIVE_TIME			500000
 
-class GreenKoopas : public CGameObject
+class GreenFlyKoopas : public CGameObject
 {
 public:
-	GreenKoopas();
-	~GreenKoopas();
+	GreenFlyKoopas();
+	~GreenFlyKoopas();
 	bool isKicked, GoAround, isShell, isShell_2, isHold;
 	bool isAttacked = false;
 	float X_max, X_min;
 	bool CountXmaxXmin;
-
 	bool Revive;
 	DWORD ReviveTime;
+	int Health;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

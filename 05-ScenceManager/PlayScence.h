@@ -8,6 +8,12 @@
 #include "Goomba.h"
 #include "Koopas.h"
 #include "Map.h"
+#include "GreenKoopas.h"
+#include "GreenFlyKoopas.h"
+#include "Coin.h"
+#include "ItemBrick.h"
+#include "GreenPlant.h"
+#include "GreenFirePlant.h"
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -28,11 +34,18 @@
 #define OBJECT_TYPE_QUESTIONBRICKITEM		8
 #define OBJECT_TYPE_FIREPIRANHAPLANT		9
 #define OBJECT_TYPE_GREENKOOPAS				10
+#define OBJECT_TYPE_GREENFLYKOOPAS			11
+#define OBJECT_TYPE_COIN					12
+#define OBJECT_TYPE_ITEMBRICK				13
+#define OBJECT_TYPE_BRICKITEM				14
+#define OBJECT_TYPE_GREENPLANT				15
+#define OBJECT_TYPE_GREENFIREPLANT			16
 #define OBJECT_TYPE_FIREBULLET				100
 
 #define OBJECT_TYPE_PORTAL	50
 
-#define MUSHROOM_ANISET_ID	8
+#define QBI_MUSHROOM_ANISET_ID	8
+#define BI_MUSHROOM_ANISET_ID	14
 #define FIREBULLET_ANISET_ID	100
 
 #define MAX_SCENE_LINE 1024

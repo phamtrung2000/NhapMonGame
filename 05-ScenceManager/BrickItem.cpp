@@ -1,24 +1,12 @@
-﻿#include "QuestionBrickItem.h"
+#include "BrickItem.h"
 #include "PlayScence.h"
 
 
-QuestionBrickItem::QuestionBrickItem(float x, float y) : CGameObject()
-{
-	isInit = false;
-	Time = 0;
-	ObjType = OBJECT_TYPE_QUESTIONBRICKITEM;
-	Start_X = x;
-	Start_Y = y;
-	this->x = x;
-	this->y = y;
-	SetState(QUESTIONBRICKITEM_STATE_INIT);
-}
-
-QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
+BrickItem::BrickItem(int item, float x, float y) : CGameObject()
 {
 	isInit = false;
 	Item = item;
-	ObjType = 8;
+	ObjType = OBJECT_TYPE_BRICKITEM;
 	Start_X = x;
 	Start_Y = y;
 	this->x = x;
@@ -27,19 +15,13 @@ QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
 	SetState(QUESTIONBRICKITEM_STATE_INIT);
 }
 
-void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
-	
+
 	switch (Item)
 	{
-	case MONEY:
-	{
-		vy += MONEY_GRAVITY * dt;
-		if (y > Start_Y - QUESTIONBRICKITEM__BBOX && vy >= 0)
-			isDie = true;
-		y += dy;
-	}break;
+	
 
 	case MUSHROOM:
 	{
@@ -73,7 +55,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-				
+
 				x += min_tx * dx + nx * 0.4f;
 				y += min_ty * dy + ny * 0.4f;
 
@@ -89,7 +71,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else if (dynamic_cast<WarpPipe*>(e->obj))
 					{
-						
+
 						vx = -vx;
 						y += dy;
 					}
@@ -119,17 +101,17 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += dy;
 		if (isInit == false)
 		{
-			if (static_cast<float>(Start_Y - y) >= static_cast < float> (3.5 * QUESTIONBRICKITEM__BBOX))
+			if (static_cast<float>(Start_Y - y) >= static_cast <float> (3.5 * QUESTIONBRICKITEM__BBOX))
 			{
 				vy = 0;
 				SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
 			}
-			
+
 		}
 		else
 		{
 			vy += LEAF_GRAVITY * dt;
-			if (x - Start_X >=  QUESTIONBRICKITEM__BBOX)
+			if (x - Start_X >= QUESTIONBRICKITEM__BBOX)
 			{
 				SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
 			}
@@ -142,7 +124,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	default:
 		break;
 	}
-	
+
 	//DebugOut(L"state=%i, nx=%i, vx = %f\n", state,nx,vx);
 	//if (Item == MUSHROOM)
 	//{
@@ -264,21 +246,18 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//DebugOut(L"vx=%f\n",vx);
 }
 
-void QuestionBrickItem::Render()
+void BrickItem::Render()
 {
 	int ani = -1;
 	switch (Item)
 	{
-	case MONEY:
-		ani = QUESTIONBRICKITEM_MONEY_ANI;
-		break;
 	case MUSHROOM:
 		ani = QUESTIONBRICKITEM_MUSHROOM_ANI;
 		break;
 	case LEAF:
 	{
 		ani = LEAF_ANI_RIGHT;
-		if(GetState() == QUESTIONBRICKITEM_STATE_MOVE_LEFT)
+		if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_LEFT)
 			ani = LEAF_ANI_LEFT;
 		else if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_RIGHT)
 			ani = LEAF_ANI_RIGHT;
@@ -297,7 +276,7 @@ void QuestionBrickItem::Render()
 
 }
 
-void QuestionBrickItem::SetState(int state)
+void BrickItem::SetState(int state)
 {
 	CGameObject::SetState(state);
 
@@ -307,9 +286,7 @@ void QuestionBrickItem::SetState(int state)
 	{
 		switch (Item)
 		{
-		case MONEY:
-			vy = -MONEY_SPEED_Y;
-			break;
+		
 		case MUSHROOM:
 			vy = -MUSHROOM_SPEED_Y;
 			break;
@@ -319,7 +296,7 @@ void QuestionBrickItem::SetState(int state)
 		default:
 			break;
 		}
-		
+
 	}
 	break;
 
@@ -340,7 +317,7 @@ void QuestionBrickItem::SetState(int state)
 			else
 				vx = -LEAF_SPEED_X;
 		}
-		
+
 	}
 	break;
 	case QUESTIONBRICKITEM_STATE_MOVE_RIGHT:
@@ -350,7 +327,7 @@ void QuestionBrickItem::SetState(int state)
 		{
 			nx = 1;
 			vx = MUSHROOM_SPEED_X;
-			
+
 		}
 		else if (Item == LEAF)
 		{
@@ -379,18 +356,15 @@ void QuestionBrickItem::SetState(int state)
 	}
 }
 
-void QuestionBrickItem::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
-	if(Item==MONEY)
-		right = x + MONEY_BBOX_WIDTH;
-	else
-		right = x + QUESTIONBRICKITEM__BBOX;
+	right = x + QUESTIONBRICKITEM__BBOX;
 	bottom = y + QUESTIONBRICKITEM__BBOX;
 }
 
-void QuestionBrickItem :: CaclVx(int objx)
+void BrickItem::CaclVx(int objx)
 {
 	//if (objx > x + (QUESTIONBRICKITEM__BBOX /3) )
 	if (objx < x)

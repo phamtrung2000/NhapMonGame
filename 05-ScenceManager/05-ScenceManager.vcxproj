@@ -127,14 +127,21 @@
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="BrickItem.cpp" />
     <ClCompile Include="Cloud.cpp" />
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
-    <ClCompile Include="FlyKoopas.cpp" />
+    <ClCompile Include="GreenFirePlant.cpp" />
+    <ClCompile Include="GreenFlyKoopas.cpp" />
     <ClCompile Include="GreenKoopas.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="ItemBrick.cpp" />
     <ClCompile Include="Koopas.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="GreenPlant.cpp" />
+    <ClCompile Include="MenuOption.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="QuestionBrickItem.cpp" />
@@ -154,14 +161,21 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Brick.h" />
+    <ClInclude Include="BrickItem.h" />
     <ClInclude Include="Cloud.h" />
+    <ClInclude Include="Coin.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
-    <ClInclude Include="FlyKoopas.h" />
+    <ClInclude Include="GreenFirePlant.h" />
+    <ClInclude Include="GreenFlyKoopas.h" />
     <ClInclude Include="GreenKoopas.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="ItemBrick.h" />
     <ClInclude Include="Koopas.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="GreenPlant.h" />
+    <ClInclude Include="MenuOption.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="QuestionBrickItem.h" />
@@ -181,12 +195,13 @@
     <Text Include="mario-sample.txt" />
     <Text Include="scene-test.txt" />
     <Text Include="scene1.txt" />
-    <Text Include="scene11.txt" />
+    <Text Include="OpeningScene.txt" />
     <Text Include="scene1_SoCua.txt" />
-    <Text Include="textures\map1.1.txt" />
     <Text Include="textures\map1.txt" />
+    <Text Include="textures\Opening\MapOpening.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="textures\bbox.png" />
     <Image Include="textures\enemies-2.1.png" />
     <Image Include="textures\enemies-2.png" />
     <Image Include="textures\enemies.png" />
@@ -205,8 +220,8 @@
     <Image Include="textures\mario1.png" />
     <Image Include="textures\misc.png" />
     <Image Include="textures\misc1.png" />
+    <Image Include="textures\Opening\MapOpening.png" />
     <Image Include="textures\sprites.png" />
-    <Image Include="textures\title.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

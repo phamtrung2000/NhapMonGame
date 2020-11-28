@@ -11,13 +11,15 @@
 #include "Ground.h"
 
 #define KOOPAS_WALKING_SPEED				0.05f
+//#define KOOPAS_WALKING_SPEED				0.0001f
+
 #define KOOPAS_SHELL_SPEED					0.15f
 #define	KOOPAS_GRAVITY						0.0007f
 #define KOOPAS_SHELL_GRAVITY				0.002f
 #define KOOPAS_SHELL_2_GRAVITY				0.0003f
-#define KOOPAS_BBOX_WIDTH					16
+#define KOOPAS_BBOX_WIDTH					15
 #define KOOPAS_BBOX_HEIGHT					26
-#define KOOPAS_BBOX_HEIGHT_SHELL			16
+#define KOOPAS_BBOX_HEIGHT_SHELL			15
 #define KOOPAS_STATE_WALKING_RIGHT			100
 #define KOOPAS_STATE_WALKING_LEFT			200
 #define KOOPAS_STATE_SHELL					300
@@ -296,3 +298,5 @@ public:
 //		DebugOut(L"koopas->isHold==false, state=%i, vx=%f,vy=%f, nx=%i\n", state,vx,vy,nx);*/
 //	
 //}
+
+
