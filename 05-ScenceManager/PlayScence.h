@@ -1,19 +1,14 @@
 #pragma once
+#include <iostream>
+#include <fstream>
+using namespace std;
+
 #include "Game.h"
 #include "Textures.h"
-#include "Scence.h"
 #include "GameObject.h"
-#include "Brick.h"
-#include "Mario.h"
-#include "Goomba.h"
-#include "Koopas.h"
+#include "Utils.h"
 #include "Map.h"
-#include "GreenKoopas.h"
-#include "GreenFlyKoopas.h"
-#include "Coin.h"
-#include "ItemBrick.h"
-#include "GreenPlant.h"
-#include "GreenFirePlant.h"
+#include "Mario.h"
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -28,7 +23,7 @@
 #define OBJECT_TYPE_GOOMBA	2
 #define OBJECT_TYPE_KOOPAS	3
 #define OBJECT_TYPE_QUESTIONBRICK	4
-#define OBJECT_TYPE_WARPPIPE		5
+#define OBJECT_TYPE_WARPPIPE		200
 #define OBJECT_TYPE_BLOCK			6
 #define OBJECT_TYPE_GROUND			7
 #define OBJECT_TYPE_QUESTIONBRICKITEM		8
@@ -49,6 +44,7 @@
 #define FIREBULLET_ANISET_ID	100
 
 #define MAX_SCENE_LINE 1024
+#define MAP_MAX_WIDTH	2816
 
 class CPlayScene: public CScene
 {

@@ -1,6 +1,7 @@
 [SETTINGS]
-start	1
+start 0
 #scene list
 [SCENES]
-1	OpeningScene.txt
+0	OpeningScene.txt
+1	textures\OverWorld\World1Scene.txt
 2	scene1_SoCua.txt

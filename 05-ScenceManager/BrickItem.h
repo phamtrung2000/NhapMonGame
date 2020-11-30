@@ -4,6 +4,7 @@
 #include "Goomba.h"
 #include "Brick.h"
 #include "WarpPipe.h"
+#include "PlayScence.h"
 
 #define MUSHROOM						1
 #define QUESTIONBRICKITEM_MUSHROOM_ANI	0

@@ -1,10 +1,6 @@
-﻿#include <algorithm>
-#include <assert.h>
-#include "Utils.h"
-
-#include "Mario.h"
-#include "Game.h"
-
+﻿#include "Mario.h"
+#include "FireBullet.h"
+#include "Brick.h"
 #include "Goomba.h"
 #include "Koopas.h"
 #include "Portal.h"
@@ -17,6 +13,12 @@
 #include "WarpPipe.h"
 #include "FirePiranhaPlant.h"
 #include "BrickItem.h"
+#include "ItemBrick.h"
+#include "GreenFirePlant.h"
+#include "GreenPlant.h"
+#include "GreenFlyKoopas.h"
+#include "Coin.h"
+#include "GreenKoopas.h"
 
 
 Mario::Mario(float x, float y) : CGameObject()

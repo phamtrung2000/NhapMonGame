@@ -1,14 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "Block.h"
-#include "WarpPipe.h"
-#include "Utils.h"
-#include "Brick.h"
-#include "QuestionBrick.h"
-#include "Goomba.h"
-#include "Mario.h"
-#include "Ground.h"
-#include "PlayScence.h"
+
 
 #define GREENKOOPAS_WALKING_SPEED				0.05f
 #define GREENKOOPAS_SHELL_SPEED					0.15f
@@ -16,7 +8,7 @@
 #define GREENKOOPAS_SHELL_GRAVITY				0.002f
 #define GREENKOOPAS_SHELL_2_GRAVITY				0.0003f
 #define GREENKOOPAS_BBOX_WIDTH					16
-#define GREENKOOPAS_BBOX_HEIGHT					27
+//#define GREENKOOPAS_BBOX_HEIGHT					27
 #define GREENKOOPAS_BBOX_HEIGHT_SHELL			16
 #define GREENKOOPAS_STATE_WALKING_RIGHT			100
 #define GREENKOOPAS_STATE_WALKING_LEFT			200

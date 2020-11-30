@@ -39,28 +39,28 @@ void FirePiranhaPlant::CalcAtkPos()
 	{
 		// mario trên, cây dưới -> đạn bay lên trên
 		if (Mario_Y < y)
-			VyBullet = -0.01;
+			VyBullet = -0.01f;
 		// mario dưới, cây trên -> đạn bay xuống
 		else
-			VyBullet = 0.01;
+			VyBullet = 0.01f;
 	}
 	// mario và cây cách xa 1 đoạn
 	else
 	{
 		if (Mario_Y < y)
-			VyBullet = -0.03;
+			VyBullet = -0.03f;
 		else
-			VyBullet = 0.05;
+			VyBullet = 0.05f;
 
 	}
 	if (Mario_X > x)
 	{
-		VxBullet = 0.05;
+		VxBullet = 0.05f;
 		nx = 1;
 	}
 	else
 	{
-		VxBullet = -0.05;
+		VxBullet = -0.05f;
 		nx = -1;
 	}
 }

@@ -15,13 +15,7 @@ public:
 	int Height;
 	bool isCovered;
 public:
-	WarpPipe(int W, int H)
-	{
-		isCovered = true;
-		Width = W;
-		Height = H;
-		ObjType = 5;
-	}
+	WarpPipe(int W, int H);
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)
 	{

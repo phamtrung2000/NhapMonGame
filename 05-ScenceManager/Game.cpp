@@ -5,7 +5,8 @@
 #include "Utils.h"
 
 #include "PlayScence.h"
-#include "MainMenu.h"
+#include "Opening.h"
+#include "World1.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -341,14 +342,19 @@ void CGame::_ParseSection_SCENES(string line)
 	if (tokens[1] == OpeningScene)
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
-		scenes[id] = new MainMenu(id, path);
+		scenes[id] = new Opening(id, path);
 	}
-	else
+	else if (tokens[1] == World1Scene)
+	{
+		LPCWSTR path = ToLPCWSTR(tokens[1]);
+		scenes[id] = new World1(id, path);
+	}
+	else 
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
 		scenes[id] = new CPlayScene(id, path);
 	}
-	//scenes[id] = scene;
+	
 }
 
 /*
@@ -393,15 +399,16 @@ void CGame::Load(LPCWSTR gameFile)
 void CGame::SwitchScene(int scene_id)
 {
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
-
-	scenes[current_scene]->Unload();;
-
+	LPSCENE s = scenes[scene_id];
+	if (current_scene == 0 || current_scene > 1)
+	{
+		
+	}
+	scenes[current_scene]->Unload();
 	CTextures::GetInstance()->Clear();
 	CSprites::GetInstance()->Clear();
 	CAnimations::GetInstance()->Clear();
-
 	current_scene = scene_id;
-	LPSCENE s = scenes[scene_id];
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();	
 }

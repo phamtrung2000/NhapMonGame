@@ -3,7 +3,7 @@
 # Option
 0	textures\Opening\title.png	255	255	255
 [MAP]
-300	textures\Opening\MapOpening.png	255	255	255	textures\Opening\MapOpening.txt
+1	textures\Opening\MapOpening.png	255	255	255	textures\Opening\MapOpening.txt
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 # 1 player

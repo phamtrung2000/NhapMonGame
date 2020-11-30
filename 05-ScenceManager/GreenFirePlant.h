@@ -1,9 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "FireBullet.h"
-#include "PlayScence.h"
-#include "Utils.h"
-#include "WarpPipe.h"
+
 
 #define	GREENFIREPLANT_SPEED_Y		0.03f
 #define	GREENFIREPLANT_BBOX_HEIGHT	24

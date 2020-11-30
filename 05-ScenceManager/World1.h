@@ -1,11 +1,16 @@
 #pragma once
+#include <iostream>
+#include <fstream>
+using namespace std;
+
 #include "Game.h"
 #include "Textures.h"
 #include "Scence.h"
 #include "GameObject.h"
-#include "MenuOption.h"
+#include "MarioOverWorld.h"
+#include "Ground.h"
 #include "Map.h"
-#include "Mario.h"
+#include "Gate.h"
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -15,16 +20,18 @@
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_MAP		7
 
-#define OBJECT_TYPE_MENUOPTION	0
+#define OBJECT_TYPE_MARIOOVERWORLD	0
+#define OBJECT_TYPE_GROUND			1
+#define OBJECT_TYPE_GATE			2
 
 #define MAX_SCENE_LINE 1024
+#define MAP_MAX_WIDTH	2816
 
-class MainMenu : public CScene
+class World1 : public CScene
 {
-protected:			
-	Mario* player;
-	MenuOption *MO;
-	Map *map;
+protected:
+	MarioOverWorld* player;					// A play scene has to have player, right? 
+	Map* map;
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_MAP(string line);
@@ -36,26 +43,24 @@ protected:
 
 
 public:
-	int ID;
-	MainMenu(int id, LPCWSTR filePath);
+	World1(int id, LPCWSTR filePath);
 
 	virtual void Load();
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
 
-	MenuOption* GetMenuOption() { return MO; }
-	int GetID() { return id; }
+	MarioOverWorld* GetPlayer() { return player; }
 
-	//friend class CPlayScenceKeyHandler;
+	//friend class World1ScenceKeyHandler;
 };
 
-class MainMenuKeyHandler : public CScenceKeyHandler
+class World1ScenceKeyHandler : public CScenceKeyHandler
 {
 public:
 	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
 	virtual void OnKeyUp(int KeyCode);
-	MainMenuKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
+	World1ScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
 

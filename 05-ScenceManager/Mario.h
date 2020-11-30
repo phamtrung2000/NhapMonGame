@@ -1,7 +1,8 @@
 ﻿#pragma once
+#include <algorithm>
+#include <assert.h>
+#include "Utils.h"
 #include "GameObject.h"
-#include "FireBullet.h"
-#include "Brick.h"
 
 #define MARIO_WALKING_SPEED		0.1f 
 #define MARIO_RUNNING_MAX_SPEED	0.2f 
@@ -214,7 +215,7 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
-	void StartUntouchable() { untouchable = true; untouchable_start = GetTickCount64(); }
+	void StartUntouchable() { untouchable = true; untouchable_start = GetTickCount(); }
 	void Reset();
 	void DownLevel();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

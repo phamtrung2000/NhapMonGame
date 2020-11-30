@@ -10,6 +10,7 @@
 
 class Map
 {
+	int texID;
 	int MaxColumn, column;
 	int MaxRow, row;
 	int TileWidth;
@@ -18,7 +19,7 @@ class Map
 	int TiledID[200][200];
 public:
 	Map();
-	void LoadMap(wstring map_txt);
+	void LoadMap(int, wstring );
 	void DrawMap();
 	void _ParseSection_INFO(string line);
 	void _ParseSection_ROWS(string line);

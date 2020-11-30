@@ -1,4 +1,13 @@
 ﻿#include "WarpPipe.h"
+#include "PlayScence.h"
+
+WarpPipe::WarpPipe(int W, int H)
+{
+	isCovered = true;
+	Width = W;
+	Height = H;
+	ObjType = OBJECT_TYPE_WARPPIPE;
+}
 
 void WarpPipe::Render()
 {

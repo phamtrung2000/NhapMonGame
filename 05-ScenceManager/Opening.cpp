@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 
-#include "MainMenu.h"
+#include "Opening.h"
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
@@ -12,11 +12,11 @@ using namespace std;
 
 //Map* map;
 
-MainMenu::MainMenu(int id, LPCWSTR filePath) : CScene(id, filePath)
+Opening::Opening(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
 	ID = id;
-	MO = new MenuOption();
-	map = new Map();
+	MO = NULL;
+	map = NULL;
 	key_handler = new MainMenuKeyHandler(this);
 }
 
@@ -25,7 +25,7 @@ MainMenu::MainMenu(int id, LPCWSTR filePath) : CScene(id, filePath)
 	See scene1.txt, scene2.txt for detail format specification
 */
 
-void MainMenu::_ParseSection_MAP(string line)
+void Opening::_ParseSection_MAP(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -39,10 +39,11 @@ void MainMenu::_ParseSection_MAP(string line)
 	wstring pathtxt = ToWSTR(tokens[5]);
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
-	map->LoadMap(pathtxt);
+	map = new Map();
+	map->LoadMap(texID, pathtxt);
 }
 
-void MainMenu::_ParseSection_TEXTURES(string line)
+void Opening::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -57,7 +58,7 @@ void MainMenu::_ParseSection_TEXTURES(string line)
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 }
 
-void MainMenu::_ParseSection_SPRITES(string line)
+void Opening::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -80,7 +81,7 @@ void MainMenu::_ParseSection_SPRITES(string line)
 	CSprites::GetInstance()->Add(ID, l, t, r, b, tex);
 }
 
-void MainMenu::_ParseSection_ANIMATIONS(string line)
+void Opening::_ParseSection_ANIMATIONS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -101,7 +102,7 @@ void MainMenu::_ParseSection_ANIMATIONS(string line)
 	CAnimations::GetInstance()->Add(ani_id, ani);
 }
 
-void MainMenu::_ParseSection_ANIMATION_SETS(string line)
+void Opening::_ParseSection_ANIMATION_SETS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -127,7 +128,7 @@ void MainMenu::_ParseSection_ANIMATION_SETS(string line)
 /*
 	Parse a line in section [OBJECTS]
 */
-void MainMenu::_ParseSection_OBJECTS(string line)
+void Opening::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -169,7 +170,7 @@ void MainMenu::_ParseSection_OBJECTS(string line)
 	objects.push_back(obj);
 }
 
-void MainMenu::Load()
+void Opening::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
@@ -222,22 +223,12 @@ void MainMenu::Load()
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
-void MainMenu::Update(DWORD dt)
+void Opening::Update(DWORD dt)
 {
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
+	// We know that MarioOverWorld is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-
-	// mario bắn lửa
-	
-	for (size_t i = 1; i < objects.size(); i++)
-	{
-		if (objects[i]->isDie == false)
-		{
-			coObjects.push_back(objects[i]);
-		}
-	}
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -248,7 +239,7 @@ void MainMenu::Update(DWORD dt)
 
 }
 
-void MainMenu::Render()
+void Opening::Render()
 {
 	map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
@@ -264,13 +255,12 @@ void MainMenu::Render()
 /*
 	Unload current scene
 */
-void MainMenu::Unload()
+void Opening::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
 	MO = NULL;
-	player = NULL;
-
+	map = NULL;
 	objects.clear();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
@@ -278,7 +268,7 @@ void MainMenu::Unload()
 void MainMenuKeyHandler::OnKeyDown(int KeyCode)
 {
 	CGame* game = CGame::GetInstance();
-	MenuOption* MO = ((MainMenu*)scence)->GetMenuOption();
+	MenuOption* MO = ((Opening*)scence)->GetMenuOption();
 	if (game->IsKeyDown(DIK_Q))
 	{
 		if (MO->is1Player == true)
@@ -288,13 +278,13 @@ void MainMenuKeyHandler::OnKeyDown(int KeyCode)
 	}
 	else if (game->IsKeyDown(DIK_RETURN))
 	{
-		CGame::GetInstance()->SwitchScene(2);
+		CGame::GetInstance()->SwitchScene(1);
 	}
 }
 
 void MainMenuKeyHandler::OnKeyUp(int KeyCode)
 {
-	CGame* game = CGame::GetInstance();
+	
 }
 
 void MainMenuKeyHandler::KeyState(BYTE* states)

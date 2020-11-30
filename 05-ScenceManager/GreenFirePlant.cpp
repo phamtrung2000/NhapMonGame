@@ -1,4 +1,7 @@
 ﻿#include "GreenFirePlant.h"
+#include "FireBullet.h"
+#include "PlayScence.h"
+#include "WarpPipe.h"
 
 GreenFirePlant::GreenFirePlant()
 {

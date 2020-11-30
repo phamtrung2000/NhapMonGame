@@ -46,8 +46,17 @@
     <Filter Include="Enemy\Goomba">
       <UniqueIdentifier>{a20d0f29-2b7b-487a-9722-bc70d9d3f100}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Menu">
+    <Filter Include="Picture/Scene\World1">
+      <UniqueIdentifier>{de1778f8-ab44-4103-a648-5e8a0a573af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Opening">
       <UniqueIdentifier>{c0e16d56-f599-4064-9a03-2ce2a7d7316a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OverWorld">
+      <UniqueIdentifier>{1215cb1d-7f16-4107-a46b-7044e26a703f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OverWorld\World1">
+      <UniqueIdentifier>{a386c9cf-df29-42e3-a7df-455ad1a54b0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -142,10 +151,19 @@
       <Filter>Enemy\Goomba</Filter>
     </ClCompile>
     <ClCompile Include="MenuOption.cpp">
-      <Filter>Menu</Filter>
+      <Filter>Opening</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
-      <Filter>Menu</Filter>
+    <ClCompile Include="MarioOverWorld.cpp">
+      <Filter>Mario</Filter>
+    </ClCompile>
+    <ClCompile Include="Opening.cpp">
+      <Filter>Opening</Filter>
+    </ClCompile>
+    <ClCompile Include="World1.cpp">
+      <Filter>OverWorld\World1</Filter>
+    </ClCompile>
+    <ClCompile Include="Gate.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,10 +258,19 @@
       <Filter>Enemy\Goomba</Filter>
     </ClInclude>
     <ClInclude Include="MenuOption.h">
-      <Filter>Menu</Filter>
+      <Filter>Opening</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenu.h">
-      <Filter>Menu</Filter>
+    <ClInclude Include="MarioOverWorld.h">
+      <Filter>Mario</Filter>
+    </ClInclude>
+    <ClInclude Include="Opening.h">
+      <Filter>Opening</Filter>
+    </ClInclude>
+    <ClInclude Include="World1.h">
+      <Filter>OverWorld\World1</Filter>
+    </ClInclude>
+    <ClInclude Include="Gate.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -256,9 +283,6 @@
     <Text Include="scene1_SoCua.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
-    <Text Include="scene-test.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
     <Text Include="textures\map1.txt">
       <Filter>Map</Filter>
     </Text>
@@ -267,6 +291,19 @@
     </Text>
     <Text Include="textures\Opening\MapOpening.txt">
       <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="Overworld.txt">
+      <Filter>Picture/Scene\Scene</Filter>
+    </Text>
+    <Text Include="textures\Overworld\World2Map.txt" />
+    <Text Include="textures\Overworld\World1.txt">
+      <Filter>OverWorld\World1</Filter>
+    </Text>
+    <Text Include="textures\Overworld\World1Map.txt">
+      <Filter>OverWorld\World1</Filter>
+    </Text>
+    <Text Include="textures\Overworld\World1Scene.txt">
+      <Filter>OverWorld\World1</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -332,6 +369,12 @@
     </Image>
     <Image Include="textures\Opening\MapOpening.png">
       <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Overworld\World1Tile.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Overworld\World1.png">
+      <Filter>OverWorld\World1</Filter>
     </Image>
   </ItemGroup>
 </Project>

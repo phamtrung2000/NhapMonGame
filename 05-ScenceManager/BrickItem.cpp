@@ -1,5 +1,4 @@
 #include "BrickItem.h"
-#include "PlayScence.h"
 
 
 BrickItem::BrickItem(int item, float x, float y) : CGameObject()

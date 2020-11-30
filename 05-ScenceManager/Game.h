@@ -13,6 +13,7 @@
 #include "Scence.h"
 
 #define OpeningScene "OpeningScene.txt"
+#define World1Scene  "textures\\OverWorld\\World1Scene.txt"
 
 using namespace std;
 

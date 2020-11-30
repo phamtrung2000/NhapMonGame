@@ -1,4 +1,14 @@
 ﻿#include "GreenFlyKoopas.h"
+#include "FireBullet.h"
+#include "Block.h"
+#include "WarpPipe.h"
+#include "Brick.h"
+#include "QuestionBrick.h"
+#include "Goomba.h"
+#include "Mario.h"
+#include "Ground.h"
+#include "GreenKoopas.h"
+#include "PlayScence.h"
 
 GreenFlyKoopas::GreenFlyKoopas()
 {

@@ -1,0 +1,49 @@
+# id	file_path	transparent_color_r	g	b
+[TEXTURES]
+0	textures\mario1.png	255	255	255
+[MAP]
+#300	textures\Overworld\World1Tile.png	255	255	255	textures\Overworld\World1Map.txt
+300	textures\Overworld\World2Tile.png	255	255	255	textures\Overworld\World2Map.txt
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#  ======= SMALL MARIO =========
+0	16	9	30	25	0
+1	16	49	30	65	0
+#  ======= BIG MARIO =========
+2	55	6	71	27	0
+3	55	46	71	67	0
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
+# ======== SMALL MARIO =========
+0	0	100	1	100
+# ======== BIG MARIO =========
+1	2	100	3	100
+[ANIMATION_SETS]
+# MARIO
+0	0	1
+# ======== GROUND =========
+1	-1
+# ======== GATE =========
+2	-1
+[OBJECTS]
+# type	x	y	ani_set_id	extra_settings per object type
+# MARIO
+0	15	35	0
+#0	0	0	0
+# ======== GATE =========
+# type	x	y	ani_set_id	gatenumber
+2	45	0	2	1
+# ======== GROUND =========
+# type	x	y	ani_set_id	width height
+# 1
+1	0	0	1	42	34
+# 2
+1	0	35	1	13	100
+# 3
+1	58	18	1	48	45
+# 4
+1	122	17	1	50	16
+# 4
+1	122	0	1	50	16
+# sau gate 1
+1	60	0	1	105	15

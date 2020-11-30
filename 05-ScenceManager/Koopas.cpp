@@ -1,5 +1,6 @@
 ﻿#include "Koopas.h"
 #include "ItemBrick.h"
+#include "FireBullet.h"
 
 Koopas::Koopas()
 {

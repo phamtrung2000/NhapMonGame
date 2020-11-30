@@ -1,5 +1,13 @@
 ﻿#include "GreenKoopas.h"
-
+#include "FireBullet.h"
+#include "Block.h"
+#include "WarpPipe.h"
+#include "Brick.h"
+#include "QuestionBrick.h"
+#include "Goomba.h"
+#include "Mario.h"
+#include "Ground.h"
+#include "PlayScence.h"
 GreenKoopas::GreenKoopas()
 {
 	SetState(GREENKOOPAS_STATE_WALKING_LEFT);

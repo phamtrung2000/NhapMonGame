@@ -7,6 +7,7 @@
 
 Map::Map()
 {
+	texID = 0;
 	MaxColumn = column = MaxRow = row = TileWidth = TileRow = TileCollum = 0;
 }
 
@@ -38,19 +39,9 @@ void Map::_ParseSection_ROWS(string line)
 	row = 0;
 }
 
-void Map::LoadMap(wstring map_txt)
+void Map::LoadMap(int texid, wstring map_txt)
 {
-	/*ifstream ifs(map_txt, ios::in);
-	ifs >> MaxRow >> MaxColumn >> TileRow >> TileCollum >> TileWidth;
-	for (int i = 0; i < MaxRow; i++)
-	{
-		for (int j = 0; j < MaxColumn; j++)
-		{
-			ifs >> TiledID[i][j];
-		}
-	}
-	ifs.close();*/
-
+	texID = texid;
 	ifstream f;
 	f.open(map_txt);
 	// current resource section flag
@@ -81,21 +72,6 @@ void Map::LoadMap(wstring map_txt)
 }
 void Map::DrawMap()
 {
-	//for (int i = 0; i < MaxRow; i++)
-	//	for (int j = 0; j < MaxColumn; j++)
-	//	{
-	//		int Id = TiledID[i][j] - 1;
-	//		RECT r;
-	//		r.left = Id % TileCollum * TileWidth;
-	//		if (Id % TileRow != 0)
-	//			r.top = Id / TileRow * TileWidth;
-	//		else
-	//			r.top = Id / TileRow * 16;
-	//		r.right = r.left + TileWidth;
-	//		r.bottom = r.top + TileWidth;
-	//		//DebugOut(L"%d\n",Id);
-	//		CGame::GetInstance()->Draw(j * 16, i * 16, CTextures::GetInstance()->Get(300), r.left, r.top, r.right, r.bottom);
-	//	}
 
 	for (int i = 0; i < MaxRow; i++)
 		for (int j = 0; j < MaxColumn; j++)
@@ -111,7 +87,7 @@ void Map::DrawMap()
 			r.right = r.left + TileWidth;
 			r.bottom = r.top + TileWidth;
 
-			CGame::GetInstance()->Draw(j * 16, i * 16, CTextures::GetInstance()->Get(300), r.left, r.top, r.right, r.bottom);
+			CGame::GetInstance()->Draw(j * TileWidth, i * TileWidth, CTextures::GetInstance()->Get(texID), r.left, r.top, r.right, r.bottom);
 		}
 
 

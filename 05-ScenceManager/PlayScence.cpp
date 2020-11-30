@@ -1,30 +1,22 @@
-﻿#include <iostream>
-#include <fstream>
-
-#include "PlayScence.h"
-#include "Utils.h"
-#include "Textures.h"
-#include "Sprites.h"
-#include "Portal.h"
-
-#include "Map.h"
-#include "QuestionBrick.h"
-#include "WarpPipe.h"
-#include "Block.h"
-#include"Ground.h"
-#include "QuestionBrickItem.h"
+﻿#include "PlayScence.h"
+#include "Goomba.h"
+#include "Koopas.h"
 #include "FirePiranhaPlant.h"
+#include "GreenPlant.h"
+#include "GreenFirePlant.h"
+#include "GreenKoopas.h"
+#include "GreenFlyKoopas.h"
+#include "Coin.h"
+#include "ItemBrick.h"
+#include "Portal.h"
+#include "QuestionBrickItem.h"
 #include "BrickItem.h"
-
-#define MAP_MAX_WIDTH	2816
-
-using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	CScene(id, filePath)
 {
 	player = NULL;
-	map = new Map();
+	map = NULL;
 	key_handler = new CPlayScenceKeyHandler(this);
 }
 
@@ -47,7 +39,8 @@ void CPlayScene::_ParseSection_MAP(string line)
 	wstring pathtxt = ToWSTR(tokens[5]);
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
-	map->LoadMap(pathtxt);
+	map = new Map();
+	map->LoadMap(texID,pathtxt);
 }
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -132,9 +125,6 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 	CAnimationSets::GetInstance()->Add(ani_set_id, s);
 }
 
-/*
-	Parse a line in section [OBJECTS] 
-*/
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
@@ -431,7 +421,7 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		
 		if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT)
 		{
 			FirePiranhaPlant* fireplant = (FirePiranhaPlant*)objects[i];
@@ -590,7 +580,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 
 		}
-		
+		objects[i]->Update(dt, &coObjects);
 	}
 
 	//DebugOut(L"obj size=%i, cooobj size = %i\n", objects.size(),coObjects.size());
@@ -624,8 +614,8 @@ void CPlayScene::Update(DWORD dt)
 	/*if (player->y >= 240)
 		cy = 240;*/
 
-	if (player->y >= 240)
-		cy = 240;
+	if (player->y >= 320/2)
+		cy = 150;
 
 	// CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
 	CGame::GetInstance()->SetCamPos(cx, cy);
@@ -654,7 +644,7 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
-
+	map = NULL;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
