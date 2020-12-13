@@ -1,5 +1,20 @@
 #include "Brick.h"
 
+Brick::Brick()
+{
+	ObjType = 1;
+	vx = vy = 0.f;
+	Type = -1;
+}
+
+Brick::Brick(int type)
+{
+	ObjType = 1;
+	vx = vy = 0.f;
+	Type = type;
+	Category = CATEGORY::OBJECT;
+}
+
 void Brick::Render()
 {
 	animation_set->at(0)->Render(x, y);

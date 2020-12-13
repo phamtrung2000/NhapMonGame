@@ -4,7 +4,7 @@
 ItemBrick::ItemBrick(int item, float x, float y) : CGameObject()
 {
 	isCollision = false;
-	hasItem = 0;
+	hasItem = true;
 	Start_Y = y; // đúng
 	this->x = x;
 	this->y = y;
@@ -12,6 +12,7 @@ ItemBrick::ItemBrick(int item, float x, float y) : CGameObject()
 	Item = item;
 	isInit = false;
 	SetState(BRICK_STATE_NORMAL);
+	Category = CATEGORY::OBJECT;
 }
 
 void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -54,8 +55,8 @@ void ItemBrick::Render()
 	else
 		DebugOut(L"isCollision==false\n");
 	DebugOut(L"State = %i, Ani = %i\n", state, ani);*/
-	if (Item != 10)
-		//animation_set->at(ani)->Render(x, y);
+	
+	animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();
 }
@@ -88,4 +89,11 @@ void ItemBrick::SetState(int state)
 	}
 }
 
+void ItemBrick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	right = x + ITEMBRICK_WIDTH;
+	bottom = y + ITEMBRICK_WIDTH;
+}
 

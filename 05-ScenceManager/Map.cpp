@@ -5,6 +5,15 @@
 #define MAP_SECTION_INFO		1
 #define MAP_SECTION_ROWS		2
 
+Map* Map::__instance = NULL;
+
+Map* Map::GetInstance()
+{
+	if (__instance == NULL)
+		__instance = new Map();
+	return __instance;
+}
+
 Map::Map()
 {
 	texID = 0;
@@ -39,6 +48,16 @@ void Map::_ParseSection_ROWS(string line)
 	row = 0;
 }
 
+int Map::GetHeight()
+{
+	return MaxRow * TileWidth;
+}
+
+int Map::GetWidth()
+{
+	return MaxColumn * TileWidth;
+}
+
 void Map::LoadMap(int texid, wstring map_txt)
 {
 	texID = texid;
@@ -70,6 +89,39 @@ void Map::LoadMap(int texid, wstring map_txt)
 	f.close();
 
 }
+
+void Map::LoadMap(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
+{
+	texID = texid;
+	ifstream f;
+	f.open(map_txt);
+	// current resource section flag
+	int section = MAP_SECTION_UNKNOWN;
+	char str[MAX_MAP_LINE];
+	while (f.getline(str, MAX_MAP_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[INFO]") { section = MAP_SECTION_INFO; continue; }
+		if (line == "[ROWS]") {
+			section = MAP_SECTION_ROWS; continue;
+		}
+
+		if (line[0] == '[') { section = MAP_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case MAP_SECTION_INFO: _ParseSection_INFO(line); break;
+		case MAP_SECTION_ROWS: _ParseSection_ROWS(line); break;
+		}
+	}
+	f.close();
+	MapWidth = MaxColumn * TileWidth;
+	MapHeight = MaxRow * TileWidth;
+}
+
 void Map::DrawMap()
 {
 

@@ -7,6 +7,7 @@ FirePiranhaPlant::FirePiranhaPlant()
 	NumberBullet = 1;
 	CalcAtkTime = 0;
 	SetState(FIREPIRANHAPLANT_STATE_HIDE);
+	Category = CATEGORY::ENEMY;
 }
 
 // cây xuất hiện nhưng chưa chắc tấn công, phải nằm trong vùng tấn công

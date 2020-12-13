@@ -39,6 +39,15 @@ struct CCollisionEvent
 	}
 };
 
+enum class CATEGORY
+{
+	PLAYER,
+	ENEMY,
+	WEAPON,
+	ITEM,
+	GROUND,
+	OBJECT
+};
 
 class CGameObject
 {
@@ -57,6 +66,8 @@ public:
 	bool isInit;
 	DWORD dt; 
 	LPANIMATION_SET animation_set;
+
+	CATEGORY Category;
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
@@ -80,7 +91,8 @@ public:
 		float &ny, 
 		float &rdx, 
 		float &rdy);
-
+	bool IsCollision(RECT rect1, RECT rect2);
+	RECT GetRect();
 	CGameObject();
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom) = 0;

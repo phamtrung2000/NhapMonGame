@@ -20,30 +20,108 @@
 #include "Coin.h"
 #include "GreenKoopas.h"
 
+Mario* Mario::__instance = NULL;
+
+Mario* Mario::GetInstance()
+{
+	if (__instance == NULL)
+		__instance = new Mario();
+	return __instance;
+}
 
 Mario::Mario(float x, float y) : CGameObject()
 {
 	ObjType = OBJECT_TYPE_MARIO;
 	isDie = false;
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_LEVEL_TAIL;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x; 
 	start_y = y; 
 	this->x = x; 
 	this->y = y; 
-	untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS  = isFalling = isSitDown = isAttacking = endAttack = false;
+	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS  = isFalling = isSitDown = isAttacking = endAttack = false;
 	OnGround = true;
-	level_of_walking = level_of_running = 1;
+	level_of_walking = level_of_running = 0;
 	level_of_stopping = 1;
 	time_attack = time_fly = 0;
 	ani = 0;
 	NumberBullet = 2;
 }
 
+void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	switch (level)
+	{
+	case MARIO_LEVEL_SMALL:
+	{
+		right = x + MARIO_SMALL_BBOX_WIDTH;
+		Width = MARIO_SMALL_BBOX_WIDTH;
+		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
+	}break;
+
+	case MARIO_LEVEL_BIG:
+	{
+		right = x + MARIO_BIG_BBOX_WIDTH;
+		Width = MARIO_BIG_BBOX_WIDTH;
+		bottom = y + MARIO_BIG_BBOX_HEIGHT;
+		if (isSitDown == true && GoHiddenWorld == false)
+		{
+			bottom = y + MARIO_BIG_BBOX_SITDOWN_HEIGHT;
+		}
+	}break;
+
+	case MARIO_LEVEL_TAIL:
+	{
+		/*right = x + MARIO_TAIL_BBOX_WIDTH;
+		Width = MARIO_TAIL_BBOX_WIDTH;
+		if(isHolding==true)
+			right = x + MARIO_TAIL_BBOX_WIDTH;
+		bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+		if (isSitDown == true && GoHiddenWorld == false)
+		{
+			bottom = y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT;
+		}*/
+		if (nx == LEFT)
+		{
+			left = x;
+			top = y;
+			right = x + MARIO_BIG_BBOX_WIDTH;
+			bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH;
+			top = y;
+			right = x + MARIO_TAIL_BBOX_WIDTH;
+			bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+		}
+		if (isSitDown == true && GoHiddenWorld == false)
+		{
+			bottom = y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT;
+		}
+	}
+	break;
+
+	case MARIO_LEVEL_FIRE:
+	{
+		right = x + MARIO_BIG_BBOX_WIDTH;
+		Width = MARIO_BIG_BBOX_WIDTH;
+		bottom = y + MARIO_BIG_BBOX_HEIGHT;
+		if (isSitDown == true && GoHiddenWorld == false)
+		{
+			bottom = y + MARIO_BIG_BBOX_SITDOWN_HEIGHT;
+		}
+	}break;
+	}
+}
+
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
+
 	if (canFlyX == true)
 	{
 		time_fly++;
@@ -68,37 +146,45 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			SetState(MARIO_STATE_IDLE);
 		}
 	}
-	// Simple fall down
-	if (isFlyingLow == false)
-		vy += MARIO_GRAVITY * dt;
+
+	if (GoHiddenWorld == false ) // để mario rớt từ từ khi đi vào map ẩn
+	{
+		if (isFlyingLow == false) // rớt bình thường
+			vy += MARIO_GRAVITY * dt;
+		else // rớt chậm khi bay
+			vy += MARIO_GRAVITY_FLYING * dt;
+	}
+	
+	if (isFalling == false)
+	{
+		// mario rớt xuống sau khi nhảy
+		if (vy >= 0 && OnGround == false)
+			isFalling = true;
+	}
 	else
 	{
-		vy += MARIO_GRAVITY_FLYING * dt;
+	/*	if (vy <= -0.23)
+			vy = 0;*/
 	}
-
-	if (vy >= 0 && OnGround == false)
-		isFalling = true;
-
-	if (isAttacking == true)
+	 
+	if (isAttacking == true) // reset lại isAttacking và hiện ani quất đuôi khi isAttacking=true
 	{
-		time_attack++;
-		if (time_attack >= 5 * TIME_ATTACK)
+		// khi ani quất đuôi hiện lên thì mới bắt đầu tính, tránh trường hợp ani chưa bằng MARIO_ANI_TAIL_ATTACK_1 nhưng time vẫn + lên bằng 1
+		if (ani >= MARIO_ANI_TAIL_ATTACK_1) 
 		{
-			time_attack = 0;
-			isAttacking = false;
+			time_attack++;
+			if (time_attack >= 5 * TIME_ATTACK)
+			{
+				time_attack = 0;
+				isAttacking = false;
+			}
 		}
 	}
 
-	if (isRunning == false && level_of_running > 1)
-	{
-		/*if (isflying != true &&)
-			level_of_running--;*/
-	}
-
-	if (isHolding == true && pressA == false)
+	if (isHolding == true && pressA == false) // đang giữ rùa, thả nút a thì chuyển sang đá
 		canKick = true;
 
-	if(canKick==true)
+	if(canKick==true) // reset lại canKick và hiện ani đá khi canKick=true
 	{
 		time_attack++;
 		if (time_attack >= 2 * TIME_ATTACK)
@@ -108,7 +194,162 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 	}
 
-	if (level_of_running == MAX_LEVEL_OF_RUNNING)
+	if (GetState() == MARIO_STATE_WALKING_RIGHT)
+	{
+		// đi bộ
+		if (isRunning == false)
+		{
+			if (level_of_running > 0) // sau khi thả nút A thì trừ level_of_running, tránh trường hợp đợi đến state IDLE mới trừ
+				level_of_running--;
+			if (vx < 0)
+			{
+				ChangeDirection = true;
+				vx += 2 * GIA_TOC;
+
+				if (vx >= 0)
+					ChangeDirection = false;
+			}
+			else
+			{
+				if (isFlyingHigh == true)
+				{
+					//vx = MARIO_FLY_MOVING_SPEED;
+				}
+				else
+				{
+					ChangeDirection = false;
+					if(level_of_walking >= 5)
+						vx = level_of_walking * GIA_TOC;
+					if (level_of_walking < MAX_LEVEL_OF_WALKING)
+						level_of_walking++;
+				}
+			}
+		}
+		// chạy
+		else
+		{
+			// đang đi bên trái -> khựng
+			if (vx < 0 && isHolding != true)
+			{
+				ChangeDirection = true;
+				vx += float(5 * GIA_TOC);
+
+				if (level_of_running > 1)
+					level_of_running--;
+
+				if (vx >= 0)
+					ChangeDirection = false;
+			}
+			// đang đứng yên / di chuyển sang phải bình thường
+			else
+			{
+				ChangeDirection = false;
+				vx = level_of_running * GIA_TOC;
+				if (vx >= abs(MARIO_RUNNING_MAX_SPEED))
+					vx = MARIO_RUNNING_MAX_SPEED;
+				if (level_of_running < MAX_LEVEL_OF_RUNNING)
+					level_of_running++;
+				else
+					isMaxRunning = true;
+			}
+		}
+		if (isSitDown == true)
+		{
+			y = y - 10;
+			isSitDown = false;
+		}
+	}
+	else if (GetState() == MARIO_STATE_WALKING_LEFT)
+	{
+		if (isRunning == false)
+		{
+			if (level_of_running > 0) // sau khi thả nút A thì trừ level_of_running, tránh trường hợp đợi đến state IDLE mới trừ
+				level_of_running--;
+			// đang đi qua bên phải (vx > 0) thì đột ngột qua trái -> khúc này xử lý vụ khựng lại r chuyển hướng
+			if (vx > 0)
+			{
+				// bắt đầu chuyển hướng di chuyển
+				ChangeDirection = true;
+
+				// trừ bớt vx chứ không gán trực tiếp để nó hiện animation khựng
+				// vx -= (level_of_walking * GIA_TOC); ->không nhân với level để vx giảm chậm để hiện animation
+				vx -= 2 * GIA_TOC;
+
+				if (level_of_walking > 0)
+					level_of_walking--;
+
+				// vx đạt tới mức di chuyển sang trái thì hủy chuyển hướng để trở về animation WALKING_LEFT
+				// nếu không thì vẫn sẽ là animation STOP_RIGHT đi về bên trái
+				if (vx <= 0)
+					ChangeDirection = false;
+			}
+			else
+			{
+				if (isFlyingHigh == true)
+				{
+					//vx = -MARIO_FLY_MOVING_SPEED;
+				}
+				else
+				{
+					ChangeDirection = false;
+					if (level_of_walking >= 5)
+						vx = -(level_of_walking * GIA_TOC);\
+					if (level_of_walking < MAX_LEVEL_OF_WALKING)
+						level_of_walking++;
+				}
+			}
+		}
+		else
+		{
+			if (vx > 0 && isHolding != true)
+			{
+				ChangeDirection = true;
+				vx -= float(5 * GIA_TOC);
+
+				if (level_of_running > 1)
+					level_of_running--;
+
+				if (vx <= 0)
+					ChangeDirection = false;
+			}
+			else
+			{
+				ChangeDirection = false;
+
+				vx = -(level_of_running * GIA_TOC);
+				if (vx >= abs(MARIO_RUNNING_MAX_SPEED))
+					vx = -MARIO_RUNNING_MAX_SPEED;
+				if (level_of_running < MAX_LEVEL_OF_RUNNING)
+					level_of_running++;
+				else
+					isMaxRunning = true;
+			}
+		}
+		if (isSitDown == true)
+		{
+			y = y - 10;
+			isSitDown = false;
+		}
+	}
+
+	if (isMaxRunning == true && abs(vx) > MARIO_RUNNING_MAX_SPEED)
+	{
+		if (nx == RIGHT)
+		{
+			vx = MARIO_RUNNING_MAX_SPEED;
+			if (OnGround == false)
+			{
+				vx = MARIO_RUNNING_MAX_SPEED ;
+				//vy += 0.0003 * dt;
+			}
+				
+		}
+			
+		else
+			vx = -MARIO_RUNNING_MAX_SPEED;
+	}
+
+	if (level_of_running == MAX_LEVEL_OF_RUNNING) // đạt trạng thái max running
 		isMaxRunning = true;
 	else
 		isMaxRunning = false;
@@ -116,17 +357,25 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	switch (level)
 	{
 	case MARIO_LEVEL_SMALL:
-		Height = MARIO_SMALL_BBOX_HEIGHT; break;
+	{
+		Height = MARIO_SMALL_BBOX_HEIGHT;
+		canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
+	}break;
 	case MARIO_LEVEL_BIG: case MARIO_LEVEL_FIRE:
-		Height = MARIO_BIG_BBOX_HEIGHT; break;
+	{
+		Height = MARIO_BIG_BBOX_HEIGHT;
+		canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
+	}break;
 	case MARIO_LEVEL_TAIL:
-		Height = MARIO_TAIL_BBOX_HEIGHT; break;
+	{
+		Height = MARIO_TAIL_BBOX_HEIGHT;
+	}break;
 	}
 
 	if (vy < 0 && y < 0)
 	{
 		y = 0;
-		vy = 0;
+		//vy = 0;
 	}
 		
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -148,7 +397,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	// No collision occured, proceed normally
 	if (coEvents.size()==0)
 	{
-		x += dx; 
+		x += dx;
 		y += dy;
 	}
 	else
@@ -160,22 +409,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		// TODO: This is a very ugly designed function!!!!
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 	
-		// how to push back Mario if collides with a moving objects, what if Mario is pushed this way into another object?
-		/*if (rdx != 0 && rdx!=dx)
-			x += 2*nx*abs(5); */
-	
 		//if (ny != 0 && untouchable == false) vy = 0;
 		/*x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 		if (nx != 0) vx = 0;
 		if (ny != 0) vy = 0;*/
-	
-		//DebugOut(L"size = %i\n", coEventsResult.size());
+
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			//DebugOut(L"type = %i\n", e->obj->ObjType);
-			// xử lý tạm vụ chạm đất
+			
+			// xử lý chạm đất
 			if (e->ny < 0)
 			{
 				OnGround = true;
@@ -190,21 +434,47 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (e->ny < 0)
 				{
 					x += min_tx * dx + nx * 0.4f;
-					if (GetState() != MARIO_STATE_DIE) // nếu k có đk này thì khi chết sẽ k bị nhảy lên vì gán trực tiếp vy = 0
-						vy = 0;
+					//if (GetState() != MARIO_STATE_DIE) // nếu k có đk này thì khi chết sẽ k bị nhảy lên vì gán trực tiếp vy = 0
+					//	y += min_ty * dy + ny * 0.4f;
 				}
-				else
+				else if (e->nx != 0)
+				{
+					vx = 0;
 					y += min_ty * dy + ny * 0.4f;
+				}
+					
 				
 			}
 			else if (dynamic_cast<WarpPipe*>(e->obj))
 			{
-				if (ny != 0) vy = 0;
+				WarpPipe* pipe = dynamic_cast<WarpPipe*>(e->obj);
+				
 				if (nx != 0) vx = 0;
-				if (e->ny < 0)
+				if (e->ny != 0)
 				{
 					x += min_tx * dx + nx * 0.4f;
-					vy = 0;
+					if (pipe->HiddenWorld == true)
+					{
+						if (e->ny < 0)
+						{
+							if (isSitDown == true)
+							{
+								GoHiddenWorld = true;
+								vy = 0.03;
+							}
+							else
+								if (ny != 0) vy = 0;
+						}
+						else if (e->ny > 0)
+						{
+							GoHiddenWorld = true;
+							vy = -0.03f;
+							y += dy;
+						}
+						
+					}
+					else
+						if (ny != 0) vy = 0;
 				}
 				else if (e->nx != 0)
 				{
@@ -240,7 +510,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (e->nx != 0)
 					{
-						level_of_running = level_of_walking = 1;
+						level_of_running = level_of_walking = 0;
 						y += min_ty * dy + ny * 0.4f;
 					}
 				}
@@ -252,10 +522,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (e->ny > 0)
 				{
 					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
-					// cả 2 đều làm cho mario k nhảy đươc tiếp + rớt xuống
 					if (e->obj->GetState() == BRICK_STATE_NORMAL)
 						e->obj->SetState(BRICK_STATE_COLLISION);
-					//vy = 0;
 				}
 				else if (e->ny < 0) // mario đi trên gạch "?"
 				{
@@ -263,8 +531,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (e->nx != 0)
 				{
-					level_of_running = level_of_walking = 1; // không hiện vụ giảm vận tốc khi thả nút di chuyện
-					y += min_ty * dy + ny * 0.4f;
+					if (GetState() == MARIO_STATE_ATTACK)
+					{
+						if (e->obj->GetState() == BRICK_STATE_NORMAL)
+							e->obj->SetState(BRICK_STATE_COLLISION);
+					}
+					else
+					{
+						level_of_running = level_of_walking = 0; // không hiện vụ giảm vận tốc khi thả nút di chuyện
+						vx = 0.f;
+						y += min_ty * dy + ny * 0.4f;
+					}
 				}
 			}
 			else if (dynamic_cast<ItemBrick*>(e->obj))
@@ -286,14 +563,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				else if (e->nx != 0)
 				{
-					if (level == MARIO_LEVEL_TAIL && isAttacking == true)
-						brick->isDie = true;
-					else
-					{
-						y += min_ty * dy + ny * 0.4f;
-					}
+					y += min_ty * dy + ny * 0.4f;
 				}
-			//	DebugOut(L"state =%i,vx = %f, vy = %f,level walk = %i, level running = %i, time fly = %i\n", state, vx, vy, level_of_walking, level_of_running, time_fly);
 			}
 			else if (dynamic_cast<QuestionBrickItem*>(e->obj))
 			{
@@ -351,11 +622,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
 				}
 				break;
-				case MARIO_LEVEL_TAIL:
+				/*case MARIO_LEVEL_TAIL:
 				{
 					level++;
 					y -= static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT) + 2;
-				}
+				}*/
 				break;
 				default:
 				{
@@ -367,10 +638,79 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			else if (dynamic_cast<BrickItem*>(e->obj))
 			{
 				BrickItem* brickitem = dynamic_cast<BrickItem*>(e->obj);
-				brickitem->isDie = true;
+					brickitem->isDie = true;
 			}
+			else if (dynamic_cast<FireBullet*>(e->obj))
+			{
+			FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
+			// jump on top >> kill firebullet and deflect a bit 
+			//if ( firebullet->FireMario == false && (e->nx != 0 || e->ny != 0))
+			if (firebullet->FireMario == false)
+			{
+				if (untouchable == false)
+				{
+					switch (level)
+					{
+					case MARIO_LEVEL_FIRE:
+					{
+						y = static_cast<float>((int)(y - abs(MARIO_BIG_BBOX_HEIGHT - MARIO_TAIL_BBOX_HEIGHT) * 2));
+						level--;
+						StartUntouchable();
+
+					}
+					break;
+
+					case MARIO_LEVEL_TAIL:
+					{
+						level--;
+						StartUntouchable();
+					}
+					break;
+					case MARIO_LEVEL_BIG:
+					{
+						y = (int)(y + abs(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT - 1));
+						level--;
+						StartUntouchable();
+					}
+					break;
+					case MARIO_LEVEL_SMALL:
+					{
+						SetState(MARIO_STATE_DIE);
+					}
+					break;
+					}
+				}
+				else
+				{
+					if (level == MARIO_LEVEL_SMALL)
+						y -= 1;
+				}
+			}
+			else
+			{
+			}
+			}
+			else if (dynamic_cast<Coin*>(e->obj))
+			{
+				Coin* coin = dynamic_cast<Coin*>(e->obj);
+				coin->isDie = true;
+				_HUD->Money++;
+				_HUD->Score += 50;
+				x += dx;
+				y += dy;
+			}
+			else if (dynamic_cast<CPortal*>(e->obj))
+			{
+				CPortal* p = dynamic_cast<CPortal*>(e->obj);
+				if(p->GetSceneId() != 1)
+					CGame::GetInstance()->SwitchScene(p->GetSceneId());
+				else
+					CGame::GetInstance()->SwitchScene2(p->GetSceneId());
+			}
+
 			else if (dynamic_cast<FirePiranhaPlant*>(e->obj))
 			{
+				y += min_ty * dy + ny * 0.4f;
 				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(e->obj);
 				if (e->ny < 0)
 				{
@@ -379,21 +719,15 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						// cho cây thụt xuống ngang với miệng cống
 						plant->y += 1;
 						plant->Stop = true;
-					}
-					else
-					{
-						if (untouchable == false)
-							DownLevel();
+						continue;
 					}
 				}
-				else if (e->nx != 0)
-				{
-					if (untouchable == false)
-						DownLevel();
-				}
+				if (untouchable == false)
+					DownLevel();
 			}
 			else if (dynamic_cast<GreenFirePlant*>(e->obj))
 			{
+				y += min_ty * dy + ny * 0.4f;
 				GreenFirePlant* plant = dynamic_cast<GreenFirePlant*>(e->obj);
 				if (e->ny < 0)
 				{
@@ -402,99 +736,28 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						// cho cây thụt xuống ngang với miệng cống
 						plant->y += 1;
 						plant->Stop = true;
-					}	
-					else
-					{
-						if (untouchable == false)
-							DownLevel();
+						continue;
 					}
 				}
-				else if (e->nx != 0)
-				{
-					if (untouchable == false)
-						DownLevel();
-				}
+				if (untouchable == false)
+					DownLevel();
 			}
 			else if (dynamic_cast<GreenPlant*>(e->obj))
 			{
+				y += min_ty * dy + ny * 0.4f;
 				GreenPlant* plant = dynamic_cast<GreenPlant*>(e->obj);
 				if (e->ny < 0)
 				{
-					//plant->vy = 0;
-					//DebugOut(L"aaaaaaaaaa %i\n", INT(plant->Startposy - plant->y));
 					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENPLANT_BBOX_HEIGHT))
 					{
 						// cho cây thụt xuống ngang với miệng cống
 						plant->y += 1;
-						//DebugOut(L"1111111111111111111111\n");
 						plant->isBlocked = true;
-					}
-					/*else
-					{
-						if (untouchable == false)
-							DownLevel();
-					}*/
-				}
-				else if (e->nx != 0)
-				{
-					if (untouchable == false)
-						DownLevel();
-				}
-			}
-			else if (dynamic_cast<FireBullet*>(e->obj))
-			{
-				FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
-				// jump on top >> kill firebullet and deflect a bit 
-				//if ( firebullet->FireMario == false && (e->nx != 0 || e->ny != 0))
-				if (firebullet->FireMario == false)
-				{
-					if (untouchable == false)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_FIRE:
-						{
-							y = (int)(y - abs(MARIO_BIG_BBOX_HEIGHT - MARIO_TAIL_BBOX_HEIGHT) * 2);
-							level--;
-							StartUntouchable();
-
-						}
-						break;
-
-						case MARIO_LEVEL_TAIL:
-						{
-							level--;
-							StartUntouchable();
-						}
-						break;
-						case MARIO_LEVEL_BIG:
-						{
-							y = (int)(y + abs(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT - 1));
-							level--;
-							StartUntouchable();
-						}
-						break;
-						case MARIO_LEVEL_SMALL:
-						{
-							SetState(MARIO_STATE_DIE);
-						}
-						break;
-						}
-					}
-					else
-					{
-						if (level == MARIO_LEVEL_SMALL)
-							y -= 1;
+						continue;
 					}
 				}
-				else
-				{
-				}
-			}
-			else if (dynamic_cast<CPortal*>(e->obj))
-			{
-				CPortal* p = dynamic_cast<CPortal*>(e->obj);
-				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+				if (untouchable == false)
+					DownLevel();
 			}
 			else if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
@@ -565,7 +828,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								if (level == MARIO_LEVEL_TAIL && isAttacking == true)
 								{
 									koopas->SetState(KOOPAS_STATE_SHELL_2);
-									koopas->ReviveTime = GetTickCount64();
+									koopas->ReviveTime = GetTickCount();
 								}
 								else
 									DownLevel();
@@ -620,13 +883,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (greenkoopas->vx != 0 && greenkoopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 				{
 					greenkoopas->SetState(KOOPAS_STATE_SHELL);
-					greenkoopas->ReviveTime = GetTickCount64();
+					greenkoopas->ReviveTime = GetTickCount();
 
 				}
 				else if (greenkoopas->vx != 0 && greenkoopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 				{
 					greenkoopas->SetState(KOOPAS_STATE_SHELL_2);
-					greenkoopas->ReviveTime = GetTickCount64();
+					greenkoopas->ReviveTime = GetTickCount();
 
 				}
 				else if (greenkoopas->GetState() == KOOPAS_STATE_SHELL || greenkoopas->GetState() == KOOPAS_STATE_SHELL_2 || greenkoopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
@@ -655,7 +918,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							if (level == MARIO_LEVEL_TAIL && isAttacking == true)
 							{
 								greenkoopas->SetState(KOOPAS_STATE_SHELL_2);
-								greenkoopas->ReviveTime = GetTickCount64();
+								greenkoopas->ReviveTime = GetTickCount();
 							}
 							else
 								DownLevel();
@@ -717,13 +980,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						if (greenflykoopas->vx != 0 && greenflykoopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 						{
 							greenflykoopas->SetState(KOOPAS_STATE_SHELL);
-							greenflykoopas->ReviveTime = GetTickCount64();
+							greenflykoopas->ReviveTime = GetTickCount();
 
 						}
 						else if (greenflykoopas->vx != 0 && greenflykoopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 						{
 							greenflykoopas->SetState(KOOPAS_STATE_SHELL_2);
-							greenflykoopas->ReviveTime = GetTickCount64();
+							greenflykoopas->ReviveTime = GetTickCount();
 
 						}
 						else if (greenflykoopas->GetState() == KOOPAS_STATE_SHELL || greenflykoopas->GetState() == KOOPAS_STATE_SHELL_2 || greenflykoopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
@@ -754,7 +1017,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								if (level == MARIO_LEVEL_TAIL && isAttacking == true)
 								{
 									greenflykoopas->SetState(KOOPAS_STATE_SHELL_2);
-									greenflykoopas->ReviveTime = GetTickCount64();
+									greenflykoopas->ReviveTime = GetTickCount();
 								}
 								else
 									DownLevel();
@@ -800,17 +1063,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 			}
-			else if (dynamic_cast<Coin*>(e->obj))
-			{
-				Coin* coin = dynamic_cast<Coin*>(e->obj);
-				x += dx;
-				y += dy;
-				coin->isDie = true;
-			}
 		}
 	}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	if (x >= MAP_MAX_WIDTH - Width - 1)
+	{
+		x = static_cast<float>(MAP_MAX_WIDTH - Width - 1);
+		vx = 0;
+		//level_of_running = level_of_walking = 1;
+	}
+	Debug();
 }
 
 void Mario::Render()
@@ -1061,29 +1324,6 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
 								else if (isSitDown == true)
 									ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
-								else if (isAttacking == true && endAttack == false)
-								{
-									if (time_attack <= TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
-									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_2;
-									}
-									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
-									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_4;
-									}
-									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
-								}
 							}
 							// trái
 							else
@@ -1093,29 +1333,6 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
 								else if (isSitDown == true)
 									ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
-								else if (isAttacking == true && endAttack == false)
-								{
-									if (time_attack <= TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
-									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_2;
-									}
-									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
-									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_4;
-									}
-									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
-								}
 							}
 						}
 						// đi bộ qua phải
@@ -1126,25 +1343,9 @@ void Mario::Render()
 								ani = MARIO_ANI_TAIL_WALKING_RIGHT;
 								if (isHolding == true)
 									ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
-								else if (isMaxRunning == true)
-									ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
 							}
 							else if (ChangeDirection == true)
 								ani = MARIO_ANI_TAIL_STOP_RIGHT;
-
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_2;
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-							}
 						}
 						//  đi bộ qua trái
 						else
@@ -1154,35 +1355,9 @@ void Mario::Render()
 								ani = MARIO_ANI_TAIL_WALKING_LEFT;
 								if (isHolding == true)
 									ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
-								else if (isMaxRunning == true)
-									ani = MARIO_ANI_TAIL_RUNNING_LEFT;
 							}
 							else if (ChangeDirection == true)
 								ani = MARIO_ANI_TAIL_STOP_LEFT;
-
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								}
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_2;
-								}
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								}
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								}
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								}
-							}
 						}
 					}
 					// rớt xuống
@@ -1245,29 +1420,8 @@ void Mario::Render()
 								if (isHolding == true)
 									ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
 								else if (isSitDown == true)
-									ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
-								else if (isAttacking == true && endAttack == false)
 								{
-									if (time_attack <= TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
-									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_2;
-									}
-									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
-									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_4;
-									}
-									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
+									ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
 								}
 							}
 							// trái
@@ -1277,29 +1431,8 @@ void Mario::Render()
 								if (isHolding == true)
 									ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
 								else if (isSitDown == true)
-									ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
-								else if (isAttacking == true && endAttack == false)
 								{
-									if (time_attack <= TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
-									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_2;
-									}
-									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_1;
-									}
-									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_4;
-									}
-									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									{
-										ani = MARIO_ANI_TAIL_ATTACK_3;
-									}
+									ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
 								}
 							}
 						}
@@ -1317,19 +1450,6 @@ void Mario::Render()
 							else if (ChangeDirection == true)
 								ani = MARIO_ANI_TAIL_STOP_RIGHT;
 
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_2;
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-							}
 						}
 						//  đi bộ qua trái
 						else
@@ -1345,29 +1465,6 @@ void Mario::Render()
 							else if (ChangeDirection == true)
 								ani = MARIO_ANI_TAIL_STOP_LEFT;
 
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								}
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_2;
-								}
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								}
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								}
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								}
-							}
 						}
 					}
 					// rớt xuống
@@ -1428,7 +1525,6 @@ void Mario::Render()
 					}
 				}
 			}
-			
 			// đá
 			if (canKick == true)
 			{
@@ -1437,6 +1533,48 @@ void Mario::Render()
 				else
 					ani = MARIO_ANI_TAIL_KICK_LEFT;
 			}
+			else if (GoHiddenWorld == true)
+				ani = MARIO_ANI_TAIL_ATTACK_2;
+			else if (isAttacking == true && endAttack == false)
+			{
+				if (nx == RIGHT)
+				{
+					if (time_attack <= TIME_ATTACK)
+						ani = MARIO_ANI_TAIL_ATTACK_1;
+					else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+						ani = MARIO_ANI_TAIL_ATTACK_2;
+					else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+						ani = MARIO_ANI_TAIL_ATTACK_3;
+					else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+						ani = MARIO_ANI_TAIL_ATTACK_4;
+					else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+						ani = MARIO_ANI_TAIL_ATTACK_1;
+				}
+				else
+				{
+					if (time_attack <= TIME_ATTACK)
+					{
+						ani = MARIO_ANI_TAIL_ATTACK_3;
+					}
+					else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+					{
+						ani = MARIO_ANI_TAIL_ATTACK_2;
+					}
+					else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+					{
+						ani = MARIO_ANI_TAIL_ATTACK_1;
+					}
+					else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+					{
+						ani = MARIO_ANI_TAIL_ATTACK_4;
+					}
+					else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+					{
+						ani = MARIO_ANI_TAIL_ATTACK_3;
+					}
+				}
+			}
+		
 		}
 		break;
 
@@ -1611,46 +1749,20 @@ void Mario::Render()
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 
-	/*if (isHolding == false)
-		DebugOut(L"isHolding == false\t");
-	else
-		DebugOut(L"isHolding == true\t");
-
-	if (pressA == false)
-		DebugOut(L"pressA == false\t");
-	else
-		DebugOut(L"pressA == true\t");
-
-	if (canKick == false)
-		DebugOut(L"canKick == false\t");
-	else
+	if (level == MARIO_LEVEL_TAIL)
 	{
-		DebugOut(L"canKick == true\t");
-		DebugOut(L"5.Render	Ani: %i, state=%i,vx=%f\t", ani,state,vx);
-	}*/
+		if (nx == RIGHT && ani >= MARIO_ANI_TAIL_ATTACK_2)
+			animation_set->at(ani)->Render(x + 7, y, alpha);
+		else if (nx == LEFT && ani == MARIO_ANI_TAIL_ATTACK_1)
+			animation_set->at(ani)->Render(x - 7, y, alpha);
+		else
+			animation_set->at(ani)->Render(x, y, alpha);
+	}
+	else
+		animation_set->at(ani)->Render(x, y, alpha);
+	//RenderBoundingBox();
 	
-	//if (canFlyS == false)
-	//	DebugOut(L"canFlyS == false\t");
-	//else
-	//	DebugOut(L"canFlyS == true\t");
-	//if (canFlyX == false)
-	//	DebugOut(L"canFlyX == false\t");
-	//else
-	//	DebugOut(L"canFlyX == true\t");
-	//if (isFlyingHigh == false)
-	//	DebugOut(L"isFlyingHigh == false\t");
-	//else
-	//	DebugOut(L"isFlyingHigh == true\t");
-	//if (isMaxRunning == false)
-	//	DebugOut(L"isMaxRunning == false\t");
-	//else
-	//	DebugOut(L"isMaxRunning == true\t");
-
-	//DebugOut(L"5.Render	Ani: %i\n", ani);
-	
-	animation_set->at(ani)->Render(x, y, alpha);
-	RenderBoundingBox();
-	//DebugOut(L"\n");
+	//DebugOut(L"ani =%i\n", ani);
 }
 
 void Mario::SetState(int state)
@@ -1661,131 +1773,13 @@ void Mario::SetState(int state)
 	{
 	case MARIO_STATE_WALKING_RIGHT:
 	{
-		// đi bộ
-		if (isRunning == false)
-		{
-			if (vx < 0)
-			{
-				ChangeDirection = true;
-				vx += 2 * GIA_TOC;
-
-				if (vx >= 0)
-					ChangeDirection = false;
-			}
-			else
-			{
-				if (isFlyingHigh == true)
-				{
-					vx = MARIO_FLY_MOVING_SPEED;
-				}
-				else
-				{
-					ChangeDirection = false;
-					vx = level_of_walking * GIA_TOC;
-					if (level_of_walking < MAX_LEVEL_OF_WALKING)
-						level_of_walking++;
-				}
-			}
-		}
-		// chạy
-		else
-		{
-			if (vx < 0 && isHolding!=true)
-			{
-				ChangeDirection = true;
-				vx += float(5 * GIA_TOC);
-
-				if (level_of_running > 1)
-					level_of_running--;
-
-				if (vx >= 0)
-					ChangeDirection = false;
-			}
-			else
-			{
-				ChangeDirection = false;
-				vx = level_of_running * GIA_TOC;
-
-				if (level_of_running < MAX_LEVEL_OF_RUNNING)
-					level_of_running++;
-				else
-					isMaxRunning = true;
-			}
-		}
-		if (isSitDown == true)
-		{
-			y = y - 10;
-			isSitDown = false;
-		}
 		nx = 1;
 	}
 	break;
 
 	case MARIO_STATE_WALKING_LEFT:
 	{
-		if (isRunning == false)
-		{
-			// đang đi qua bên phải (vx > 0) thì đột ngột qua trái -> khúc này xử lý vụ khựng lại r chuyển hướng
-			if (vx > 0)
-			{
-				// bắt đầu chuyển hướng di chuyển
-				ChangeDirection = true;
-
-				// trừ bớt vx chứ không gán trực tiếp để nó hiện animation khựng
-				// vx -= (level_of_walking * GIA_TOC); ->không nhân với level để vx giảm chậm để hiện animation
-				vx -= 2 * GIA_TOC;
-				
-				// vx đạt tới mức di chuyển sang trái thì hủy chuyển hướng để trở về animation WALKING_LEFT
-				// nếu không thì vẫn sẽ là animation STOP_RIGHT đi về bên trái
-				if (vx <= 0)
-					ChangeDirection = false;
-			}
-			else 
-			{
-				if (isFlyingHigh == true)
-				{
-					vx = -MARIO_FLY_MOVING_SPEED;
-				}
-				else
-				{
-					ChangeDirection = false;
-					vx = -(level_of_walking * GIA_TOC);
-
-					if (level_of_walking < MAX_LEVEL_OF_WALKING)
-						level_of_walking++;
-				}
-			}
-		}
-		else
-		{
-			if (vx > 0 && isHolding != true)
-			{
-				ChangeDirection = true;
-				vx -= float(5 * GIA_TOC);
-
-				if (level_of_running > 1)
-					level_of_running--;
-
-				if (vx <= 0)
-					ChangeDirection = false;
-			}
-			else
-			{
-				ChangeDirection = false;
-				
-				vx = -(level_of_running * GIA_TOC);
-
-				if (level_of_running < MAX_LEVEL_OF_RUNNING)
-					level_of_running++;
-				else
-					isMaxRunning = true;
-			}
-		}
-		if (isSitDown == true)
-		{
-			y = y - 10;
-			isSitDown = false;
-		}
+		
 		nx = -1;
 	}
 	break;
@@ -1822,13 +1816,10 @@ void Mario::SetState(int state)
 			else if (level_of_walking > 0)
 			{
 				vx -= GIA_TOC;
-				//level_of_walking--;
 			}
 
 			if (vx < 0)
-			{
 				vx = 0;
-			}
 
 		}
 		else if (vx < 0)
@@ -1840,7 +1831,6 @@ void Mario::SetState(int state)
 			else if (level_of_walking > 0)
 			{
 				vx += GIA_TOC;
-				//level_of_walking--;
 			}
 			if (vx > 0)
 				vx = 0;
@@ -1849,17 +1839,35 @@ void Mario::SetState(int state)
 		// đang trong trạng thái bay thì k trừ 
 		if (canFlyX == false)
 		{
-			if (level_of_walking > 1)
+			if (level_of_walking > 0)
 				level_of_walking--;
-			if (level_of_running > 1)
+			else if (level_of_walking == 0)
+				vx = 0;
+			if (level_of_running > 0)
 				level_of_running--;
+			else if (level_of_running == 0)
+				vx = 0;
 		}
 		if (isSitDown == true)
 		{
 			y = y - 10;
 			isSitDown = false;
 		}
-		ChangeDirection = false;
+		if (ChangeDirection == true)
+		{
+			if (nx == LEFT)
+			{
+				if (level_of_walking == 0)
+				{
+					ChangeDirection = false;
+				}
+			}
+			else
+			{
+
+			}
+		}
+
 
 		if (isFlyingHigh != true)
 		{
@@ -1935,6 +1943,10 @@ void Mario::SetState(int state)
 	{
 		isFlyingHigh = true;
 		vy = -MARIO_FLY_SPEED;
+		if (nx == RIGHT)
+			vx = MARIO_FLY_MOVING_SPEED;
+		else
+			vx = -MARIO_FLY_MOVING_SPEED;
 		/*if (canFlyX == true)
 		{
 			if (time_fly <= TIME_FLY)
@@ -2001,89 +2013,23 @@ void Mario::SetState(int state)
 	}
 
 	// DebugOut(L"level of running=%i\n",level_of_running);
-}
-
-void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
-{
-	left = x;
-	top = y;
-	switch (level)
-	{
-	case MARIO_LEVEL_SMALL:
-	{
-		right = x + MARIO_SMALL_BBOX_WIDTH;
-		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
-	}
-	break;
-
-	case MARIO_LEVEL_BIG:
-	{
-		right = x + MARIO_BIG_BBOX_WIDTH;
-		bottom = y + MARIO_BIG_BBOX_HEIGHT;
-		if (isSitDown == true)
-		{
-			bottom = y + MARIO_BIG_BBOX_SITDOWN_HEIGHT;
-		}
-	}break;
-
-	case MARIO_LEVEL_TAIL:
-	{
-		/*if (nx == RIGHT)
-		{
-			left = x + (MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH + 1);
-			right = x + MARIO_TAIL_BBOX_WIDTH;
-		}
-		else
-		{
-			left = x;
-			right = x + (MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH + 4);
-		}*/
-		right = x + MARIO_TAIL_BBOX_WIDTH;
-		if (isAttacking == true && endAttack == false && nx==1)
-		{
-			//right = x + MARIO_TAIL_BBOX_WIDTH + (MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH);
-			//DebugOut(L"MARIO right= %f, x=% f\n", right, x);
-		}
-		else if  (isAttacking == true && endAttack == false && nx == -1)
-		{
-			//left = x - (MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH);
-			//DebugOut(L"MARIO left = %f, right= %f, x=% f\n", left, right, x);
-		}
-		if(isHolding==true)
-			right = x + MARIO_TAIL_BBOX_WIDTH;
-
-		bottom = y + MARIO_TAIL_BBOX_HEIGHT;
-		if (isSitDown == true)
-		{
-			bottom = y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT;
-		}
-	}
-	break;
-
-	case MARIO_LEVEL_FIRE:
-	{
-		right = x + MARIO_BIG_BBOX_WIDTH;
-		bottom = y + MARIO_BIG_BBOX_HEIGHT;
-		if (isSitDown == true)
-		{
-			bottom = y + MARIO_BIG_BBOX_SITDOWN_HEIGHT;
-		}
-	}break;
-	}
 	
-	//if(y<500)
-		//DebugOut(L"bottom= %f, y=% f\n",bottom, y);
 }
 
 void Mario::Reset()
 {
+	SetSpeed(0, 0);
+	isDie = false;
 	SetState(MARIO_STATE_IDLE);
 	SetLevel(MARIO_LEVEL_SMALL);
 	SetPosition(start_x, start_y);
-	SetSpeed(0, 0);
+	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking = endAttack = false;
+	OnGround = true;
+	level_of_walking = level_of_running = 0;
+	level_of_stopping = 1;
+	time_attack = time_fly = 0;
+	ani = 0;
 	NumberBullet = 2;
-	canFlyS = canFlyX = false;
-	time_fly = 0;
 }
 
 void Mario::DownLevel()
@@ -2109,6 +2055,47 @@ void Mario::DownLevel()
 		}
 		level--;
 		StartUntouchable();
+	}
+}
+
+void Mario::Debug()
+{
+	if (level_of_walking >= 0) {
+		switch (state)
+		{
+		case MARIO_STATE_IDLE:
+			DebugOut(L"State = IDLE\t"); break;
+		case MARIO_STATE_WALKING_RIGHT:
+			DebugOut(L"State = WALKING_RIGHT\t"); break;
+		case MARIO_STATE_WALKING_LEFT:
+			DebugOut(L"State = WALKING_LEFT\t"); break;
+		case MARIO_STATE_JUMP:
+			DebugOut(L"State = JUMP\t"); break;
+		case MARIO_STATE_DIE:
+			DebugOut(L"State = DIE\t"); break;
+		case MARIO_STATE_JUMP_LOW:
+			DebugOut(L"State = JUMP_LOW\t"); break;
+		case MARIO_STATE_FLY_LOW:
+			DebugOut(L"State = FLY_LOW\t"); break;
+		case MARIO_STATE_FLY_HIGH:
+			DebugOut(L"State = FLY_HIGH\t"); break;
+		case MARIO_STATE_SITDOWN:
+			DebugOut(L"State = SITDOWN\t"); break;
+		case MARIO_STATE_ATTACK:
+			DebugOut(L"State = ATTACK\t"); break;
+		case MARIO_STATE_RUNNING:
+			DebugOut(L"State = RUNNING\t"); break;
+		}
+		if (isRunning == false)
+			DebugOut(L"isRunning == false\t");
+		else
+			DebugOut(L"isRunning == true\t");
+		/*if (canFlyX == false)
+			DebugOut(L"canFlyX == false\t");
+		else
+			DebugOut(L"canFlyX == true\t");*/
+
+		DebugOut(L"level running %i, vx = %f, vy = %f, nx = %i,x = %f\n", level_of_running, vx, vy, nx, x);
 	}
 	
 }

@@ -13,6 +13,7 @@ GreenKoopas::GreenKoopas()
 	SetState(GREENKOOPAS_STATE_WALKING_LEFT);
 	Revive = isHold = isShell = isShell_2 = false;
 	ObjType = OBJECT_TYPE_GREENKOOPAS;
+	Category = CATEGORY::ENEMY;
 }
 
 GreenKoopas::~GreenKoopas()

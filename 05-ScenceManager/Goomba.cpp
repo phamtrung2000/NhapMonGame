@@ -15,6 +15,7 @@ CGoomba::CGoomba()
 	SetState(GOOMBA_STATE_WALKING);
 	nx = 1;
 	vy = 0;
+	Category = CATEGORY::ENEMY;
 }
 
 //void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -296,7 +297,8 @@ void CGoomba::SetState(int state)
 
 		case GOOMBA_STATE_DIE_2:
 		{
-			//vx = -vx;
+			nx = -nx;
+			vx = -vx;
 			vy = -0.1f;
 		}
 		break;

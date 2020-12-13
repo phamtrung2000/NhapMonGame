@@ -4,7 +4,7 @@
 QuestionBrick::QuestionBrick(int item,float x,float y) : CGameObject()
 {
 	isCollision =  false;
-	hasItem = 0;
+	hasItem = true;
 	Start_Y = y; // đúng
 	this->x = x;
 	this->y = y;
@@ -12,6 +12,7 @@ QuestionBrick::QuestionBrick(int item,float x,float y) : CGameObject()
 	Item = item;
 	isInit = false;
 	SetState(BRICK_STATE_NORMAL);
+	Category = CATEGORY::OBJECT;
 }
 
 void QuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects) 
@@ -104,6 +105,14 @@ void QuestionBrick::SetState(int state)
 		//}
 	
 	
+}
+
+void QuestionBrick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	right = x + QUESTIONBRICK_WIDTH;
+	bottom = y + QUESTIONBRICK_WIDTH;
 }
 
 

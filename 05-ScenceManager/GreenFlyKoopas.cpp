@@ -16,6 +16,7 @@ GreenFlyKoopas::GreenFlyKoopas()
 	Revive = isHold = isShell = isShell_2 = false;
 	ObjType = OBJECT_TYPE_GREENFLYKOOPAS;
 	Health = 2;
+	Category = CATEGORY::ENEMY;
 }
 
 GreenFlyKoopas::~GreenFlyKoopas()

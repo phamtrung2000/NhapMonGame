@@ -34,9 +34,6 @@
     <Filter Include="PlayScene">
       <UniqueIdentifier>{a7bda07e-7202-4f8f-9250-a5794d2960bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Item">
-      <UniqueIdentifier>{2aa10810-226b-4f10-9a35-ce6e35b1826a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Enemy\Plant">
       <UniqueIdentifier>{ebc0494f-32fa-41e9-93d6-2fe70bfa4ee5}</UniqueIdentifier>
     </Filter>
@@ -57,6 +54,21 @@
     </Filter>
     <Filter Include="OverWorld\World1">
       <UniqueIdentifier>{a386c9cf-df29-42e3-a7df-455ad1a54b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{5848e480-b8ed-4a4c-bf40-e05549b9e8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\World1">
+      <UniqueIdentifier>{7ff16def-207a-4f67-83d6-d3d0aee32fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{2aa10810-226b-4f10-9a35-ce6e35b1826a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ground">
+      <UniqueIdentifier>{122a92db-cf6d-4cdb-ae70-3d48f9c892c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MarioWeapon">
+      <UniqueIdentifier>{244d3937-a7ff-4867-a6d2-062a496e46e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -93,9 +105,6 @@
     <ClCompile Include="Brick.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="FireBullet.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Mario.cpp">
       <Filter>Mario</Filter>
     </ClCompile>
@@ -111,17 +120,11 @@
     <ClCompile Include="Cloud.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ground.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="PlayScence.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Coin.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="QuestionBrickItem.cpp">
-      <Filter>Object\Item</Filter>
+      <Filter>Item</Filter>
     </ClCompile>
     <ClCompile Include="ItemBrick.cpp">
       <Filter>Object</Filter>
@@ -165,6 +168,24 @@
     <ClCompile Include="Gate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MarioTail.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Coin.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="FireBullet.cpp">
+      <Filter>MarioWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -200,9 +221,6 @@
     <ClInclude Include="Brick.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Mario.h">
       <Filter>Mario</Filter>
     </ClInclude>
@@ -210,9 +228,6 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="WarpPipe.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="FireBullet.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
@@ -224,14 +239,11 @@
     <ClInclude Include="PlayScence.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Coin.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="ItemBrick.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="QuestionBrickItem.h">
-      <Filter>Object\Item</Filter>
+      <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="BrickItem.h">
       <Filter>Header Files</Filter>
@@ -272,15 +284,30 @@
     <ClInclude Include="Gate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MarioTail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="FireBullet.h">
+      <Filter>MarioWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="mario-sample.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
     <Text Include="scene1.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
-    <Text Include="scene1_SoCua.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
     <Text Include="textures\map1.txt">
@@ -292,52 +319,35 @@
     <Text Include="textures\Opening\MapOpening.txt">
       <Filter>Picture/Scene\Scene</Filter>
     </Text>
-    <Text Include="Overworld.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
     <Text Include="textures\Overworld\World2Map.txt" />
-    <Text Include="textures\Overworld\World1.txt">
-      <Filter>OverWorld\World1</Filter>
-    </Text>
     <Text Include="textures\Overworld\World1Map.txt">
       <Filter>OverWorld\World1</Filter>
     </Text>
     <Text Include="textures\Overworld\World1Scene.txt">
       <Filter>OverWorld\World1</Filter>
     </Text>
+    <Text Include="textures\World\World1\Scene1.1.txt">
+      <Filter>World\World1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\HiddenMap1.1.txt">
+      <Filter>World\World1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Map1.1.txt">
+      <Filter>World\World1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\SceneHidden1.1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\enemies.png">
       <Filter>Picture/Scene</Filter>
     </Image>
-    <Image Include="textures\enemies1.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\enemies-2.1.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\enemies-2.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
     <Image Include="textures\enemies3.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\enemies4.png">
       <Filter>Picture/Scene</Filter>
     </Image>
     <Image Include="textures\EnemiesFull.png">
       <Filter>Picture/Scene</Filter>
     </Image>
     <Image Include="textures\gameover.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\map1.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\mario.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\mario1.png">
       <Filter>Picture/Scene</Filter>
     </Image>
     <Image Include="textures\misc.png">
@@ -376,5 +386,26 @@
     <Image Include="textures\Overworld\World1.png">
       <Filter>OverWorld\World1</Filter>
     </Image>
+    <Image Include="textures\Hidden1.1Tile.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\World\World1\HiddenMap1.1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\World\World1\Map1.1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Mario\mario1.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\ScoreBoard - Copy.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+    <Image Include="textures\Hub.png">
+      <Filter>Picture/Scene</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\Super-Mario-Bros--3.ttf" />
   </ItemGroup>
 </Project>

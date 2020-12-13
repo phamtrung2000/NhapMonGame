@@ -45,24 +45,20 @@
 #define ANI_BRICK_NORMAL 0
 #define	ANI_BRICK_COLLISION	1
 
+#define QUESTIONBRICK_WIDTH	16
+
 class QuestionBrick : public CGameObject
 {
 public:
 	float Start_Y;
 	bool isCollision;
-	int hasItem;
+	bool hasItem;
 	int Item;
 public:
 	QuestionBrick(int item,float x = 0.0f, float y = 0.0f);
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	void SetState(int state);
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)
-	{
-		left = x;
-		top = y;
-		right = x + 16;
-		bottom = y + 16;
-	}
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };
 

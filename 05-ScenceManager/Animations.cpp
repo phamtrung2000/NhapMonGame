@@ -22,7 +22,7 @@ void CAnimation::Add(int spriteId, DWORD time)
 // NOTE: sometimes Animation object is NULL ??? HOW ??? 
 void CAnimation::Render(float x, float y, int alpha)
 {
-	DWORD now = GetTickCount();
+	DWORD now = GetTickCount64();
 	if (currentFrame == -1)
 	{
 		currentFrame = 0;
@@ -35,7 +35,16 @@ void CAnimation::Render(float x, float y, int alpha)
 		{
 			currentFrame++;
 			lastFrameTime = now;
-			if (currentFrame == frames.size()) currentFrame = 0;
+			if (currentFrame == frames.size())
+			{
+				currentFrame = 0;
+				isLastFrame = true;
+			}
+		}
+		else
+		{
+			isLastFrame = false;
+			t += now - lastFrameTime;
 		}
 	}
 

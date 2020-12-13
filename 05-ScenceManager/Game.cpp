@@ -18,6 +18,7 @@ CGame * CGame::__instance = NULL;
 */
 void CGame::Init(HWND hWnd)
 {
+	
 	LPDIRECT3D9 d3d = Direct3DCreate9(D3D_SDK_VERSION);
 
 	this->hWnd = hWnd;									
@@ -67,8 +68,18 @@ void CGame::Init(HWND hWnd)
 */
 void CGame::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
 {
-	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
+	/*D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
 	RECT r; 
+	r.left = left;
+	r.top = top;
+	r.right = right;
+	r.bottom = bottom;
+	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));*/
+
+	float cx, cy;
+	CGame::GetInstance()->GetCamPos(cx, cy);
+	D3DXVECTOR3 p(floor(x - cx), floor(y - cy), 0);
+	RECT r;
 	r.left = left;
 	r.top = top;
 	r.right = right;
@@ -339,12 +350,12 @@ void CGame::_ParseSection_SCENES(string line)
 	if (tokens.size() < 2) return;
 	int id = atoi(tokens[0].c_str());
 	
-	if (tokens[1] == OpeningScene)
+	if (tokens[1] == OpeningSceneText)
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
 		scenes[id] = new Opening(id, path);
 	}
-	else if (tokens[1] == World1Scene)
+	else if (tokens[1] == World1SceneText)
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
 		scenes[id] = new World1(id, path);
@@ -354,7 +365,6 @@ void CGame::_ParseSection_SCENES(string line)
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
 		scenes[id] = new CPlayScene(id, path);
 	}
-	
 }
 
 /*
@@ -392,23 +402,48 @@ void CGame::Load(LPCWSTR gameFile)
 	f.close();
 
 	DebugOut(L"[INFO] Loading game file : %s has been loaded successfully\n",gameFile);
-
-	SwitchScene(current_scene);
+	if(current_scene == OpeningSceneID)
+		SwitchScene(current_scene);
+	/*else
+		SwitchScene2(current_scene);*/
 }
 
 void CGame::SwitchScene(int scene_id)
 {
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
-	LPSCENE s = scenes[scene_id];
-	if (current_scene == 0 || current_scene > 1)
+	if (current_scene == World1SceneID)
 	{
-		
+		/*LPSCENE s = scenes[scene_id];
+		World1* world1 = (World1*)s;*/
+		World1* world1 = (World1*)scenes[current_scene];
+		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
+		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
 	}
 	scenes[current_scene]->Unload();
 	CTextures::GetInstance()->Clear();
 	CSprites::GetInstance()->Clear();
 	CAnimations::GetInstance()->Clear();
 	current_scene = scene_id;
+	LPSCENE s = scenes[scene_id];
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
 	s->Load();	
+}
+
+void CGame::SwitchScene2(int scene_id)
+{
+	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+
+	if (current_scene == 0 || current_scene > 1)
+	{
+
+	}
+	scenes[current_scene]->Unload();
+	CTextures::GetInstance()->Clear();
+	CSprites::GetInstance()->Clear();
+	CAnimations::GetInstance()->Clear();
+	current_scene = scene_id;
+	LPSCENE s = scenes[scene_id];
+	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+	
 }

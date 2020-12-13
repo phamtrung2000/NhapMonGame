@@ -3,10 +3,28 @@
 
 WarpPipe::WarpPipe(int W, int H)
 {
-	isCovered = true;
+	HiddenWorld = false;
 	Width = W;
 	Height = H;
 	ObjType = OBJECT_TYPE_WARPPIPE;
+	Category = CATEGORY::OBJECT;
+}
+
+WarpPipe::WarpPipe(int W, int H,bool a)
+{
+	HiddenWorld = a;
+	Width = W;
+	Height = H;
+	ObjType = OBJECT_TYPE_WARPPIPE;
+	Category = CATEGORY::OBJECT;
+}
+
+void WarpPipe::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	right = left + Width;
+	bottom = top + Height;
 }
 
 void WarpPipe::Render()

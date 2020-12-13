@@ -13,17 +13,13 @@ class WarpPipe : public CGameObject
 public:
 	int Width;
 	int Height;
-	bool isCovered;
+	bool HiddenWorld;
+
 public:
 	WarpPipe(int W, int H);
+	WarpPipe(int W, int H,bool);
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)
-	{
-		left = x;
-		top = y;
-		right = left + Width;
-		bottom = top + Height;
-	}
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Render();
 };
 

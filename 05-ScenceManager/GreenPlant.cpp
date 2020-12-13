@@ -6,6 +6,7 @@ GreenPlant::GreenPlant()
 	isBlocked = Stop = isInit = false;
 	WarpPipeHeight = WarpPipeWidth = AppearTime = 0;
 	SetState(GREENPLANT_STATE_HIDE);
+	Category = CATEGORY::ENEMY;
 }
 
 // cây xuất hiện nhưng chưa chắc tấn công, phải nằm trong vùng tấn công
@@ -125,7 +126,7 @@ void GreenPlant::Render()
 	// cây trái , mario phải
 	ani = GREENPLANT_ANI_APPEAR_HIDE;
 	if (isInit == true)
-		//animation_set->at(ani)->Render(x, y);
+		animation_set->at(ani)->Render(x, y);
 	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
 	RenderBoundingBox();
 }

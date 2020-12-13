@@ -19,6 +19,7 @@ public:
 		ObjType = 100;
 		x = a;
 		y = b;
+		Category = CATEGORY::WEAPON;
 	}
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();

@@ -1,4 +1,4 @@
-#include <d3dx9.h>
+﻿#include <d3dx9.h>
 #include <algorithm>
 
 
@@ -75,6 +75,8 @@ void CGameObject::CalcPotentialCollisions(
 
 		if (e->t > 0 && e->t <= 1.0f)
 			coEvents.push_back(e);
+		/*else if(IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+			coEvents.push_back(e);*/
 		else
 			delete e;
 	}
@@ -132,9 +134,29 @@ void CGameObject::RenderBoundingBox()
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 
-	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 32);
+	//CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 155);
+	CGame::GetInstance()->Draw(l, t, bbox, rect.left, rect.top, rect.right, rect.bottom, 155);
 }
 
+// hàm kiểm tra render box của obj này nằm bên trong render box của obj kia
+bool CGameObject::IsCollision(RECT rect1, RECT rect2)
+{
+	if (rect1.left > rect2.right || rect1.right < rect2.left || rect1.top > rect2.bottom || rect1.bottom < rect2.top)
+		return false;
+	return true;
+}
+RECT CGameObject::GetRect()
+{
+	float l, t, r, b;
+	RECT rect;
+	GetBoundingBox(l, t, r, b);
+	rect.left = l;
+	rect.top = t;
+	rect.right = r;
+	rect.bottom = b;
+	return rect;
+
+}
 
 CGameObject::~CGameObject()
 {

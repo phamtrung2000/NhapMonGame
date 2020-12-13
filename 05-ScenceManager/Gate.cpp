@@ -5,6 +5,7 @@ Gate::Gate(int a)
 {
 	ObjType = OBJECT_TYPE_GATE;
 	GateNumber = a;
+	isComplete = false;
 }
 
 void Gate::Render()

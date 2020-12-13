@@ -5,6 +5,7 @@ World1::World1(int id, LPCWSTR filePath) : CScene(id, filePath)
 	player = NULL;
 	map = NULL;
 	key_handler = new World1ScenceKeyHandler(this);
+	MapHeight = MapWidth = 0;
 }
 
 /*
@@ -27,7 +28,8 @@ void World1::_ParseSection_MAP(string line)
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 	map = new Map();
-	map->LoadMap(texID, pathtxt);
+	map->LoadMap(texID, pathtxt,MapWidth,MapHeight);
+	
 }
 
 void World1::_ParseSection_TEXTURES(string line)
@@ -128,8 +130,8 @@ void World1::_ParseSection_OBJECTS(string line)
 	int ani_set_id = atoi(tokens[3].c_str());
 	if (object_type == OBJECT_TYPE_GROUND)
 	{
-		width = atof(tokens[4].c_str());
-		height = atof(tokens[5].c_str());
+		
+		
 	}
 	else if (object_type == OBJECT_TYPE_GATE)
 	{
@@ -156,7 +158,21 @@ void World1::_ParseSection_OBJECTS(string line)
 		DebugOut(L"[INFO] Player object created!\n");
 	}break;
 
-	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
+	case OBJECT_TYPE_GROUND:
+	{
+		width = atof(tokens[4].c_str());
+		height = atof(tokens[5].c_str());
+		if (tokens.size() <= 6)
+		{
+			obj = new Ground(width, height);
+		}
+		else
+		{
+			int BehindGate = atof(tokens[6].c_str());
+			obj = new Ground(width, height, BehindGate);
+		}
+		
+	}break;
 	case OBJECT_TYPE_GATE: obj = new Gate(GateNumber); break;
 
 	default:
@@ -231,6 +247,64 @@ void World1::Load()
 	
 }
 
+void World1::Load2(float x , float y)
+{
+	if (objects.size() == 0)
+	{
+		DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
+
+		ifstream f;
+		f.open(sceneFilePath);
+
+		// current resource section flag
+		int section = SCENE_SECTION_UNKNOWN;
+
+		char str[MAX_SCENE_LINE];
+		while (f.getline(str, MAX_SCENE_LINE))
+		{
+			string line(str);
+
+			if (line[0] == '#') continue;	// skip comment lines	
+
+			if (line == "[TEXTURES]") {
+				section = SCENE_SECTION_TEXTURES; continue;
+			}
+
+			if (line == "[MAP]") {
+				section = SCENE_SECTION_MAP; continue;
+			}
+			if (line == "[SPRITES]") {
+				section = SCENE_SECTION_SPRITES; continue;
+			}
+			if (line == "[ANIMATIONS]") {
+				section = SCENE_SECTION_ANIMATIONS; continue;
+			}
+			if (line == "[ANIMATION_SETS]") {
+				section = SCENE_SECTION_ANIMATION_SETS; continue;
+			}
+			if (line == "[OBJECTS]") {
+				section = SCENE_SECTION_OBJECTS; continue;
+			}
+			if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
+
+			switch (section)
+			{
+			case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+			case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+			case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+			case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+			case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+			}
+		}
+
+		f.close();
+		CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+		DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
+	}
+	GetPlayer()->SetPosition(x, y);
+}
+
 void World1::Update(DWORD dt)
 {
 	vector<LPGAMEOBJECT> coObjects;
@@ -245,6 +319,11 @@ void World1::Update(DWORD dt)
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
+		if (objects[i]->ObjType == OBJECT_TYPE_GATE)
+		{
+			Gate* gate = (Gate*)objects[i];
+			//if(gate->isComplete==true)
+		}
 		objects[i]->Update(dt, &coObjects);
 	}
 
@@ -257,33 +336,10 @@ void World1::Update(DWORD dt)
 	//float cx, cy;
 	//player->GetPosition(cx, cy);
 
-	//CGame* game = CGame::GetInstance();
+	CGame* game = CGame::GetInstance();
 
-	//cx -= game->GetScreenWidth() / 2;
 
-	//// xóa khúc vàng ở sau lúc bắt đầu game
-	//if (cx < 0)
-	//{
-	//	cx = 0;
-	//}
-	//if (cx > MAP_MAX_WIDTH)
-	//	cx = MAP_MAX_WIDTH;
-
-	//cy -= game->GetScreenHeight() / 2;
-	///*if (cy >= 270)
-	//{
-	//	cy = 270;
-	//}
-	//else
-	//	cy = 270;*/
-	//	/*if (player->y >= 240)
-	//		cy = 240;*/
-
-	//if (player->y >= 320 / 2)
-	//	cy = 150;
-
-	// CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
-	CGame::GetInstance()->SetCamPos(-100, -100);
+	CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 }
 
 void World1::Render()
@@ -336,7 +392,7 @@ void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 	else if (game->IsKeyDown(DIK_RETURN))
 	{
 		if(mario->Scene > 0 && mario->GetState() == MARIO_OVERWORLD_STATE_IN_GATE)
-			CGame::GetInstance()->SwitchScene(mario->Scene + 1);
+			CGame::GetInstance()->SwitchScene(mario->Scene);
 	}
 }
 

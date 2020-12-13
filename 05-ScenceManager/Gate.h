@@ -4,6 +4,7 @@ class Gate : public CGameObject
 {
 public:
 	int GateNumber;
+	bool isComplete;
 	Gate(int a);
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)

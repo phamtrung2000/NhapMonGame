@@ -1,9 +1,8 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
-0	textures\mario1.png	255	255	255
+0	.\textures\Mario\mario1.png	255	255	255
 [MAP]
-#300	textures\Overworld\World1Tile.png	255	255	255	textures\Overworld\World1Map.txt
-300	textures\Overworld\World2Tile.png	255	255	255	textures\Overworld\World2Map.txt
+300	.\textures\Overworld\World2Tile.png	255	255	255	.\textures\Overworld\World2Map.txt
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 #  ======= SMALL MARIO =========
@@ -32,9 +31,9 @@
 #0	0	0	0
 # ======== GATE =========
 # type	x	y	ani_set_id	gatenumber
-2	45	0	2	1
+2	45	0	2	10
 # ======== GROUND =========
-# type	x	y	ani_set_id	width height
+# type	x	y	ani_set_id	width height	BehindGate
 # 1
 1	0	0	1	42	34
 # 2
@@ -46,4 +45,4 @@
 # 4
 1	122	0	1	50	16
 # sau gate 1
-1	60	0	1	105	15
+1	60	0	1	105	15	1

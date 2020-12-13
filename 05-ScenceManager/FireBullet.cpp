@@ -9,10 +9,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// đầu màn hình
 	float cam_x = CGame::GetInstance()->GetCamX();
 	// chiều dài màn hình
-	float cam_w = CGame::GetInstance()->GetScreenWidth();
+	int cam_w = CGame::GetInstance()->GetScreenWidth();
 
 	// ra khỏi camera -> delete
-	if (x > cam_x + cam_w || x < cam_x)
+	if (x > cam_x + static_cast<float>(cam_w) || x < cam_x)
 		isDie = true;
 
 	CGameObject::Update(dt);
@@ -55,46 +55,64 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
-				if (e->ny < 0)
+				CATEGORY category = e->obj->Category;
+				switch (category)
 				{
-					vy = -0.15;
-				}
-				if (dynamic_cast<CGoomba*>(e->obj))
-				{
-					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-					if (e->nx != 0 || e->ny != 0)
+					case CATEGORY::ENEMY:
 					{
-						if (goomba->GetState() != GOOMBA_STATE_DIE)
-							goomba->SetState(GOOMBA_STATE_DIE_2);
-						
-						this->isDie = true;
-					}
-				}
-				else if (dynamic_cast<Koopas*>(e->obj))
-				{
-					Koopas* koopas = dynamic_cast<Koopas*>(e->obj);
-					if (e->nx != 0 || e->ny != 0)
-					{
-						if (koopas->GetState() != KOOPAS_STATE_DIE)
-							koopas->SetState(KOOPAS_STATE_DIE);
+						if (dynamic_cast<CGoomba*>(e->obj))
+						{
+							CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+							if (e->nx != 0 || e->ny != 0)
+							{
+								if (goomba->GetState() != GOOMBA_STATE_DIE)
+									goomba->SetState(GOOMBA_STATE_DIE_2);
 
-						this->isDie = true;
-						vx = 0;
-						vy = 0;
-					}
-				}
-				else if (dynamic_cast<Block*>(e->obj))
-				{
-					x += dx;
-				}
-				else if (dynamic_cast<WarpPipe*>(e->obj))
-				{
-					if (e->nx != 0)
+								this->isDie = true;
+							}
+						}
+						else if (dynamic_cast<Koopas*>(e->obj))
+						{
+							Koopas* koopas = dynamic_cast<Koopas*>(e->obj);
+							if (e->nx != 0 || e->ny != 0)
+							{
+								if (koopas->GetState() != KOOPAS_STATE_DIE)
+									koopas->SetState(KOOPAS_STATE_DIE);
+
+								this->isDie = true;
+								vx = 0;
+								vy = 0;
+							}
+						}
+						else
+						{
+							e->obj->isDie = this->isDie = true;
+						}
+							
+					}break;
+
+					case CATEGORY::OBJECT:
 					{
-						this->isDie = true;
-					}
+						if (e->nx != 0)
+						{
+							if (dynamic_cast<Block*>(e->obj))
+							{
+								x += dx;
+							}
+							else
+								this->isDie = true;
+						}
+						else
+							vy = -0.15f;
+					}break;
+
+					case CATEGORY::GROUND:
+					{
+						vy = -0.15f;
+					}break;
+
 				}
-				y += min_ty * dy + ny * 0.4f;
+				
 			}
 		}
 	}

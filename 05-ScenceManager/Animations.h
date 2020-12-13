@@ -24,10 +24,11 @@ typedef CAnimationFrame *LPANIMATION_FRAME;
 class CAnimation
 {
 	DWORD lastFrameTime;
-	int currentFrame;
 	int defaultTime;
 	vector<LPANIMATION_FRAME> frames;
 public:
+	int currentFrame;
+	bool isLastFrame; // check last frame 
 	CAnimation(int defaultTime = 100) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; }
 	void Add(int spriteId, DWORD time = 0);
 

@@ -7,12 +7,7 @@
 class Coin : public CGameObject
 {
 public:
-	Coin()
-	{
-		ObjType = 12;
-		vx = vy = 0;
-	}
-	
+	Coin();
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
 };

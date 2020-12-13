@@ -5,13 +5,13 @@
 #include "GameObject.h"
 
 #define MARIO_WALKING_SPEED		0.1f 
-#define MARIO_RUNNING_MAX_SPEED	0.2f 
+#define MARIO_RUNNING_MAX_SPEED	0.15f 
 #define MARIO_FLY_MOVING_SPEED	0.1f 
 #define GIA_TOC					0.003125f // gia tốc
 #define MAX_LEVEL_OF_WALKING	32
-#define MAX_LEVEL_OF_RUNNING	64
+#define MAX_LEVEL_OF_RUNNING	98//64
 
-#define MARIO_JUMP_SPEED_FAST		0.25f // chuẩn
+#define MARIO_JUMP_SPEED_FAST		0.27f	//0.25f // chuẩn
 #define MARIO_JUMP_SPEED_SLOW		0.18f // chuẩn
 #define MARIO_FLY_SPEED				0.1f // chuẩn
 #define MARIO_JUMP_DEFLECT_SPEED 0.17f
@@ -176,14 +176,17 @@
 
 
 #define TIME_ATTACK 5
-#define TIME_FLY 200000 //200
+#define TIME_FLY 200
 #define TIME_FLY_S 5
+
 class Mario : public CGameObject
 {
+private:
+	static Mario* __instance;
 public:
 	int level;
 	bool untouchable;
-	DWORD untouchable_start;
+	ULONGLONG untouchable_start;
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
 
@@ -196,29 +199,31 @@ public:
 	bool isMaxRunning;
 	
 	bool isFalling;
-	bool isSitDown;
+	bool isSitDown, GoHiddenWorld;
 	bool isAttacking, endAttack;
 	int time_attack;
 	int time_fly;
 	int NumberBullet;
 	int ani;
 	bool isHolding = false, pressA = false, canKick = false;
-	int Height;
+	int Height,Width;
 
 	bool canFlyX, canFlyS; // biến để cắm cờ lúc mario đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
 	bool isFlyingLow,isFlyingHigh;
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
+	static Mario* GetInstance();
+
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	virtual void Render();
-
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
-	void StartUntouchable() { untouchable = true; untouchable_start = GetTickCount(); }
+	void StartUntouchable() { untouchable = true; untouchable_start = GetTickCount64(); }
 	void Reset();
 	void DownLevel();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Debug();
 };
 
 //#include <algorithm>
@@ -2079,7 +2084,7 @@ public:
 //	level--;
 //	StartUntouchable();
 //}
-
+//
 //void Mario::DownLevel()
 //{
 //	switch (level)
@@ -2104,7 +2109,7 @@ public:
 //	level--;
 //	StartUntouchable();
 //}
-
+//
 //else
 //	{
 //	float min_tx, min_ty, nx = 0, ny;

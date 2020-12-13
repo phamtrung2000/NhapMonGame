@@ -10,8 +10,9 @@ MarioOverWorld::MarioOverWorld(float x, float y) : CGameObject()
 	ObjType = OBJECT_TYPE_MARIOOVERWORLD;
 	level = MARIO_OVERWORLD_LEVEL_SMALL;
 	SetState(MARIO_OVERWORLD_STATE_IDLE);
-	this->x = x;
-	this->y = y;
+	this->x = start_x = x;
+	this->y = start_y = y;
+
 	Scene = 0;
 	InGate = false;
 }
@@ -55,8 +56,8 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (dynamic_cast<Ground*>(e->obj))
 			{
-				if (nx != 0) vx = 0;
-				if (ny != 0) vy = 0;
+				/*if (nx != 0) vx = 0;
+				if (ny != 0) vy = 0;*/
 				Ground* ground = dynamic_cast<Ground*>(e->obj);
 				if (e->ny < 0)
 				{
@@ -78,16 +79,31 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	if(InGate==true)
+
+	//for (UINT i = 0; i < coObjects->size(); i++)
+	//{
+	//	if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
+	//	{
+	//		Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
+	//		// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+	//		if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+	//		{
+	//			/*if (gate->isComplete == false && this->vx > 0)
+	//				this->vx = 0;*/
+	//		}
+	//	}
+	//}
+	/*if(InGate==true)
 		DebugOut(L"InGate==true\n");
 	else
 		DebugOut(L"InGate==false\n");
-	DebugOut(L"x = %f, y = %f, state %i\n", x, y, state);
+	DebugOut(L"x = %f, y = %f, state %i\n", x, y, state);*/
 	if (vy < 0 && y < 0)
 	{
 		SetPosition(x, 0);
 		vy = 0;
 	}
+	DebugOut(L"x = %f, y = %f, state %i\n", x, y, state); 
 }
 
 void MarioOverWorld::Render()

@@ -223,6 +223,10 @@ void Opening::Load()
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
+void Opening::Load2(float, float)
+{
+}
+
 void Opening::Update(DWORD dt)
 {
 	// We know that MarioOverWorld is the first object in the list hence we won't add him into the colliable object list
@@ -278,7 +282,7 @@ void MainMenuKeyHandler::OnKeyDown(int KeyCode)
 	}
 	else if (game->IsKeyDown(DIK_RETURN))
 	{
-		CGame::GetInstance()->SwitchScene(1);
+		CGame::GetInstance()->SwitchScene(World1SceneID);
 	}
 }
 

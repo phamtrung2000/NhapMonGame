@@ -1,55 +1,66 @@
-#pragma once
+﻿#pragma once
 
 #include <unordered_map>
-
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-
-
-#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-
 #include "Scence.h"
-
-#define OpeningScene "OpeningScene.txt"
-#define World1Scene  "textures\\OverWorld\\World1Scene.txt"
-
 using namespace std;
 
+#define DIRECTINPUT_VERSION 0x0800
+
+#define OpeningSceneText "OpeningScene.txt"
+#define OpeningSceneID	0
+#define World1SceneText  ".\\textures\\Overworld\\World1Scene.txt"
+#define World1SceneID	1
+#define Scene1_1Text  ".\\textures\World\\World1\\Scene1.1.txt"
+#define Scene1_1ID		10
+#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.1.txt"
+#define SceneHidden1_1ID	11
+
 #define KEYBOARD_BUFFER_SIZE 1024
+#define SCREEN_WIDTH	400
+#define SCREEN_HEIGHT	320
+
+#define _Mario Mario::GetInstance()
+#define _Game  CGame::GetInstance()
+#define _AnimationsSets CAnimationSets::GetInstance()
+#define _HUD HUD::GetInstance()
+#define _Map Map::GetInstance()
+#define _Camera Camera::GetInstance()
+//#define grid Grid::GetInstance()
 
 class CGame
 {
 	static CGame * __instance;
 	HWND hWnd;									// Window handle
-
 	LPDIRECT3D9 d3d = NULL;						// Direct3D handle
 	LPDIRECT3DDEVICE9 d3ddv = NULL;				// Direct3D device object
-
 	LPDIRECT3DSURFACE9 backBuffer = NULL;		
 	LPD3DXSPRITE spriteHandler = NULL;			// Sprite helper library to help us draw 2D image on the screen 
-
 	LPDIRECTINPUT8       di;		// The DirectInput object         
 	LPDIRECTINPUTDEVICE8 didv;		// The keyboard device 
-
 	BYTE  keyStates[256];			// DirectInput keyboard state buffer 
 	DIDEVICEOBJECTDATA keyEvents[KEYBOARD_BUFFER_SIZE];		// Buffered keyboard data
-
 	LPKEYEVENTHANDLER keyHandler;
 
 	float cam_x = 0.0f;
 	float cam_y = 0.0f;
-
 	int screen_width;
 	int screen_height; 
-
 	unordered_map<int, LPSCENE> scenes;
-	int current_scene; 
+	
 
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
+public:
+	int current_scene;
+	int MarioLife;
+	float X_MarioOverworld, Y_MarioOverworld;
+	int Score,Money;
+	ULONGLONG PlayTime;
 public:
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -62,12 +73,12 @@ public:
 	void Load(LPCWSTR gameFile);
 	LPSCENE GetCurrentScene() { return scenes[current_scene]; }
 	void SwitchScene(int scene_id);
-
+	void SwitchScene2(int scene_id); // hàm chuyển cảnh nhưng thay đổi tọa độ mario thay vì khởi tạo như file scnene.txt
 	int GetScreenWidth() { return screen_width; }
 	int GetScreenHeight() { return screen_height; }
 	float GetCamX() { return cam_x; }
 	float GetCamY() { return cam_y; }
-
+	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
 
 	static void SweptAABB(
 		float ml,			// move left 

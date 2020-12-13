@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <d3dx9.h>
 #include "KeyEventHandler.h"
@@ -11,10 +11,12 @@ protected:
 	LPCWSTR sceneFilePath;
 
 public: 
+	CScene();
 	CScene(int id, LPCWSTR filePath);
 
 	CKeyEventHandler * GetKeyEventHandler() { return key_handler; }
 	virtual void Load() = 0;
+	virtual void Load2(float x, float y) = 0; // load map có truyền tọa độ mới của mario
 	virtual void Unload() = 0;
 	virtual void Update(DWORD dt) = 0;
 	virtual void Render() = 0; 

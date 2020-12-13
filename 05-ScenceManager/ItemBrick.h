@@ -11,7 +11,9 @@
 #define ANI_BRICK_NORMAL 0
 #define	ANI_BRICK_COLLISION	1
 
+#define NORMAL	0
 #define MUSHROOM 1
+#define BUTTON	2
 
 #define ITEMBRICK_WIDTH	16
 
@@ -20,19 +22,13 @@ class ItemBrick : public CGameObject
 public:
 	float Start_Y;
 	bool isCollision;
-	int hasItem;
+	bool hasItem;
 	int Item;
 public:
 	ItemBrick(int item, float x = 0.0f, float y = 0.0f);
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	void SetState(int state);
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)
-	{
-		left = x;
-		top = y;
-		right = x + ITEMBRICK_WIDTH;
-		bottom = y + ITEMBRICK_WIDTH;
-	}
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };
 

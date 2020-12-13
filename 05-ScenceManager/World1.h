@@ -33,6 +33,7 @@ protected:
 	MarioOverWorld* player;					// A play scene has to have player, right? 
 	Map* map;
 	vector<LPGAMEOBJECT> objects;
+	int MapHeight, MapWidth;
 
 	void _ParseSection_MAP(string line);
 	void _ParseSection_TEXTURES(string line);
@@ -46,6 +47,7 @@ public:
 	World1(int id, LPCWSTR filePath);
 
 	virtual void Load();
+	virtual void Load2(float, float);
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();

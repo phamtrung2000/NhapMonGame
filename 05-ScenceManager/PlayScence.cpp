@@ -11,36 +11,23 @@
 #include "Portal.h"
 #include "QuestionBrickItem.h"
 #include "BrickItem.h"
+#include "MarioTail.h"
+#include "Game.h"
+#include "Camera.h"
 
-CPlayScene::CPlayScene(int id, LPCWSTR filePath):
-	CScene(id, filePath)
+CPlayScene* CPlayScene::__instance = NULL;
+
+CPlayScene::CPlayScene()
 {
-	player = NULL;
-	map = NULL;
-	key_handler = new CPlayScenceKeyHandler(this);
 }
 
-/*
-	Load scene resources from scene file (textures, sprites, animations and objects)
-	See scene1.txt, scene2.txt for detail format specification
-*/
-
-void CPlayScene::_ParseSection_MAP(string line)
+CPlayScene::CPlayScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
-	vector<string> tokens = split(line);
-
-	if (tokens.size() < 6) return; // skip invalid lines
-
-	int texID = atoi(tokens[0].c_str());
-	wstring path = ToWSTR(tokens[1]);
-	int R = atoi(tokens[2].c_str());
-	int G = atoi(tokens[3].c_str());
-	int B = atoi(tokens[4].c_str());
-	wstring pathtxt = ToWSTR(tokens[5]);
-
-	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
-	map = new Map();
-	map->LoadMap(texID,pathtxt);
+	SceneID = id;
+	mario = NULL;
+	map = NULL;
+	hud = NULL;
+	key_handler = new CPlayScenceKeyHandler(this);
 }
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -158,13 +145,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		case OBJECT_TYPE_MARIO:
 		{
-			if (player != NULL)
+			if (mario != NULL)
 			{
 				DebugOut(L"[ERROR] MARIO object was created before!\n");
 				return;
 			}
 			obj = new Mario(x, y);
-			player = (Mario*)obj;
+			obj = _Mario;
+			mario = (Mario*)obj;
 
 			DebugOut(L"[INFO] Player object created!\n");
 		}break;
@@ -173,7 +161,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		case OBJECT_TYPE_GOOMBA: obj = new CGoomba(); break;
 		case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
 		case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item,x,y); break;
-		case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height); break;
+		case OBJECT_TYPE_WARPPIPE:
+		{
+			if(tokens.size() > 6 && tokens[6] == "true")
+				obj = new WarpPipe(width, height,true);
+			else
+				obj = new WarpPipe(width, height, false);
+
+		}break;
+
 		case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
 		case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
 		case OBJECT_TYPE_FIREPIRANHAPLANT: obj = new FirePiranhaPlant(); break;
@@ -191,6 +187,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		case OBJECT_TYPE_GREENFLYKOOPAS: obj = new GreenFlyKoopas(); break;
 		case OBJECT_TYPE_COIN: obj = new Coin(); break;
 		case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
+		/*case 1100:
+		{
+			obj = new HUD();
+			hud = (HUD*)obj; 
+		}break;*/
 		case OBJECT_TYPE_PORTAL:
 			{	
 				float r = atof(tokens[4].c_str());
@@ -214,6 +215,36 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	objects.push_back(obj);
 }
 
+
+void CPlayScene::_ParseSection_MAP(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 6) return; // skip invalid lines
+
+	int texID = atoi(tokens[0].c_str());
+	wstring path = ToWSTR(tokens[1]);
+	int R = atoi(tokens[2].c_str());
+	int G = atoi(tokens[3].c_str());
+	int B = atoi(tokens[4].c_str());
+	wstring pathtxt = ToWSTR(tokens[5]);
+
+	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
+
+	_Map->LoadMap(texID, pathtxt);
+}
+
+void CPlayScene::_ParseSection_HUD(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	_HUD->LoadHUD(pathtxt);
+}
+
 void CPlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
@@ -233,10 +264,6 @@ void CPlayScene::Load()
 
 		if (line == "[TEXTURES]") {
 			section = SCENE_SECTION_TEXTURES; continue; }
-
-		if (line == "[MAP]") {
-			section = SCENE_SECTION_MAP; continue;
-		}
 		if (line == "[SPRITES]") { 
 			section = SCENE_SECTION_SPRITES; continue; }
 		if (line == "[ANIMATIONS]") { 
@@ -245,8 +272,13 @@ void CPlayScene::Load()
 			section = SCENE_SECTION_ANIMATION_SETS; continue; }
 		if (line == "[OBJECTS]") { 
 			section = SCENE_SECTION_OBJECTS; continue; }
-		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }	
-
+		if (line == "[MAP]") {
+			section = SCENE_SECTION_MAP; continue;
+		}
+		if (line == "[HUD]") {
+			section = SCENE_SECTION_HUD; continue;
+		}
+		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 		switch (section)
 		{ 
 			case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
@@ -255,33 +287,86 @@ void CPlayScene::Load()
 			case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 			case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+			case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
 		}
 	}
 
 	f.close();
-	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	_HUD->Init();
+	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(0, 255, 255));
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
+}
+
+void CPlayScene::Load2(float x,float y)
+{
+//	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
+//
+//	ifstream f;
+//	f.open(sceneFilePath);
+//
+//	// current resource section flag
+//	int section = SCENE_SECTION_UNKNOWN;
+//
+//	char str[MAX_SCENE_LINE];
+//	while (f.getline(str, MAX_SCENE_LINE))
+//	{
+//		string line(str);
+//
+//		if (line[0] == '#') continue;	// skip comment lines	
+//
+//		if (line == "[TEXTURES]") {
+//			section = SCENE_SECTION_TEXTURES; continue;
+//		}
+//
+//		if (line == "[MAP]") {
+//			section = SCENE_SECTION_MAP; continue;
+//		}
+//		if (line == "[SPRITES]") {
+//			section = SCENE_SECTION_SPRITES; continue;
+//		}
+//		if (line == "[ANIMATIONS]") {
+//			section = SCENE_SECTION_ANIMATIONS; continue;
+//		}
+//		if (line == "[ANIMATION_SETS]") {
+//			section = SCENE_SECTION_ANIMATION_SETS; continue;
+//		}
+//		if (line == "[OBJECTS]") {
+//			section = SCENE_SECTION_OBJECTS; continue;
+//		}
+//		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
+//
+//		switch (section)
+//		{
+//		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+//		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+//		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+//		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+//		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+//		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+//		}
+//	}
+//
+//	f.close();
+//	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(0, 255, 255));
+//	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
 void CPlayScene::Update(DWORD dt)
 {
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
-
 	vector<LPGAMEOBJECT> coObjects;
 
-	// mario bắn lửa
-	if (player->level == MARIO_LEVEL_FIRE && player->isAttacking == true && (player->ani == MARIO_ANI_FIRE_ATTACK_RIGHT_2 || player->ani == MARIO_ANI_FIRE_ATTACK_LEFT_2))
+	// Tạo đạn lửa khi mario bắn lửa
+	if (mario->level == MARIO_LEVEL_FIRE && mario->isAttacking == true && (mario->ani == MARIO_ANI_FIRE_ATTACK_RIGHT_2 || mario->ani == MARIO_ANI_FIRE_ATTACK_LEFT_2))
 	{
 		// kiểm soát số đạn <=2
-		if (player->NumberBullet <= 2 && player->NumberBullet > 0)
+		if (mario->NumberBullet <= 2 && mario->NumberBullet > 0)
 		{
-			//DebugOut(L"level=%i , number = %i \n", player->level, player->NumberBullet);
-			FireBullet* fb = new FireBullet(player->x + 5, player->y);
-			fb->SetSpeed(0.1 * player->nx, 0);
+			//DebugOut(L"level=%i , number = %i \n", mario->level, mario->NumberBullet);
+			FireBullet* fb = new FireBullet(mario->x + 5, mario->y);
+			fb->SetSpeed(0.15 * mario->nx, 0);
 			fb->FireMario = true;
 			// chiều của viên đạn
-			if (player->nx == 1)
+			if (mario->nx == 1)
 				fb->nx = 1;
 			else
 				fb->nx = -1;
@@ -290,10 +375,33 @@ void CPlayScene::Update(DWORD dt)
 			LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
 			fb->SetAnimationSet(ani_set);
 			objects.push_back(fb);
-			player->NumberBullet--;
+			mario->NumberBullet--;
 			// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-			player->isAttacking = false;
+			mario->isAttacking = false;
 		//	DebugOut(L"Them dan lua -> objects.size = %i \n", objects.size());
+		}
+	}
+	// tạo object đuôi(MarioTail) khi mario quật đuôi, xóa object khi thực hiện xong hành động quật đuôi
+	else if (mario->level == MARIO_LEVEL_TAIL && mario->isAttacking == true)
+	{
+		//DebugOut(L" ani = %i, time %i\n", mario->ani, mario->time_attack);
+		if (mario->nx == RIGHT && mario->ani == MARIO_ANI_TAIL_ATTACK_1 && mario->time_attack==0)
+		{
+			MarioTail* tail = new MarioTail(0, 0);
+			tail->SetPosition(mario->x, mario->y + 18);
+			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+			LPANIMATION_SET ani_set = animation_sets->Get(0);
+			tail->SetAnimationSet(ani_set);
+			objects.push_back(tail);
+		}
+		else if (mario->nx == LEFT && mario->ani == MARIO_ANI_TAIL_ATTACK_3 && mario->time_attack == 0)
+		{
+			MarioTail* tail = new MarioTail(0, 0);
+			tail->SetPosition(mario->x + MARIO_BIG_BBOX_WIDTH, mario->y + 18);
+			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+			LPANIMATION_SET ani_set = animation_sets->Get(0);
+			tail->SetAnimationSet(ani_set);
+			objects.push_back(tail);
 		}
 	}
 	
@@ -306,51 +414,49 @@ void CPlayScene::Update(DWORD dt)
 			{
 				QuestionBrick* a = (QuestionBrick*)objects[i];
 
-				if (a->hasItem == 0)
+				if (a->hasItem == true)
 				{
 					float x = objects[i]->x;
 					float y = objects[i]->y;
 					if (a->Item > MONEY)
 					{
-						switch (player->level)
+						switch (mario->level)
 						{
 						case MARIO_LEVEL_SMALL:
 						{
 							a->Item = MUSHROOM;
 						}break;
 
-						case MARIO_LEVEL_BIG:
-						{
-							a->Item = LEAF;
-						}break;
+					
 						default:
+							a->Item = LEAF;
 							break;
 						}
 					}
 					QuestionBrickItem* questionbrickitem = new QuestionBrickItem(a->Item, x, y);
-					questionbrickitem->CaclVx(player->x);
+					questionbrickitem->CaclVx(mario->x);
 					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 					LPANIMATION_SET ani_set = animation_sets->Get(QBI_MUSHROOM_ANISET_ID);
 					questionbrickitem->SetAnimationSet(ani_set);
 					objects.push_back(questionbrickitem);
-					a->hasItem = 1;
+					a->hasItem = false;
 				}
 			}
 			else if (objects[i]->ObjType == OBJECT_TYPE_ITEMBRICK && objects[i]->state == BRICK_STATE_EMPTY)
 			{
 				ItemBrick* itembrick = (ItemBrick*)objects[i];
 
-				if (itembrick->hasItem == 0 && itembrick->Item == MUSHROOM)
+				if (itembrick->hasItem == true && itembrick->Item == MUSHROOM)
 				{
 					float x = objects[i]->x;
 					float y = objects[i]->y;
 					BrickItem* brickitem = new BrickItem(itembrick->Item, x, y);
-					brickitem->CaclVx(player->x);
+					brickitem->CaclVx(mario->x);
 					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 					LPANIMATION_SET ani_set = animation_sets->Get(BI_MUSHROOM_ANISET_ID);
 					brickitem->SetAnimationSet(ani_set);
 					objects.push_back(brickitem);
-					itembrick->hasItem = 1;
+					itembrick->hasItem = false;
 				}
 			}
 			else if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
@@ -410,14 +516,13 @@ void CPlayScene::Update(DWORD dt)
 				//DebugOut(L"1.i=%i,	state=%i, tyle=%i\n", i, objects[i]->GetState(), objects[i]->ObjType);
 				//DebugOut(L"Xoa dan lua -> objects.size = %i \n", objects.size());
 				if(fb->FireMario==true)
-					player->NumberBullet++;
+					mario->NumberBullet++;
 				objects.erase(objects.begin() + i);
 				continue;
 			}
 		}
 			
-		
-}
+	}
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -425,94 +530,94 @@ void CPlayScene::Update(DWORD dt)
 		if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT)
 		{
 			FirePiranhaPlant* fireplant = (FirePiranhaPlant*)objects[i];
-			fireplant->GetEnemyPos(player->x, player->y);
-			if (abs(player->x - fireplant->x) <= 20 && fireplant->Stop == true)
+			fireplant->GetEnemyPos(mario->x, mario->y);
+			if (abs(mario->x - fireplant->x) <= 20 && fireplant->Stop == true)
 				fireplant->SetState(FIREPIRANHAPLANT_STATE_STOP);
 			else if (fireplant->Stop == true)
 			{
 				fireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
 				fireplant->Stop = false;
 			}
-			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", mario->x, mario->y, fireplant->x, fireplant->y);
 		}
 		else if (objects[i]->ObjType == OBJECT_TYPE_GREENPLANT)
 		{
 			GreenPlant* greenplant = (GreenPlant*)objects[i];
-			greenplant->GetEnemyPos(player->x, player->y);
-			if (abs(player->x - greenplant->x) <= 20 && greenplant->isBlocked == true)
+			greenplant->GetEnemyPos(mario->x, mario->y);
+			if (abs(mario->x - greenplant->x) <= 20 && greenplant->isBlocked == true)
 				greenplant->SetState(GREENPLANT_STATE_STOP);
 			else if (greenplant->isBlocked == true)
 			{
 				greenplant->SetState(GREENPLANT_STATE_APPEAR);
 				greenplant->isBlocked = false;
 			}
-			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", mario->x, mario->y, fireplant->x, fireplant->y);
 		}
 		else if (objects[i]->ObjType == OBJECT_TYPE_GREENFIREPLANT)
 		{
 			GreenFirePlant* greenfireplant = (GreenFirePlant*)objects[i];
-			greenfireplant->GetEnemyPos(player->x, player->y);
-			if (abs(player->x - greenfireplant->x) <= 20 && greenfireplant->Stop == true)
+			greenfireplant->GetEnemyPos(mario->x, mario->y);
+			if (abs(mario->x - greenfireplant->x) <= 20 && greenfireplant->Stop == true)
 				greenfireplant->SetState(FIREPIRANHAPLANT_STATE_STOP);
 			else if (greenfireplant->Stop == true)
 			{
 				greenfireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
 				greenfireplant->Stop = false;
 			}
-			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", player->x, player->y, fireplant->x, fireplant->y);
+			//DebugOut(L"mario x = %f, mario y = %f, plant x = %f, plant y =%f\n", mario->x, mario->y, fireplant->x, fireplant->y);
 		}
 		else if (objects[i]->ObjType == OBJECT_TYPE_KOOPAS && objects[i]->GetState() == KOOPAS_STATE_SHELL_HOLD )
 		{
 			Koopas* koopas = (Koopas*)objects[i];
-			if (player->pressA == false)
+			if (mario->pressA == false)
 			{
 				koopas->isHold = false;
-				if (player->nx == 1)
+				if (mario->nx == 1)
 					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 				else
 					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
 			}
 			else
 			{
-				if (player->nx == 1)
+				if (mario->nx == 1)
 				{
-					//koopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
-					if (player->level == MARIO_LEVEL_SMALL)
+					//koopas->x = mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
+					if (mario->level == MARIO_LEVEL_SMALL)
 					{
-						koopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
-						koopas->y = player->y - 2;
+						koopas->x = mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						koopas->y = mario->y - 2;
 					}
-					else if (player->level == MARIO_LEVEL_TAIL)
+					else if (mario->level == MARIO_LEVEL_TAIL)
 					{
-						koopas->x = player->x + MARIO_TAIL_BBOX_WIDTH + 1;
-						koopas->y = player->y + 7;
+						koopas->x = mario->x + MARIO_TAIL_BBOX_WIDTH + 1;
+						koopas->y = mario->y + 7;
 					}
 					else
 					{
-						koopas->x = player->x + MARIO_BIG_BBOX_WIDTH + 1;
-						koopas->y = player->y + 6;
+						koopas->x = mario->x + MARIO_BIG_BBOX_WIDTH + 1;
+						koopas->y = mario->y + 6;
 					}
-					koopas->dx = player->dx;
-					koopas->nx = player->nx;
-				//	DebugOut(L"player x = %f, koopas x = %f, player right = %f\n", player->x, koopas->x);
+					koopas->dx = mario->dx;
+					koopas->nx = mario->nx;
+				//	DebugOut(L"mario x = %f, koopas x = %f, mario right = %f\n", mario->x, koopas->x);
 				}
 				else
 				{
 
-					//koopas->x = player->x - KOOPAS_BBOX_WIDTH - 1;
-					//DebugOut(L"vao day, vx=%f\n", player->vx);
-					if (player->level == MARIO_LEVEL_SMALL)
+					//koopas->x = mario->x - KOOPAS_BBOX_WIDTH - 1;
+					//DebugOut(L"vao day, vx=%f\n", mario->vx);
+					if (mario->level == MARIO_LEVEL_SMALL)
 					{
-						koopas->x = player->x - KOOPAS_BBOX_WIDTH - 1;
-						koopas->y = player->y - 2;
+						koopas->x = mario->x - KOOPAS_BBOX_WIDTH - 1;
+						koopas->y = mario->y - 2;
 					}
 					else
 					{
-						koopas->x = player->x - KOOPAS_BBOX_WIDTH - 1;
-						koopas->y = player->y + 5;
+						koopas->x = mario->x - KOOPAS_BBOX_WIDTH - 1;
+						koopas->y = mario->y + 5;
 					}
-					koopas->dx = player->dx;
-					koopas->nx = player->nx;
+					koopas->dx = mario->dx;
+					koopas->nx = mario->nx;
 
 				}
 			}
@@ -521,131 +626,132 @@ void CPlayScene::Update(DWORD dt)
 		else if (objects[i]->ObjType == OBJECT_TYPE_GREENKOOPAS && objects[i]->GetState() == GREENKOOPAS_STATE_SHELL_HOLD)
 		{
 			GreenKoopas* greenkoopas = (GreenKoopas*)objects[i];
-			if (player->pressA == false)
+			if (mario->pressA == false)
 			{
 				greenkoopas->isHold = false;
-				if (player->nx == 1)
+				if (mario->nx == 1)
 					greenkoopas->SetState(GREENKOOPAS_STATE_SHELL_WALKING_RIGHT);
 				else
 					greenkoopas->SetState(GREENKOOPAS_STATE_SHELL_WALKING_LEFT);
 			}
 			else
 			{
-				if (player->nx == RIGHT)
+				if (mario->nx == RIGHT)
 				{
-					if (player->level == MARIO_LEVEL_SMALL)
+					if (mario->level == MARIO_LEVEL_SMALL)
 					{
-						//greenkoopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
-						greenkoopas->x = player->x + MARIO_SMALL_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y - 2;
+						//greenkoopas->x = mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						greenkoopas->x = mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y - 2;
 					}
-					else if (player->level == MARIO_LEVEL_TAIL)
+					else if (mario->level == MARIO_LEVEL_TAIL)
 					{
-						greenkoopas->x = player->x + MARIO_TAIL_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y + 7;
+						greenkoopas->x = mario->x + MARIO_TAIL_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y + 7;
 					}
 					else
 					{
-						greenkoopas->x = player->x + MARIO_BIG_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y + 6;
+						greenkoopas->x = mario->x + MARIO_BIG_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y + 6;
 					}
-					greenkoopas->dx = player->dx;
-					greenkoopas->nx = player->nx;
-					//	DebugOut(L"player x = %f, greenkoopas x = %f, player right = %f\n", player->x, greenkoopas->x);
+					greenkoopas->dx = mario->dx;
+					greenkoopas->nx = mario->nx;
+					//	DebugOut(L"mario x = %f, greenkoopas x = %f, mario right = %f\n", mario->x, greenkoopas->x);
 				}
 				else
 				{
 
-					//greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH - 1;
-					//DebugOut(L"vao day, vx=%f\n", player->vx);
-					if (player->level == MARIO_LEVEL_SMALL)
+					//greenkoopas->x = mario->x - GREENKOOPAS_BBOX_WIDTH - 1;
+					//DebugOut(L"vao day, vx=%f\n", mario->vx);
+					if (mario->level == MARIO_LEVEL_SMALL)
 					{
-						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y - 2;
+						greenkoopas->x = mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y - 2;
 					}
-					else if (player->level == MARIO_LEVEL_TAIL)
+					else if (mario->level == MARIO_LEVEL_TAIL)
 					{
-						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y + 7;
+						greenkoopas->x = mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y + 7;
 					}
 					else
 					{
-						greenkoopas->x = player->x - GREENKOOPAS_BBOX_WIDTH + 1;
-						greenkoopas->y = player->y + 6;
+						greenkoopas->x = mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
+						greenkoopas->y = mario->y + 6;
 					}
-					greenkoopas->dx = player->dx;
-					greenkoopas->nx = player->nx;
+					greenkoopas->dx = mario->dx;
+					greenkoopas->nx = mario->nx;
 
 				}
 			}
 
+		}
+		else if (objects[i]->ObjType == OBJECT_TYPE_MARIO_TAIL)
+		{
+			MarioTail* tail = (MarioTail*)objects[i];
+			if (mario->nx == RIGHT && mario->isAttacking==true)
+			{
+				if (mario->ani == MARIO_ANI_TAIL_ATTACK_3)
+					tail->SetPosition(mario->x + MARIO_TAIL_BBOX_WIDTH, mario->y + 18);
+				else if (mario->ani == MARIO_ANI_TAIL_ATTACK_4)
+					tail->isDie = true;
+				else
+					tail->SetPosition(mario->x, mario->y + 18);
+			}
+			else if (mario->nx == LEFT && mario->isAttacking == true)
+			{
+				if (mario->ani == MARIO_ANI_TAIL_ATTACK_1)
+					tail->SetPosition(mario->x - 7, mario->y + 18);
+				else if (mario->ani == MARIO_ANI_TAIL_ATTACK_4)
+					tail->isDie = true;
+				else
+					tail->SetPosition(mario->x + MARIO_BIG_BBOX_WIDTH, mario->y + 18);
+			}
 		}
 		objects[i]->Update(dt, &coObjects);
 	}
 
 	//DebugOut(L"obj size=%i, cooobj size = %i\n", objects.size(),coObjects.size());
 
+	_Camera->Update();
+	_HUD->Update(dt);
+
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return; 
+	if (mario == NULL) return; 
 
-	// Update camera to follow mario
-	float cx, cy;
-	player->GetPosition(cx, cy);
+	
+	
 
-	CGame *game = CGame::GetInstance();
-
-	cx -= game->GetScreenWidth() / 2;
-
-	// xóa khúc vàng ở sau lúc bắt đầu game
-	if (cx < 0)
-	{
-		cx = 0;
-	}
-	if (cx > MAP_MAX_WIDTH)
-		cx = MAP_MAX_WIDTH;
-
-	cy -= game->GetScreenHeight() /2 ;
-	/*if (cy >= 270)
-	{
-		cy = 270;
-	}
-	else
-		cy = 270;*/
-	/*if (player->y >= 240)
-		cy = 240;*/
-
-	if (player->y >= 320/2)
-		cy = 150;
-
-	// CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
-	CGame::GetInstance()->SetCamPos(cx, cy);
 }
 
 void CPlayScene::Render()
 {
-	map->DrawMap();
-	for (int i = 0; i < objects.size(); i++)
+	//map->DrawMap();
+	_Map->DrawMap();
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
 		if (objects[i]->isDie != true)
 		{
 			objects[i]->Render();
 		}
 	}
+	_HUD->Render();
 }
 
-/*
-	Unload current scene
-*/
 void CPlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();
-	player = NULL;
+	mario = NULL;
 	map = NULL;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
+}
+
+CPlayScene* CPlayScene::GetInstance()
+{
+	if (__instance == NULL) __instance = new CPlayScene();
+	return __instance;
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
@@ -725,8 +831,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetState(MARIO_STATE_JUMP);
 		if (mario->GetLevel() == 3)
 		{
-			
-			if (mario->isFalling == true)
+			/*if (mario->isFalling == true)
 			{
 				mario->SetState(MARIO_STATE_FLY_LOW);
 			}
@@ -734,7 +839,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			{
 				mario->canFlyS = true;
 				mario->SetState(MARIO_STATE_FLY_HIGH);
-			}
+			}*/
 		}
 	}
 	break;
@@ -743,15 +848,12 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		//DebugOut(L"Down X\n");
 		mario->SetState(MARIO_STATE_JUMP_LOW);
-
-		//if (mario->GetLevel() == 3)
-		//	mario->canFlyX = true;
 	}
 	break;
 
 	case DIK_R: // reset
-	mario->Reset();
-	break;
+		mario->Reset();
+		break;
 
 	case DIK_A:
 	{
@@ -767,8 +869,6 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_LEFT:
 	{
 		//DebugOut(L"DIK_LEFT	\n");
-		mario->level_of_stopping = 1;
-		mario->level_of_walking = 0;
 		if (mario->GetState() == MARIO_STATE_WALKING_RIGHT)
 		{
 			//mario->SetState(MARIO_STATE_WALKING_LEFT);
@@ -781,8 +881,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_RIGHT:
 	{
 		//DebugOut(L"DIK_RIGHT\n");
-		mario->level_of_stopping = 1;
-		mario->level_of_walking = 0;
+		
 	}
 	break;
 
@@ -813,11 +912,14 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 
 	case DIK_S:
 	{
-		//DebugOut(L"Up S\n");
+		DebugOut(L"Up S\n");
 		// thả nút S thì rớt xuống liền
 		if (mario->vy < 0)
 		{
-			mario->vy = 0;
+			/*if (mario->vy <= -MARIO_JUMP_SPEED_FAST/2 && mario->GoHiddenWorld == false)
+				mario->vy = 0;
+			else
+				mario->isFalling = true;*/
 			mario->isFalling = true;
 			mario->OnGround = false;
 		}
@@ -848,7 +950,6 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE *states)
 {
 	CGame *game = CGame::GetInstance();
-	//if (filePath == L"scene1_SoCua.txt")
 	Mario *mario = ((CPlayScene*)scence)->GetPlayer();
 
 	// disable control key when Mario die 
@@ -871,35 +972,15 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	}
 	else
 		mario->SetState(MARIO_STATE_IDLE);
+
+	
 	if (game->IsKeyDown(DIK_A))
 	{
 		if (mario->pressA == true && (mario->GetState() == MARIO_STATE_WALKING_LEFT || mario->GetState() == MARIO_STATE_WALKING_RIGHT))
 			mario->isRunning = true;
 	}
-
 	if (game->IsKeyDown(DIK_X))
 	{
-		/*int state = 0;
-		if (mario->OnGround == true)
-		{
-			state = MARIO_STATE_JUMP_LOW;
-			if (mario->canFlyX == true)
-				state = MARIO_STATE_FLY_HIGH;
-		}
-		if (mario->GetLevel() == 3)
-		{
-			if (mario->isFalling == true)
-			{
-				state = MARIO_STATE_FLY_LOW;
-			}
-			if (mario->isMaxRunning == true)
-			{
-				mario->canFlyX = true;
-				state = MARIO_STATE_FLY_HIGH;
-			}
-		}
-		mario->SetState(state);*/
-
 		if (mario->OnGround == true)
 		{
 			mario->SetState(MARIO_STATE_JUMP_LOW);
@@ -918,20 +999,31 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 				mario->SetState(MARIO_STATE_FLY_HIGH);
 			}
 		}
-	}
-	/*else if (game->IsKeyDown(DIK_S))
-	{
-		mario->SetState(MARIO_STATE_JUMP);
-		if (mario->canFlyS == true)
+
+	/*	if (mario->OnGround == true)
+		{
+			mario->SetState(MARIO_STATE_JUMP_LOW);
+			if (mario->GetLevel() == 3)
+			{
+				if (mario->isMaxRunning == true)
+				{
+					mario->canFlyX = true;
+					mario->SetState(MARIO_STATE_FLY_HIGH);
+				}
+			}
+		}
+		else
 		{
 			if (mario->isFalling == true)
 			{
 				mario->SetState(MARIO_STATE_FLY_LOW);
 			}
-			if (mario->isMaxRunning == true)
+			else
 			{
-				mario->SetState(MARIO_STATE_FLY_HIGH);
+				if(mario->canFlyX == true)
+					mario->SetState(MARIO_STATE_FLY_HIGH);
 			}
-		}
-	}*/
+		}*/
+		
+	}
 }

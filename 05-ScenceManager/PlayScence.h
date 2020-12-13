@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -9,6 +9,9 @@ using namespace std;
 #include "Utils.h"
 #include "Map.h"
 #include "Mario.h"
+#include "HUD.h"
+
+#define SCENE_ID_HIDDENMAP_1_1 3
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -17,6 +20,7 @@ using namespace std;
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_MAP		7
+#define SCENE_SECTION_HUD		8
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -35,6 +39,7 @@ using namespace std;
 #define OBJECT_TYPE_BRICKITEM				14
 #define OBJECT_TYPE_GREENPLANT				15
 #define OBJECT_TYPE_GREENFIREPLANT			16
+#define OBJECT_TYPE_MARIO_TAIL				17
 #define OBJECT_TYPE_FIREBULLET				100
 
 #define OBJECT_TYPE_PORTAL	50
@@ -48,32 +53,40 @@ using namespace std;
 
 class CPlayScene: public CScene
 {
-protected: 
-	Mario *player;					// A play scene has to have player, right? 
+private:
+	static CPlayScene* __instance;
+public:
+	Mario* mario;			// A play scene has to have mario, right? 
 	Map* map;
+	HUD* hud;
 	vector<LPGAMEOBJECT> objects;
 
-	void _ParseSection_MAP(string line);
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 
-	
+	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
+	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
 public: 
+	int SceneID;
+	CPlayScene();
 	CPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();
+	virtual void Load2(float, float); // load cảnh + tọa độ mới của mario
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
 
-	Mario * GetPlayer() { return player; } 
-
-	//friend class CPlayScenceKeyHandler;
+	Mario * GetPlayer() { return mario; } 
+	HUD* GetHUD() { return hud; }
+	static CPlayScene* GetInstance();
+	
 };
 
+//friend class CPlayScenceKeyHandler;
 class CPlayScenceKeyHandler : public CScenceKeyHandler
 {
 public: 

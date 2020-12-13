@@ -13,3 +13,10 @@ void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
 	r = x + COIN_BBOX_WIDTH;
 	b = y + COIN_BBOX_HEIGHT;
 }
+
+Coin::Coin()
+{
+	ObjType = 12;
+	vx = vy = 0;
+	Category = CATEGORY::ITEM;
+}

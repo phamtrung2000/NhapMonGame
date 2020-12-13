@@ -11,6 +11,7 @@ Koopas::Koopas()
 	isHold = isShell = isShell_2 =false;
 	ObjType = 3;
 	GoAround = Revive = false;
+	Category = CATEGORY::ENEMY;
 }
 
 void Koopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -207,7 +208,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 
 	//DebugOut(L"state=%i, vx=%f,vy=%f, nx=%i, y = %f\n", state, vx, vy, nx, y);
-	DebugOut(L"x max %f, x min %f, x %f, state %i\n", X_max, X_min, x, state);
+	//DebugOut(L"x max %f, x min %f, x %f, state %i\n", X_max, X_min, x, state);
 	if (isShell == false && isShell_2 == false)
 	{
 		vy += KOOPAS_GRAVITY * dt;
