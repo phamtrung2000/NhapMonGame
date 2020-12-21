@@ -1,6 +1,7 @@
 ﻿#include "Koopas.h"
 #include "ItemBrick.h"
 #include "FireBullet.h"
+#include "PlayScence.h"
 
 Koopas::Koopas()
 {
@@ -9,7 +10,7 @@ Koopas::Koopas()
 	X_min = MIN;
 	CountXmaxXmin = false;
 	isHold = isShell = isShell_2 =false;
-	ObjType = 3;
+	ObjType = OBJECT_TYPE_KOOPAS;
 	GoAround = Revive = false;
 	Category = CATEGORY::ENEMY;
 }
@@ -353,8 +354,8 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					this->x += min_tx * dx + nx * 0.4f;
 					if (CountXmaxXmin == false)
 					{
-						X_min = brick->x - ITEMBRICK_WIDTH / 2;
-						X_max = X_min + ITEMBRICK_WIDTH;
+						X_min = brick->x - ITEMBRICK_WIDTH / 2 - 2;
+						X_max = X_min + ITEMBRICK_WIDTH - 2;
 						CountXmaxXmin = true;
 					}
 				}

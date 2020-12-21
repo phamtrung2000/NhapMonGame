@@ -4,6 +4,11 @@
 #include "World1.h"
 
 
+//MarioOverWorld* MarioOverWorld::GetInstance()
+//{
+//	if (__instance == NULL) __instance = new MarioOverWorld();
+//	return __instance;
+//}
 
 MarioOverWorld::MarioOverWorld(float x, float y) : CGameObject()
 {
@@ -16,6 +21,8 @@ MarioOverWorld::MarioOverWorld(float x, float y) : CGameObject()
 	Scene = 0;
 	InGate = false;
 }
+
+
 
 void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

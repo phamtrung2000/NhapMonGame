@@ -39,6 +39,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (y > Start_Y - QUESTIONBRICKITEM__BBOX && vy >= 0)
 			isDie = true;
 		y += dy;
+		
 	}break;
 
 	case MUSHROOM:

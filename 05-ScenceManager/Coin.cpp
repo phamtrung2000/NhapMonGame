@@ -1,4 +1,5 @@
 #include "Coin.h"
+#include "PlayScence.h"
 
 void Coin::Render()
 {
@@ -16,7 +17,7 @@ void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 Coin::Coin()
 {
-	ObjType = 12;
+	ObjType = OBJECT_TYPE_COIN;
 	vx = vy = 0;
 	Category = CATEGORY::ITEM;
 }

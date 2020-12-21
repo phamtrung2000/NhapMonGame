@@ -4,6 +4,11 @@
 #include "WarpPipe.h"
 #include "Game.h"
 #include "Koopas.h"
+#include "EffectSmoke.h"
+#include "EffectHit.h"
+#include "Utils.h"
+#include "PlayScence.h"
+
 void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// đầu màn hình
@@ -17,7 +22,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CGameObject::Update(dt);
 
-	if (FireMario)
+	if (FireMario == true)
 	{
 		vy += FIREBULLET_GRAVITY * dt;
 
@@ -47,19 +52,19 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-			x += min_tx * dx + nx * 0.4f;
-			//y += min_ty * dy + ny * 0.4f;
-
-			if (ny != 0) vy = 0;
+			
 
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
-				CATEGORY category = e->obj->Category;
-				switch (category)
+				
+				if (e->obj != NULL)
 				{
+					switch (e->obj->Category)
+					{
 					case CATEGORY::ENEMY:
 					{
+						
 						if (dynamic_cast<CGoomba*>(e->obj))
 						{
 							CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
@@ -80,38 +85,58 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									koopas->SetState(KOOPAS_STATE_DIE);
 
 								this->isDie = true;
-								vx = 0;
-								vy = 0;
 							}
 						}
 						else
 						{
 							e->obj->isDie = this->isDie = true;
 						}
-							
+
+						auto hit = new EffectHit(e->obj->x, e->obj->y);
+						_PlayScene->objects.push_back(hit);
+
 					}break;
 
-					case CATEGORY::OBJECT:
+					case CATEGORY::OBJECT: case CATEGORY::GROUND:
 					{
+						
+			////
+
+			//if (ny != 0) vy = 0;
 						if (e->nx != 0)
 						{
+							y += min_ty * dy + ny * 0.4f;
 							if (dynamic_cast<Block*>(e->obj))
 							{
 								x += dx;
 							}
 							else
+							{
 								this->isDie = true;
+								auto effect = new EffectSmoke(this->x, this->y);
+								_PlayScene->objects.push_back(effect);
+							}
 						}
-						else
+						else if (e->ny < 0)
+						{
+							x += min_tx * dx + nx * 0.4f;
 							vy = -0.15f;
+						}
+							
 					}break;
 
-					case CATEGORY::GROUND:
+					default:
 					{
-						vy = -0.15f;
+						x += dx;
+						y += dy;
+
+			//if (ny != 0) vy = 0;
 					}break;
 
+
+					}
 				}
+				
 				
 			}
 		}
@@ -139,4 +164,22 @@ void FireBullet::Render()
 	animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();
+}
+
+void FireBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	right = x + FIREBULLET_BBOX;
+	bottom = y + FIREBULLET_BBOX;
+}
+
+FireBullet::FireBullet(float a, float b)
+{
+	FireMario = isDie = false;
+	ObjType = OBJECT_TYPE_FIREBULLET;
+	x = a;
+	y = b;
+	Category = CATEGORY::WEAPON;
+	SetSpeed(FIREBULLET_VX_SPEED * _Mario->nx, 0);
 }

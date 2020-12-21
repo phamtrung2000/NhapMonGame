@@ -2,7 +2,7 @@
 
 FirePiranhaPlant::FirePiranhaPlant()
 {
-	ObjType = 9;
+	ObjType = OBJECT_TYPE_FIREPIRANHAPLANT;
 	Stop = isInit = canAttack = isAttacking = false;
 	NumberBullet = 1;
 	CalcAtkTime = 0;

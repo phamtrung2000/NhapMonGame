@@ -56,7 +56,7 @@ void ItemBrick::Render()
 		DebugOut(L"isCollision==false\n");
 	DebugOut(L"State = %i, Ani = %i\n", state, ani);*/
 	
-	animation_set->at(ani)->Render(x, y);
+	//animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();
 }

@@ -11,6 +11,7 @@ MarioTail::MarioTail(float x, float y)
 	ObjType = OBJECT_TYPE_MARIO_TAIL;
 	vx = vy = 0;
 	SetPosition(x, y);
+	Category = CATEGORY::WEAPON;
 }
 void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -45,7 +46,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						goomba->SetState(GOOMBA_STATE_DIE_2);
 					}
 				}
-				coObjects->at(i)->isDie = true;
+				//coObjects->at(i)->isDie = true;
 			}
 		}
 	}

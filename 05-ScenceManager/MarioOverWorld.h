@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <assert.h>
 #include "Utils.h"
-#include "Game.h"
 #include "GameObject.h"
 #include "Ground.h"
 
@@ -37,13 +36,17 @@
 class MarioOverWorld : public CGameObject
 {
 public:
+	//static MarioOverWorld* __instance;
+
 	int level;
 	float start_x;			// initial position of MarioOverWorld at scene
 	float start_y;
 	int Scene;
 	bool InGate; // mario đang đứng trên cổng thì mới cho phép chuyển cảnh
-public:
+
+	//static MarioOverWorld* GetInstance();
 	MarioOverWorld(float x = 0.0f, float y = 0.0f);
+	
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
 	void SetState(int state);

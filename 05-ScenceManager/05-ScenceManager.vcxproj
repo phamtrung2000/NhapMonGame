@@ -131,6 +131,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="EffectHit.cpp" />
+    <ClCompile Include="EffectSmoke.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="Gate.cpp" />
@@ -171,6 +173,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="EffectHit.h" />
+    <ClInclude Include="EffectSmoke.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="Gate.h" />
@@ -240,9 +244,6 @@
     <Image Include="textures\sprites.png" />
     <Image Include="textures\World\World1\HiddenMap1.1.png" />
     <Image Include="textures\World\World1\Map1.1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="font\Super-Mario-Bros--3.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

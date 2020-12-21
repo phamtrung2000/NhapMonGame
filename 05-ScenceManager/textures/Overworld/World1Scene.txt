@@ -1,6 +1,8 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
 0	.\textures\Mario\mario1.png	255	255	255
+[HUD]
+.\textures\HUD\HUD.txt
 [MAP]
 300	.\textures\Overworld\World2Tile.png	255	255	255	.\textures\Overworld\World2Map.txt
 # id	left	top	right	bottom	texture_id

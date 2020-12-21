@@ -10,6 +10,7 @@ CPortal::CPortal(float l, float t, float r, float b, int scene_id )
 	y = t;
 	Width = r;
 	Height = b;
+	Category = CATEGORY::PORTAL;
 }
 
 void CPortal::Render()

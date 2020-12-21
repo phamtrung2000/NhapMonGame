@@ -9,7 +9,7 @@ protected:
 	CKeyEventHandler * key_handler;
 	int id;
 	LPCWSTR sceneFilePath;
-
+	int MapHeight, MapWidth;
 public: 
 	CScene();
 	CScene(int id, LPCWSTR filePath);

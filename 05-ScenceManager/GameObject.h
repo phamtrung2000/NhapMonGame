@@ -46,7 +46,9 @@ enum class CATEGORY
 	WEAPON,
 	ITEM,
 	GROUND,
-	OBJECT
+	OBJECT,
+	EFFECT,
+	PORTAL
 };
 
 class CGameObject

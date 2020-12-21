@@ -43,7 +43,7 @@ public:
 	float X_max, X_min;
 	bool CountXmaxXmin;
 	bool Revive;
-	DWORD ReviveTime;
+	ULONGLONG ReviveTime;
 	int Health;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

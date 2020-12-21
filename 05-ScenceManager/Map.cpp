@@ -58,6 +58,11 @@ int Map::GetWidth()
 	return MaxColumn * TileWidth;
 }
 
+void Map::UnLoad()
+{
+	__instance = NULL;
+}
+
 void Map::LoadMap(int texid, wstring map_txt)
 {
 	texID = texid;

@@ -23,6 +23,7 @@ public:
 	int GetHeight() { return height; }
 	int GetWidth() { return width; }
 	void Update();
+	void Update1();
 
 	static Camera* GetInstance();
 

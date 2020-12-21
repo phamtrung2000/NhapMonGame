@@ -5,7 +5,22 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dinput.h>
+#include <iostream>
+#include <fstream>
+
 #include "Scence.h"
+#include "Utils.h"
+
+#include "Mario.h"
+#include "MarioOverWorld.h"
+#include "Game.h"
+#include "Animations.h"
+#include "HUD.h"
+#include "Map.h"
+#include "Camera.h"
+#include "PlayScence.h"
+#include "World1.h"
+
 using namespace std;
 
 #define DIRECTINPUT_VERSION 0x0800
@@ -24,12 +39,14 @@ using namespace std;
 #define SCREEN_HEIGHT	320
 
 #define _Mario Mario::GetInstance()
+#define _MarioOverworld MarioOverWorld::GetInstance()
 #define _Game  CGame::GetInstance()
 #define _AnimationsSets CAnimationSets::GetInstance()
 #define _HUD HUD::GetInstance()
 #define _Map Map::GetInstance()
 #define _Camera Camera::GetInstance()
-//#define grid Grid::GetInstance()
+#define _PlayScene CPlayScene::GetInstance()
+//#define _WorldMap World1::GetInstance()
 
 class CGame
 {

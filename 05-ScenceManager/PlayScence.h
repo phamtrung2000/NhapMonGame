@@ -11,7 +11,7 @@ using namespace std;
 #include "Mario.h"
 #include "HUD.h"
 
-#define SCENE_ID_HIDDENMAP_1_1 3
+#define SCENE_ID_HIDDENMAP_1_1 11
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -51,14 +51,12 @@ using namespace std;
 #define MAX_SCENE_LINE 1024
 #define MAP_MAX_WIDTH	2816
 
-class CPlayScene: public CScene
+class CPlayScene : public CScene
 {
 private:
-	static CPlayScene* __instance;
+	
 public:
-	Mario* mario;			// A play scene has to have mario, right? 
-	Map* map;
-	HUD* hud;
+	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_TEXTURES(string line);
@@ -69,7 +67,7 @@ public:
 
 	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
-public: 
+public:
 	int SceneID;
 	CPlayScene();
 	CPlayScene(int id, LPCWSTR filePath);
@@ -80,19 +78,16 @@ public:
 	virtual void Render();
 	virtual void Unload();
 
-	Mario * GetPlayer() { return mario; } 
-	HUD* GetHUD() { return hud; }
 	static CPlayScene* GetInstance();
-	
 };
 
 //friend class CPlayScenceKeyHandler;
 class CPlayScenceKeyHandler : public CScenceKeyHandler
 {
-public: 
-	virtual void KeyState(BYTE *states);
+public:
+	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
-	virtual void OnKeyUp(int KeyCode) ;
-	CPlayScenceKeyHandler(CScene *s) :CScenceKeyHandler(s) {};
+	virtual void OnKeyUp(int KeyCode);
+	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
 

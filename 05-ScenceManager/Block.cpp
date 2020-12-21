@@ -1,4 +1,5 @@
 #include "Block.h"
+#include "PlayScence.h"
 
 void Block::Render()
 {
@@ -7,7 +8,7 @@ void Block::Render()
 
 Block::Block(int W, int H)
 {
-	ObjType = 6;
+	ObjType = OBJECT_TYPE_BLOCK;
 	Width = W;
 	Height = H;
 	Category = CATEGORY::OBJECT;

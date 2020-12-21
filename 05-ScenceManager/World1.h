@@ -1,9 +1,8 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <fstream>
 using namespace std;
 
-#include "Game.h"
 #include "Textures.h"
 #include "Scence.h"
 #include "GameObject.h"
@@ -19,6 +18,7 @@ using namespace std;
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_MAP		7
+#define SCENE_SECTION_HUD		8
 
 #define OBJECT_TYPE_MARIOOVERWORLD	0
 #define OBJECT_TYPE_GROUND			1
@@ -31,18 +31,18 @@ class World1 : public CScene
 {
 protected:
 	MarioOverWorld* player;					// A play scene has to have player, right? 
-	Map* map;
+	//Map* map;
 	vector<LPGAMEOBJECT> objects;
 	int MapHeight, MapWidth;
 
-	void _ParseSection_MAP(string line);
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 
-
+	void _ParseSection_MAP(string line);
+	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
 public:
 	World1(int id, LPCWSTR filePath);
 

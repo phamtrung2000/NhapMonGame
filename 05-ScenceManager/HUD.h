@@ -29,7 +29,7 @@ class HUD
 public:
 	int Score, MarioLife, Money;
 	ULONGLONG PlayTime, // thời gian chơi : 300s
-		countPlayTime; // biến đếm GetTickCount để trừ thời gian chơi đi 1
+		countPlayTime; // biến đếm GetTickCount64 để trừ thời gian chơi đi 1
 
 	static HUD* GetInstance();
 	HUD();
@@ -37,6 +37,7 @@ public:
 	void Init();
 	void Update(float dt);
 	void Render();
+	void Unload();
 	~HUD();
 
 	void _ParseSection_TEXTURES(string line);

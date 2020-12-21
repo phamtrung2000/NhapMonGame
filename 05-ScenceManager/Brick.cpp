@@ -1,8 +1,9 @@
 #include "Brick.h"
+#include "PlayScence.h"
 
 Brick::Brick()
 {
-	ObjType = 1;
+	ObjType = OBJECT_TYPE_BRICK;
 	vx = vy = 0.f;
 	Type = -1;
 }

@@ -30,6 +30,7 @@ public:
 	void _ParseSection_ROWS(string line);
 	int GetHeight();
 	int GetWidth();
+	void UnLoad();
 	~Map();
 };
 

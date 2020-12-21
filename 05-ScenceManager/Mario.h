@@ -31,6 +31,8 @@
 #define MARIO_STATE_ATTACK			900
 #define MARIO_STATE_RUNNING			1000
 
+#define MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG		89
+
 #define MARIO_ANI_BIG_IDLE_RIGHT			0
 #define MARIO_ANI_BIG_IDLE_LEFT				1
 #define MARIO_ANI_SMALL_IDLE_RIGHT			2
@@ -153,31 +155,36 @@
 #define MARIO_ANI_TAIL_FLY_FALL_RIGHT		87
 #define MARIO_ANI_TAIL_FLY_FALL_LEFT		88
 
+
+
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_TAIL	3
 #define	MARIO_LEVEL_FIRE	4
 
 #define MARIO_SMALL_BBOX_WIDTH  12
-#define MARIO_SMALL_BBOX_HEIGHT 15
+#define MARIO_SMALL_BBOX_HEIGHT 14//15
 
 #define MARIO_BIG_BBOX_WIDTH  14
-#define MARIO_BIG_BBOX_HEIGHT 27
+#define MARIO_BIG_BBOX_HEIGHT 26//27
 #define MARIO_BIG_BBOX_SITDOWN_HEIGHT 18
 
 #define MARIO_TAIL_BBOX_WIDTH  21
 #define MARIO_TAIL_BBOX_HEIGHT 28
 #define MARIO_TAIL_BBOX_SITDOWN_HEIGHT 18
 
-#define MARIO_UNTOUCHABLE_TIME 5000
+#define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
 #define LEFT -1
 #define RIGHT 1
 
-
 #define TIME_ATTACK 5
 #define TIME_FLY 200
-#define TIME_FLY_S 5
+#define TIME_FLY_S 40
+#define MARIO_UNTOUCHABLE_TIME 5000
+#define TIME_LEVEL_UP 3000
+#define ITIME_LEVEL_UP 180
+#define LEVEL_UP_DIVIDE	15
 
 class Mario : public CGameObject
 {
@@ -186,30 +193,38 @@ private:
 public:
 	int level;
 	bool untouchable;
-	ULONGLONG untouchable_start;
+	ULONGLONG untouchable_start,
+		LevelUpTime, // khoảng thời gian hiện effect tăng cấp
+		a;
+	int iLevelUpTime;
+	bool test;
+
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
 
-	bool OnGround;
-	bool isRunning;
+	bool OnGround; // chạm đất
+	bool isRunning; 
 	int	 level_of_running;
-	bool ChangeDirection;
+	bool ChangeDirection; // chuyển hướng, để hiện ani khựng lại quay đầu
 	int  level_of_walking;
 	int  level_of_stopping;
 	bool isMaxRunning;
 	
-	bool isFalling;
-	bool isSitDown, GoHiddenWorld;
-	bool isAttacking, endAttack;
-	int time_attack;
-	int time_fly;
-	int NumberBullet;
+	bool isFalling, // đang rớt xuống
+		isSitDown, // đang ngồi
+		GoHiddenWorld, // đi vào map ẩn để hiện ani xuống cống
+		isAttacking, // đang ở state attack
+		endAttack; // thực hiện xong động tác quật đuôi thì mới cho phép quật đuôi tiếp
+	int time_attack; // biến đếm thời gian thực hiện động tác quật đuôi để hiện ani tương ứng
+	int time_fly,FlyTimePer1; // thời gian bay, hết thời gian thì rớt xuống
+	int NumberBullet; // số lượng đạn ( 2 viên )
 	int ani;
 	bool isHolding = false, pressA = false, canKick = false;
 	int Height,Width;
 
-	bool canFlyX, canFlyS; // biến để cắm cờ lúc mario đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
-	bool isFlyingLow,isFlyingHigh;
+	bool canFlyX, canFlyS, // mario có thể bay khi đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
+		isFlyingLow, isFlyingHigh, // biến để xác định mario đang ở state fly
+		isLevelUp; // mario tăng cấp để hiện effect tăng cấp
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
@@ -222,8 +237,13 @@ public:
 	void StartUntouchable() { untouchable = true; untouchable_start = GetTickCount64(); }
 	void Reset();
 	void DownLevel();
+	void UpLevel();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Debug();
+	void Unload();
+	void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	void CollisionWithItem(LPCOLLISIONEVENT e);
 };
 
 //#include <algorithm>

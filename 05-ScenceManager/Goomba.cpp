@@ -6,7 +6,7 @@
 #include "Koopas.h"
 #include "FireBullet.h"
 #include "Ground.h"
-
+#include "Game.h"
 
 CGoomba::CGoomba()
 {
@@ -145,21 +145,22 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (GetState() != GOOMBA_STATE_DIE)
 		vy += GOOMBA_GRAVITY * dt;
+
 	if (state == GOOMBA_STATE_DIE)
 	{
 		if (time_die <= 20)
 			time_die++;
 		else
-		{
 			isDie = true;
-		}
 	}
 	else if (state == GOOMBA_STATE_DIE_2)
 	{
-		//vy += GOOMBA_GRAVITY * dt;
-		if (y > 450)
+		if(y > _Map->GetHeight())
 			isDie = true;
 	}
+
+	//if (isDie == true)
+	//	_HUD->Score += 100;
 
 
 	if (vx < 0 && x < 0)
@@ -299,7 +300,7 @@ void CGoomba::SetState(int state)
 		{
 			nx = -nx;
 			vx = -vx;
-			vy = -0.1f;
+			vy = GOOMBA_DIE_DEFLECT_SPEED;
 		}
 		break;
 

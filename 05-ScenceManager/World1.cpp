@@ -1,9 +1,20 @@
 ﻿#include "World1.h"
+#include "Game.h"
+#include "HUD.h"
+
+//World1::World1()
+//{
+//	player = NULL;
+//	map = NULL;
+//	SceneID = 0;
+//	key_handler = new CPlayScenceKeyHandler(this);
+//}
 
 World1::World1(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
 	player = NULL;
-	map = NULL;
+	//map = NULL;
+	//SceneID = id;
 	key_handler = new World1ScenceKeyHandler(this);
 	MapHeight = MapWidth = 0;
 }
@@ -27,9 +38,20 @@ void World1::_ParseSection_MAP(string line)
 	wstring pathtxt = ToWSTR(tokens[5]);
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
-	map = new Map();
-	map->LoadMap(texID, pathtxt,MapWidth,MapHeight);
-	
+	//map = new Map();
+	//map->LoadMap(texID, pathtxt,MapWidth,MapHeight);
+	_Map->LoadMap(texID, pathtxt, MapWidth, MapHeight);
+}
+
+void World1::_ParseSection_HUD(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	_HUD->LoadHUD(pathtxt);
 }
 
 void World1::_ParseSection_TEXTURES(string line)
@@ -187,6 +209,7 @@ void World1::_ParseSection_OBJECTS(string line)
 
 	obj->SetAnimationSet(ani_set);
 	objects.push_back(obj);
+	
 }
 
 void World1::Load()
@@ -227,6 +250,9 @@ void World1::Load()
 			if (line == "[OBJECTS]") {
 				section = SCENE_SECTION_OBJECTS; continue;
 			}
+			if (line == "[HUD]") {
+				section = SCENE_SECTION_HUD; continue;
+			}
 			if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 			switch (section)
@@ -237,10 +263,11 @@ void World1::Load()
 			case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 			case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+			case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
 			}
 		}
-
 		f.close();
+		_HUD->Init();
 		CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 		DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 	}
@@ -338,13 +365,17 @@ void World1::Update(DWORD dt)
 
 	CGame* game = CGame::GetInstance();
 
-
+	_Camera->Update();
+	_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 	CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
+	_HUD->Update(dt);
+	DebugOut(L"cam y = %f\n", _Camera->cam_y);
 }
 
 void World1::Render()
 {
-	map->DrawMap();
+	//map->DrawMap();
+	_Map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
 	{
 		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
@@ -353,6 +384,7 @@ void World1::Render()
 			objects[i]->Render();
 		}
 	}
+	_HUD->Render();
 }
 
 /*
@@ -365,9 +397,16 @@ void World1::Unload()
 
 	objects.clear();
 	player = NULL;
-	map = NULL;
+	_Map->UnLoad();
+	_HUD->Unload();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
+
+//World1* World1::GetInstance()
+//{
+//	if (__instance == NULL) __instance = new World1();
+//	return __instance;
+//}
 
 void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 {
