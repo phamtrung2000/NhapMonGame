@@ -1,19 +1,6 @@
 ﻿#include "QuestionBrickItem.h"
 #include "PlayScence.h"
 
-
-QuestionBrickItem::QuestionBrickItem(float x, float y) : CGameObject()
-{
-	isInit = false;
-	Time = 0;
-	ObjType = OBJECT_TYPE_QUESTIONBRICKITEM;
-	Start_X = x;
-	Start_Y = y;
-	this->x = x;
-	this->y = y;
-	SetState(QUESTIONBRICKITEM_STATE_INIT);
-}
-
 QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
 {
 	isInit = false;
@@ -25,6 +12,7 @@ QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
 	this->y = y;
 	vx = vy = 0;
 	SetState(QUESTIONBRICKITEM_STATE_INIT);
+	Category = CATEGORY::ITEM;
 }
 
 void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

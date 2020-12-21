@@ -1,4 +1,4 @@
-#include "Map.h"
+﻿#include "Map.h"
 
 #define MAX_MAP_LINE 1024
 #define MAP_SECTION_UNKNOWN		-1
@@ -129,7 +129,6 @@ void Map::LoadMap(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
 
 void Map::DrawMap()
 {
-
 	for (int i = 0; i < MaxRow; i++)
 		for (int j = 0; j < MaxColumn; j++)
 		{

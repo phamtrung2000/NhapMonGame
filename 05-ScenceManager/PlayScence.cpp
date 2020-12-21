@@ -298,7 +298,7 @@ void CPlayScene::Load()
 	}
 
 	f.close();
-	_HUD->Init();
+	
 	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(0, 255, 255));
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
@@ -731,6 +731,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	// Background đen phía sau
 	_Map->DrawMap();
 	_Mario->Render();
 	for (unsigned int i = 1; i < objects.size(); i++)
@@ -752,7 +753,7 @@ void CPlayScene::Unload()
 	objects.clear();
 	_Mario->Unload();
 	_Map->UnLoad();
-	_HUD->Unload();
+	//_HUD->Unload();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -899,7 +900,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				_Mario->isFalling = true;*/
 			_Mario->isFalling = true;
 			_Mario->OnGround = false;
-			if (_Mario->canFlyX == false && _Mario->canFlyS == false) // đang bay thì k rớt -> bấm liên tục nút S nó bay lên
+			if ((_Mario->canFlyX == false && _Mario->canFlyS == false) && _Mario->GoHiddenWorld == false) // đang bay thì k rớt -> bấm liên tục nút S nó bay lên
 				_Mario->vy = 0;
 		}
 

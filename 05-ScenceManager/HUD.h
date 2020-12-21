@@ -28,13 +28,14 @@ class HUD
 	float CamX, CamY;
 public:
 	int Score, MarioLife, Money;
-	ULONGLONG PlayTime, // thời gian chơi : 300s
-		countPlayTime; // biến đếm GetTickCount64 để trừ thời gian chơi đi 1
+	int PlayTime; // thời gian chơi : 300s
+	ULONGLONG countPlayTime; // biến đếm GetTickCount64 để trừ thời gian chơi đi 1
 
 	static HUD* GetInstance();
 	HUD();
 	void LoadHUD(wstring);
 	void Init();
+	void Init(int playtime);
 	void Update(float dt);
 	void Render();
 	void Unload();

@@ -36,7 +36,7 @@ using namespace std;
 
 #define KEYBOARD_BUFFER_SIZE 1024
 #define SCREEN_WIDTH	400
-#define SCREEN_HEIGHT	320
+#define SCREEN_HEIGHT	280 //320
 
 #define _Mario Mario::GetInstance()
 #define _MarioOverworld MarioOverWorld::GetInstance()

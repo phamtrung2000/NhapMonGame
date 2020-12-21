@@ -1,4 +1,4 @@
-#include "Game.h"
+﻿#include "Game.h"
 #include "PlayScence.h"
 #include "Opening.h"
 #include "World1.h"
@@ -412,17 +412,68 @@ void CGame::SwitchScene(int scene_id)
 		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
 		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
 	}
-	scenes[current_scene]->Unload();
-	CTextures::GetInstance()->Clear();
-	CSprites::GetInstance()->Clear();
-	CAnimations::GetInstance()->Clear();
-	current_scene = scene_id;
-	LPSCENE s = scenes[scene_id];
-	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 
-	_PlayScene->__instance = (CPlayScene*)s;
-	_Camera->SetCamPos(0.0f, 0.0f);
-	s->Load();
+	if (scene_id == World1SceneID) // chuyển sang World Map 1
+	{
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_HUD->Init(0);
+	}
+	else // chuyển sang PlayScene
+	{
+		if (current_scene == OpeningSceneID)
+		{
+			scenes[current_scene]->Unload();
+			CTextures::GetInstance()->Clear();
+			CSprites::GetInstance()->Clear();
+			CAnimations::GetInstance()->Clear();
+			current_scene = scene_id;
+			LPSCENE s = scenes[scene_id];
+			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+			_PlayScene->__instance = (CPlayScene*)s;
+			_Camera->SetCamPos(0.0f, 0.0f);
+			s->Load();
+		}
+		else if (current_scene == World1SceneID)
+		{
+			scenes[current_scene]->Unload();
+			CTextures::GetInstance()->Clear();
+			CSprites::GetInstance()->Clear();
+			CAnimations::GetInstance()->Clear();
+			current_scene = scene_id;
+			LPSCENE s = scenes[scene_id];
+			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+			_PlayScene->__instance = (CPlayScene*)s;
+			_Camera->SetCamPos(0.0f, 0.0f);
+			s->Load();
+			_HUD->Init(300);
+		}
+		else if(current_scene >= Scene1_1ID)
+		{
+			scenes[current_scene]->Unload();
+			CTextures::GetInstance()->Clear();
+			CSprites::GetInstance()->Clear();
+			CAnimations::GetInstance()->Clear();
+			current_scene = scene_id;
+			LPSCENE s = scenes[scene_id];
+			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+			_PlayScene->__instance = (CPlayScene*)s;
+			_Camera->SetCamPos(0.0f, 0.0f);
+			s->Load();
+			_HUD->Init(_HUD->PlayTime);
+		}
+	}
 }
 
 void CGame::SwitchScene2(int scene_id)

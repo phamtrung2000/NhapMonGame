@@ -30,6 +30,8 @@
 #define	QUESTIONBRICKITEM_STATE_MOVE_RIGHT	3
 #define	QUESTIONBRICKITEM_STATE_MOVE_LEFT	4
 
+#define QUESTIONBRICKITEM__SCORE		1000
+
 class QuestionBrickItem : public CGameObject
 {
 public:
@@ -38,7 +40,6 @@ public:
 	int Item;
 	int Time;
 public:
-	QuestionBrickItem(float x = 0.0f, float y = 0.0f);
 	QuestionBrickItem(int item,float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();

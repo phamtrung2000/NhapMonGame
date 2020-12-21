@@ -4,9 +4,6 @@
 
 Camera* Camera::__instance = NULL;
 
-#define CAMERA_SCREEN_HIGHT	248
-#define CAMERA_SCREEN_HIGHT_MAX	200
-
 Camera* Camera::GetInstance()
 {
 	if (__instance == NULL)
@@ -57,6 +54,8 @@ void Camera::Update()
 		cx = MAP_MAX_WIDTH;
 	
 	cy -= _Game->GetScreenHeight() / 2;
+	if (cy < 0)
+		cy = 0;
 	if (_PlayScene->SceneID == SCENE_ID_HIDDENMAP_1_1)
 	{
 		SetCamPos(cx, 0.0f);
@@ -71,8 +70,8 @@ void Camera::Update()
 		}
 		else
 		{
-			SetCamPos(cx, 200);
-			_Game->SetCamPos(cx, 200);
+			SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40 );
+			_Game->SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40);
 		}
 	}
 

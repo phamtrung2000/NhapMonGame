@@ -10,10 +10,7 @@
 #define POS_I2 CamX + 183
 #define POS_I3 CamX + 206
 
-#define CAM_Y_HUD_ITEM _Camera->cam_y + 230 
-#define POS_Y_TP CamY + 200 + 16
-#define POS_Y_TEX1 CamY + 200 + 6
-#define POS_Y_TEX2 CamY + 200 + 15
+#define CAM_Y_HUD_ITEM	_Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 10
 
 HUD* HUD::__instance = NULL;
 
@@ -29,11 +26,12 @@ HUD::HUD()
 {
 	isDrawPush = true;
 	CamX = CamY = 0.f;
-	MarioLife = 3;
+	MarioLife = 4;
 	Score = 0;
 	PlayTime = 300;
 	Money = 0;
 	countPlayTime = 0;
+	font = NULL;
 }
 
 void HUD::_ParseSection_TEXTURES(string line)
@@ -134,7 +132,6 @@ void HUD::LoadHUD(wstring map_txt)
 
 void HUD::Init()
 {
-	font = NULL;
 	LPDIRECT3DDEVICE9 d3ddv = CGame::GetInstance()->GetDirect3DDevice();
 	LPDIRECT3DSURFACE9 buffer = CGame::GetInstance()->GetBackBuffer();
 	AddFontResourceEx(L".\\font\\Super-Mario-Bros--3.ttf", FR_PRIVATE, NULL);
@@ -152,12 +149,12 @@ void HUD::Init()
 		L"Super Mario Bros. 3",
 		&font);
 
-	CamX = _Camera->cam_x;
-	CamY = _Camera->cam_y + 235;
+	CamX = _Camera->cam_x + 60;
+	CamY = _Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 5;
 	// chiều dài màn hình
 	int ScreenWidth = CGame::GetInstance()->GetScreenWidth();
 
-	SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + 230);
+	SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
 
 	auto sprites = CSprites::GetInstance();
 	HUB = sprites->Get(90000);
@@ -167,6 +164,44 @@ void HUD::Init()
 	typePlayer = sprites->Get(92001);
 	speed = sprites->Get(91001);
 	push = sprites->Get(91002);
+}
+
+void HUD::Init(int playtime)
+{
+	LPDIRECT3DDEVICE9 d3ddv = CGame::GetInstance()->GetDirect3DDevice();
+	LPDIRECT3DSURFACE9 buffer = CGame::GetInstance()->GetBackBuffer();
+	AddFontResourceEx(L".\\font\\Super-Mario-Bros--3.ttf", FR_PRIVATE, NULL);
+	HRESULT result = D3DXCreateFont(
+		d3ddv,		// d3d divice
+		9,			//	Height
+		0,			//	Width
+		FW_NORMAL,	//	Weight
+		1,			//MipLevels
+		false,		//Italic,
+		DEFAULT_CHARSET, //CharSet
+		OUT_CHARACTER_PRECIS, //OutputPrecision
+		ANTIALIASED_QUALITY, // Quality
+		FF_DONTCARE, // PitchAndFamily,
+		L"Super Mario Bros. 3",
+		&font);
+
+	CamX = _Camera->cam_x + 60;
+	CamY = _Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 5;
+	// chiều dài màn hình
+	int ScreenWidth = CGame::GetInstance()->GetScreenWidth();
+
+	SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
+
+	auto sprites = CSprites::GetInstance();
+	HUB = sprites->Get(90000);
+	Item1 = sprites->Get(90002);
+	Item2 = sprites->Get(90003);
+	Item3 = sprites->Get(90004);
+	typePlayer = sprites->Get(92001);
+	speed = sprites->Get(91001);
+	push = sprites->Get(91002);
+
+	PlayTime = playtime;
 }
 
 void HUD::Update(float dt)
@@ -200,25 +235,25 @@ void HUD::Update(float dt)
 
 void HUD::Render()
 {
-
 	CamX = _Camera->cam_x;
-	CamY = _Camera->cam_y + 230;
-
+	CamY = _Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 5;
 	//================ Vẽ HUD ======================
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
 	// khung đen sau HUD
-	_Game->Draw(CamX, CamY, bbox, 0, 0, _Camera->GetWidth(), 60, 255);
-	DebugOut(L"Camera camx %f, camera camy %f\n", _Camera->cam_x, _Camera->cam_y);
-	DebugOut(L"camx %f, camy %f\n", CamX, CamY);
-	DebugOut(L"left = %i, top = %i, right = %i, bottom = %i\n", rect.left, rect.top, rect.right, rect.bottom);
+	_Game->Draw(CamX, CamY - 20, bbox, 0, 0, _Camera->GetWidth(), 60, 255);
+	//DebugOut(L"Camera camx %f, camera camy %f\n", _Camera->cam_x, _Camera->cam_y);
+	//DebugOut(L"camx %f, camy %f\n", CamX, CamY);
+	//DebugOut(L"left = %i, top = %i, right = %i, bottom = %i\n", rect.left, rect.top, rect.right, rect.bottom);
+
 	// Thanh HUD
+	CamX = CamX + 60;
 	HUB->Draw(CamX, CAM_Y_HUD_ITEM);
 	// 3 item hình thẻ bài
 	Item1->Draw(CamX + 160, CAM_Y_HUD_ITEM);
 	Item2->Draw(CamX + 190, CAM_Y_HUD_ITEM);
 	Item3->Draw(CamX + 220, CAM_Y_HUD_ITEM);
 	// icon số mạng mario
-	typePlayer->Draw(CamX + 4, CamY + 15);
+	typePlayer->Draw(CamX + 4, CamY + 10);
 	// thanh tốc độ
 
 	for (int i = 0; i < NumSpeed; i++)
@@ -229,7 +264,7 @@ void HUD::Render()
 		push->Draw(CamX + 100, CamY + 6);
 	}
 
-	//SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(_Game->GetScreenWidth()), CamY + 230);
+	//SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(CGame::GetInstance()->GetScreenWidth()), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
 	LPD3DXSPRITE spriteHandler = _Game->GetSpriteHandler();
 	if (font)
 		font->DrawTextA(spriteHandler, information.c_str(), -1, &rect, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));

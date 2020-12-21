@@ -267,7 +267,7 @@ void World1::Load()
 			}
 		}
 		f.close();
-		_HUD->Init();
+		_HUD->Init(0);
 		CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 		DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 	}
@@ -374,6 +374,10 @@ void World1::Update(DWORD dt)
 
 void World1::Render()
 {
+	// Background đen phía sau
+	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
+	_Game->Draw(-100, -50, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255);
+
 	//map->DrawMap();
 	_Map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
@@ -398,7 +402,7 @@ void World1::Unload()
 	objects.clear();
 	player = NULL;
 	_Map->UnLoad();
-	_HUD->Unload();
+	//_HUD->Unload();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

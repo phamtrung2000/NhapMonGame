@@ -191,12 +191,10 @@ class Mario : public CGameObject
 private:
 	static Mario* __instance;
 public:
-	int level;
-	bool untouchable;
-	ULONGLONG untouchable_start,
-		LevelUpTime, // khoảng thời gian hiện effect tăng cấp
-		a;
-	int iLevelUpTime;
+	
+	bool untouchable; // trạng thái bất tử
+	ULONGLONG untouchable_start; // thời điểm bắt đầu bất tử
+	
 	bool test;
 
 	float start_x;			// initial position of Mario at scene
@@ -222,9 +220,15 @@ public:
 	bool isHolding = false, pressA = false, canKick = false;
 	int Height,Width;
 
+	// BAY (FLY)
 	bool canFlyX, canFlyS, // mario có thể bay khi đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
-		isFlyingLow, isFlyingHigh, // biến để xác định mario đang ở state fly
-		isLevelUp; // mario tăng cấp để hiện effect tăng cấp
+		isFlyingLow, isFlyingHigh; // biến để xác định mario đang ở state fly
+		 
+	// TĂNG CẤP (UP LEVEL)
+	ULONGLONG LevelUpTime; // thời điểm bắt đầu tăng cấp
+	bool isLevelUp; // mario tăng cấp để hiện effect tăng cấp
+	int iLevelUpTime; // Thời gian tăng cấp + hiện effect tăng cấp
+	int level; // cấp độ
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
@@ -243,7 +247,8 @@ public:
 	void Unload();
 	void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
-	void CollisionWithItem(LPCOLLISIONEVENT e);
+	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 };
 
 //#include <algorithm>

@@ -20,6 +20,7 @@
 #include "Coin.h"
 #include "GreenKoopas.h"
 #include "EffectSmoke.h"
+#include "MarioTail.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -513,17 +514,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			// TODO: This is a very ugly designed function!!!!
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		/*	if (ny == 1)
-			{
-				vy = 0;
-				OnGround = false;
-			}
-			else if (ny == -1)
-			{
-				vy = 0;
-				OnGround = true;
-			}*/
-
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
@@ -542,119 +532,63 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							if (dynamic_cast<Ground*>(e->obj))
 							{
-								if (ny != 0 && untouchable == false) vy = 0;
+								if (ny != 0 && GetState() != MARIO_STATE_DIE) vy = 0;
 								Ground* ground = dynamic_cast<Ground*>(e->obj);
 								if (e->ny < 0)
 								{
 									x += min_tx * dx + nx * 0.4f;
-									if (GetState() != MARIO_STATE_DIE) // nếu k có đk này thì khi chết sẽ k bị nhảy lên vì gán trực tiếp vy = 0
-										y += min_ty * dy + ny * 0.4f;
 								}
 								else if (e->nx != 0)
 								{
 									y += min_ty * dy + ny * 0.4f;
 								}
 							}
-						}break;
-
-					case CATEGORY::OBJECT:
-						CollisionWithObject(e, min_tx, min_ty, nx, ny);
-						break;
-					case CATEGORY::ENEMY:
-						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+						}
 						break;
 
-					case CATEGORY::ITEM:
-					{
-						if (dynamic_cast<QuestionBrickItem*>(e->obj))
-						{
-							QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
-							questionbrickitem->isDie = true;
-							UpLevel();
-						}
-						else if (dynamic_cast<BrickItem*>(e->obj))
-						{
-							BrickItem* brickitem = dynamic_cast<BrickItem*>(e->obj);
-							brickitem->isDie = true;
-						}
-						else if (dynamic_cast<Coin*>(e->obj))
-						{
-							Coin* coin = dynamic_cast<Coin*>(e->obj);
-							coin->isDie = true;
-							_HUD->Money++;
-							_HUD->Score += 50;
-							x += dx;
-							y += dy;
-						}
-					}
-					break;
+						case CATEGORY::OBJECT:
+							CollisionWithObject(e, min_tx, min_ty, nx, ny);
+							break;
+						case CATEGORY::ENEMY:
+							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+							break;
 
-					case CATEGORY::WEAPON:
-					{
-						if (dynamic_cast<FireBullet*>(e->obj))
+						case CATEGORY::ITEM:
+							CollisionWithItem(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::WEAPON:
 						{
-							FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
-							// jump on top >> kill firebullet and deflect a bit 
-							//if ( firebullet->FireMario == false && (e->nx != 0 || e->ny != 0))
-							if (firebullet->FireMario == false)
+							if (e->obj->ObjType == OBJECT_TYPE_FIREBULLET)
 							{
-								if (untouchable == false)
+								if (dynamic_cast<FireBullet*>(e->obj))
 								{
-									switch (level)
+									FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
+									if (firebullet->FireMario == false)
 									{
-									case MARIO_LEVEL_FIRE:
-									{
-										y = static_cast<float>((int)(y - abs(MARIO_BIG_BBOX_HEIGHT - MARIO_TAIL_BBOX_HEIGHT) * 2));
-										level--;
-										StartUntouchable();
-
-									}
-									break;
-
-									case MARIO_LEVEL_TAIL:
-									{
-										level--;
-										StartUntouchable();
-									}
-									break;
-									case MARIO_LEVEL_BIG:
-									{
-										y = (int)(y + abs(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT - 1));
-										level--;
-										StartUntouchable();
-									}
-									break;
-									case MARIO_LEVEL_SMALL:
-									{
-										SetState(MARIO_STATE_DIE);
-									}
-									break;
+										if (untouchable == false)
+										{
+											DownLevel();
+										}
 									}
 								}
+							}
+							
+						}
+						break;
+
+						case CATEGORY::PORTAL:
+						{
+							if (dynamic_cast<CPortal*>(e->obj))
+							{
+								CPortal* p = dynamic_cast<CPortal*>(e->obj);
+								if (p->GetSceneId() != 1)
+									CGame::GetInstance()->SwitchScene(p->GetSceneId());
 								else
-								{
-									if (level == MARIO_LEVEL_SMALL)
-										y -= 1;
-								}
-							}
-							else
-							{
+									CGame::GetInstance()->SwitchScene2(p->GetSceneId());
 							}
 						}
-					}
-					break;
-
-					case CATEGORY::PORTAL:
-					{
-						if (dynamic_cast<CPortal*>(e->obj))
-						{
-							CPortal* p = dynamic_cast<CPortal*>(e->obj);
-							if (p->GetSceneId() != 1)
-								CGame::GetInstance()->SwitchScene(p->GetSceneId());
-							else
-								CGame::GetInstance()->SwitchScene2(p->GetSceneId());
-						}
-					}break;
+						break;
 
 					}
 				}
@@ -672,7 +606,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	
 	//y = static_cast<int>(y);
-	//Debug();
+	Debug();
 }
 
 void Mario::Render()
@@ -1581,7 +1515,7 @@ void Mario::SetState(int state)
 
 	case MARIO_STATE_DIE:
 	{
-		vx = 0;
+		vx = 0.0f;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 	}
 	break;
@@ -1794,27 +1728,11 @@ void Mario::Debug()
 	case MARIO_STATE_RUNNING:
 		DebugOut(L"State = RUNNING\t"); break;
 	}
-	/*if (canFlyS == false)
-		DebugOut(L"canFlyS == false\t");
+	if (GoHiddenWorld == false)
+		DebugOut(L"GoHiddenWorld == false\t");
 	else
-		DebugOut(L"canFlyS == true\t");
-	if (OnGround == false)
-		DebugOut(L"OnGround == false\t");
-	else
-		DebugOut(L"OnGround == true\t");
-	if (isFalling == false)
-		DebugOut(L"isFalling == false\t");
-	else
-		DebugOut(L"isFalling == true\t");
-	if (isMaxRunning == false)
-		DebugOut(L"isMaxRunning == false\t");
-	else
-		DebugOut(L"isMaxRunning == true\t");
-	if (isFlyingHigh == false)
-		DebugOut(L"isFlyingHigh == false\t");
-	else
-		DebugOut(L"isFlyingHigh == true\t");*/
-	//DebugOut(L"level walking %i, vx = %f, vy = %f, nx = %i,x = %f\n", level_of_walking, _Mario->vx, vy, nx, x);
+		DebugOut(L"GoHiddenWorld == true\t");
+	
 	DebugOut(L"level walking = %i, time fly = %i, vy = %f\n", level_of_walking, time_fly, vy);
 }
 
@@ -1835,6 +1753,7 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 	{
 		x += min_tx * dx + nx * 0.4f;
 	}
+
 	if (e->ny < 0) // va chạm từ trên xuống
 	{
 		if (e->obj->isDie == false)
@@ -2038,7 +1957,7 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 					}
 				}
 			}
-			else if (dynamic_cast<GreenKoopas*>(e->obj)) // if e->obj is Goomba 
+			else if (dynamic_cast<GreenKoopas*>(e->obj))
 			{
 				GreenKoopas* greenkoopas = dynamic_cast<GreenKoopas*>(e->obj);
 				if (greenkoopas->vx != 0)
@@ -2087,7 +2006,7 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 				}
 
 			}
-			else if (dynamic_cast<GreenFlyKoopas*>(e->obj)) // if e->obj is Goomba 
+			else if (dynamic_cast<GreenFlyKoopas*>(e->obj))
 			{
 				GreenFlyKoopas* greenflykoopas = dynamic_cast<GreenFlyKoopas*>(e->obj);
 				if (greenflykoopas->vx != 0)
@@ -2155,7 +2074,11 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		{
 			x += dx;
 		}
-		else if (e->ny != 0)
+		else if (e->ny < 0)
+		{
+			x += min_tx * dx + nx * 0.4f;
+		}
+		else if (e->ny > 0)
 		{
 			if (isFlyingHigh == true)
 				y += dy;
@@ -2259,18 +2182,21 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		if (dynamic_cast<WarpPipe*>(e->obj))
 		{
 			if (ny != 0) vy = 0;
+			if (nx != 0) vx = 0;
 			WarpPipe* pipe = dynamic_cast<WarpPipe*>(e->obj);
 			if (e->ny != 0)
 			{
-				//x += min_tx * dx + nx * 0.4f;
+				x += min_tx * dx + nx * 0.4f;
 				if (pipe->HiddenWorld == true)
 				{
 					if (e->ny < 0)
 					{
-						if (isSitDown == true)
+						if (isSitDown == true && 
+							this->x + MARIO_TAIL_WIDTH <= pipe->x + pipe->Width / 2 &&
+							this->x + MARIO_TAIL_WIDTH >= pipe->x + pipe->Width / 2 - 10)
 						{
 							GoHiddenWorld = true;
-							vy = 0.03;
+							vy = 0.03f;
 						}
 					}
 					else if (e->ny > 0)
@@ -2321,6 +2247,45 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		x += min_tx * dx + nx * 0.4f;
 	}*/
 
+}
+
+void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+	{
+		if (dynamic_cast<QuestionBrickItem*>(e->obj))
+		{
+			QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
+			questionbrickitem->isDie = true;
+			_HUD->Score += QUESTIONBRICKITEM__SCORE;
+			if(questionbrickitem->Item>= this->level)
+				UpLevel();
+			
+		}
+	}
+	else if (e->obj->ObjType == OBJECT_TYPE_BRICKITEM)
+	{
+		if (dynamic_cast<BrickItem*>(e->obj))
+		{
+			BrickItem* brickitem = dynamic_cast<BrickItem*>(e->obj);
+			brickitem->isDie = true;
+			_HUD->MarioLife++;
+			x += dx;
+			y += dy;
+		}
+	}
+	else if (e->obj->ObjType == OBJECT_TYPE_COIN)
+	{
+		if (dynamic_cast<Coin*>(e->obj))
+		{
+			Coin* coin = dynamic_cast<Coin*>(e->obj);
+			coin->isDie = true;
+			_HUD->Money++;
+			_HUD->Score += COIN_SCORE;
+			x += dx;
+			y += dy;
+		}
+	}
 }
 
 //void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)

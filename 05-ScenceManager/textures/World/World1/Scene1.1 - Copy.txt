@@ -2,7 +2,7 @@
 [TEXTURES]
 0	.\textures\Mario\mario.png	255	255	255
 1	.\textures\Mario\mario1.png	255	255	255
-14	.\textures\Mario\mario2.png	176	224	248
+15	.\textures\Mario\mario2.png	176	224	248
 # BRICK / ITEM BRICK / QUESTION BRICK / QUESTION BRICK ITEM / BRICK ITEM
 2	textures\misc.png	176	224	248
 3	textures\misc1.png	176	224	248
@@ -81,7 +81,7 @@
 27	125	315	141	341	0
 
 # Up Level Right : Small -> Big
-28	407	116	421	138	14
+28	407	116	421	138	15
 
 # ====== SMALL MARIO ========= 
 # idle small right
@@ -862,56 +862,6 @@
 13	688	350	13	0
 13	704	350	13	0
 13	720	350	13	0
-
 200	352	368	5	32	48
 # ======= RED KOOPAS =========
 3	220	350	3
-
-
-[OBJECTS]
-# type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
-# MARIO
-0	130	16	0
-#---- Ground-----
-7	0	0	-1	128	192
-7	128	160	-1	384	32
-7	256	144	-1	256	16
-7	272	128	-1	240	16
-7	288	112	-1	224	16
-7	304	96	-1	208	16
-7	320	80	-1	192	16
-7	336	64	-1	176	16
-7	384	0	-1	128	64
-7	160	0	-1	192	16
-# --- SCENE PORTAL ----
-# type	l	t	ani_set_id	r	b	scene_id
-50	352	0	-1	32	2	1
-# ===== COIN ======
-12	1072	320	12
-12	1104	304	12
-12	1136	288	12
-12	1168	272	12
-12	1200	256	12
-12	1328	80	12
-12	1344	80	12
-12	1360	80	12
-12	1472	112	12
-12	1488	112	12
-12	1536	128	12
-12	1552	128	12
-12	1568	128	12
-12	1584	128	12
-12	1616	112	12
-12	1632	112	12
-12	1648	112	12
-12	1664	112	12
-12	1696	144	12
-12	1728	112	12
-12	1760	128	12
-12	1808	96	12
-12	1840	128	12
-#======= WARPPIPE =========
-#objtype	x	y	aniset_id	width	height	HiddenWorld
-200	128	0	5	32	32	true
-200	352	0	5	32	32	true

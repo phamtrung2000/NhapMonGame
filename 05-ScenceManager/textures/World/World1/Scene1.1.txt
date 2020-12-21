@@ -2,7 +2,7 @@
 [TEXTURES]
 0	.\textures\Mario\mario.png	255	255	255
 1	.\textures\Mario\mario1.png	255	255	255
-14	.\textures\Mario\mario2.png	176	224	248
+15	.\textures\Mario\mario2.png	176	224	248
 # BRICK / ITEM BRICK / QUESTION BRICK / QUESTION BRICK ITEM / BRICK ITEM
 2	textures\misc.png	176	224	248
 3	textures\misc1.png	176	224	248
@@ -81,7 +81,7 @@
 27	125	315	141	341	0
 
 # Up Level Right : Small -> Big
-28	407	116	421	138	14
+28	407	116	421	138	15
 
 # ====== SMALL MARIO ========= 
 # idle small right
@@ -802,7 +802,7 @@
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-#0	300	250	0
+#0	10	10	0
 #0	800	368	0
 #0	1700	350	0
 #0	2064	350	0

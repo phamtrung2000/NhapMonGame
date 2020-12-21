@@ -12,6 +12,7 @@ BrickItem::BrickItem(int item, float x, float y) : CGameObject()
 	this->y = y;
 	vx = vy = 0;
 	SetState(QUESTIONBRICKITEM_STATE_INIT);
+	Category = CATEGORY::ITEM;
 }
 
 void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
