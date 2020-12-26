@@ -1,6 +1,7 @@
 ﻿#include "World1.h"
 #include "Game.h"
 #include "HUD.h"
+#include "DancingTree.h"
 
 //World1::World1()
 //{
@@ -196,6 +197,7 @@ void World1::_ParseSection_OBJECTS(string line)
 		
 	}break;
 	case OBJECT_TYPE_GATE: obj = new Gate(GateNumber); break;
+	case OBJECT_TYPE_DANCINGTREE: obj = new DancingTree(); break;
 
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -369,7 +371,7 @@ void World1::Update(DWORD dt)
 	_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 	CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 	_HUD->Update(dt);
-	DebugOut(L"cam y = %f\n", _Camera->cam_y);
+	//DebugOut(L"cam y = %f\n", _Camera->cam_y);
 }
 
 void World1::Render()
@@ -378,7 +380,6 @@ void World1::Render()
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
 	_Game->Draw(-100, -50, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255);
 
-	//map->DrawMap();
 	_Map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
 	{

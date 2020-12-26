@@ -2,13 +2,16 @@
 #include "Sprites.h"
 #include<fstream>
 #include <string>
-
+#include"GameObject.h"
 
 #define HUD_SECTION_UNKNOWN -1
 #define HUD_SECTION_TEXTURES 2
 #define HUD_SECTION_SPRITES 3
 #define HUD_SECTION_ANIMATIONS 4
 #define MAX_HUD_LINE 1024
+
+#define COIN_SCORE 50
+#define QUESTIONBRICKITEM_SCORE 1000
 
 class HUD
 {
@@ -44,5 +47,7 @@ public:
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
+
+	void UpdateScore(LPGAMEOBJECT e);
 };
 

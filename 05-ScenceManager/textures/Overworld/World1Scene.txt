@@ -1,24 +1,33 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
 0	.\textures\Mario\mario1.png	255	255	255
+1	.\textures\Overworld\WorldMap1Title.png	255	255	255
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
-300	.\textures\Overworld\World2Tile.png	255	255	255	.\textures\Overworld\World2Map.txt
-# id	left	top	right	bottom	texture_id
+#300	.\textures\Overworld\World2Tile.png	255	255	255	.\textures\Overworld\World2Map.txt
+300	.\textures\Overworld\WorldMap1Title.png	255	255	255	.\textures\Overworld\world1_map.txt
 [SPRITES]
+# id	left	top	right	bottom	texture_id
 #  ======= SMALL MARIO =========
 0	16	9	30	25	0
 1	16	49	30	65	0
 #  ======= BIG MARIO =========
 2	55	6	71	27	0
 3	55	46	71	67	0
+# ======== DANCING TREE =========
+10	0	16	16	32	1
+11	16	16	32	32	1
+12	32	16	48	32	1
+13	48	16	64	32	1
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ======== SMALL MARIO =========
 0	0	100	1	100
 # ======== BIG MARIO =========
 1	2	100	3	100
+# ======== DANCING TREE =========
+10	10	300	11	300	12	300	13	300
 [ANIMATION_SETS]
 # MARIO
 0	0	1
@@ -26,25 +35,78 @@
 1	-1
 # ======== GATE =========
 2	-1
+# ======== DANCING TREE =========
+3	10
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # MARIO
-0	15	35	0
+0	15	33	0
 #0	0	0	0
 # ======== GATE =========
 # type	x	y	ani_set_id	gatenumber
-2	45	0	2	10
+2	48	0	2	10
 # ======== GROUND =========
 # type	x	y	ani_set_id	width height	BehindGate
 # 1
-1	0	0	1	42	34
+#1	0	0	1	42	34
 # 2
-1	0	35	1	13	100
+#1	0	35	1	13	100
 # 3
-1	58	18	1	48	45
+#1	58	18	1	48	45
 # 4
-1	122	17	1	50	16
+#1	122	17	1	50	16
 # 4
-1	122	0	1	50	16
+#1	122	0	1	50	16
 # sau gate 1
-1	60	0	1	105	15	1
+1	64	0	1	48	16	11
+# ======== DANCING TREE =========
+3	0	0	3
+3	16	0	3
+3	32	0	3
+3	0	16	3
+3	16	16	3
+3	32	16	3
+
+3	0	50	3
+3	16	50	3
+3	32	50	3
+3	0	64	3
+3	16	64	3
+3	32	64	3
+3	0	80	3
+
+3	64	18	3
+3	80	18	3
+3	96	18	3
+3	64	32	3
+3	80	32	3
+3	96	32	3
+3	64	48	3
+3	80	48	3
+3	96	48	3
+
+
+3	80	82	3
+3	96	82	3
+3	112	82	3
+
+
+3	192	0	3
+3	208	0	3
+3	192	16	3
+3	208	16	3
+3	192	32	3
+3	208	32	3
+3	128	50	3
+3	144	50	3
+3	160	50	3
+3	176	50	3
+3	192	50	3
+3	208	50	3
+3	128	64	3
+3	144	64	3
+3	208	64	3
+3	208	80	3
+3	208	96	3
+3	208	112	3
+3	208	128	3

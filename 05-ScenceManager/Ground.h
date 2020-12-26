@@ -12,7 +12,7 @@ public:
 		Width = W;
 		Height = H;
 		ObjType = 7;
-		BehindGate = 0;
+		BehindGate = -1;
 		Category = CATEGORY::GROUND;
 	}
 	Ground(int W, int H,int behindgate)

@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "GameObject.h"
 
-#define MARIO_TAIL_WIDTH  8.0f
-#define MARIO_TAIL_HEIGHT 2.0f
+#define MARIO_TAIL_WIDTH  10.f//8.0f
+#define MARIO_TAIL_HEIGHT 6.0f//2.0f
 
 class MarioTail:public CGameObject //mỗi khi mario quật đuôi thì tạo object đuôi thay 
 {

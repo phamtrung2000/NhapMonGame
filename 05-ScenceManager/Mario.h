@@ -4,12 +4,12 @@
 #include "Utils.h"
 #include "GameObject.h"
 
-#define MARIO_WALKING_SPEED		0.1f 
-#define MARIO_RUNNING_MAX_SPEED	0.15f 
+#define MARIO_WALKING_SPEED		0.12f//0.1f 
+#define MARIO_RUNNING_MAX_SPEED	0.21f 
 #define MARIO_FLY_MOVING_SPEED	0.1f 
-#define GIA_TOC					0.003125f // gia tốc
+#define GIA_TOC					0.003f//0.003125f // gia tốc
 #define MAX_LEVEL_OF_WALKING	32
-#define MAX_LEVEL_OF_RUNNING	98//64
+#define MAX_LEVEL_OF_RUNNING	70//98
 
 #define MARIO_JUMP_SPEED_FAST		0.27f	//0.25f // chuẩn
 #define MARIO_JUMP_SPEED_SLOW		0.18f // chuẩn
@@ -51,14 +51,14 @@
 #define MARIO_ANI_SMALL_JUMP_RIGHT			11
 #define MARIO_ANI_SMALL_JUMP_LEFT			12
 
-#define MARIO_ANI_SMALL_STOP_RIGHT			13
-#define MARIO_ANI_SMALL_STOP_LEFT			14
+#define MARIO_ANI_SMALL_STOP_RIGHT			14
+#define MARIO_ANI_SMALL_STOP_LEFT			13
 
 #define MARIO_ANI_SMALL_RUNNING_RIGHT		15
 #define MARIO_ANI_SMALL_RUNNING_LEFT		16
 
-#define MARIO_ANI_BIG_STOP_RIGHT			17
-#define MARIO_ANI_BIG_STOP_LEFT				18
+#define MARIO_ANI_BIG_STOP_RIGHT			18
+#define MARIO_ANI_BIG_STOP_LEFT				17
 
 #define MARIO_ANI_BIG_RUNNING_RIGHT			19
 #define MARIO_ANI_BIG_RUNNING_LEFT			20
@@ -73,8 +73,8 @@
 #define MARIO_ANI_TAIL_JUMP_RIGHT			25
 #define MARIO_ANI_TAIL_JUMP_LEFT			26
 
-#define MARIO_ANI_TAIL_STOP_RIGHT			27
-#define MARIO_ANI_TAIL_STOP_LEFT			28
+#define MARIO_ANI_TAIL_STOP_RIGHT			28
+#define MARIO_ANI_TAIL_STOP_LEFT			27
 
 #define MARIO_ANI_TAIL_RUNNING_RIGHT		29
 #define MARIO_ANI_TAIL_RUNNING_LEFT			30
@@ -105,8 +105,8 @@
 #define MARIO_ANI_FIRE_WALKING_RIGHT		47
 #define MARIO_ANI_FIRE_WALKING_LEFT			48
 
-#define MARIO_ANI_FIRE_STOP_RIGHT			49
-#define MARIO_ANI_FIRE_STOP_LEFT			50
+#define MARIO_ANI_FIRE_STOP_RIGHT			50
+#define MARIO_ANI_FIRE_STOP_LEFT			49
 
 #define MARIO_ANI_FIRE_JUMP_RIGHT			51
 #define MARIO_ANI_FIRE_JUMP_LEFT			52
@@ -197,8 +197,8 @@ public:
 	
 	bool test;
 
-	float start_x;			// initial position of Mario at scene
-	float start_y; 
+	float start_x, start_y;		// vị trí bắt đầu
+	float NewX, NewY; // vị trí mới sau khi rời khỏi map ẩn
 
 	bool OnGround; // chạm đất
 	bool isRunning; 

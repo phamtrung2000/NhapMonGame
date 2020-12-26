@@ -6,9 +6,7 @@
 
 #define HEIGHT_SCORE_BROAD 28
 #define ID_TEX_HUB 12
-#define POS_I1 CamX + 160
-#define POS_I2 CamX + 183
-#define POS_I3 CamX + 206
+
 
 #define CAM_Y_HUD_ITEM	_Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 10
 
@@ -91,6 +89,29 @@ void HUD::_ParseSection_ANIMATIONS(string line)
 	}
 
 	CAnimations::GetInstance()->Add(ani_id, ani);
+}
+
+void HUD::UpdateScore(LPGAMEOBJECT e)
+{
+	switch (e->Category)
+	{
+	case CATEGORY::ITEM:
+	{
+		if (e->ObjType == OBJECT_TYPE_COIN)
+		{
+			this->Score += COIN_SCORE;
+			this->Money++;
+		}
+		else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+		{
+			this->Score += QUESTIONBRICKITEM_SCORE;
+		}
+	}
+	break;
+	
+	default:
+		break;
+	}
 }
 
 void HUD::LoadHUD(wstring map_txt)
@@ -219,17 +240,22 @@ void HUD::Update(float dt)
 		timeString = "0" + timeString;
 	string life = to_string(this->MarioLife);
 	string money = to_string(this->Money);
-	while (money.length() < 2)
-		money = "  " + money;
+	/*while (money.length() < 2)
+		money = "  " + money;*/
 
 	string scene = to_string(_Game->current_scene / 10);
 
 	float vx, vy;
 	_Mario->GetSpeed(vx, vy);
 	
-	NumSpeed = int(_Mario->level_of_running / 14);
-	information = scene + "                              " + money + "\n";
-	information += life + "  " + scoregame + "	      " + timeString + "\n";
+	NumSpeed = int(_Mario->level_of_running / (MAX_LEVEL_OF_RUNNING/7));
+	information = scene;
+	if(money.size() == 1)
+		information += "                                  " + money + "\n";
+	else if (money.size() == 2)
+		information += "                                   " + money + "\n";
+
+	information += life + "   " + scoregame + "	            " + timeString + "\n";
 
 }
 
@@ -240,7 +266,7 @@ void HUD::Render()
 	//================ Vẽ HUD ======================
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
 	// khung đen sau HUD
-	_Game->Draw(CamX, CamY - 20, bbox, 0, 0, _Camera->GetWidth(), 60, 255);
+	_Game->Draw(CamX, CamY - 25, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
 	//DebugOut(L"Camera camx %f, camera camy %f\n", _Camera->cam_x, _Camera->cam_y);
 	//DebugOut(L"camx %f, camy %f\n", CamX, CamY);
 	//DebugOut(L"left = %i, top = %i, right = %i, bottom = %i\n", rect.left, rect.top, rect.right, rect.bottom);
@@ -249,19 +275,19 @@ void HUD::Render()
 	CamX = CamX + 60;
 	HUB->Draw(CamX, CAM_Y_HUD_ITEM);
 	// 3 item hình thẻ bài
-	Item1->Draw(CamX + 160, CAM_Y_HUD_ITEM);
-	Item2->Draw(CamX + 190, CAM_Y_HUD_ITEM);
-	Item3->Draw(CamX + 220, CAM_Y_HUD_ITEM);
+	Item1->Draw(CamX + 190, CAM_Y_HUD_ITEM);
+	Item2->Draw(CamX + 215, CAM_Y_HUD_ITEM);
+	Item3->Draw(CamX + 240, CAM_Y_HUD_ITEM);
 	// icon số mạng mario
-	typePlayer->Draw(CamX + 4, CamY + 10);
+	typePlayer->Draw(CamX + 9, CamY + 9);
 	// thanh tốc độ
 
-	for (int i = 0; i < NumSpeed; i++)
-		speed->Draw(CamX + 53 + (i * 8), CamY + 6);
+	for (int i = 0; i < NumSpeed - 1; i++)
+		speed->Draw(CamX + 55 + (i * 8), CamY + 1);
 
 	if (NumSpeed > 6 && isDrawPush)
 	{
-		push->Draw(CamX + 100, CamY + 6);
+		push->Draw(CamX + 57 + (6 * 8), CamY + 1);
 	}
 
 	//SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(CGame::GetInstance()->GetScreenWidth()), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);

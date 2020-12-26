@@ -23,6 +23,7 @@ using namespace std;
 #define OBJECT_TYPE_MARIOOVERWORLD	0
 #define OBJECT_TYPE_GROUND			1
 #define OBJECT_TYPE_GATE			2
+#define OBJECT_TYPE_DANCINGTREE		3
 
 #define MAX_SCENE_LINE 1024
 #define MAP_MAX_WIDTH	2816

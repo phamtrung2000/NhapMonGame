@@ -383,8 +383,15 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				X_min = MIN;
 				X_max = MAX;
-				this->x += min_tx * dx + nx * 0.4f;
-				
+				Ground* ground = dynamic_cast<Ground*>(e->obj);
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
+				else if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.4f;
+				}
 			}
 			else if (dynamic_cast<CGoomba*>(e->obj))
 			{

@@ -22,8 +22,6 @@ MarioOverWorld::MarioOverWorld(float x, float y) : CGameObject()
 	InGate = false;
 }
 
-
-
 void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Calculate dx, dy 
@@ -66,13 +64,22 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				/*if (nx != 0) vx = 0;
 				if (ny != 0) vy = 0;*/
 				Ground* ground = dynamic_cast<Ground*>(e->obj);
-				if (e->ny < 0)
+				if (this->Scene >= ground->BehindGate)
 				{
-					x += min_tx * dx + nx * 0.4f;
-					
+					x += dx;
+					y += dy;
 				}
 				else
-					y += min_ty * dy + ny * 0.4f;
+				{
+					if (e->ny < 0)
+					{
+						x += min_tx * dx + nx * 0.4f;
+
+					}
+					else
+						y += min_ty * dy + ny * 0.4f;
+				}
+				
 			}
 			else if (dynamic_cast<Gate*>(e->obj))
 			{
@@ -110,7 +117,7 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetPosition(x, 0);
 		vy = 0;
 	}
-	DebugOut(L"x = %f, y = %f, state %i\n", x, y, state); 
+	//DebugOut(L"x = %f, y = %f, state %i\n", x, y, state); 
 }
 
 void MarioOverWorld::Render()

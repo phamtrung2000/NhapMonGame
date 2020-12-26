@@ -21,6 +21,7 @@ using namespace std;
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_MAP		7
 #define SCENE_SECTION_HUD		8
+#define SCENE_SECTION_MARIO		9
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -67,6 +68,7 @@ public:
 
 	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
+	void _ParseSection_MARIO(string line); // hàm đọc MARIO trong file txt
 public:
 	int SceneID;
 	CPlayScene();

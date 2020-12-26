@@ -75,7 +75,7 @@ void CGameObject::CalcPotentialCollisions(
 
 		if (e->t > 0 && e->t <= 1.0f)
 			coEvents.push_back(e);
-		/*else if(IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+		/*if(IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 			coEvents.push_back(e);*/
 		else
 			delete e;

@@ -144,15 +144,23 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 	case OBJECT_TYPE_MARIO:
 	{
-		/*if (_Mario != NULL)
+		if (tokens.size() > 4)
 		{
-			DebugOut(L"[ERROR] MARIO object was created before!\n");
-			return;
-		}*/
+			float NewX = atof(tokens[4].c_str());
+			float NewY = atof(tokens[5].c_str());
+			_Mario->SetPosition(x, y);
+			_Mario->start_x = x;
+			_Mario->start_y = y;
+			_Mario->NewX = NewX;
+			_Mario->NewY = NewY;
+		}
+		else
+		{
+			_Mario->SetPosition(x, y);
+			_Mario->start_x = x;
+			_Mario->start_y = y;
+		}
 		
-		_Mario->SetPosition(x,y);
-		_Mario->start_x = x;
-		_Mario->start_y = y;
 		obj = _Mario;
 		//_Mario = (Mario*)obj;
 
@@ -246,6 +254,52 @@ void CPlayScene::_ParseSection_HUD(string line)
 	_HUD->LoadHUD(pathtxt);
 }
 
+void CPlayScene::_ParseSection_MARIO(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
 void CPlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
@@ -284,6 +338,9 @@ void CPlayScene::Load()
 		if (line == "[HUD]") {
 			section = SCENE_SECTION_HUD; continue;
 		}
+		if (line == "[MARIO]") {
+			section = SCENE_SECTION_MARIO; continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 		switch (section)
 		{
@@ -294,6 +351,7 @@ void CPlayScene::Load()
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 		case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
+		case SCENE_SECTION_MARIO: _ParseSection_MARIO(line); break;
 		}
 	}
 
@@ -589,22 +647,22 @@ void CPlayScene::Update(DWORD dt)
 			}
 			else
 			{
-				if (_Mario->nx == 1)
+				if (_Mario->nx == RIGHT)
 				{
 					//koopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
 					if (_Mario->level == MARIO_LEVEL_SMALL)
 					{
-						koopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
+						koopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH - 1.0f;
 						koopas->y = _Mario->y - 2;
 					}
 					else if (_Mario->level == MARIO_LEVEL_TAIL)
 					{
-						koopas->x = _Mario->x + MARIO_TAIL_BBOX_WIDTH + 1;
+						koopas->x = _Mario->x + MARIO_TAIL_BBOX_WIDTH - 2.0f;
 						koopas->y = _Mario->y + 7;
 					}
 					else
 					{
-						koopas->x = _Mario->x + MARIO_BIG_BBOX_WIDTH + 1;
+						koopas->x = _Mario->x + MARIO_BIG_BBOX_WIDTH - 1.0f;
 						koopas->y = _Mario->y + 6;
 					}
 					koopas->dx = _Mario->dx;
@@ -618,12 +676,12 @@ void CPlayScene::Update(DWORD dt)
 					//DebugOut(L"vao day, vx=%f\n", _Mario->vx);
 					if (_Mario->level == MARIO_LEVEL_SMALL)
 					{
-						koopas->x = _Mario->x - KOOPAS_BBOX_WIDTH - 1;
+						koopas->x = _Mario->x - KOOPAS_BBOX_WIDTH + 1;
 						koopas->y = _Mario->y - 2;
 					}
 					else
 					{
-						koopas->x = _Mario->x - KOOPAS_BBOX_WIDTH - 1;
+						koopas->x = _Mario->x - KOOPAS_BBOX_WIDTH + 1;
 						koopas->y = _Mario->y + 5;
 					}
 					koopas->dx = _Mario->dx;
@@ -702,7 +760,7 @@ void CPlayScene::Update(DWORD dt)
 			{
 				if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
 					tail->SetPosition(_Mario->x + MARIO_TAIL_BBOX_WIDTH, _Mario->y + 18);
-				else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_4)
+				else if (_Mario->ani >= MARIO_ANI_TAIL_ATTACK_4)
 					tail->isDie = true;
 				else
 					tail->SetPosition(_Mario->x, _Mario->y + 18);
@@ -732,8 +790,8 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	// Background đen phía sau
-	_Map->DrawMap();
-	_Mario->Render();
+	//_Map->DrawMap();
+	
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		if (objects[i]->isDie != true)
@@ -741,8 +799,8 @@ void CPlayScene::Render()
 			objects[i]->Render();
 		}
 	}
+	_Mario->Render();
 	_HUD->Render();
-	DebugOut(L"RENDER ani = %i\n", _Mario->ani);
 }
 
 void CPlayScene::Unload()
