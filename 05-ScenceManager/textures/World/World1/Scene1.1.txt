@@ -1,4 +1,4 @@
-# MARIO : 0,1,15 bên file Mario.txt
+# MARIO : 0,1,15,16 bên file Mario.txt
 [MARIO]
 .\textures\Mario\Mario.txt
 [TEXTURES]
@@ -20,15 +20,18 @@
 11	textures\ScoreBoard - Copy.png	255	255	255
 # EFFECT
 14	.\textures\Effect\enemy.png	68	145	190
+# ITEM
+17	.\textures\Item\Item.png	68	145	190
+
+
+
+# không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
 [HUD]
 .\textures\HUD\HUD.txt
-
 [MAP]
 300	textures\World\World1\Scene1.1Tile.png	255	255	255	textures\World\World1\Scene1.1Map.txt
 # id	left	top	right	bottom	texture_id
-
-
 
 
 [SPRITES]
@@ -144,6 +147,13 @@
 # ===== BRICK ITEM ========
 # Green MushRoom
 810	318	189	334	205	2
+#======== BUTTON P =========
+# Not Press
+811	12	13	28	29	17
+812	34	13	50	29	17
+813	59	13	75	29	17
+# IsPress
+814	82	23	98	29	17
 
 #=====  RED FIRE PLANT ========
 # Up Right
@@ -201,6 +211,46 @@
 1105	9	14	23	28	14
 1106	32	17	43	28	14
 1107	51	20	59	28	14
+
+#======== MARIO TAIL =========
+# RIGHT
+# 0
+1200	366	261	372	268	15
+# 1
+1201	373	257	380	266	15
+# 2
+1202	382	261	388	268	15
+# 3
+1203	391	262	396	270	15
+# 4
+1204	366	278	372	284	15
+# 5
+1205	374	276	380	284	15
+# 6
+1206	383	275	388	283	15
+# 7
+1207	389	274	396	280	15
+# INVISIBLE
+1208	360	261	365	266	15
+
+# LEFT
+# 0
+1210	268	261	274	268	16
+# 1
+1211	260	257	267	266	16
+# 2
+1212	252	261	258	268	16
+# 3
+1213	244	262	249	270	16
+# 4
+1214	268	278	274	284	16
+# 5
+1215	260	276	266	284	16
+# 6
+1216	252	275	257	283	16
+# 7
+1217	244	274	251	280	16
+
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -283,6 +333,11 @@
 # ===== BRICK ITEM =====
 # Green MushRoom
 810	810	100
+#	BUTTON P
+# Not Press
+811	811	100	812	100	813	100
+# IsPress
+812	814	100
 #==== RED FIRE PLANT ====
 # Appear/Hide Up Right
 900	900	100	901	100
@@ -322,6 +377,53 @@
 1100	1100	50	1101	50	1102	50	1103	50
 # Hit
 1101	1105	50	1106	50	1107	50
+#======== MARIO TAIL =========
+# RIGHT
+# 0
+1200	1200	100
+# 1
+1201	1201	100
+# 2
+1202	1202	100
+# 3
+1203	1203	100
+# 4
+1204	1204	100
+# 5
+1205	1205	100
+# 6
+1206	1206	100
+# 7
+1207	1207	100
+# LEFT
+# 0
+1208	1210	100
+# 1
+1209	1211	100
+# 2
+1210	1212	100
+# 3
+1211	1213	100
+# 4
+1212	1214	100
+# 5
+1213	1215	100
+# 6
+1214	1216	100
+# 7
+1215	1217	100
+# INVISIBLE
+1216	1208	100
+# tail walking right 
+1217	1206	100	1202	100	1207	100
+# tail walking right 
+1218	1216	100	1212	100	1217	100
+# tail flying low right 
+1219	1207	100	1205	100
+# tail flying low left 
+1220	1217	100	1215	100
+
+
 
 [ANIMATION_SETS]
 # BRICK 
@@ -353,7 +455,7 @@
 # ======= ITEM BRICK ========
 13	201	603
 # ===== BRICK ITEM =====
-14	810
+14	810	811	812
 # Fire Bullet
 100	1000	1001
 # ====== Effect =======
@@ -361,20 +463,26 @@
 1100	1100
 # Hit
 1101	1101
+#======== MARIO TAIL =========
+# RIGHT
+1200	1200	1201	1202	1203	1204	1205	1206	1207	1208	1209	1210	1211	1212	1213	1214	1215	1216	1217	1218	1219	1220
+#======== BUTTON P =========
+# Not Press
+1250	811	812
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-0	200	350	0
+#0	200	350	0
 #0	1200	368	0
 #0	1700	350	0
+# trước hàng gạch
 #0	2064	350	0
 # tren cong' map an
-#0	2272	64	0	2320	352
+0	2272	48	0	2320	352
 #tren dam may
 #0	1500	100	0
-
 
 # BRICK 
 #type	x	y	ani_set_id	type_brick( 0: normal, 1: cloud)
@@ -515,6 +623,7 @@
 13	2096	400	13	0
 13	2112	400	13	0
 13	2096	384	13	0
+
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
 200	352	368	5	32	48
@@ -523,4 +632,3 @@
 200	2272	112	5	32	192	true
 200	2272	384	5	32	32
 200	2336	384	5	32	32
-

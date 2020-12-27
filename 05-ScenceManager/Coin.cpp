@@ -17,7 +17,16 @@ void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 Coin::Coin()
 {
+	
 	ObjType = OBJECT_TYPE_COIN;
 	vx = vy = 0;
 	Category = CATEGORY::ITEM;
+}
+
+Coin::Coin(float x, float y)
+{
+	ObjType = OBJECT_TYPE_COIN;
+	vx = vy = 0;
+	Category = CATEGORY::ITEM;
+	SetPosition(x, y);
 }

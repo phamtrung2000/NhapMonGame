@@ -2,6 +2,7 @@
 #include "ItemBrick.h"
 #include "FireBullet.h"
 #include "PlayScence.h"
+#include "Coin.h"
 
 Koopas::Koopas()
 {
@@ -30,179 +31,6 @@ void Koopas::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		right = right - 1.f;
 	}
 }
-
-//void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
-//{
-//	CGameObject::Update(dt, coObjects);
-//	
-//	//DebugOut(L"state=%i, vx=%f,vy=%f, nx=%i, x max = %f, x min =%f\n", state, vx, vy, nx, X_max, X_min);
-//
-//	if (isShell == false && isShell_2 == false)
-//	{
-//		vy += KOOPAS_GRAVITY * dt;
-//	}
-//	else if (isShell == true && isHold != true)
-//	{
-//		vy += KOOPAS_SHELL_GRAVITY * dt;
-//	}
-//	else if (isShell_2 == true && isHold != true)
-//	{
-//		vy += KOOPAS_SHELL_2_GRAVITY * dt;
-//	}
-//		
-//	if (GetState() == KOOPAS_STATE_WALKING_RIGHT || GetState() == KOOPAS_STATE_WALKING_LEFT)
-//	{
-//		if (x >= X_max && vx > 0)
-//		{
-//			SetState(KOOPAS_STATE_WALKING_LEFT);
-//		}
-//		else if (x <= X_min && vx < 0)
-//		{
-//			SetState(KOOPAS_STATE_WALKING_RIGHT);
-//		}
-//			
-//	}
-//
-//	
-//	if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || GetState() == KOOPAS_STATE_SHELL_HOLD)
-//		&& GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
-//	{
-//		Revive = true;
-//		if (GetTickCount64() - ReviveTime > KOOPAS_REVIVE_TIME)
-//		{
-//			ReviveTime = 0;
-//			Revive = false;
-//			y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
-//			SetState(KOOPAS_STATE_WALKING_RIGHT);
-//		}
-//	}
-//
-//	vector<LPCOLLISIONEVENT> coEvents;
-//	vector<LPCOLLISIONEVENT> coEventsResult;
-//
-//	coEvents.clear();
-//
-//	if (state != KOOPAS_STATE_DIE)
-//		CalcPotentialCollisions(coObjects, coEvents);
-//
-//	if (coEvents.size() == 0)
-//	{
-//		x += dx;
-//		y += dy;
-//	}
-//	else
-//	{
-//		float min_tx, min_ty, nx = 0, ny;
-//		float rdx = 0;
-//		float rdy = 0;
-//
-//		// TODO: This is a very ugly designed function!!!!
-//		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-//		if (rdx != 0 && rdx!=dx)
-//			x += nx*abs(rdx); 
-//		// chuẩn + ít lỗi nhất
-//		this->x += min_tx * dx + nx * 0.4f;
-//		if (ny != 0) vy = 0;
-//
-//		for (UINT i = 0; i < coEventsResult.size(); i++)
-//		{
-//			LPCOLLISIONEVENT e = coEventsResult[i];
-//
-//			if (dynamic_cast<WarpPipe*>(e->obj))
-//			{
-//				if (e->nx != 0)
-//				{
-//					if (isShell == false && isShell_2 == false)
-//					{
-//						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-//							SetState(KOOPAS_STATE_WALKING_LEFT);
-//						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-//							SetState(KOOPAS_STATE_WALKING_RIGHT);
-//					}
-//					else
-//					{
-//						if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-//							SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-//						else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-//							SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-//					}
-//				}
-//			}
-//			else if (dynamic_cast<QuestionBrick*>(e->obj))
-//			{
-//				QuestionBrick* brick = dynamic_cast<QuestionBrick*>(e->obj);
-//				if (e->nx != 0)
-//				{
-//					if (isShell == false && isShell_2 == false)
-//					{
-//						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-//							SetState(KOOPAS_STATE_WALKING_LEFT);
-//						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-//							SetState(KOOPAS_STATE_WALKING_RIGHT);
-//					}
-//					else
-//					{
-//						if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-//							SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-//						else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-//							SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-//					}
-//					if (brick->GetState() == BRICK_STATE_NORMAL && brick->Item < 10 && (isShell == true || isShell_2 == true))
-//						brick->SetState(BRICK_STATE_COLLISION);
-//				}
-//			}
-//			else if (dynamic_cast<Block*>(e->obj))
-//			{
-//				if (e->ny < 0 && CountXmaxXmin == false)
-//				{
-//					Block* block = dynamic_cast<Block*>(e->obj);
-//					X_min = block->x;
-//					X_max = X_min + (block->Width - 16);
-//					CountXmaxXmin = true;
-//				}
-//				if (GetState() != KOOPAS_STATE_SHELL || GetState() != KOOPAS_STATE_SHELL_2)
-//				{
-//					x += dx;
-//				}
-//			}
-//			else if (dynamic_cast<Ground*>(e->obj))
-//			{
-//				X_min = MIN;
-//				X_max = MAX;
-//			}
-//			else if (dynamic_cast<CGoomba*>(e->obj))
-//			{
-//				DebugOut(L"nx %f, ny %f\n",e->nx,e->ny);
-//				//x += dx;
-//				//this->y += min_ty * dy + ny * 0.4f;
-//			}
-//			else if (dynamic_cast<Koopas*>(e->obj))
-//			{
-//				x += dx;
-//				//this->y += min_ty * dy + ny * 0.4f;
-//			}
-//			else if (dynamic_cast<FireBullet*>(e->obj))
-//			{
-//				FireBullet* fb = dynamic_cast<FireBullet*>(e->obj);
-//				if (fb->FireMario == false)
-//				{
-//					x += dx;
-//				}
-//			}
-//		}
-//	}
-//	if (isShell == false)
-//		DebugOut(L"isShell == false\t");
-//	else
-//		DebugOut(L"isShell == true\t");
-//	if (isShell_2 == false)
-//		DebugOut(L"isShell_2 == false\t");
-//	else
-//		DebugOut(L"isShell_2 == true\t");
-//	DebugOut(L"\n");
-//
-//	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-//}
 
 void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -410,6 +238,18 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					x += dx;
 				}
+			}
+			else if (dynamic_cast<Coin*>(e->obj))
+			{
+				if (e->nx != 0)
+				{
+					x += dx;
+				}
+				else if (e->ny < 0)
+				{
+					y += dy;
+				}
+				
 			}
 		}
 	}

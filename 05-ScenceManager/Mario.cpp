@@ -21,8 +21,7 @@
 #include "GreenKoopas.h"
 #include "EffectSmoke.h"
 #include "MarioTail.h"
-
-int dem = 0;
+#include "ButtonP.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -493,6 +492,22 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		coEvents.clear();
 
+		for (UINT i = 0; i < coObjects->size(); i++)
+		{
+			if (coObjects->at(i)->Category == CATEGORY::ITEM && coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
+			{
+				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+				{
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
+					{
+						coObjects->at(i)->isDie = true;
+						_HUD->UpdateScore(coObjects->at(i));
+					}
+				}
+			}
+		}
+
 		// turn off collision when die 
 		if (state != MARIO_STATE_DIE)
 			CalcPotentialCollisions(coObjects, coEvents);
@@ -587,11 +602,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							if (dynamic_cast<CPortal*>(e->obj))
 							{
 								CPortal* p = dynamic_cast<CPortal*>(e->obj);
-								/*if (p->GetSceneId() != 1)
-									CGame::GetInstance()->SwitchScene(p->GetSceneId());
-								else
-									CGame::GetInstance()->SwitchScene2(p->GetSceneId());*/
-
+							
 								CGame::GetInstance()->SwitchScene(p->GetSceneId());
 							}
 						}
@@ -607,21 +618,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
-		for (UINT i = 0; i < coObjects->size(); i++)
-		{
-			if (coObjects->at(i)->Category == CATEGORY::ITEM)
-			{
-				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-				{
-					if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
-					{
-						coObjects->at(i)->isDie = true;
-						_HUD->UpdateScore(coObjects->at(i));
-					}
-				}
-			}
-		}
+		
 
 		if (x >= MAP_MAX_WIDTH - Width - 1)
 		{
@@ -631,7 +628,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	
 	//y = static_cast<int>(y);
-	Debug();
+	//Debug();
 }
 
 void Mario::Render()
@@ -1474,13 +1471,21 @@ void Mario::SetState(int state)
 	{
 	case MARIO_STATE_WALKING_RIGHT:
 	{
-		nx = 1;
+		if (nx == LEFT)
+		{
+			x -= 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+		}
+		nx = RIGHT;
 	}
 	break;
 
 	case MARIO_STATE_WALKING_LEFT:
 	{
-		nx = -1;
+		if (nx == RIGHT)
+		{
+			x += 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+		}
+		nx = LEFT;
 	}
 	break;
 
@@ -2330,23 +2335,37 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 		if (dynamic_cast<BrickItem*>(e->obj))
 		{
 			BrickItem* brickitem = dynamic_cast<BrickItem*>(e->obj);
-			brickitem->isDie = true;
-			_HUD->MarioLife++;
-			x += dx;
-			y += dy;
+			if (brickitem->Item == MUSHROOM)
+			{
+				brickitem->isDie = true;
+				_HUD->MarioLife++;
+				x += dx;
+				y += dy;
+			}
+			else if (brickitem->Item == BUTTONP)
+			{
+				if (ny != 0) vy = 0;
+				if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.4f;
+				}
+				else if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+					brickitem->SetState(BRICKITEM_STATE_COLLISION);
+				}
+			}
+			
 		}
 	}
 	else if (e->obj->ObjType == OBJECT_TYPE_COIN)
 	{
-		dem++;
 		if (dynamic_cast<Coin*>(e->obj))
 		{
 			Coin* coin = dynamic_cast<Coin*>(e->obj);
 			coin->isDie = true;
 			_HUD->UpdateScore(e->obj);
 			x += dx;
-			y += dy;
 		}
-		DebugOut(L"dem = %i\t", dem);
 	}
 }

@@ -5,6 +5,8 @@
 #include"PlayScence.h"
 #include "ItemBrick.h"
 #include "Mario.h"
+#include "BrickItem.h"
+#include "EffectSmoke.h"
 
 MarioTail::MarioTail(float x, float y)
 {
@@ -19,32 +21,6 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (_Mario->nx == RIGHT )
 	{
-		/*if (_Mario->ani == MARIO_ANI_TAIL_JUMP_RIGHT )
-		{
-			width = 7;
-			height = 6;
-		}
-		else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_RIGHT)
-		{
-			width = 7;
-			height = 9;
-		}
-		else if (_Mario->ani == MARIO_ANI_TAIL_IDLE_RIGHT)
-		{
-			width = 5;
-			height = 8;
-		}
-		else if (_Mario->ani == MARIO_ANI_TAIL_WALKING_RIGHT)
-		{
-			width = 6;
-			height = 8;
-		}
-		else 
-		{
-			width = 6;
-			height = 7;
-		}*/
-		
 		if (_Mario->isAttacking == false)
 		{
 			this->x = _Mario->x - 5;
@@ -76,27 +52,6 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else if (_Mario->nx == LEFT )
 	{
-		/*if (_Mario->ani == MARIO_ANI_TAIL_JUMP_RIGHT)
-		{
-			width = 7;
-			height = 6;
-		}
-		else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_RIGHT)
-		{
-			width = 7;
-			height = 9;
-		}
-		else if (_Mario->ani == MARIO_ANI_TAIL_IDLE_RIGHT)
-		{
-			width = 5;
-			height = 8;
-		}
-		else
-		{
-			width = 6;
-			height = 7;
-		}*/
-
 		if (_Mario->isAttacking == false)
 		{
 			this->x = _Mario->x + MARIO_BIG_BBOX_WIDTH + 2;
@@ -116,39 +71,54 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
-
-	for (UINT i = 0; i < coObjects->size(); i++)
+	if (_Mario->isAttacking == true)
 	{
-		// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-		if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true )
+		for (UINT i = 0; i < coObjects->size(); i++)
 		{
-			if (coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
+			// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 			{
-				coObjects->at(i)->isDie = true;
-			}
-			else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICK)
-			{
-				QuestionBrick* brick = dynamic_cast<QuestionBrick*>(coObjects->at(i));
-				if (brick->GetState() == BRICK_STATE_NORMAL)
+				if (coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
 				{
-					brick->SetState(BRICK_STATE_COLLISION);
-				}
-			}
-
-			else if (coObjects->at(i)->Category == CATEGORY::ENEMY)
-			{
-				if (coObjects->at(i)->ObjType == OBJECT_TYPE_GOOMBA)
-				{
-					CGoomba* goomba = dynamic_cast<CGoomba*>(coObjects->at(i));
-					if (goomba->GetState() == GOOMBA_STATE_WALKING)
+					ItemBrick* brick = dynamic_cast<ItemBrick*>(coObjects->at(i));
+					if(brick->Item==NORMAL)
+						coObjects->at(i)->isDie = true;
+					else if (brick->Item == BUTTONP)
 					{
-						goomba->SetState(GOOMBA_STATE_DIE_2);
+						brick->SetState(BRICK_STATE_COLLISION);
+						BrickItem* brickitem = new BrickItem(BUTTONP, brick->x , brick->y - 16);
+						_PlayScene->objects.push_back(brickitem);
+						auto effect = new EffectSmoke(brick->x , brick->y - 16);
+						_PlayScene->objects.push_back(effect);
+					}
+						
+				}
+				else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICK)
+				{
+					QuestionBrick* brick = dynamic_cast<QuestionBrick*>(coObjects->at(i));
+					if (brick->GetState() == BRICK_STATE_NORMAL)
+					{
+						brick->SetState(BRICK_STATE_COLLISION);
 					}
 				}
-				//coObjects->at(i)->isDie = true;
+
+				else if (coObjects->at(i)->Category == CATEGORY::ENEMY)
+				{
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_GOOMBA)
+					{
+						CGoomba* goomba = dynamic_cast<CGoomba*>(coObjects->at(i));
+						if (goomba->GetState() == GOOMBA_STATE_WALKING)
+						{
+							goomba->SetState(GOOMBA_STATE_DIE_2);
+						}
+					}
+					//coObjects->at(i)->isDie = true;
+				}
 			}
 		}
 	}
+	if (_Mario->GoHiddenWorld == true)
+		this->isDie = true;
 }
 
 void MarioTail::Render()

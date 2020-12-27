@@ -332,6 +332,7 @@ void QuestionBrickItem::SetState(int state)
 		
 	}
 	break;
+
 	case QUESTIONBRICKITEM_STATE_MOVE_RIGHT:
 	{
 		isInit = true;

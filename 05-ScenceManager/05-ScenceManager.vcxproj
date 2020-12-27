@@ -128,6 +128,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickItem.cpp" />
+    <ClCompile Include="ButtonP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="DancingTree.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickItem.h" />
+    <ClInclude Include="ButtonP.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="DancingTree.h" />
@@ -217,6 +219,7 @@
     <Text Include="textures\Opening\MapOpening.txt" />
     <Text Include="textures\Overworld\World1Scene.txt" />
     <Text Include="textures\Overworld\World2Map.txt" />
+    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />

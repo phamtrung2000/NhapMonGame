@@ -207,6 +207,9 @@
     <ClCompile Include="EffectSmoke.cpp">
       <Filter>PlayScene\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="ButtonP.cpp">
+      <Filter>PlayScene\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -332,6 +335,9 @@
     <ClInclude Include="DancingTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ButtonP.h">
+      <Filter>PlayScene\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="mario-sample.txt">
@@ -363,6 +369,7 @@
     <Text Include="textures\World\World1\Scene1.1Map.txt">
       <Filter>World\World1</Filter>
     </Text>
+    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\enemies.png">

@@ -14,6 +14,7 @@
 #include "MarioTail.h"
 #include "Game.h"
 #include "Camera.h"
+#include "ButtonP.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -197,11 +198,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GREENFLYKOOPAS: obj = new GreenFlyKoopas(); break;
 	case OBJECT_TYPE_COIN: obj = new Coin(); break;
 	case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
-		/*case 1100:
-		{
-			obj = new HUD();
-			hud = (HUD*)obj;
-		}break;*/
+	case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -512,9 +509,6 @@ void CPlayScene::Update(DWORD dt)
 					float y = objects[i]->y;
 					BrickItem* brickitem = new BrickItem(itembrick->Item, x, y);
 					brickitem->CaclVx(_Mario->x);
-					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-					LPANIMATION_SET ani_set = animation_sets->Get(BI_MUSHROOM_ANISET_ID);
-					brickitem->SetAnimationSet(ani_set);
 					objects.push_back(brickitem);
 					itembrick->hasItem = false;
 				}
@@ -567,6 +561,7 @@ void CPlayScene::Update(DWORD dt)
 					//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
 				}
 			}
+
 		}
 		else
 		{
@@ -776,7 +771,7 @@ void CPlayScene::Update(DWORD dt)
 	_HUD->Update(dt);
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (_Mario == NULL) return;
-	//DebugOut(L"objects.size() = %i\n", objects.size());
+	DebugOut(L"objects.size() = %i\n", objects.size());
 
 	//CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 }

@@ -13,7 +13,7 @@
 
 #define NORMAL	0
 #define MUSHROOM 1
-#define BUTTON	2
+#define BUTTONP	2
 
 #define ITEMBRICK_WIDTH	16
 
@@ -24,6 +24,7 @@ public:
 	bool isCollision;
 	bool hasItem;
 	int Item;
+	bool check;
 public:
 	ItemBrick(int item, float x = 0.0f, float y = 0.0f);
 	void Render();
