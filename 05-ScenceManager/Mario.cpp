@@ -45,7 +45,7 @@ Mario::Mario(float x, float y) : CGameObject()
 	this->y = y; 
 	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning 
 	= isFlyingHigh = canFlyX = canFlyS  = isFalling = isSitDown = isAttacking 
-	= endAttack = isLevelUp = test = false;
+	= endAttack = isLevelUp = test = render_tail = false;
 	OnGround = true;
 	level_of_walking = level_of_running = 0;
 	level_of_stopping = 1;
@@ -1446,7 +1446,7 @@ void Mario::Render()
 		int alpha = 255;
 		if (untouchable) alpha = 128;
 
-		if (level == MARIO_LEVEL_TAIL)
+		/*if (level == MARIO_LEVEL_TAIL)
 		{
 			if (nx == RIGHT && ani >= MARIO_ANI_TAIL_ATTACK_2)
 				animation_set->at(ani)->Render(x + 7, y, alpha);
@@ -1455,10 +1455,10 @@ void Mario::Render()
 			else
 				animation_set->at(ani)->Render(x, y, alpha);
 		}
-		else
+		else*/
 			animation_set->at(ani)->Render(x, y, alpha);
 	}
-	//DebugOut(L"RENDER ani = %i\n", ani);
+	DebugOut(L"RENDER ani = %i\n", ani);
 	//if(isAttacking==true)
 	//	DebugOut(L"isAttacking==true\n");
 	//else
@@ -1480,7 +1480,6 @@ void Mario::SetState(int state)
 
 	case MARIO_STATE_WALKING_LEFT:
 	{
-		
 		nx = -1;
 	}
 	break;
@@ -1716,7 +1715,7 @@ void Mario::Reset()
 	SetState(MARIO_STATE_IDLE);
 	SetLevel(MARIO_LEVEL_SMALL);
 	SetPosition(start_x, start_y);
-	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking = endAttack = false;
+	render_tail = GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking = endAttack = false;
 	OnGround = true;
 	level_of_walking = level_of_running = 0;
 	level_of_stopping = 1;
@@ -1792,12 +1791,16 @@ void Mario::Debug()
 	case MARIO_STATE_RUNNING:
 		DebugOut(L"State = RUNNING\t"); break;
 	}
-	if (ChangeDirection == false)
-		DebugOut(L"ChangeDirection == false\t");
+	if (canFlyX == false)
+		DebugOut(L"canFlyX == false\t");
 	else
-		DebugOut(L"ChangeDirection == true\t");
+		DebugOut(L"canFlyX == true\t");
+	if (isFlyingLow == false)
+		DebugOut(L"isFlyingLow == false\t");
+	else
+		DebugOut(L"isFlyingLow == true\t");
 	
-	DebugOut(L"level_of_walking = %i, level_of_running = %i, vx = %f, vy = %f\n",level_of_walking, level_of_running, vx, vy);
+	//DebugOut(L"level_of_walking = %i, level_of_running = %i, vx = %f, vy = %f\n",level_of_walking, level_of_running, vx, vy);
 }
 
 void Mario::Unload()

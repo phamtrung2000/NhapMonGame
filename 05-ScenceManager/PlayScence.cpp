@@ -442,27 +442,21 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 	// tạo object đuôi(MarioTail) khi _Mario quật đuôi, xóa object khi thực hiện xong hành động quật đuôi
-	else if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isAttacking == true)
+	else if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->render_tail == false)
 	{
 		//DebugOut(L" ani = %i, time %i\n", _Mario->ani, _Mario->time_attack);
-		if (_Mario->nx == RIGHT && _Mario->ani == MARIO_ANI_TAIL_ATTACK_1 && _Mario->time_attack == 0)
+		if (_Mario->nx == RIGHT )
 		{
-			MarioTail* tail = new MarioTail(0, 0);
-			tail->SetPosition(_Mario->x, _Mario->y + 18);
-			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(0);
-			tail->SetAnimationSet(ani_set);
-			objects.push_back(tail);
+			if (_Mario->ani != MARIO_ANI_TAIL_STOP_RIGHT)
+			{
+				MarioTail* tail = new MarioTail(_Mario->x, _Mario->y + 18);
+				CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+				LPANIMATION_SET ani_set = animation_sets->Get(1200);
+				tail->SetAnimationSet(ani_set);
+				objects.push_back(tail);
+			}
 		}
-		else if (_Mario->nx == LEFT && _Mario->ani == MARIO_ANI_TAIL_ATTACK_3 && _Mario->time_attack == 0)
-		{
-			MarioTail* tail = new MarioTail(0, 0);
-			tail->SetPosition(_Mario->x + MARIO_BIG_BBOX_WIDTH, _Mario->y + 18);
-			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(0);
-			tail->SetAnimationSet(ani_set);
-			objects.push_back(tail);
-		}
+		_Mario->render_tail = true;
 	}
 
 	for (size_t i = 1; i < objects.size(); i++)
@@ -755,7 +749,7 @@ void CPlayScene::Update(DWORD dt)
 		}
 		else if (objects[i]->ObjType == OBJECT_TYPE_MARIO_TAIL)
 		{
-			MarioTail* tail = (MarioTail*)objects[i];
+			/*MarioTail* tail = (MarioTail*)objects[i];
 			if (_Mario->nx == RIGHT && _Mario->isAttacking == true)
 			{
 				if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
@@ -773,7 +767,7 @@ void CPlayScene::Update(DWORD dt)
 					tail->isDie = true;
 				else
 					tail->SetPosition(_Mario->x + MARIO_BIG_BBOX_WIDTH, _Mario->y + 18);
-			}
+			}*/
 		}
 		objects[i]->Update(dt, &coObjects);
 	}

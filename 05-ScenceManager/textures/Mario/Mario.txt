@@ -3,6 +3,7 @@
 0	.\textures\Mario\mario.png	255	255	255
 1	.\textures\Mario\mario1.png	255	255	255
 15	.\textures\Mario\mario2.png	176	224	248
+16	.\textures\Mario\mario3.png	176	224	248
 [SPRITES]
 # ====== BIG MARIO =========
 # idle right
@@ -103,114 +104,77 @@
 
 # TAIL MARIO
 # tail idle right
-100	212	443	233	471	1
+100	566	164	582	192	15
 # tail walking right
-#101	272	634	294	662	0
-101	262	443	284	471	1
-#102	303	634	324	661	0
-102	291	443	314	470	1
-
+101	583	164	599	192	15
+# tail walking right lv2/ falling / flying low
+102	601	164	617	191	15
 # tail idle left
-#103	182	634	203	662	0
-103	173	443	194	471	1
+103	58	164	74	192	16
 # tail walking left
-#104	152	634	174	662	0
-104	122	443	144	471	1
-#105	122	634	143	661	0
-105	92	443	115	470	1
+104	41	164	57	192	16
+# tail walking left lv2/ falling / flying low
+105	23	164	39	191	16
 
 # tail running right
-#106	331	634	355	662	0
-106	211	523	235	551	1
-#107	362	634	385	662	0
-107	251	523	275	551	1
-#108	393	634	414	661	0
-108	291	523	315	551	1
+106	450	164	474	192	15
+107	478	164	501	192	15
+108	504	164	527	191	15
 # tail running left
-#109	91	634	115	662	0
-109	171	523	195	551	1
-#110	61	634	84	662	0
-110	131	523	155	551	1
-#111	32	634	53	661	0
-111	91	523	115	551	1
+109	166	164	190	192	16
+110	139	164	162	192	16
+111	113	164	136	192	16
 
 # tail stop right
-#112	5	633	21	663	0
-112	215	482	231	512	1
+112	485	224	501	254	15
 # tail stop left
-#113	425	633	441	663	0
-113	175	482	191	512	1
+113	139	224	155	254	16
 # tail jump right
-#114	392	754	415	781	0
-114	331	443	354	470	1
+114	601	224	617	251	15
 # tail jump left
-#115	31	754	54	781	0
-115	52	443	75	470	1
+115	23	224	39	251	16
 
-# tail falling right
-#116	362	794	385	822	0
-116	211	603	234	630	1
-# tail falling left
-#117	61	794	84	822	0
-117	172	603	195	630	1
-
-# tail flying right lv1
-#118	392	754	415	781	0
-118	291	443	314	470	1
-# tail flying right lv2
-#119	302	874	324	902	0
-119	252	603	274	631	1
-# tail flying left lv1
-#120	31	754	54	781	0
-120	92	443	115	470	1
-# tail flying left lv2
-#121	122	874	144	902	0
-121	132	603	154	631	1
-
+# tail flying max running right lv0
+116	412	195	436	223	15
 # tail flying max running right lv1
-#122	331	714	355	741	0
-122	291	603	315	631	1
-
+117	424	164	448	191	15
 # tail flying max running right lv2
-#123	361	714	385	742	0
-123	371	603	395	630	1
+118	386	195	410	222	15
 
+# tail flying max running left lv0
+119	204	195	228	223	16
 # tail flying max running left lv1
-#124	91	714	115	741	0
-124	91	603	115	631	1
+120	192	164	216	191	16
 # tail flying max running left lv2
-#125	61	714	85	742	0
-125	11	603	35	630	1
+121	230	195	254	222	16
 
 # tail sitdown right
-#126	392	719	414	737	0
-126	372	448	394	466	1
+122	438	267	454	285	15
 # tail sitdown left
-#127	32	719	54	737	0
-127	12	448	34	466	1
+123	186	267	202	285	16
 
 # tail attack 
-128	236	443	259	471	1
-129	355	483	371	511	1
-130	147	443	170	471	1
-131	390	483	406	511	1
+128	566	164	582	192	15
+129	406	163	422	192	15
+130	58	164	74	192	16
+131	388	164	404	192	15
 
 # Tail Hold Koopas Idle Right
-132	322	523	343	551	1
+132	565	194	581	222	15
 # Tail Hold Koopas Walk Right
-133	351	523	373	551	1
-134	381	523	404	550	1
+133	583	194	599	222	15
+134	601	194	617	221	15
 
 # Tail Hold Koopas Idle Left
-135	63	523	84	551	1
+135	59	194	75	222	16
 # Tail Hold Koopas Walk Left
-136	33	523	55	551	1
-137	2	523	25	550	1
+136	41	194	57	222	16
+137	23	194	39	221	16
 
 # Tail Kick Koopas Right
-138	247	483	269	511	1
+138	541	194	563	222	15
 # Tail Kick Koopas Right
-139	137	483	159	511	1
+139	77	194	99	222	16
 
 # tail flying fall right
 140	331	603	355	630	1
@@ -303,6 +267,8 @@
 19	11	50	12	50	13	50
 # big running left
 20	14	50	15	50	16	50
+
+
 # tail idle right
 21	100	100
 # tail idle left
@@ -323,27 +289,34 @@
 29	106	50	107	50	108	50
 # tail running left
 30	109	50	110	50	111	50
-# tail fall right
-31	116	100
-# tail fall left
-32	117	100
-# tail flying right
-33	118	100	119	100
-# tail flying left
-34	120	100	121	100
-# tail flying right
-35	122	100	123	100
-# tail flying left
-36	124	100	125	100
+
+# tail falling/flying low  right
+31	102	100
+# tail falling/flying low left
+32	105	100
+
+# tail flying low right
+33	102	100
+# tail flying low left
+34	105	100
+
+
+# tail flying high right
+35	117	100	118	100
+# tail flying high left
+36	120	100	121	100
+
 # tail sitdown right
-37	126	100
+37	122	100
 # tail sitdown left
-38	127	100
+38	123	100
+
 # tail attack 
 39	128	150
 40	129	150
 41	130	150
 42	131	150
+
 # big sitdown right
 43	17	100
 # big sitdown left
@@ -433,9 +406,9 @@
 # Tail Hold Koopas Jump Left
 86	137	100
 # Tail Fly Fall Right
-87	140	100
+87	118	100
 # Tail Fly Fall Left
-88	141	100
+88	121	100
 # Up Level Right : Small->Big
 89	28	100
 [ANIMATION_SETS]

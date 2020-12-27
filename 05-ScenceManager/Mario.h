@@ -73,8 +73,8 @@
 #define MARIO_ANI_TAIL_JUMP_RIGHT			25
 #define MARIO_ANI_TAIL_JUMP_LEFT			26
 
-#define MARIO_ANI_TAIL_STOP_RIGHT			28
-#define MARIO_ANI_TAIL_STOP_LEFT			27
+#define MARIO_ANI_TAIL_STOP_RIGHT			27
+#define MARIO_ANI_TAIL_STOP_LEFT			28
 
 #define MARIO_ANI_TAIL_RUNNING_RIGHT		29
 #define MARIO_ANI_TAIL_RUNNING_LEFT			30
@@ -169,8 +169,8 @@
 #define MARIO_BIG_BBOX_HEIGHT 26//27
 #define MARIO_BIG_BBOX_SITDOWN_HEIGHT 18
 
-#define MARIO_TAIL_BBOX_WIDTH  21
-#define MARIO_TAIL_BBOX_HEIGHT 28
+#define MARIO_TAIL_BBOX_WIDTH  16//21
+#define MARIO_TAIL_BBOX_HEIGHT 27//28
 #define MARIO_TAIL_BBOX_SITDOWN_HEIGHT 18
 
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
@@ -220,6 +220,8 @@ public:
 	bool isHolding = false, pressA = false, canKick = false;
 	int Height,Width;
 
+
+	bool render_tail;
 	// BAY (FLY)
 	bool canFlyX, canFlyS, // mario có thể bay khi đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
 		isFlyingLow, isFlyingHigh; // biến để xác định mario đang ở state fly
