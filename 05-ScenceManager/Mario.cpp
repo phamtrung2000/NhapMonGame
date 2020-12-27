@@ -469,12 +469,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			case MARIO_LEVEL_SMALL:
 			{
 				Height = MARIO_SMALL_BBOX_HEIGHT;
-				canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
+				render_tail = canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
 			}break;
 			case MARIO_LEVEL_BIG: case MARIO_LEVEL_FIRE:
 			{
 				Height = MARIO_BIG_BBOX_HEIGHT;
-				canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
+				render_tail = canFlyS = canFlyX = isFlyingHigh = isFlyingLow = false;
 			}break;
 			case MARIO_LEVEL_TAIL:
 			{

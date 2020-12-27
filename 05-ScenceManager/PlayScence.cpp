@@ -442,17 +442,11 @@ void CPlayScene::Update(DWORD dt)
 	else if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->render_tail == false)
 	{
 		//DebugOut(L" ani = %i, time %i\n", _Mario->ani, _Mario->time_attack);
-		if (_Mario->nx == RIGHT )
-		{
-			if (_Mario->ani != MARIO_ANI_TAIL_STOP_RIGHT)
-			{
-				MarioTail* tail = new MarioTail(_Mario->x, _Mario->y + 18);
-				CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-				LPANIMATION_SET ani_set = animation_sets->Get(1200);
-				tail->SetAnimationSet(ani_set);
-				objects.push_back(tail);
-			}
-		}
+		MarioTail* tail = new MarioTail(_Mario->x, _Mario->y + 18);
+		CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(1200);
+		tail->SetAnimationSet(ani_set);
+		objects.push_back(tail);
 		_Mario->render_tail = true;
 	}
 
@@ -780,7 +774,6 @@ void CPlayScene::Render()
 {
 	// Background đen phía sau
 	//_Map->DrawMap();
-	
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		if (objects[i]->isDie != true)

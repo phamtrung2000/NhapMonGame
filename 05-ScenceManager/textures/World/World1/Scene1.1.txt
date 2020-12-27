@@ -474,13 +474,13 @@
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-#0	200	350	0
+0	200	350	0	2320	352
 #0	1200	368	0
 #0	1700	350	0
 # trước hàng gạch
 #0	2064	350	0
 # tren cong' map an
-0	2272	48	0	2320	352
+#0	2272	48	0	2320	352
 #tren dam may
 #0	1500	100	0
 

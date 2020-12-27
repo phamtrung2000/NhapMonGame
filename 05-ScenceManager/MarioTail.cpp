@@ -66,6 +66,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_1)
 				this->SetPosition(_Mario->x - 7.0f, _Mario->y + 18);
+				//this->SetPosition(_Mario->x - 10.0f, _Mario->y + 18);
 			else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
 				this->SetPosition(_Mario->x + MARIO_TAIL_BBOX_WIDTH, _Mario->y + 18);
 		}
@@ -117,7 +118,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 	}
-	if (_Mario->GoHiddenWorld == true)
+	if (_Mario->GoHiddenWorld == true || _Mario->level != MARIO_LEVEL_TAIL)
 		this->isDie = true;
 }
 

@@ -178,7 +178,7 @@
 #define LEFT -1
 #define RIGHT 1
 
-#define TIME_ATTACK 3
+#define TIME_ATTACK 4
 #define TIME_FLY 200
 #define TIME_FLY_S 40
 #define MARIO_UNTOUCHABLE_TIME 5000
