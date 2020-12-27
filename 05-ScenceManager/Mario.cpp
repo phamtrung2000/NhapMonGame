@@ -438,10 +438,61 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				isSitDown = false;
 			}
 		}
-		else if (GetState() == MARIO_STATE_IDLE)
+		else if (GetState() == MARIO_STATE_SITDOWN)
 		{
-			
+			if (level_of_walking == 0 && level_of_running == 0)
+			{
+				vx = 0;
+				ChangeDirection = false;
+			}
+			else
+			{
+				if (vx > 0)
+				{
+					if (level_of_running > 0)
+					{
+						//vx -= 2 * GIA_TOC;
+						vx -= 1 * GIA_TOC;
+						if (vx < 0.0f)
+							vx = 0.0f;
+					}
+					// đi bộ
+					else if (level_of_walking > 0)
+					{
+						vx -= GIA_TOC;
+					}
+				}
+				else if (vx < 0)
+				{
+					if (level_of_running > 0)
+					{
+						//vx += 2 * GIA_TOC;
+						vx += 1 * GIA_TOC;
+						if (vx > 0.0f)
+							vx = 0.0f;
+					}
+					else if (level_of_walking > 0)
+					{
+						vx += GIA_TOC;
+					}
+				}
+			}
+
+			// đang trong trạng thái bay thì k trừ 
+			if (canFlyX == false && canFlyS == false)
+			{
+				if (level_of_walking > 0)
+					level_of_walking--;
+				/*else if (level_of_walking == 0)
+					vx = 0;*/
+
+				if (level_of_running > 0)
+					level_of_running--;
+				/*else if (level_of_running == 0)
+					vx = 0;*/
+			}
 		}
+
 		if (isMaxRunning == true && abs(vx) > MARIO_RUNNING_MAX_SPEED)
 		{
 			if (nx == RIGHT)
@@ -619,7 +670,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
 		
-
 		if (x >= MAP_MAX_WIDTH - Width - 1)
 		{
 			x = static_cast<float>(MAP_MAX_WIDTH - Width - 1);
@@ -628,7 +678,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	
 	//y = static_cast<int>(y);
-	//Debug();
+	Debug();
 }
 
 void Mario::Render()
@@ -656,7 +706,7 @@ void Mario::Render()
 					else if ((iLevelUpTime / LEVEL_UP_DIVIDE) % 2 != 0)
 						ani = MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG;
 				}*/
-				if (iLevelUpTime>0 && iLevelUpTime < ITIME_LEVEL_UP/2)
+				if (iLevelUpTime > 0 && iLevelUpTime < ITIME_LEVEL_UP / 2)
 				{
 					if ((iLevelUpTime / LEVEL_UP_DIVIDE) % 2 == 0) // 0->14 30 60
 						ani = MARIO_ANI_SMALL_IDLE_RIGHT;
@@ -712,7 +762,7 @@ void Mario::Render()
 						}
 						else
 						{
-							if(nx == LEFT)
+							if (nx == LEFT)
 								ani = MARIO_ANI_SMALL_STOP_LEFT;
 							else
 								ani = MARIO_ANI_SMALL_STOP_RIGHT;
@@ -784,125 +834,6 @@ void Mario::Render()
 
 			case MARIO_LEVEL_BIG:
 			{
-				// chưa nhảy / đang rớt xuống
-				if (vy >= 0)
-				{
-					// đang chạm đất
-					if (OnGround == true)
-					{
-						// đứng yên
-						if (level_of_walking == 0 && level_of_running == 0)
-						{
-							// đi thẳng k chuyển hướng
-							if (ChangeDirection == false)
-							{
-								// phải 
-								if (nx == RIGHT)
-								{
-									ani = MARIO_ANI_BIG_IDLE_RIGHT;
-									if (isHolding == true)
-										ani = MARIO_ANI_BIG_HOLD_IDLE_RIGHT;
-									else if (isSitDown == true)
-										ani = MARIO_ANI_BIG_SITDOWN_RIGHT;
-								}
-								// trái
-								else
-								{
-									ani = MARIO_ANI_BIG_IDLE_LEFT;
-									if (isHolding == true)
-										ani = MARIO_ANI_BIG_HOLD_IDLE_LEFT;
-									else if (isSitDown == true)
-										ani = MARIO_ANI_BIG_SITDOWN_LEFT;
-								}
-							}
-							else
-							{
-								if (nx == LEFT)
-									ani = MARIO_ANI_BIG_STOP_LEFT;
-								else
-									ani = MARIO_ANI_BIG_STOP_RIGHT;
-							}
-						}
-						// đi bộ qua phải
-						else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
-						{
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_BIG_WALKING_RIGHT;
-								if (isHolding == true)
-									ani = MARIO_ANI_BIG_HOLD_WALK_RIGHT;
-								else if (isMaxRunning == true)
-									ani = MARIO_ANI_BIG_RUNNING_RIGHT;
-							}
-							else if (ChangeDirection == true)
-							{
-								ani = MARIO_ANI_BIG_STOP_RIGHT;
-							}
-						}
-						//  đi bộ qua trái
-						else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
-						{
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_BIG_WALKING_LEFT;
-								if (isHolding == true)
-									ani = MARIO_ANI_BIG_HOLD_WALK_LEFT;
-								else if (isMaxRunning == true)
-									ani = MARIO_ANI_BIG_RUNNING_LEFT;
-							}
-							else if (ChangeDirection == true)
-							{
-								if (isHolding != true)
-									ani = MARIO_ANI_BIG_STOP_LEFT;
-							}
-						}
-					}
-					// rớt xuống
-					else
-					{
-						if (isHolding == true)
-						{
-							// phải 
-							if (nx == RIGHT)
-								ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;
-							// trái
-							else
-								ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;
-						}
-						else
-						{
-							// phải 
-							if (nx == RIGHT)
-								ani = MARIO_ANI_BIG_FALL_RIGHT;
-							// trái
-							else
-								ani = MARIO_ANI_BIG_FALL_LEFT;
-						}
-					}
-				}
-				// nhảy
-				else
-				{
-					if (isHolding == true)
-					{
-						// phải 
-						if (nx == RIGHT)
-							ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;
-						// trái
-						else
-							ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;
-					}
-					else
-					{
-						// phải 
-						if (nx == RIGHT)
-							ani = MARIO_ANI_BIG_JUMP_RIGHT;
-						// trái
-						else
-							ani = MARIO_ANI_BIG_JUMP_LEFT;
-					}
-				}
-
 				// đá
 				if (canKick == true)
 				{
@@ -911,13 +842,139 @@ void Mario::Render()
 					else
 						ani = MARIO_ANI_BIG_KICK_LEFT;
 				}
-
+				else
+				{
+					if (isSitDown == true)
+					{
+						if (nx == RIGHT)
+							ani = MARIO_ANI_BIG_SITDOWN_RIGHT;
+						else
+							ani = MARIO_ANI_BIG_SITDOWN_LEFT;
+					}
+					else
+					{
+						// chưa nhảy / đang rớt xuống
+						if (vy >= 0)
+						{
+							// đang chạm đất
+							if (OnGround == true)
+							{
+								// đứng yên
+								if (level_of_walking == 0 && level_of_running == 0)
+								{
+									// đi thẳng k chuyển hướng
+									if (ChangeDirection == false)
+									{
+										// phải 
+										if (nx == RIGHT)
+										{
+											ani = MARIO_ANI_BIG_IDLE_RIGHT;
+											if (isHolding == true)
+												ani = MARIO_ANI_BIG_HOLD_IDLE_RIGHT;
+										}
+										// trái
+										else
+										{
+											ani = MARIO_ANI_BIG_IDLE_LEFT;
+											if (isHolding == true)
+												ani = MARIO_ANI_BIG_HOLD_IDLE_LEFT;
+										}
+									}
+									else
+									{
+										if (nx == LEFT)
+											ani = MARIO_ANI_BIG_STOP_LEFT;
+										else
+											ani = MARIO_ANI_BIG_STOP_RIGHT;
+									}
+								}
+								// đi bộ qua phải
+								else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
+								{
+									if (ChangeDirection == false)
+									{
+										ani = MARIO_ANI_BIG_WALKING_RIGHT;
+										if (isHolding == true)
+											ani = MARIO_ANI_BIG_HOLD_WALK_RIGHT;
+										else if (isMaxRunning == true)
+											ani = MARIO_ANI_BIG_RUNNING_RIGHT;
+									}
+									else if (ChangeDirection == true)
+									{
+										ani = MARIO_ANI_BIG_STOP_RIGHT;
+									}
+								}
+								//  đi bộ qua trái
+								else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
+								{
+									if (ChangeDirection == false)
+									{
+										ani = MARIO_ANI_BIG_WALKING_LEFT;
+										if (isHolding == true)
+											ani = MARIO_ANI_BIG_HOLD_WALK_LEFT;
+										else if (isMaxRunning == true)
+											ani = MARIO_ANI_BIG_RUNNING_LEFT;
+									}
+									else if (ChangeDirection == true)
+									{
+										if (isHolding != true)
+											ani = MARIO_ANI_BIG_STOP_LEFT;
+									}
+								}
+							}
+							// rớt xuống
+							else
+							{
+								if (isHolding == true)
+								{
+									// phải 
+									if (nx == RIGHT)
+										ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;
+									// trái
+									else
+										ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;
+								}
+								else
+								{
+									// phải 
+									if (nx == RIGHT)
+										ani = MARIO_ANI_BIG_FALL_RIGHT;
+									// trái
+									else
+										ani = MARIO_ANI_BIG_FALL_LEFT;
+								}
+							}
+						}
+						// nhảy
+						else
+						{
+							if (isHolding == true)
+							{
+								// phải 
+								if (nx == RIGHT)
+									ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;
+								// trái
+								else
+									ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;
+							}
+							else
+							{
+								// phải 
+								if (nx == RIGHT)
+									ani = MARIO_ANI_BIG_JUMP_RIGHT;
+								// trái
+								else
+									ani = MARIO_ANI_BIG_JUMP_LEFT;
+							}
+						}
+					}
+				}
 			}
 			break;
 
 			case MARIO_LEVEL_TAIL:
 			{
-				if (canFlyX == true )
+				if (canFlyX == true)
 				{
 					// chưa nhảy // đang rớt xuống
 					if (vy >= 0)
@@ -934,8 +991,6 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_IDLE_RIGHT;
 									if (isHolding == true)
 										ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
-									else if (isSitDown == true)
-										ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
 								}
 								// trái
 								else
@@ -943,8 +998,7 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_IDLE_LEFT;
 									if (isHolding == true)
 										ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
-									else if (isSitDown == true)
-										ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
+									
 								}
 							}
 							// đi bộ qua phải
@@ -1015,20 +1069,111 @@ void Mario::Render()
 					}
 				}
 				else if (canFlyS == true)
-				{
-					// đang rớt xuống
-					if (vy >= 0)
 					{
-						// phải 
-						if (nx == RIGHT)
+						// đang rớt xuống
+						if (vy >= 0)
 						{
-							if (OnGround==false)
-								ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
-							else if(OnGround == true)
+							// phải 
+							if (nx == RIGHT)
 							{
+								if (OnGround == false)
+									ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
+								else if (OnGround == true)
+								{
+									if (level_of_walking == 0 && level_of_running == 0)
+										ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+									else if (level_of_walking > 0 || level_of_running > 0)
+									{
+										if (ChangeDirection == false)
+										{
+											ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+											if (isHolding == true)
+												ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
+											else if (isMaxRunning == true)
+												ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
+										}
+										else if (ChangeDirection == true)
+											ani = MARIO_ANI_TAIL_STOP_RIGHT;
+
+									}
+								}
+
+							}
+							// trái
+							else
+							{
+								ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+							}
+						}
+						// nhảy
+						else
+						{
+							// phải 
+							if (nx == RIGHT)
+							{
+								if (isMaxRunning == true)// && OnGround == false)
+								{
+									/*if (isFlyingHigh == true)
+										ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
+									else
+										ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;*/
+
+									ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
+								}
+							}
+							// trái
+							else
+							{
+								if (isMaxRunning == true)
+								{
+									if (isFlyingHigh == true)
+										ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
+									else
+										ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+								}
+							}
+						}
+					}
+				else
+					{
+						// chưa nhảy // đang rớt xuống
+						if (vy >= 0)
+						{
+							// đang chạm đất
+							if (OnGround == true)
+							{
+								// đứng yên
 								if (level_of_walking == 0 && level_of_running == 0)
-									ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-								else if (level_of_walking > 0 || level_of_running > 0)
+								{
+									if (ChangeDirection == false)
+									{
+										// phải 
+										if (nx == RIGHT)
+										{
+											ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+											if (isHolding == true)
+												ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
+										}
+										// trái
+										else
+										{
+											ani = MARIO_ANI_TAIL_IDLE_LEFT;
+											if (isHolding == true)
+												ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
+										}
+									}
+									else
+									{
+										if (nx == LEFT)
+											ani = MARIO_ANI_TAIL_STOP_LEFT;
+										else
+											ani = MARIO_ANI_TAIL_STOP_RIGHT;
+									}
+
+
+								}
+								// đi bộ qua phải
+								else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
 								{
 									if (ChangeDirection == false)
 									{
@@ -1042,122 +1187,54 @@ void Mario::Render()
 										ani = MARIO_ANI_TAIL_STOP_RIGHT;
 
 								}
+								//  đi bộ qua trái
+								else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
+								{
+									if (ChangeDirection == false)
+									{
+										ani = MARIO_ANI_TAIL_WALKING_LEFT;
+										if (isHolding == true)
+											ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
+										else if (isMaxRunning == true)
+											ani = MARIO_ANI_TAIL_RUNNING_LEFT;
+									}
+									else if (ChangeDirection == true)
+										ani = MARIO_ANI_TAIL_STOP_LEFT;
+
+								}
 							}
-								
-						}
-						// trái
-						else
-						{
-							ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
-						}
-					}
-					// nhảy
-					else
-					{
-						// phải 
-						if (nx == RIGHT)
-						{
-							if (isMaxRunning == true)// && OnGround == false)
+							// rớt xuống
+							else
 							{
-								/*if (isFlyingHigh == true)
-									ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
+								if (isHolding == true)
+								{
+									// phải 
+									if (nx == RIGHT)
+										ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT;
+									// trái
+									else
+										ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT;
+								}
 								else
-									ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;*/
-								
-								ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
-							}
-						}
-						// trái
-						else
-						{
-							if (isMaxRunning == true)
-							{
-								if (isFlyingHigh == true)
-									ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
-								else
-									ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
-							}
-						}
-					}
-				}
-				else
-				{
-					// chưa nhảy // đang rớt xuống
-					if (vy >= 0)
-					{
-						// đang chạm đất
-						if (OnGround == true)
-						{
-							// đứng yên
-							if (level_of_walking == 0 && level_of_running == 0)
-							{
-								if (ChangeDirection == false)
 								{
 									// phải 
 									if (nx == RIGHT)
 									{
-										ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-										if (isHolding == true)
-											ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
-										else if (isSitDown == true)
-										{
-											ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
-										}
+										ani = MARIO_ANI_TAIL_FALLING_RIGHT;
+										if (isFlyingLow == true)
+											ani = MARIO_ANI_TAIL_FLYING_RIGHT;
 									}
 									// trái
 									else
 									{
-										ani = MARIO_ANI_TAIL_IDLE_LEFT;
-										if (isHolding == true)
-											ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
-										else if (isSitDown == true)
-										{
-											ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
-										}
+										ani = MARIO_ANI_TAIL_FALLING_LEFT;
+										if (isFlyingLow == true)
+											ani = MARIO_ANI_TAIL_FLYING_LEFT;
 									}
 								}
-								else
-								{
-									if (nx == LEFT)
-										ani = MARIO_ANI_TAIL_STOP_LEFT;
-									else
-										ani = MARIO_ANI_TAIL_STOP_RIGHT;
-								}
-								
-
-							}
-							// đi bộ qua phải
-							else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
-							{
-								if (ChangeDirection == false)
-								{
-									ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-									if (isHolding == true)
-										ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
-									else if (isMaxRunning == true)
-										ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
-								}
-								else if (ChangeDirection == true)
-									ani = MARIO_ANI_TAIL_STOP_RIGHT;
-
-							}
-							//  đi bộ qua trái
-							else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
-							{
-								if (ChangeDirection == false)
-								{
-									ani = MARIO_ANI_TAIL_WALKING_LEFT;
-									if (isHolding == true)
-										ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
-									else if (isMaxRunning == true)
-										ani = MARIO_ANI_TAIL_RUNNING_LEFT;
-								}
-								else if (ChangeDirection == true)
-									ani = MARIO_ANI_TAIL_STOP_LEFT;
-
 							}
 						}
-						// rớt xuống
+						// nhảy
 						else
 						{
 							if (isHolding == true)
@@ -1174,47 +1251,16 @@ void Mario::Render()
 								// phải 
 								if (nx == RIGHT)
 								{
-									ani = MARIO_ANI_TAIL_FALLING_RIGHT;
-									if (isFlyingLow == true)
-										ani = MARIO_ANI_TAIL_FLYING_RIGHT;
+									ani = MARIO_ANI_TAIL_JUMP_RIGHT;
 								}
 								// trái
 								else
 								{
-									ani = MARIO_ANI_TAIL_FALLING_LEFT;
-									if (isFlyingLow == true)
-										ani = MARIO_ANI_TAIL_FLYING_LEFT;
+									ani = MARIO_ANI_TAIL_JUMP_LEFT;
 								}
 							}
 						}
 					}
-					// nhảy
-					else
-					{
-						if (isHolding == true)
-						{
-							// phải 
-							if (nx == RIGHT)
-								ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT;
-							// trái
-							else
-								ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT;
-						}
-						else
-						{
-							// phải 
-							if (nx == RIGHT)
-							{
-								ani = MARIO_ANI_TAIL_JUMP_RIGHT;
-							}
-							// trái
-							else
-							{
-								ani = MARIO_ANI_TAIL_JUMP_LEFT;
-							}
-						}
-					}
-				}
 				
 				// đá
 				if (canKick == true)
@@ -1265,133 +1311,161 @@ void Mario::Render()
 						}
 					}
 				}
+				else if (isSitDown == true)
+				{
+					if(nx==RIGHT)
+						ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
+					else
+						ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
+				}
 
 			}
 			break;
 
 			case MARIO_LEVEL_FIRE:
 			{
-				// chưa nhảy // đang rớt xuống
-				if (vy >= 0)
+				if (isSitDown == true)
 				{
-					if (OnGround == true)
+					if(nx==RIGHT)
+						ani = MARIO_ANI_FIRE_SITDOWN_RIGHT;
+					else
+						ani = MARIO_ANI_FIRE_SITDOWN_LEFT;
+				}
+				else
+				{
+					// chưa nhảy // đang rớt xuống
+					if (vy >= 0)
 					{
-						// đứng yên
-						if (level_of_walking == 0 && level_of_running == 0)
+						if (OnGround == true)
 						{
-							if (ChangeDirection == false)
+							// đứng yên
+							if (level_of_walking == 0 && level_of_running == 0)
+							{
+								if (ChangeDirection == false)
+								{
+									// phải 
+									if (nx == RIGHT)
+									{
+										ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+										if (isAttacking == true && endAttack == false)
+										{
+											if (time_attack <= TIME_ATTACK)
+											{
+												ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
+											}
+											else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+											{
+												ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
+											}
+										}
+									}
+
+									// trái
+									else
+									{
+										ani = MARIO_ANI_FIRE_IDLE_LEFT;
+										if (isAttacking == true && endAttack == false)
+										{
+											if (time_attack <= TIME_ATTACK)
+											{
+												ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
+											}
+											else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+											{
+												ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
+											}
+										}
+									}
+
+								}
+								else
+								{
+									if (nx == LEFT)
+										ani = MARIO_ANI_FIRE_STOP_LEFT;
+									else
+										ani = MARIO_ANI_FIRE_STOP_RIGHT;
+								}
+
+							}
+							// đi bộ qua phải
+							else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
+							{
+								// ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+
+								if (ChangeDirection == false)
+								{
+									ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+
+									if (isMaxRunning == true)
+										ani = MARIO_ANI_FIRE_RUNNING_RIGHT;
+								}
+								else if (ChangeDirection == true)
+								{
+									ani = MARIO_ANI_FIRE_STOP_RIGHT;
+								}
+
+								if (isAttacking == true && endAttack == false)
+								{
+									if (time_attack <= TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
+									}
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
+									}
+
+								}
+							}
+							//  đi bộ qua trái
+							else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
+							{
+								if (ChangeDirection == false)
+								{
+									ani = MARIO_ANI_FIRE_WALKING_LEFT;
+
+									if (isMaxRunning == true)
+										ani = MARIO_ANI_FIRE_RUNNING_LEFT;
+								}
+								else if (ChangeDirection == true)
+								{
+									ani = MARIO_ANI_FIRE_STOP_LEFT;
+								}
+
+								if (isAttacking == true && endAttack == false)
+								{
+									if (time_attack <= TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
+									}
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
+									}
+
+								}
+							}
+						}
+						else
+						{
+							// đứng yên
+							if (vx == 0)
 							{
 								// phải 
 								if (nx == RIGHT)
-								{
-									ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-									if (isSitDown == true)
-									{
-										ani = MARIO_ANI_FIRE_SITDOWN_RIGHT;
-									}
-									else if (isAttacking == true && endAttack == false)
-									{
-										if (time_attack <= TIME_ATTACK)
-										{
-											ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
-										}
-										else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-										{
-											ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
-										}
-									}
-								}
-
+									ani = MARIO_ANI_FIRE_JUMP_RIGHT;
 								// trái
 								else
-								{
-									ani = MARIO_ANI_FIRE_IDLE_LEFT;
-									if (isSitDown == true)
-									{
-										ani = MARIO_ANI_FIRE_SITDOWN_LEFT;
-									}
-									else if (isAttacking == true && endAttack == false)
-									{
-										if (time_attack <= TIME_ATTACK)
-										{
-											ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
-										}
-										else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-										{
-											ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
-										}
-									}
-								}
-
+									ani = MARIO_ANI_FIRE_JUMP_LEFT;
 							}
+							// đi bộ qua phải
+							else if (vx > 0)
+								ani = MARIO_ANI_FIRE_JUMP_RIGHT;
 							else
-							{
-								if (nx == LEFT)
-									ani = MARIO_ANI_FIRE_STOP_LEFT;
-								else
-									ani = MARIO_ANI_FIRE_STOP_RIGHT;
-							}
-
-						}
-						// đi bộ qua phải
-						else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
-						{
-							// ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-
-								if (isMaxRunning == true)
-									ani = MARIO_ANI_FIRE_RUNNING_RIGHT;
-							}
-							else if (ChangeDirection == true)
-							{
-								ani = MARIO_ANI_FIRE_STOP_RIGHT;
-							}
-
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-								{
-									ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
-								}
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
-								}
-
-							}
-						}
-						//  đi bộ qua trái
-						else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
-						{
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_FIRE_WALKING_LEFT;
-
-								if (isMaxRunning == true)
-									ani = MARIO_ANI_FIRE_RUNNING_LEFT;
-							}
-							else if (ChangeDirection == true)
-							{
-								ani = MARIO_ANI_FIRE_STOP_LEFT;
-							}
-
-							if (isAttacking == true && endAttack == false)
-							{
-								if (time_attack <= TIME_ATTACK)
-								{
-									ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
-								}
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
-								}
-
-							}
+								ani = MARIO_ANI_FIRE_JUMP_LEFT;
 						}
 					}
+					// nhảy
 					else
 					{
 						// đứng yên
@@ -1406,33 +1480,14 @@ void Mario::Render()
 						}
 						// đi bộ qua phải
 						else if (vx > 0)
+						{
 							ani = MARIO_ANI_FIRE_JUMP_RIGHT;
+						}
+						//  đi bộ qua trái
 						else
+						{
 							ani = MARIO_ANI_FIRE_JUMP_LEFT;
-					}
-				}
-				// nhảy
-				else
-				{
-					// đứng yên
-					if (vx == 0)
-					{
-						// phải 
-						if (nx == RIGHT)
-							ani = MARIO_ANI_FIRE_JUMP_RIGHT;
-						// trái
-						else
-							ani = MARIO_ANI_FIRE_JUMP_LEFT;
-					}
-					// đi bộ qua phải
-					else if (vx > 0)
-					{
-						ani = MARIO_ANI_FIRE_JUMP_RIGHT;
-					}
-					//  đi bộ qua trái
-					else
-					{
-						ani = MARIO_ANI_FIRE_JUMP_LEFT;
+						}
 					}
 				}
 			}
@@ -1453,14 +1508,16 @@ void Mario::Render()
 				animation_set->at(ani)->Render(x, y, alpha);
 		}
 		else*/
-			animation_set->at(ani)->Render(x, y, alpha);
+		animation_set->at(ani)->Render(x, y, alpha);
+
+
+		DebugOut(L"RENDER ani = %i\n", ani);
+		//if(isAttacking==true)
+		//	DebugOut(L"isAttacking==true\n");
+		//else
+		//	DebugOut(L"isAttacking==false\n");
+		RenderBoundingBox();
 	}
-	//DebugOut(L"RENDER ani = %i\n", ani);
-	//if(isAttacking==true)
-	//	DebugOut(L"isAttacking==true\n");
-	//else
-	//	DebugOut(L"isAttacking==false\n");
-	RenderBoundingBox();
 }
 
 void Mario::SetState(int state)
@@ -1590,105 +1647,26 @@ void Mario::SetState(int state)
 
 	case MARIO_STATE_FLY_LOW:
 	{
-		/*if (canFlyX == true)
-		{
-			if (time_fly <= TIME_FLY)
-			{
-				if(isMaxRunning==true)
-					vy = -MARIO_FLY_SPEED;
-				isFlyingHigh = true;
-				time_fly++;
-			}
-			else
-			{
-				isMaxRunning = false;
-				level_of_running = 10;
-				if (vy < 0)
-				{
-					vy = 0;
-				}
-			}
-		}
-		else if (canFlyS == true)
-		{
-			DebugOut(L"time fly = %i\n",time_fly);
-			if (time_fly <= TIME_FLY_S)
-			{
-				time_fly++;
-				isFlyingHigh = true;
-			}
-			else
-			{
-				isMaxRunning = false;
-				level_of_running = 10;
-				if (vy < 0)
-				{
-					vy = 0;
-				}
-			}
-		}*/
 		isFlyingLow = true;
-		if (canFlyX == true)
-		{
-			
-		}
-		else if (canFlyS == true)
-		{
-
-		}
+		isFlyingHigh = false;
 	}
 	break;
 
 	case MARIO_STATE_FLY_HIGH:
 	{
+		isFlyingLow = false;
 		isFlyingHigh = true;
 		vy = -MARIO_FLY_SPEED;
 		if (nx == RIGHT)
 			vx = MARIO_FLY_MOVING_SPEED;
 		else
 			vx = -MARIO_FLY_MOVING_SPEED;
-		/*if (canFlyX == true)
-		{
-			if (time_fly <= TIME_FLY)
-			{
-				vy = -MARIO_FLY_SPEED;
-				time_fly++;
-			}
-			else
-			{
-				level_of_running = 10;
-				if (vy < 0)
-				{
-					vy = 0;
-				}
-			}
-		}
-		else if (canFlyS == true)
-		{
-			DebugOut(L"time fly = %i\n", time_fly);
-			if (time_fly <= TIME_FLY_S)
-			{
-				if (isMaxRunning == true)
-					vy = -MARIO_FLY_SPEED;
-				time_fly++;
-				isFlyingHigh = true;
-			}
-			else
-			{
-				isMaxRunning = false;
-				level_of_running = 10;
-				if (vy < 0)
-				{
-					vy = 0;
-				}
-			}
-		}*/
 	}
 	break;
 
 	case MARIO_STATE_SITDOWN:
 	{
-		if (isSitDown == false)
+		if (isSitDown == false && level > MARIO_LEVEL_SMALL)
 		{
 			isSitDown = true;
 			// sprite ngồi heigh chỉ có 18 còn sprite idle thì heigh = 28 nên phải trừ bớt để k bị lỗi sprite
@@ -1697,8 +1675,6 @@ void Mario::SetState(int state)
 				y = y + (MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_BBOX_SITDOWN_HEIGHT);
 			else
 				y = y + (MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_BBOX_SITDOWN_HEIGHT);
-
-			vx = 0.0f;
 		}
 	}
 	break;
@@ -1796,16 +1772,12 @@ void Mario::Debug()
 	case MARIO_STATE_RUNNING:
 		DebugOut(L"State = RUNNING\t"); break;
 	}
-	if (canFlyX == false)
-		DebugOut(L"canFlyX == false\t");
+	if (isSitDown == false)
+		DebugOut(L"isSitDown == false\t");
 	else
-		DebugOut(L"canFlyX == true\t");
-	if (isFlyingLow == false)
-		DebugOut(L"isFlyingLow == false\t");
-	else
-		DebugOut(L"isFlyingLow == true\t");
+		DebugOut(L"isSitDown == true\t");
 	
-	//DebugOut(L"level_of_walking = %i, level_of_running = %i, vx = %f, vy = %f\n",level_of_walking, level_of_running, vx, vy);
+	DebugOut(L"level_of_walking = %i, level_of_running = %i, vx = %f, vy = %f\n",level_of_walking, level_of_running, vx, vy);
 }
 
 void Mario::Unload()

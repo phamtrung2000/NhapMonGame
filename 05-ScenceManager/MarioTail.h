@@ -31,7 +31,6 @@ class MarioTail:public CGameObject //mỗi khi mario quật đuôi thì tạo ob
 {
 public:
 	float width, height;
-	int ani;
 	MarioTail(float, float);
 	~MarioTail() {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

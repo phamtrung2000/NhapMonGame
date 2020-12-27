@@ -21,21 +21,22 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (_Mario->nx == RIGHT )
 	{
+		float temp_x = _Mario->x - 5;
 		if (_Mario->isAttacking == false)
 		{
-			this->x = _Mario->x - 5;
+			this->x = temp_x;
 			if (_Mario->ani == MARIO_ANI_TAIL_JUMP_RIGHT)
 				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 3;
 			else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_RIGHT)
 				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 5;
 			else if ( _Mario->isSitDown==true)
 			{
-				this->x = _Mario->x - 7;
-				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 5;
+				this->x = temp_x - 1;
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 8;
 			}
 			else if (_Mario->isFlyingLow == true)
 			{
-				this->x = _Mario->x - 6;
+				this->x = temp_x - 1;
 				this->y = _Mario->y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT - 1;
 			}
 			else 
@@ -45,7 +46,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 3;
 			if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_1)
-				x = _Mario->x - 7.0f;
+				x = temp_x - 2;
 			else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
 				x = _Mario->x + MARIO_TAIL_BBOX_WIDTH;
 		}
@@ -55,12 +56,20 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (_Mario->isAttacking == false)
 		{
 			this->x = _Mario->x + MARIO_BIG_BBOX_WIDTH + 2;
-			if (_Mario->ani != MARIO_ANI_TAIL_JUMP_LEFT && _Mario->ani != MARIO_ANI_TAIL_FALLING_LEFT)
-				this->SetPosition(_Mario->x + MARIO_BIG_BBOX_WIDTH + 2, _Mario->y + MARIO_BIG_BBOX_HEIGHT - 7);
-			else if (_Mario->ani == MARIO_ANI_TAIL_JUMP_LEFT)
-				this->SetPosition(_Mario->x + MARIO_BIG_BBOX_WIDTH + 2, _Mario->y + MARIO_BIG_BBOX_HEIGHT - 9);
+			if (_Mario->ani == MARIO_ANI_TAIL_JUMP_LEFT)
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 3;
 			else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_LEFT)
-				this->SetPosition(_Mario->x + MARIO_BIG_BBOX_WIDTH + 2, _Mario->y + MARIO_BIG_BBOX_HEIGHT - 11);
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 5;
+			else if (_Mario->isSitDown == true)
+			{
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 8;
+			}
+			else if (_Mario->isFlyingLow == true)
+			{
+				this->y = _Mario->y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT - 1;
+			}
+			else
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 2;
 		}
 		else
 		{
@@ -209,5 +218,5 @@ void MarioTail::Render()
 		}
 	}
 	animation_set->at(ani)->Render(x, y, 255);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }

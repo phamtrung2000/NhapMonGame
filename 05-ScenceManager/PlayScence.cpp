@@ -765,7 +765,7 @@ void CPlayScene::Update(DWORD dt)
 	_HUD->Update(dt);
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (_Mario == NULL) return;
-	DebugOut(L"objects.size() = %i\n", objects.size());
+	//DebugOut(L"objects.size() = %i\n", objects.size());
 }
 
 void CPlayScene::Render()
@@ -987,7 +987,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
-		if (_Mario->GetLevel() > 1)
+		//if (_Mario->GetLevel() > 1)
 		{
 			_Mario->SetState(MARIO_STATE_SITDOWN);
 		}
