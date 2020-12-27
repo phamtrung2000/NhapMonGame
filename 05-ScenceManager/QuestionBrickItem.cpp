@@ -1,5 +1,6 @@
 ﻿#include "QuestionBrickItem.h"
 #include "PlayScence.h"
+#include "EffectScore.h"
 
 QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
 {
@@ -13,6 +14,14 @@ QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
 	vx = vy = 0;
 	SetState(QUESTIONBRICKITEM_STATE_INIT);
 	Category = CATEGORY::ITEM;
+	AppearTime = GetTickCount64();
+	switch (item)
+	{
+	case MONEY:
+		score = QUESTIONBRICKITEM_MONEY__SCORE; break;
+	case MUSHROOM: case LEAF:
+		score = QUESTIONBRICKITEM__SCORE; break;
+	}
 }
 
 void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -24,8 +33,13 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	case MONEY:
 	{
 		vy += MONEY_GRAVITY * dt;
-		if (y > Start_Y - QUESTIONBRICKITEM__BBOX && vy >= 0)
+		if (GetTickCount64() - AppearTime >= 800)
+		{
 			isDie = true;
+			EffectScore* score = new EffectScore(this->x, this->y, this->score);
+			_PlayScene->objects.push_back(score);
+		}
+			
 		y += dy;
 		
 	}break;

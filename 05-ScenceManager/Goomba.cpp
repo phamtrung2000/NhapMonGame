@@ -16,128 +16,8 @@ CGoomba::CGoomba()
 	nx = 1;
 	vy = 0;
 	Category = CATEGORY::ENEMY;
+	score = GOOMBA_SCORE;
 }
-
-//void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
-//{
-//	CGameObject::Update(dt, coObjects);
-//
-//	if(GetState() != GOOMBA_STATE_DIE)
-//		vy += GOOMBA_GRAVITY * dt;
-//	if (state == GOOMBA_STATE_DIE)
-//	{
-//		if(time_die<=20)
-//			time_die++;
-//		else
-//		{
-//			isDie = true;
-//		}
-//	}
-//	else if (state == GOOMBA_STATE_DIE_2)
-//	{
-//		//vy += GOOMBA_GRAVITY * dt;
-//		if(y > 450)
-//			isDie = true;
-//	}
-//
-//	
-//	if (vx < 0 && x < 0)
-//	{
-//		x = 0; 
-//		vx = -vx;
-//		nx = -nx;
-//	}
-//
-//	vector<LPCOLLISIONEVENT> coEvents;
-//	vector<LPCOLLISIONEVENT> coEventsResult;
-//
-//	coEvents.clear();
-//
-//	if (state != GOOMBA_STATE_DIE)
-//		CalcPotentialCollisions(coObjects, coEvents);
-//	
-//	if (coEvents.size() == 0)
-//	{
-//		x += dx;
-//		y += dy;
-//	}
-//	else
-//	{
-//		float min_tx, min_ty, nx = 0, ny;
-//		float rdx = 0;
-//		float rdy = 0;
-//
-//		// TODO: This is a very ugly designed function!!!!
-//		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-//
-//		// how to push back Mario if collides with a moving objects, what if Mario is pushed this way into another object?
-//		//if (rdx != 0 && rdx!=dx)
-//		//	x += nx*abs(rdx); 
-//
-//	
-//		// chuẩn + ít lỗi nhất
-//		this->x += min_tx * dx + nx * 0.4f;
-//		if (ny != 0) vy = 0;
-//
-//		for (UINT i = 0; i < coEventsResult.size(); i++)
-//		{
-//			LPCOLLISIONEVENT e = coEventsResult[i];
-//
-//			if (dynamic_cast<WarpPipe*>(e->obj) || dynamic_cast<QuestionBrick*>(e->obj))
-//			{
-//				if (e->nx != 0)
-//				{
-//					this->nx = -this->nx;
-//					this->vx = this->nx * GOOMBA_WALKING_SPEED;
-//					x += dx;
-//					//this->y += min_ty * dy + ny * 0.4f;
-//				}
-//				
-//			}
-//			else if (dynamic_cast<Block*>(e->obj))
-//			{
-//				this->vx = this->nx * GOOMBA_WALKING_SPEED;
-//				x += dx;
-//				//this->y += min_ty * dy + ny * 0.4f;
-//			}
-//			else if (dynamic_cast<CGoomba*>(e->obj))
-//			{
-//				this->vx = this->nx * GOOMBA_WALKING_SPEED;
-//				x += dx;
-//				this->y += min_ty * dy + ny * 0.4f;
-//			}
-//			else if (dynamic_cast<Koopas*>(e->obj))
-//			{
-//				Koopas* kp = dynamic_cast<Koopas*>(e->obj);
-//				if (kp->isShell == false && kp->isShell_2 == false)
-//				{
-//					this->vx = this->nx * GOOMBA_WALKING_SPEED;
-//					x += dx;
-//					this->y += min_ty * dy + ny * 0.4f;
-//				}
-//				else
-//				{
-//					if (kp->GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT || kp->GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-//					{
-//						SetState(GOOMBA_STATE_DIE_2);
-//					}
-//				}
-//			}
-//			else if (dynamic_cast<FireBullet*>(e->obj))
-//			{
-//				FireBullet* fb = dynamic_cast<FireBullet*>(e->obj);
-//				if (fb->FireMario == false)
-//				{
-//					this->vx = this->nx * GOOMBA_WALKING_SPEED;
-//					vy = 0;
-//					x += dx;
-//				}
-//			}
-//		}
-//	}
-//
-//	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-//}
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -151,7 +31,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (time_die <= 20)
 			time_die++;
 		else
+		{
 			isDie = true;
+		}
+			
 	}
 	else if (state == GOOMBA_STATE_DIE_2)
 	{

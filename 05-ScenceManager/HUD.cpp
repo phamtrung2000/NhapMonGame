@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Textures.h"
 #include "Game.h"
+#include "Goomba.h"
 
 #define HEIGHT_SCORE_BROAD 28
 #define ID_TEX_HUB 12
@@ -95,19 +96,33 @@ void HUD::UpdateScore(LPGAMEOBJECT e)
 {
 	switch (e->Category)
 	{
-	case CATEGORY::ITEM:
-	{
-		if (e->ObjType == OBJECT_TYPE_COIN)
+		case CATEGORY::ITEM:
 		{
-			this->Score += COIN_SCORE;
-			this->Money++;
+			if (e->ObjType == OBJECT_TYPE_COIN)
+			{
+				this->Score += COIN_SCORE;
+				this->Money++;
+			}
+			else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+			{
+				this->Score += QUESTIONBRICKITEM_SCORE;
+			}
 		}
-		else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+		break;
+
+		case CATEGORY::ENEMY:
 		{
-			this->Score += QUESTIONBRICKITEM_SCORE;
+			if (e->ObjType == OBJECT_TYPE_GOOMBA)
+			{
+				CGoomba* goomba = dynamic_cast<CGoomba*>(e);
+				this->Score += goomba->score;
+			}
+			else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+			{
+				this->Score += QUESTIONBRICKITEM_SCORE;
+			}
 		}
-	}
-	break;
+		break;
 	
 	default:
 		break;

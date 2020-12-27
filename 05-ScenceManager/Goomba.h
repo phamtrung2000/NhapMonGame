@@ -17,15 +17,16 @@
 #define GOOMBA_ANI_DIE		1
 #define GOOMBA_ANI_DIE_2	2
 
+#define GOOMBA_SCORE	100
+
 class CGoomba : public CGameObject
 {
-	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
-	virtual void Render();
-
 public:
 	bool isDie2;
-public: 	
+	int score;
 	CGoomba();
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Render();
 	virtual void SetState(int state);
 };

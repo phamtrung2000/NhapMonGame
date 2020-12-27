@@ -210,6 +210,9 @@
     <ClCompile Include="ButtonP.cpp">
       <Filter>PlayScene\Item</Filter>
     </ClCompile>
+    <ClCompile Include="EffectScore.cpp">
+      <Filter>PlayScene\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -337,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="ButtonP.h">
       <Filter>PlayScene\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectScore.h">
+      <Filter>PlayScene\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

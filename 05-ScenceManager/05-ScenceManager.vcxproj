@@ -133,6 +133,7 @@
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="DancingTree.cpp" />
     <ClCompile Include="EffectHit.cpp" />
+    <ClCompile Include="EffectScore.cpp" />
     <ClCompile Include="EffectSmoke.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Coin.h" />
     <ClInclude Include="DancingTree.h" />
     <ClInclude Include="EffectHit.h" />
+    <ClInclude Include="EffectScore.h" />
     <ClInclude Include="EffectSmoke.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />

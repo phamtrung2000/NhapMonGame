@@ -22,6 +22,7 @@
 #include "EffectSmoke.h"
 #include "MarioTail.h"
 #include "ButtonP.h"
+#include "EffectScore.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -1824,6 +1825,9 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 				{
 					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 					goomba->SetState(GOOMBA_STATE_DIE);
+					EffectScore* score = new EffectScore(goomba->x, goomba->y, goomba->score);
+					_PlayScene->objects.push_back(score);
+					_HUD->UpdateScore(e->obj);
 				}
 				else if (dynamic_cast<Koopas*>(e->obj)) // if e->obj is Goomba 
 				{
@@ -1901,7 +1905,7 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 
 					}
 				}
-				_HUD->Score += 100;
+				//_HUD->Score += 100;
 			}
 			else // nhảy chạm đầu Enemy Plant ( Cây )
 			{
@@ -2309,10 +2313,11 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 		{
 			QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
 			questionbrickitem->isDie = true;
-			_HUD->Score += QUESTIONBRICKITEM__SCORE;
+			_HUD->Score += questionbrickitem->score;
 			if (questionbrickitem->Item >= this->level)
 				UpLevel();
-
+			EffectScore* score = new EffectScore(questionbrickitem->x, questionbrickitem->y, questionbrickitem->score);
+			_PlayScene->objects.push_back(score);
 		}
 	}
 	else if (e->obj->ObjType == OBJECT_TYPE_BRICKITEM)
