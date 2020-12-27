@@ -160,13 +160,11 @@ void MarioTail::Render()
 					ani = MARIOTAIL_ANI_7_RIGHT;
 				else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_RIGHT)
 					ani = MARIOTAIL_ANI_1_RIGHT;
-				else if (_Mario->ani == MARIO_ANI_TAIL_STOP_RIGHT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_RIGHT)
-					ani = MARIOTAIL_ANI_INVISIBLE;
 				else if (_Mario->ani == MARIO_ANI_TAIL_SITDOWN_RIGHT)
 					ani = MARIOTAIL_ANI_0_RIGHT;
 				else if (_Mario->isFlyingLow == true)
 					ani = MARIOTAIL_ANI_FLYINGLOW_RIGHT;
-				if(_Mario->canFlyS == true)
+				if(_Mario->canFlyS == true || _Mario->ani == MARIO_ANI_TAIL_STOP_RIGHT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_RIGHT || _Mario->ani == MARIO_ANI_TAIL_KICK_RIGHT)
 					ani = MARIOTAIL_ANI_INVISIBLE;
 			}
 			else
@@ -201,13 +199,11 @@ void MarioTail::Render()
 					ani = MARIOTAIL_ANI_7_LEFT;
 				else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_LEFT)
 					ani = MARIOTAIL_ANI_1_LEFT;
-				else if (_Mario->ani == MARIO_ANI_TAIL_STOP_LEFT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_LEFT)
-					ani = MARIOTAIL_ANI_INVISIBLE;
 				else if (_Mario->ani == MARIO_ANI_TAIL_SITDOWN_LEFT)
 					ani = MARIOTAIL_ANI_0_LEFT;
 				else if (_Mario->isFlyingLow == true)
 					ani = MARIOTAIL_ANI_FLYINGLOW_LEFT;
-				if (_Mario->canFlyS == true)
+				if (_Mario->canFlyS == true || _Mario->ani == MARIO_ANI_TAIL_STOP_LEFT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_LEFT || _Mario->ani == MARIO_ANI_TAIL_KICK_LEFT)
 					ani = MARIOTAIL_ANI_INVISIBLE;
 			}
 			else

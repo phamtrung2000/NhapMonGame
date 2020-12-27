@@ -913,7 +913,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	{
 	case DIK_A:
 	{
-		//if (_Mario->isRunning == true)
+		DebugOut(L"Up A\n");
 		_Mario->isRunning = false;
 		_Mario->pressA = false;
 		/*if (_Mario->isHolding == true)
@@ -987,7 +987,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
-		//if (_Mario->GetLevel() > 1)
+		if (_Mario->isHolding == false)
 		{
 			_Mario->SetState(MARIO_STATE_SITDOWN);
 		}
