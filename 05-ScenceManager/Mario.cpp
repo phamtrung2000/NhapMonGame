@@ -1455,7 +1455,7 @@ void Mario::Render()
 		else*/
 			animation_set->at(ani)->Render(x, y, alpha);
 	}
-	DebugOut(L"RENDER ani = %i\n", ani);
+	//DebugOut(L"RENDER ani = %i\n", ani);
 	//if(isAttacking==true)
 	//	DebugOut(L"isAttacking==true\n");
 	//else

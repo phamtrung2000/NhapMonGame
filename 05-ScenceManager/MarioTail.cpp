@@ -84,13 +84,14 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					ItemBrick* brick = dynamic_cast<ItemBrick*>(coObjects->at(i));
 					if(brick->Item==NORMAL)
 						coObjects->at(i)->isDie = true;
-					else if (brick->Item == BUTTONP)
+					else if (brick->Item == BUTTONP && brick->hasItem == true)
 					{
 						brick->SetState(BRICK_STATE_COLLISION);
 						BrickItem* brickitem = new BrickItem(BUTTONP, brick->x , brick->y - 16);
 						_PlayScene->objects.push_back(brickitem);
 						auto effect = new EffectSmoke(brick->x , brick->y - 16);
 						_PlayScene->objects.push_back(effect);
+						brick->hasItem = false;
 					}
 						
 				}
@@ -208,6 +209,5 @@ void MarioTail::Render()
 		}
 	}
 	animation_set->at(ani)->Render(x, y, 255);
-	DebugOut(L"RENDER Tail ani = %i\n", ani);
 	RenderBoundingBox();
 }

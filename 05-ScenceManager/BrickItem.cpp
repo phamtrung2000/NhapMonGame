@@ -1,11 +1,12 @@
 #include "BrickItem.h"
 #include "ItemBrick.h"
 #include "Coin.h"
+#include "EffectSmoke.h"
 #define BRICKITEM_ANISET_ID	14
 
 BrickItem::BrickItem(int item, float x, float y) : CGameObject()
 {
-	isInit = false;
+	ChangeToCoin = isPressed = isInit = false;
 	Item = item;
 	ObjType = OBJECT_TYPE_BRICKITEM;
 	Start_X = x;
@@ -82,7 +83,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else if (dynamic_cast<CGoomba*>(e->obj))
 						{
-							DebugOut(L"Goombaa\n");
+							
 							x += dx;
 						}
 						else if (dynamic_cast<Block*>(e->obj))
@@ -102,7 +103,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	case BUTTONP:
 	{
-		if (isPressed == true)
+		if (isPressed == true && ChangeToCoin == false)
 		{
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
@@ -111,14 +112,16 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					ItemBrick* itembrick = (ItemBrick*)coObjects->at(i);
 					if (itembrick->Item == NORMAL)
 					{
-						float temp_x = itembrick->x;
-						float temp_y = itembrick->y;
+						
 						itembrick->isDie = true;
-
-						/*auto hit = new EffectHit(temp_x, temp_y);
-						_PlayScene->objects.push_back(hit);*/
+						/*auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
+						smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
+						_PlayScene->objects.push_back(smoke);*/
+						
 						Coin* coin = new Coin();
-						coin->SetPosition(temp_x, temp_y);
+						coin->SetPosition(itembrick->x, itembrick->y);
+						coin->isBrickToCoin = true;
+						coin->AppearTime = GetTickCount64();
 						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 						LPANIMATION_SET ani_set = animation_sets->Get(12);
 						coin->SetAnimationSet(ani_set);
@@ -126,131 +129,11 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			}
+			ChangeToCoin = true;
 		}
 	}break;
-	default:
-		break;
-	}
 
-	//DebugOut(L"state=%i, nx=%i, vx = %f\n", state,nx,vx);
-	//if (Item == MUSHROOM)
-	//{
-	//	if (isInit == false)
-	//	{
-	//		y += dy;
-	//		if (Start_Y - y > BRICKITEM__BBOX)
-	//			SetState(BRICKITEM_STATE_MOVE);
-	//	}
-	//	else
-	//	{
-	//		vy += MUSHROOM_GRAVITY * dt;
-	//
-	//		vector<LPCOLLISIONEVENT> coEvents;
-	//		vector<LPCOLLISIONEVENT> coEventsResult;
-	//
-	//		coEvents.clear();
-	//
-	//		CalcPotentialCollisions(coObjects, coEvents);
-	//
-	//		if (coEvents.size() == 0)
-	//		{
-	//			x += dx;
-	//			y += dy;
-	//		}
-	//		else
-	//		{
-	//			float min_tx, min_ty, nx = 0, ny;
-	//			float rdx = 0;
-	//			float rdy = 0;
-	//
-	//			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-	//
-	//			//for (UINT i = 0; i < coEventsResult.size(); i++)
-	//			//{
-	//			//	LPCOLLISIONEVENT e = coEventsResult[i];
-	//			//
-	//			//	if (dynamic_cast<Brick*>(e->obj))
-	//			//	{
-	//			//
-	//			//		x += dx;
-	//			//		// cai if nay lam cai gi` ?
-	//			//	/*if (e->nx)
-	//			//		vx = 0; */
-	//			//	}
-	//			//	else if (dynamic_cast<WarpPipe*>(e->obj))
-	//			//	{
-	//			//		DebugOut(L"WarpPipe\n");
-	//			//		vx = -vx;
-	//			//		y += dy;
-	//			//	}
-	//			//	else if (dynamic_cast<CGoomba*>(e->obj))
-	//			//	{
-	//			//		DebugOut(L"Goombaa\n");
-	//			//		x += dx;
-	//			//	}
-	//			//	if (dynamic_cast<Block*>(e->obj))
-	//			//	{
-	//			//		x += dx;
-	//			//	}
-	//			//	if (!dynamic_cast<CGoomba*>(e->obj))
-	//			//		if (ny != 0) vy = 0;
-	//			//	x += min_tx * dx + nx * 0.4f;
-	//			//	y += min_ty * dy + ny * 0.5f;
-	//			//}
-	//
-	//			x += min_tx * dx + nx * 0.4f;
-	//			y += min_ty * dy + ny * 0.4f;
-	//
-	//			if (ny != 0) vy = 0;
-	//
-	//			for (UINT i = 0; i < coEventsResult.size(); i++)
-	//			{
-	//				LPCOLLISIONEVENT e = coEventsResult[i];
-	//
-	//				if (dynamic_cast<Brick*>(e->obj))
-	//				{
-	//					x += dx;
-	//				}
-	//				else if (dynamic_cast<WarpPipe*>(e->obj))
-	//				{
-	//					DebugOut(L"WarpPipe\n");
-	//					vx = -vx;
-	//					y += dy;
-	//				}
-	//				else if (dynamic_cast<CGoomba*>(e->obj))
-	//				{
-	//					DebugOut(L"Goombaa\n");
-	//					x += dx;
-	//				}
-	//				else if (dynamic_cast<Block*>(e->obj))
-	//				{
-	//					x += dx;
-	//				}
-	//				else if (!dynamic_cast<CGoomba*>(e->obj))
-	//					if (ny != 0) 
-	//						vy = 0;
-	//
-	//			}
-	//		}
-	//		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	//	}
-	//}
-	//else if (Item == MONEY)
-	//{
-	//	if (isInit == false)
-	//	{
-	//		Time++;
-	//		y += dy;
-	//		vy += MONEY_GRAVITY * dt;
-	//		if (Time >= MONEY_APPEAR_TIME)
-	//		{
-	//			isDie = true;
-	//			Time = 0;
-	//		}
-	//			
-	//	}
-	//}
-	//DebugOut(L"vx=%f\n",vx);
+	}
 }
 
 void BrickItem::Render()
@@ -372,7 +255,7 @@ void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bot
 		{
 			if (isPressed == false)
 			{
-				bottom = top + BUTTONP_BBOX_HEIGHT;
+				bottom = y + BUTTONP_BBOX_HEIGHT;
 			}
 			else
 			{

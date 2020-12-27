@@ -35,7 +35,9 @@ public:
 	int Time;
 
 	// BUTTON P
-	bool isPressed;
+	bool isPressed, ChangeToCoin;
+
+
 public:
 	BrickItem(int item, float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

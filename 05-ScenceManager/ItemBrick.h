@@ -16,6 +16,7 @@
 #define BUTTONP	2
 
 #define ITEMBRICK_WIDTH	16
+#define ITEMBRICK_ANISET_ID	13
 
 class ItemBrick : public CGameObject
 {

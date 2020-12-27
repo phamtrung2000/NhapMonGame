@@ -766,14 +766,12 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (_Mario == NULL) return;
 	DebugOut(L"objects.size() = %i\n", objects.size());
-
-	//CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 }
 
 void CPlayScene::Render()
 {
 	// Background đen phía sau
-	//_Map->DrawMap();
+	_Map->DrawMap();
 	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		if (objects[i]->isDie != true)

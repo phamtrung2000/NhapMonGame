@@ -9,7 +9,7 @@
 class EffectSmoke : public CGameObject
 {
 public:
-	ULONGLONG AppearTime;
+	ULONGLONG AppearTime, AmountTimeAppear;
 	EffectSmoke(float x, float y)
 	{
 		CAnimationSets* animation_sets = CAnimationSets::GetInstance();
@@ -19,6 +19,7 @@ public:
 		this->y = y;
 		Category = CATEGORY::EFFECT;
 		AppearTime = GetTickCount64();
+		AmountTimeAppear = EFFECTSMOKE_APPEARTIME;
 	}
 	~EffectSmoke() {}
 	void Render()
@@ -28,7 +29,7 @@ public:
 	void GetBoundingBox(float& l, float& t, float& r, float& b) {}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
-		if (GetTickCount64() - AppearTime >= EFFECTSMOKE_APPEARTIME)
+		if (GetTickCount64() - AppearTime >= AmountTimeAppear)
 			this->isDie = true;
 	}
 };
