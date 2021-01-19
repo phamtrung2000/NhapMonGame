@@ -1,20 +1,19 @@
 ﻿#pragma once
-#include "GameObject.h"
+#include "Item.h"
 
-#define COIN_BBOX_WIDTH  8
+#define COIN_BBOX_WIDTH  14
 #define COIN_BBOX_HEIGHT 16
 #define COIN_ANI		 0
-//#define COIN_SCORE		50	
+#define COIN_SCORE		50	
 #define COIN_APPEARTIME 15000
 
 
-class Coin : public CGameObject
+class Coin : public Item
 {
 public:
 	// các biến hỗ trợ việc tiền biến thành gạch lại như cũ
 	bool isBrickToCoin;
 	ULONGLONG AppearTime;
-
 
 	Coin();
 	Coin(float x,float y);

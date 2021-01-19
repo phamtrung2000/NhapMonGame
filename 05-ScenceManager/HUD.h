@@ -48,6 +48,6 @@ public:
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 
-	void UpdateScore(LPGAMEOBJECT e);
+	void UpdateScore(LPGAMEOBJECT e, int _nScore);
 };
 

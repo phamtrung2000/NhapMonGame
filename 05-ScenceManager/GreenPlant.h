@@ -1,16 +1,12 @@
 ﻿#pragma once
-#include "GameObject.h"
-#include "FireBullet.h"
-#include "PlayScence.h"
-#include "Utils.h"
-#include "WarpPipe.h"
+#include "FirePiranhaPlant.h"
 
 #define	GREENPLANT_SPEED_Y		0.03f
 #define	GREENPLANT_BBOX_HEIGHT	24
 #define	GREENPLANT_BBOX_WIDTH	16
 
 #define	ATTACK_ZONE_Y	200
-#define	ATTACK_ZONE_X	100
+#define	MAX_ATTACK_ZONE_X	100
 
 #define GREENPLANT_STATE_HIDE		0
 #define GREENPLANT_STATE_APPEAR		100
@@ -21,7 +17,7 @@
 #define APPEAR_TIME 500
 
 
-class GreenPlant : public CGameObject
+class GreenPlant : public FirePiranhaPlant
 {
 public:
 	float Startposy;
@@ -35,6 +31,7 @@ public:
 	bool Stop, isBlocked;
 public:
 	GreenPlant();
+	~GreenPlant();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
 	void SetState(int state);

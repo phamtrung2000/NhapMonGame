@@ -1,7 +1,7 @@
 #pragma once
-#include "GameObject.h"
+#include "Enemy.h"
 
-#define GOOMBA_DIE_DEFLECT_SPEED	-0.3f
+#define GOOMBA_DIE_DEFLECT_SPEED	0.25f
 #define GOOMBA_WALKING_SPEED	0.05f
 #define	GOOMBA_GRAVITY			0.0007f
 
@@ -9,24 +9,30 @@
 #define GOOMBA_BBOX_HEIGHT		15
 #define GOOMBA_BBOX_HEIGHT_DIE	9
 
-#define GOOMBA_STATE_WALKING	100
-#define GOOMBA_STATE_DIE		200
-#define GOOMBA_STATE_DIE_2		300
+#define GOOMBA_STATE_DIE		0
+#define GOOMBA_STATE_DIE_2		1
+#define GOOMBA_STATE_WALKING_RIGHT	2
+#define GOOMBA_STATE_WALKING_LEFT	3
+
 
 #define GOOMBA_ANI_WALKING	0
 #define GOOMBA_ANI_DIE		1
 #define GOOMBA_ANI_DIE_2	2
 
 #define GOOMBA_SCORE	100
+#define GOOMBA_TIMETODIE	20
 
-class CGoomba : public CGameObject
+class Goomba : public Enemy
 {
 public:
-	bool isDie2;
-	int score;
-	CGoomba();
+	Goomba();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	virtual void SetState(int state);
+	virtual void Revival() {};
+	virtual void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	virtual void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) ;
+	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 };

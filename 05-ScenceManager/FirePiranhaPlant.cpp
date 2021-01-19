@@ -1,21 +1,24 @@
 ﻿#include "FirePiranhaPlant.h"
+#include "PlayScence.h"
+#include "WarpPipe.h"
 
-FirePiranhaPlant::FirePiranhaPlant()
+FirePiranhaPlant::FirePiranhaPlant() : Enemy()
 {
 	ObjType = OBJECT_TYPE_FIREPIRANHAPLANT;
 	Stop = isInit = canAttack = isAttacking = false;
 	NumberBullet = 1;
 	CalcAtkTime = 0;
 	SetState(FIREPIRANHAPLANT_STATE_HIDE);
-	Category = CATEGORY::ENEMY;
+	Score = FIREPIRANHAPLANT_SCORE;
+	TypeEnemy = ENEMYTYPE_PLANT;
 }
 
 // cây xuất hiện nhưng chưa chắc tấn công, phải nằm trong vùng tấn công
 void FirePiranhaPlant::CalcAttackZone()
 {
-	//	DebugOut(L"x - Mario_X = %f\n", abs(x - Mario_X));
+	float a = abs(x - Mario_X);
 	// mario đi tới vùng tấn công
-	if (abs(x - Mario_X) <= ATTACK_ZONE_X)
+	if (abs(x - Mario_X) <= MAX_ATTACK_ZONE_X && abs(x - Mario_X) >= MIN_ATTACK_ZONE_X)
 	{
 		// cây đang trạng thái núp và số đạn = 1 thì mới xuất hiện
 		// nếu không có điều kiện số đạn = 1 thì sẽ lặp vô tận 
@@ -30,7 +33,21 @@ void FirePiranhaPlant::CalcAttackZone()
 		}
 	}
 	else
-		SetState(FIREPIRANHAPLANT_STATE_HIDE);
+	{
+		if (GetState() == FIREPIRANHAPLANT_STATE_APPEAR && NumberBullet == 1)
+		{
+			if (y - Startposy <= -WarpPipeHeight)
+			{
+				vy = 0;
+				canAttack = true;
+			}
+			if (NumberBullet == 0)
+				SetState(FIREPIRANHAPLANT_STATE_HIDE);
+		}
+		else
+			SetState(FIREPIRANHAPLANT_STATE_HIDE);
+	}
+		
 }
 
 void FirePiranhaPlant::CalcAtkPos()
@@ -65,110 +82,6 @@ void FirePiranhaPlant::CalcAtkPos()
 		nx = -1;
 	}
 }
-
-//void FirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
-//{
-//	CGameObject::Update(dt);
-//	
-//	//y += dy;
-//
-//	if (isInit == false)
-//	{
-//		Startposy = y;
-//		isInit = true;
-//	}
-//
-//	if (AppearTime == 0)
-//	{
-//		// set giá trị time mới
-//		AppearTime = GetTickCount64();
-//	}
-//
-//	if (canAttack && CalcAtkTime == 0)
-//	{
-//		CalcAtkTime = GetTickCount64();
-//	}
-//	if (canAttack && GetTickCount64() - CalcAtkTime >= 2000)
-//	{
-//		canAttack = false;
-//		CalcAtkTime = 0;
-//	}
-//
-//	//DebugOut(L"Startposy=%f, y=%f\n", Startposy, y);
-//	// cây chạm đáy, chuyển thành state appear để đi lên
-//	if (y - Startposy  >= 0)
-//	{
-//		if (GetTickCount64() - AppearTime >= 3000)
-//		{
-//			SetState(FIREPIRANHAPLANT_STATE_APPEAR);
-//		//	DebugOut(L"FIREPIRANHAPLANT_STATE_APPEAR\n");
-//			AppearTime = 0;
-//		}
-//	}
-//
-//	
-//	if ( y - Startposy <= -32)
-//	{
-//		if (GetTickCount64() - AppearTime >= 3000)
-//		{
-//			SetState(FIREPIRANHAPLANT_STATE_HIDE);
-//		//	DebugOut(L"FIREPIRANHAPLANT_STATE_HIDE\n");
-//			AppearTime = 0;
-//		}
-//		CalcAttackZone();
-//	}
-//
-//	if (canAttack && NumberBullet == 1)
-//	{
-//		CalcAtkPos();
-//	}
-//	
-//	vector<LPCOLLISIONEVENT> coEvents;
-//	vector<LPCOLLISIONEVENT> coEventsResult;
-//
-//	coEvents.clear();
-//
-//	if (state != FIREPIRANHAPLANT_STATE_DIE)
-//		CalcPotentialCollisions(coObjects, coEvents);
-//
-//	if (coEvents.size() == 0)
-//	{
-//		x += dx;
-//		y += dy;
-//	}
-//	else
-//	{
-//		float min_tx, min_ty, nx = 0, ny;
-//		float rdx = 0;
-//		float rdy = 0;
-//
-//		// TODO: This is a very ugly designed function!!!!
-//		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-//
-//		// how to push back Mario if collides with a moving objects, what if Mario is pushed this way into another object?
-//		//if (rdx != 0 && rdx!=dx)
-//		//	x += nx*abs(rdx); 
-//
-//
-//		// chuẩn + ít lỗi nhất
-//		this->x += min_tx * dx + nx * 0.4f;
-//		if (ny != 0) vy = 0;
-//
-//		for (UINT i = 0; i < coEventsResult.size(); i++)
-//		{
-//			LPCOLLISIONEVENT e = coEventsResult[i];
-//			if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE)
-//			{
-//				DebugOut(L"11111111111111111\n");
-//			}
-//			DebugOut(L"type = %i\n", e->obj->ObjType);
-//		
-//		}
-//	}
-//
-//	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-//	DebugOut(L"state = %i\n", state);
-//}
 
 void FirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -299,7 +212,7 @@ void FirePiranhaPlant::SetState(int state)
 		isAttacking = true;
 		break;
 	case FIREPIRANHAPLANT_STATE_DIE:
-		isDie = true;
+		isDie = canDelete = true;
 		break;
 	case FIREPIRANHAPLANT_STATE_STOP:
 		vy = 0;

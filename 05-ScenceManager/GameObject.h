@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <d3dx9.h>
@@ -10,6 +10,9 @@
 using namespace std;
 
 #define ID_TEX_BBOX -100		// special texture to draw object bounding box
+
+#define LEFT -1
+#define RIGHT 1
 
 class CGameObject; 
 typedef CGameObject * LPGAMEOBJECT;
@@ -62,13 +65,13 @@ public:
 	float vy;
 	int nx;	 
 	int state;
-	int time_die;
-	int ObjType;
-	bool isDie;
+	int TimeToDie;
+	bool isDie; // chết nhưng chưa xóa, vẫn còn render
+	bool canDelete; // có thể xóa sau khi chết, ví dụ rùa đã chết nhưng sau khi rớt xuống đất mới xóa
 	bool isInit;
 	DWORD dt; 
 	LPANIMATION_SET animation_set;
-
+	int ObjType;
 	CATEGORY Category;
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
@@ -101,7 +104,10 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects = NULL);
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }
-
+	virtual void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
+	virtual void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
+	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
+	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
 
 	~CGameObject();
 };

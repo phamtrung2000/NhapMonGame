@@ -30,8 +30,7 @@
 
 #define MARIO_OVERWORLD_TAIL_BBOX_HEIGHT 24
 
-#define LEFT -1
-#define RIGHT 1
+
 
 class MarioOverWorld : public CGameObject
 {

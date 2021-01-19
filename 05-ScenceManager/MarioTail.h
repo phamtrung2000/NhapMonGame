@@ -27,21 +27,18 @@
 #define MARIOTAIL_ANI_FLYINGLOW_RIGHT 19
 #define MARIOTAIL_ANI_FLYINGLOW_LEFT	20
 
+#define MARIOTAIL_ANI_SET_ID 1200
+
 class MarioTail:public CGameObject //mỗi khi mario quật đuôi thì tạo object đuôi thay 
 {
 public:
-	float width, height;
+	bool isInvisible;
 	MarioTail(float, float);
 	~MarioTail() {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
 	void SetState(int state) {}
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom)
-	{
-		left = x;
-		top = y;
-		right = x + MARIO_TAIL_WIDTH;
-		bottom = y + MARIO_TAIL_HEIGHT;
-	}
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	
 };
 

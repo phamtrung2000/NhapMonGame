@@ -30,6 +30,6 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (GetTickCount64() - AppearTime >= AmountTimeAppear)
-			this->isDie = true;
+			this->canDelete = true;
 	}
 };

@@ -213,6 +213,12 @@
     <ClCompile Include="EffectScore.cpp">
       <Filter>PlayScene\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>PlayScene\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -344,6 +350,12 @@
     <ClInclude Include="EffectScore.h">
       <Filter>PlayScene\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>PlayScene\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="mario-sample.txt">
@@ -378,21 +390,6 @@
     <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\enemies.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\enemies3.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\EnemiesFull.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\gameover.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\misc.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
     <Image Include="textures\misc1.png">
       <Filter>Picture/Scene</Filter>
     </Image>
@@ -420,16 +417,7 @@
     <Image Include="textures\Opening\MapOpening.png">
       <Filter>Picture/Scene</Filter>
     </Image>
-    <Image Include="textures\Hidden1.1Tile.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\Mario\mario1.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
     <Image Include="textures\ScoreBoard - Copy.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\Hub.png">
       <Filter>Picture/Scene</Filter>
     </Image>
     <Image Include="textures\World\World1\SceneHidden1.1Tile.png">

@@ -33,14 +33,7 @@ void Camera::Update()
 {
 	// Update camera to follow mario
 	float cx, cy;
-	/*if (_PlayScene->SceneID == SCENE_ID_HIDDENMAP_1_1)
-	{
-
-	}
-	else
-	{
-
-	}*/
+	
 	_Mario->GetPosition(cx, cy);
 	cx -= _Game->GetScreenWidth() / 2;
 	if (cx >= MAP_MAX_WIDTH - _Game->GetScreenWidth())
@@ -63,7 +56,7 @@ void Camera::Update()
 	}
 	else
 	{
-		if (_Mario->canFlyS == true || _Mario->canFlyX == true || _Mario->y <= _Map->GetHeight() / 2)
+		if ( ((_Mario->canFlyS == true || _Mario->canFlyX == true) && _Mario->OnGround == false ) || _Mario->y <= _Map->GetHeight() / 2)
 		{
 			SetCamPos(cx, cy);
 			_Game->SetCamPos(cx, cy);

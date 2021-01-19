@@ -3,10 +3,21 @@
 #include "ItemBrick.h"
 #include "EffectSmoke.h"
 
+Coin::Coin() : Item()
+{
+	TypeItem = ITEM_TYPE_COIN;
+
+	ObjType = OBJECT_TYPE_COIN;
+
+	isBrickToCoin = false;
+	AppearTime = 0;
+	Score = COIN_SCORE;
+}
+
 void Coin::Render()
 {
 	animation_set->at(COIN_ANI)->Render(x, y);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -17,14 +28,7 @@ void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
 	b = y + COIN_BBOX_HEIGHT;
 }
 
-Coin::Coin()
-{
-	ObjType = OBJECT_TYPE_COIN;
-	vx = vy = 0.0f;
-	Category = CATEGORY::ITEM;
-	isBrickToCoin = false;
-	AppearTime = 0;
-}
+
 
 Coin::Coin(float x, float y)
 {
@@ -46,7 +50,7 @@ void Coin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		itembrick->SetAnimationSet(ani_set);
 		_PlayScene->objects.push_back(itembrick);
 
-		this->isDie = true;
+		this->canDelete = true;
 		isBrickToCoin = false;
 		AppearTime = 0;
 	}

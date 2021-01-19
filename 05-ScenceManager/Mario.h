@@ -1,7 +1,4 @@
 ﻿#pragma once
-#include <algorithm>
-#include <assert.h>
-#include "Utils.h"
 #include "GameObject.h"
 
 #define MARIO_WALKING_SPEED		0.12f//0.1f 
@@ -9,7 +6,7 @@
 #define MARIO_FLY_MOVING_SPEED	0.1f 
 #define GIA_TOC					0.003f//0.003125f // gia tốc
 #define MAX_LEVEL_OF_WALKING	32
-#define MAX_LEVEL_OF_RUNNING	70//98
+#define MAX_LEVEL_OF_RUNNING	91//98
 
 #define MARIO_JUMP_SPEED_FAST		0.27f	//0.25f // chuẩn
 #define MARIO_JUMP_SPEED_SLOW		0.18f // chuẩn
@@ -20,18 +17,22 @@
 #define MARIO_DIE_DEFLECT_SPEED	 0.2f
 
 #define MARIO_STATE_IDLE			0
-#define MARIO_STATE_WALKING_RIGHT	100
-#define MARIO_STATE_WALKING_LEFT	200
-#define MARIO_STATE_JUMP			300
-#define MARIO_STATE_DIE				400
-#define MARIO_STATE_JUMP_LOW		500
-#define MARIO_STATE_FLY_LOW			600
-#define MARIO_STATE_FLY_HIGH		700
-#define MARIO_STATE_SITDOWN			800
-#define MARIO_STATE_ATTACK			900
-#define MARIO_STATE_RUNNING			1000
+#define MARIO_STATE_WALKING_RIGHT	1
+#define MARIO_STATE_WALKING_LEFT	2
+#define MARIO_STATE_JUMP			3
+#define MARIO_STATE_DIE				4
+#define MARIO_STATE_JUMP_LOW		5
+#define MARIO_STATE_FLY_LOW			6
+#define MARIO_STATE_FLY_HIGH		7
 
-#define MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG		89
+#define MARIO_STATE_SITDOWN			8
+#define MARIO_STATE_ATTACK			9
+#define MARIO_STATE_RUNNING			10
+#define MARIO_STATE_HOLDING_IDLE	11
+#define MARIO_STATE_FLYING_HIGH_RIGHT	12
+#define MARIO_STATE_FLYING_HIGH_LEFT	13
+#define MARIO_STATE_HOLDING_RIGHT		14
+#define MARIO_STATE_HOLDING_LEFT		15
 
 #define MARIO_ANI_BIG_IDLE_RIGHT			0
 #define MARIO_ANI_BIG_IDLE_LEFT				1
@@ -154,7 +155,8 @@
 #define MARIO_ANI_TAIL_HOLD_JUMP_LEFT		86
 #define MARIO_ANI_TAIL_FLY_FALL_RIGHT		87
 #define MARIO_ANI_TAIL_FLY_FALL_LEFT		88
-
+#define MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG		89
+#define MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG		90
 
 
 #define	MARIO_LEVEL_SMALL	1
@@ -175,10 +177,7 @@
 
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
-#define LEFT -1
-#define RIGHT 1
-
-#define TIME_ATTACK 4
+#define TIME_ATTACK 3
 #define TIME_FLY 200
 #define TIME_FLY_S 40
 #define MARIO_UNTOUCHABLE_TIME 5000
@@ -186,51 +185,69 @@
 #define ITIME_LEVEL_UP 180
 #define LEVEL_UP_DIVIDE	15
 
+#define TIMEDELAYUSEBFIREBULLET_A	 500
+#define TIMEDELAYUSEBFIREBULLET_Z	 35
+
 class Mario : public CGameObject
 {
 private:
 	static Mario* __instance;
 public:
-	
+	// trạng thái bất tử
 	bool untouchable; // trạng thái bất tử
 	ULONGLONG untouchable_start; // thời điểm bắt đầu bất tử
+	int UntouchtableTime;
 	
 	bool test;
 
 	float start_x, start_y;		// vị trí bắt đầu
 	float NewX, NewY; // vị trí mới sau khi rời khỏi map ẩn
+	float MaxY; // xử lý TH y+ quá mức và mario rớt xuyên xuống đất/ vật thể
 
 	bool OnGround; // chạm đất
 	bool isRunning; 
 	int	 level_of_running;
 	bool ChangeDirection; // chuyển hướng, để hiện ani khựng lại quay đầu
 	int  level_of_walking;
-	int  level_of_stopping;
 	bool isMaxRunning;
 	
 	bool isFalling, // đang rớt xuống
 		isSitDown, // đang ngồi
-		GoHiddenWorld, // đi vào map ẩn để hiện ani xuống cống
-		isAttacking, // đang ở state attack
+		GoHiddenWorld; // đi vào map ẩn để hiện ani xuống cống
+	
+	
+	bool isAttacking, // đang ở state attack
 		endAttack; // thực hiện xong động tác quật đuôi thì mới cho phép quật đuôi tiếp
 	int time_attack; // biến đếm thời gian thực hiện động tác quật đuôi để hiện ani tương ứng
-	int time_fly,FlyTimePer1; // thời gian bay, hết thời gian thì rớt xuống
 	int NumberBullet; // số lượng đạn ( 2 viên )
+	ULONGLONG TimeUseFireBullet, // thời điểm dùng đạn lửa
+		TimeDelayUseFireBullet; // khoảng thời gian chờ khi ném đạn lửa
+	
+	
 	int ani;
 	bool isHolding = false, pressA = false, canKick = false;
 	int Height,Width;
 
 
-	bool render_tail;
+	bool render_tail; // Đã vẽ đuôi hay chưa để thoát vòng lặp vẽ đuôi bên playscene
 	// BAY (FLY)
 	bool canFlyX, canFlyS, // mario có thể bay khi đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
 		isFlyingLow, isFlyingHigh; // biến để xác định mario đang ở state fly
+	ULONGLONG TimeDelayFly; // khoảng thời gian chờ khi bay bằng S
+	int time_fly, FlyTimePer1; // thời gian bay, hết thời gian thì rớt xuống
 		 
 	// TĂNG CẤP (UP LEVEL)
-	ULONGLONG LevelUpTime; // thời điểm bắt đầu tăng cấp
+	ULONGLONG ChangeLevelTime; // thời điểm bắt đầu tăng cấp
 	bool isLevelUp; // mario tăng cấp để hiện effect tăng cấp
-	int iLevelUpTime; // Thời gian tăng cấp + hiện effect tăng cấp
+	bool isLevelDown; // mario giảm cấp để hiện effect giảm cấp
+	int iChangeLevelTime; // Thời gian tăng cấp + hiện effect tăng cấp
 	int level; // cấp độ
+
+	ULONGLONG TimeJumpS; // thời điểm nhảy bằng nút S để làm vụ thả S thì rớt xuống 
+	bool pressS;
+
+	int nScore; // tăng điểm theo cấp số nhân khi mario nhảy chạm đầu giết quái liên tục + k chạm đất
+	// 1: x1, 2: x2, 3: x4,4: x8,5: x10,6: x20,7 : x40, 8: x80,9 : +1M
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
@@ -252,136 +269,64 @@ public:
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 };
-
-//case MARIO_LEVEL_TAIL:
+//
+//if (canFlyX == true || canFlyS == true)
 //{
-//	if (canFlyX == true)
+//	// chưa nhảy // đang rớt xuống
+//	if (vy >= 0)
 //	{
-//		// chưa nhảy // đang rớt xuống
-//		if (vy >= 0)
+//		// đang chạm đất
+//		if (OnGround == true)
 //		{
-//			// đang chạm đất
-//			if (OnGround == true)
-//			{
-//				// đứng yên
-//				if (level_of_walking == 0 && level_of_running == 0)
-//				{
-//					// phải 
-//					if (nx == RIGHT)
-//					{
-//						ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
-//						else if (isSitDown == true)
-//							ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
-//					}
-//					// trái
-//					else
-//					{
-//						ani = MARIO_ANI_TAIL_IDLE_LEFT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
-//						else if (isSitDown == true)
-//							ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
-//					}
-//				}
-//				// đi bộ qua phải
-//				else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
-//				{
-//					if (ChangeDirection == false)
-//					{
-//						ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
-//					}
-//					else if (ChangeDirection == true)
-//						ani = MARIO_ANI_TAIL_STOP_RIGHT;
-//				}
-//				//  đi bộ qua trái
-//				else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
-//				{
-//					if (ChangeDirection == false)
-//					{
-//						ani = MARIO_ANI_TAIL_WALKING_LEFT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
-//					}
-//					else if (ChangeDirection == true)
-//						ani = MARIO_ANI_TAIL_STOP_LEFT;
-//				}
-//			}
-//			// rớt xuống
-//			else
+//			// đứng yên
+//			if (level_of_walking == 0 && level_of_running == 0 || vx == 0)
 //			{
 //				// phải 
 //				if (nx == RIGHT)
 //				{
-//					ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
+//					ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+//					if (isHolding == true)
+//						ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
 //				}
 //				// trái
 //				else
 //				{
-//					ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+//					ani = MARIO_ANI_TAIL_IDLE_LEFT;
+//					if (isHolding == true)
+//						ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
+//
 //				}
 //			}
+//			// đi bộ qua phải
+//			else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
+//			{
+//				if (ChangeDirection == false)
+//				{
+//					ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+//				}
+//				else if (ChangeDirection == true)
+//					ani = MARIO_ANI_TAIL_STOP_RIGHT;
+//			}
+//			//  đi bộ qua trái
+//			else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
+//			{
+//				if (ChangeDirection == false)
+//				{
+//					ani = MARIO_ANI_TAIL_WALKING_LEFT;
+//					if (isHolding == true)
+//						ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
+//				}
+//				else if (ChangeDirection == true)
+//					ani = MARIO_ANI_TAIL_STOP_LEFT;
+//			}
 //		}
-//		// nhảy
+//		// rớt xuống
 //		else
 //		{
 //			// phải 
 //			if (nx == RIGHT)
 //			{
-//				if (isMaxRunning == true)
-//				{
-//					if (isFlyingHigh == true)
-//						ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
-//					else
-//						ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
-//				}
-//			}
-//			// trái
-//			else
-//			{
-//				if (isMaxRunning == true)
-//				{
-//					if (isFlyingHigh == true)
-//						ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
-//					else
-//						ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
-//				}
-//			}
-//		}
-//	}
-//	else if (canFlyS == true)
-//	{
-//		// đang rớt xuống
-//		if (vy >= 0)
-//		{
-//			// phải 
-//			if (nx == RIGHT)
-//			{
-//				if (OnGround == false)
-//					ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
-//				else if (OnGround == true)
-//				{
-//					if (level_of_walking == 0 && level_of_running == 0)
-//						ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-//					else if (level_of_walking > 0 || level_of_running > 0)
-//					{
-//						if (ChangeDirection == false)
-//						{
-//							ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-//							if (isHolding == true)
-//								ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
-//							else if (isMaxRunning == true)
-//								ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
-//						}
-//						else if (ChangeDirection == true)
-//							ani = MARIO_ANI_TAIL_STOP_RIGHT;
-//
-//					}
-//				}
-//
+//				ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
 //			}
 //			// trái
 //			else
@@ -389,144 +334,107 @@ public:
 //				ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
 //			}
 //		}
-//		// nhảy
-//		else
-//		{
-//			// phải 
-//			if (nx == RIGHT)
-//			{
-//				if (isMaxRunning == true)// && OnGround == false)
-//				{
-//					/*if (isFlyingHigh == true)
-//						ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
-//					else
-//						ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;*/
-//
-//					ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
-//				}
-//			}
-//			// trái
-//			else
-//			{
-//				if (isMaxRunning == true)
-//				{
-//					if (isFlyingHigh == true)
-//						ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
-//					else
-//						ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
-//				}
-//			}
-//		}
 //	}
+//	// nhảy
 //	else
 //	{
-//		// chưa nhảy // đang rớt xuống
-//		if (vy >= 0)
+//		// phải 
+//		if (nx == RIGHT)
 //		{
-//			// đang chạm đất
-//			if (OnGround == true)
+//			if (isMaxRunning == true)
 //			{
-//				// đứng yên
-//				if (level_of_walking == 0 && level_of_running == 0)
-//				{
-//					if (ChangeDirection == false)
-//					{
-//						// phải 
-//						if (nx == RIGHT)
-//						{
-//							ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-//							if (isHolding == true)
-//								ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
-//							else if (isSitDown == true)
-//							{
-//								ani = MARIO_ANI_TAIL_SITDOWN_RIGHT;
-//							}
-//						}
-//						// trái
-//						else
-//						{
-//							ani = MARIO_ANI_TAIL_IDLE_LEFT;
-//							if (isHolding == true)
-//								ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
-//							else if (isSitDown == true)
-//							{
-//								ani = MARIO_ANI_TAIL_SITDOWN_LEFT;
-//							}
-//						}
-//					}
-//					else
-//					{
-//						if (nx == LEFT)
-//							ani = MARIO_ANI_TAIL_STOP_LEFT;
-//						else
-//							ani = MARIO_ANI_TAIL_STOP_RIGHT;
-//					}
-//
-//
-//				}
-//				// đi bộ qua phải
-//				else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
-//				{
-//					if (ChangeDirection == false)
-//					{
-//						ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
-//						else if (isMaxRunning == true)
-//							ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
-//					}
-//					else if (ChangeDirection == true)
-//						ani = MARIO_ANI_TAIL_STOP_RIGHT;
-//
-//				}
-//				//  đi bộ qua trái
-//				else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
-//				{
-//					if (ChangeDirection == false)
-//					{
-//						ani = MARIO_ANI_TAIL_WALKING_LEFT;
-//						if (isHolding == true)
-//							ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
-//						else if (isMaxRunning == true)
-//							ani = MARIO_ANI_TAIL_RUNNING_LEFT;
-//					}
-//					else if (ChangeDirection == true)
-//						ani = MARIO_ANI_TAIL_STOP_LEFT;
-//
-//				}
+//				if (isFlyingHigh == true)
+//					ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
+//				else
+//					ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
 //			}
-//			// rớt xuống
-//			else
+//		}
+//		// trái
+//		else
+//		{
+//			if (isMaxRunning == true)
 //			{
-//				if (isHolding == true)
+//				if (isFlyingHigh == true)
+//					ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
+//				else
+//					ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+//			}
+//			else
+//				ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
+//		}
+//
+//	}
+//}
+//else
+//{
+//	// chưa nhảy // đang rớt xuống
+//	if (vy >= 0)
+//	{
+//		// đang chạm đất
+//		if (OnGround == true)
+//		{
+//			// đứng yên
+//			if (level_of_walking == 0 && level_of_running == 0 || vx == 0)
+//			{
+//				if (ChangeDirection == false)
 //				{
 //					// phải 
 //					if (nx == RIGHT)
-//						ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT;
+//					{
+//						ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+//						if (isHolding == true)
+//							ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT;
+//					}
 //					// trái
 //					else
-//						ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT;
+//					{
+//						ani = MARIO_ANI_TAIL_IDLE_LEFT;
+//						if (isHolding == true)
+//							ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT;
+//					}
 //				}
 //				else
 //				{
-//					// phải 
-//					if (nx == RIGHT)
-//					{
-//						ani = MARIO_ANI_TAIL_FALLING_RIGHT;
-//						if (isFlyingLow == true)
-//							ani = MARIO_ANI_TAIL_FLYING_RIGHT;
-//					}
-//					// trái
+//					if (nx == LEFT)
+//						ani = MARIO_ANI_TAIL_STOP_LEFT;
 //					else
-//					{
-//						ani = MARIO_ANI_TAIL_FALLING_LEFT;
-//						if (isFlyingLow == true)
-//							ani = MARIO_ANI_TAIL_FLYING_LEFT;
-//					}
+//						ani = MARIO_ANI_TAIL_STOP_RIGHT;
 //				}
+//
+//
+//			}
+//			// đi bộ qua phải
+//			else if ((level_of_walking > 0 || level_of_running > 0) && nx == RIGHT)
+//			{
+//				if (ChangeDirection == false)
+//				{
+//					ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+//					if (isHolding == true)
+//						ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT;
+//					else if (isMaxRunning == true)
+//						ani = MARIO_ANI_TAIL_RUNNING_RIGHT;
+//				}
+//				else if (ChangeDirection == true)
+//					ani = MARIO_ANI_TAIL_STOP_RIGHT;
+//
+//			}
+//			//  đi bộ qua trái
+//			else if ((level_of_walking > 0 || level_of_running > 0) && nx == LEFT)
+//			{
+//				if (ChangeDirection == false)
+//				{
+//					ani = MARIO_ANI_TAIL_WALKING_LEFT;
+//					if (isHolding == true)
+//						ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT;
+//					else if (isMaxRunning == true)
+//						ani = MARIO_ANI_TAIL_RUNNING_LEFT;
+//				}
+//				else if (ChangeDirection == true)
+//					ani = MARIO_ANI_TAIL_STOP_LEFT;
+//
 //			}
 //		}
-//		// nhảy
+//		// rớt xuống
 //		else
 //		{
 //			if (isHolding == true)
@@ -543,66 +451,45 @@ public:
 //				// phải 
 //				if (nx == RIGHT)
 //				{
-//					ani = MARIO_ANI_TAIL_JUMP_RIGHT;
+//					ani = MARIO_ANI_TAIL_FALLING_RIGHT;
+//					if (isFlyingLow == true)
+//						ani = MARIO_ANI_TAIL_FLYING_RIGHT;
 //				}
 //				// trái
 //				else
 //				{
-//					ani = MARIO_ANI_TAIL_JUMP_LEFT;
+//					ani = MARIO_ANI_TAIL_FALLING_LEFT;
+//					if (isFlyingLow == true)
+//						ani = MARIO_ANI_TAIL_FLYING_LEFT;
 //				}
 //			}
 //		}
 //	}
-//
-//	// đá
-//	if (canKick == true)
+//	// nhảy
+//	else
 //	{
-//		if (nx == RIGHT)
-//			ani = MARIO_ANI_TAIL_KICK_RIGHT;
-//		else
-//			ani = MARIO_ANI_TAIL_KICK_LEFT;
-//	}
-//	else if (GoHiddenWorld == true)
-//		ani = MARIO_ANI_TAIL_ATTACK_2;
-//	else if (isAttacking == true && endAttack == false)
-//	{
-//		if (nx == RIGHT)
+//		if (isHolding == true)
 //		{
-//			if (time_attack <= TIME_ATTACK)
-//				ani = MARIO_ANI_TAIL_ATTACK_1;
-//			else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-//				ani = MARIO_ANI_TAIL_ATTACK_2;
-//			else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-//				ani = MARIO_ANI_TAIL_ATTACK_3;
-//			else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-//				ani = MARIO_ANI_TAIL_ATTACK_4;
-//			else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-//				ani = MARIO_ANI_TAIL_ATTACK_1;
+//			// phải 
+//			if (nx == RIGHT)
+//				ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT;
+//			// trái
+//			else
+//				ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT;
 //		}
 //		else
 //		{
-//			if (time_attack <= TIME_ATTACK)
+//			// phải 
+//			if (nx == RIGHT)
 //			{
-//				ani = MARIO_ANI_TAIL_ATTACK_3;
+//				ani = MARIO_ANI_TAIL_JUMP_RIGHT;
 //			}
-//			else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+//			// trái
+//			else
 //			{
-//				ani = MARIO_ANI_TAIL_ATTACK_2;
-//			}
-//			else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-//			{
-//				ani = MARIO_ANI_TAIL_ATTACK_1;
-//			}
-//			else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-//			{
-//				ani = MARIO_ANI_TAIL_ATTACK_4;
-//			}
-//			else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-//			{
-//				ani = MARIO_ANI_TAIL_ATTACK_3;
+//				ani = MARIO_ANI_TAIL_JUMP_LEFT;
 //			}
 //		}
 //	}
-//
 //}
-//break;
+

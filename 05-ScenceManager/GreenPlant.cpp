@@ -1,20 +1,24 @@
 ﻿#include "GreenPlant.h"
+#include "PlayScence.h"
+#include "WarpPipe.h"
+#include "FirePiranhaPlant.h"
 
-GreenPlant::GreenPlant()
+GreenPlant::GreenPlant() : FirePiranhaPlant()
 {
 	ObjType = OBJECT_TYPE_GREENPLANT;
 	isBlocked = Stop = isInit = false;
 	WarpPipeHeight = WarpPipeWidth = AppearTime = 0;
 	SetState(GREENPLANT_STATE_HIDE);
-	Category = CATEGORY::ENEMY;
+}
+
+GreenPlant::~GreenPlant()
+{
 }
 
 // cây xuất hiện nhưng chưa chắc tấn công, phải nằm trong vùng tấn công
 void GreenPlant::CalcAttackZone()
 {
-	//	DebugOut(L"x - Mario_X = %f\n", abs(x - Mario_X));
-	// mario đi tới vùng tấn công
-	if (abs(x - Mario_X) <= ATTACK_ZONE_X)
+	if (abs(x - Mario_X) <= MAX_ATTACK_ZONE_X && abs(x - Mario_X) >= MIN_ATTACK_ZONE_X && x - Mario_X >= 0)
 	{
 		
 		// cây đang trạng thái núp và số đạn = 1 thì mới xuất hiện
@@ -31,7 +35,20 @@ void GreenPlant::CalcAttackZone()
 		}
 	}
 	else
-		SetState(GREENPLANT_STATE_HIDE);
+	{
+		if (GetState() == FIREPIRANHAPLANT_STATE_APPEAR && NumberBullet == 1)
+		{
+			if (y - Startposy <= -WarpPipeHeight)
+			{
+				vy = 0;
+				canAttack = true;
+			}
+			if (NumberBullet == 0)
+				SetState(FIREPIRANHAPLANT_STATE_HIDE);
+		}
+		else
+			SetState(FIREPIRANHAPLANT_STATE_HIDE);
+	}
 }
 
 void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -144,7 +161,7 @@ void GreenPlant::SetState(int state)
 		vy = GREENPLANT_SPEED_Y;
 		break;
 	case GREENPLANT_STATE_DIE:
-		isDie = true;
+		isDie = canDelete = true;
 		break;
 	case GREENPLANT_STATE_STOP:
 		vy = 0;

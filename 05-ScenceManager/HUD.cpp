@@ -3,7 +3,12 @@
 #include "Camera.h"
 #include "Textures.h"
 #include "Game.h"
+
 #include "Goomba.h"
+#include "FirePiranhaPlant.h"
+#include "EffectScore.h"
+#include "Item.h"
+#include "QuestionBrickItem.h"
 
 #define HEIGHT_SCORE_BROAD 28
 #define ID_TEX_HUB 12
@@ -92,42 +97,107 @@ void HUD::_ParseSection_ANIMATIONS(string line)
 	CAnimations::GetInstance()->Add(ani_id, ani);
 }
 
-void HUD::UpdateScore(LPGAMEOBJECT e)
+void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 {
 	switch (e->Category)
 	{
 		case CATEGORY::ITEM:
 		{
-			if (e->ObjType == OBJECT_TYPE_COIN)
+			int score = 0;
+			Item* item = dynamic_cast<Item*>(e);
+			switch (item->TypeItem)
 			{
-				this->Score += COIN_SCORE;
-				this->Money++;
-			}
-			else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
-			{
-				this->Score += QUESTIONBRICKITEM_SCORE;
+				case ITEM_TYPE_QUESTIONBRICKITEM:
+				{
+					QuestionBrickItem* qbitem = dynamic_cast<QuestionBrickItem*>(item);
+					score = qbitem->Score;
+					this->Score += qbitem->Score;
+					if (qbitem->Item != MONEY)
+					{
+						EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, score);
+						_PlayScene->objects.push_back(effectscore);
+					}
+				}
+				break;
+
+				case ITEM_TYPE_BRICKITEM:
+				{
+					this->MarioLife++;
+					EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, 10000);
+					_PlayScene->objects.push_back(effectscore);
+				}
+				break;
+
+				case ITEM_TYPE_COIN:
+				{
+					score = item->Score;
+					this->Score += item->Score;
+					this->Money++;
+				}
+				break;
 			}
 		}
 		break;
 
 		case CATEGORY::ENEMY:
 		{
-			if (e->ObjType == OBJECT_TYPE_GOOMBA)
+			int score = 0;
+			Enemy* enemy = dynamic_cast<Enemy*>(e);
+			if (_nScore == 9)
 			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e);
-				this->Score += goomba->score;
+				score = enemy->Score * 100;
+				this->MarioLife++;
 			}
-			else if (e->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+			else
 			{
-				this->Score += QUESTIONBRICKITEM_SCORE;
+				switch (_nScore)
+				{
+				case 1:
+					score = enemy->Score * 1;
+					break;
+
+				case 2:
+					score = enemy->Score * 2;
+					break;
+
+				case 3:
+					score = enemy->Score * 4;
+					break;
+
+				case 4:
+					score = enemy->Score * 8;
+					break;
+
+				case 5:
+					score = enemy->Score * 10;
+					break;
+
+				case 6:
+					score = enemy->Score * 20;
+					break;
+
+				case 7:
+					score = enemy->Score * 40;
+					break;
+
+				case 8:
+					score = enemy->Score * 80;
+					break;
+				}
+				this->Score += score;
 			}
+			
+			EffectScore* effectscore = new EffectScore(enemy->x, enemy->y - 5, score);
+			_PlayScene->objects.push_back(effectscore);
 		}
 		break;
 	
 	default:
 		break;
 	}
+	
 }
+
 
 void HUD::LoadHUD(wstring map_txt)
 {
@@ -262,8 +332,10 @@ void HUD::Update(float dt)
 
 	float vx, vy;
 	_Mario->GetSpeed(vx, vy);
-	
-	NumSpeed = int(_Mario->level_of_running / (MAX_LEVEL_OF_RUNNING/7));
+	if (_Mario->canFlyX == false && _Mario->canFlyS == false)
+		NumSpeed = int(_Mario->level_of_running / (MAX_LEVEL_OF_RUNNING / 7));
+	else
+		NumSpeed = 7;
 	information = scene;
 	if(money.size() == 1)
 		information += "                                  " + money + "\n";
@@ -295,8 +367,8 @@ void HUD::Render()
 	Item3->Draw(CamX + 240, CAM_Y_HUD_ITEM);
 	// icon số mạng mario
 	typePlayer->Draw(CamX + 9, CamY + 9);
+	
 	// thanh tốc độ
-
 	for (int i = 0; i < NumSpeed - 1; i++)
 		speed->Draw(CamX + 55 + (i * 8), CamY + 1);
 

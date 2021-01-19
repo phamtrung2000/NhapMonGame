@@ -55,11 +55,15 @@ using namespace std;
 
 class CPlayScene : public CScene
 {
-private:
-	
 public:
+	int SceneID;
+	bool Stop;
+
 	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
+
+	CPlayScene();
+	CPlayScene(int id, LPCWSTR filePath);
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -70,10 +74,8 @@ public:
 	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
 	void _ParseSection_MARIO(string line); // hàm đọc MARIO trong file txt
-public:
-	int SceneID;
-	CPlayScene();
-	CPlayScene(int id, LPCWSTR filePath);
+
+
 
 	virtual void Load();
 	virtual void Load2(float, float); // load cảnh + tọa độ mới của mario

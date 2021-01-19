@@ -1,16 +1,13 @@
 ﻿#pragma once
-#include "GameObject.h"
-#include "FireBullet.h"
-#include "PlayScence.h"
-#include "Utils.h"
-#include "WarpPipe.h"
+#include "Enemy.h"
 
 #define	FIREPIRANHAPLANT_SPEED_Y		0.03f
 #define	FIREPIRANHAPLANT_BBOX_HEIGHT	32
 #define	FIREPIRANHAPLANT_BBOX_WIDTH		16
 
 #define	ATTACK_ZONE_Y	200
-#define	ATTACK_ZONE_X	150
+#define	MAX_ATTACK_ZONE_X	150
+#define	MIN_ATTACK_ZONE_X	32
 
 #define FIREPIRANHAPLANT_STATE_HIDE		0
 #define FIREPIRANHAPLANT_STATE_APPEAR	100
@@ -26,8 +23,9 @@
 #define FIREPIRANHAPLANT_ANI_ATTACK_DOWN_RIGHT		5
 #define FIREPIRANHAPLANT_ANI_ATTACK_UP_LEFT			6
 #define FIREPIRANHAPLANT_ANI_ATTACK_DOWN_LEFT		7
+#define FIREPIRANHAPLANT_SCORE 100
 
-class FirePiranhaPlant : public CGameObject
+class FirePiranhaPlant : public Enemy
 {
 public:
 	float Startposy;

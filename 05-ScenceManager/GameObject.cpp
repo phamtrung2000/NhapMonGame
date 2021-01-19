@@ -12,9 +12,10 @@ CGameObject::CGameObject()
 {
 	x = y = 0;
 	vx = vy = 0;
-	nx = 1;	
-	time_die = 0;
-	isDie=false;
+	nx = RIGHT;	
+	TimeToDie = 0;
+	isDie = canDelete = false;
+	Category = CATEGORY::OBJECT;
 }
 
 void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)

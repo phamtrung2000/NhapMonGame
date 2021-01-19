@@ -45,8 +45,6 @@ void ButtonP::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (isPressed == true)
 	{
-		
-
 		for (UINT i = 0; i < coObjects->size(); i++)
 		{
 			if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
@@ -56,7 +54,7 @@ void ButtonP::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					float temp_x = itembrick->x;
 					float temp_y = itembrick->y;
-					itembrick->isDie = true;
+					itembrick->canDelete = true;
 					
 					/*auto hit = new EffectHit(temp_x, temp_y);
 					_PlayScene->objects.push_back(hit);*/

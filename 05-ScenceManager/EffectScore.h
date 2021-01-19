@@ -13,6 +13,7 @@
 #define EFFECTSCORE_ANI_2000	5
 #define EFFECTSCORE_ANI_4000	6
 #define EFFECTSCORE_ANI_8000	7
+#define EFFECTSCORE_ANI_1UP		8
 
 
 class EffectScore : public CGameObject
@@ -33,6 +34,7 @@ public:
 		score = Score;
 	}
 	~EffectScore() {}
+
 	void Render()
 	{
 		int ani = -1;
@@ -54,9 +56,14 @@ public:
 			ani = EFFECTSCORE_ANI_4000; break;
 		case 8000:
 			ani = EFFECTSCORE_ANI_8000; break;
+		case 10000:
+			ani = EFFECTSCORE_ANI_1UP; break;
+		/*default:
+			ani = EFFECTSCORE_ANI_1UP; break;*/
 		}
 
 		animation_set->at(ani)->Render(x, y);
+		DebugOut(L"EFFECT score = %i\n", score);
 	}
 	void GetBoundingBox(float& l, float& t, float& r, float& b) {}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -64,6 +71,6 @@ public:
 		CGameObject::Update(dt);
 		y += dy;
 		if (GetTickCount64() - AppearTime >= EFFECTSCORE_APPEARTIME)
-			this->isDie = true;
+			this->canDelete = true;
 	}
 };

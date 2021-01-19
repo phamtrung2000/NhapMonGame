@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
-#define BRICK_SPEED_Y	0.05f
+#define ITEMBRICK_SPEED_Y	0.05f
 #define MAX_HIGH	5
 
 #define BRICK_STATE_NORMAL		0
@@ -15,7 +15,7 @@
 #define MUSHROOM 1
 #define BUTTONP	2
 
-#define ITEMBRICK_WIDTH	16
+#define ITEMBRICK_WIDTH	16.0f
 #define ITEMBRICK_ANISET_ID	13
 
 class ItemBrick : public CGameObject

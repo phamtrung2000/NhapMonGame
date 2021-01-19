@@ -135,6 +135,7 @@
     <ClCompile Include="EffectHit.cpp" />
     <ClCompile Include="EffectScore.cpp" />
     <ClCompile Include="EffectSmoke.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="Gate.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="GreenKoopas.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemBrick.cpp" />
     <ClCompile Include="ItemCard.cpp" />
     <ClCompile Include="Koopas.cpp" />
@@ -180,6 +182,7 @@
     <ClInclude Include="EffectHit.h" />
     <ClInclude Include="EffectScore.h" />
     <ClInclude Include="EffectSmoke.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="Gate.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="GreenKoopas.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="ItemBrick.h" />
     <ClInclude Include="ItemCard.h" />
     <ClInclude Include="Koopas.h" />
@@ -229,19 +233,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\bbox.png" />
-    <Image Include="textures\enemies.png" />
-    <Image Include="textures\enemies3.png" />
-    <Image Include="textures\EnemiesFull.png" />
-    <Image Include="textures\gameover.png" />
     <Image Include="textures\Goomba_Koopas\Left.png" />
     <Image Include="textures\Goomba_Koopas\LeftUp.png" />
     <Image Include="textures\Goomba_Koopas\Right.png" />
     <Image Include="textures\Goomba_Koopas\RightUp.png" />
-    <Image Include="textures\Hidden1.1Tile.png" />
-    <Image Include="textures\Hub.png" />
     <Image Include="textures\Koopas.png" />
-    <Image Include="textures\Mario\mario1.png" />
-    <Image Include="textures\misc.png" />
     <Image Include="textures\misc1.png" />
     <Image Include="textures\Opening\MapOpening.png" />
     <Image Include="textures\ScoreBoard - Copy.png" />

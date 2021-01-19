@@ -24,7 +24,7 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 		if (Start_Y - y >= MAX_HIGH)
 		{
-			vy = BRICK_SPEED_Y;
+			vy = ITEMBRICK_SPEED_Y;
 		}
 		y += dy;
 
@@ -76,7 +76,7 @@ void ItemBrick::SetState(int state)
 	case BRICK_STATE_COLLISION:
 	{
 		// viên gạch nảy lên
-		vy = -BRICK_SPEED_Y;
+		vy = -ITEMBRICK_SPEED_Y;
 		isCollision = true;
 	}break;
 

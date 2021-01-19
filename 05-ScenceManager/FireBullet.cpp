@@ -8,6 +8,7 @@
 #include "EffectHit.h"
 #include "Utils.h"
 #include "PlayScence.h"
+#include "GreenFlyKoopas.h"
 
 void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -18,7 +19,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// ra khỏi camera -> delete
 	if (x > cam_x + static_cast<float>(cam_w) || x < cam_x)
-		isDie = true;
+		canDelete = true;
 
 	CGameObject::Update(dt);
 
@@ -27,10 +28,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += FIREBULLET_GRAVITY * dt;
 
 		if (y >= 500)
-			isDie = true;
+			canDelete = true;
 		if (nx = -1 && x < 0)
 		{
-			isDie = true;
+			canDelete = true;
 		}
 
 		vector<LPCOLLISIONEVENT> coEvents;
@@ -52,8 +53,6 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-			
-
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
@@ -64,45 +63,55 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 					case CATEGORY::ENEMY:
 					{
-						
-						if (dynamic_cast<CGoomba*>(e->obj))
+						Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+					
+
+						switch (enemy->TypeEnemy)
 						{
-							CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+
+						case ENEMYTYPE_GOOMBA:
+						{
+							Goomba* goomba = dynamic_cast<Goomba*>(e->obj);
 							if (e->nx != 0 || e->ny != 0)
 							{
 								if (goomba->GetState() != GOOMBA_STATE_DIE)
+								{
 									goomba->SetState(GOOMBA_STATE_DIE_2);
-
-								this->isDie = true;
+									this->canDelete = true;
+									auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
+									_PlayScene->objects.push_back(hit);
+								}
 							}
-						}
-						else if (dynamic_cast<Koopas*>(e->obj))
+						}break;
+
+						case ENEMYTYPE_KOOPAS:
 						{
 							Koopas* koopas = dynamic_cast<Koopas*>(e->obj);
-							if (e->nx != 0 || e->ny != 0)
+							if (koopas->GetState() != KOOPAS_STATE_DIE)
 							{
-								if (koopas->GetState() != KOOPAS_STATE_DIE)
-									koopas->SetState(KOOPAS_STATE_DIE);
-
-								this->isDie = true;
+								if (e->obj->ObjType == OBJECT_TYPE_GREENFLYKOOPAS)
+								{
+									GreenFlyKoopas* koopas = dynamic_cast<GreenFlyKoopas*>(e->obj);
+									koopas->Health--;
+								}
+								koopas->SetState(KOOPAS_STATE_DIE);
+								this->canDelete = true;
+								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
+								_PlayScene->objects.push_back(hit);
+								
 							}
 						}
-						else
-						{
-							e->obj->isDie = this->isDie = true;
+						break;
+
+						default:
+							e->obj->canDelete = this->canDelete = true;
+							break;
 						}
-
-						auto hit = new EffectHit(e->obj->x, e->obj->y);
-						_PlayScene->objects.push_back(hit);
-
 					}break;
 
 					case CATEGORY::OBJECT: case CATEGORY::GROUND:
 					{
-						
-			////
-
-			//if (ny != 0) vy = 0;
+					
 						if (e->nx != 0)
 						{
 							y += min_ty * dy + ny * 0.4f;
@@ -112,7 +121,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 							else
 							{
-								this->isDie = true;
+								this->canDelete = true;
 								auto effect = new EffectSmoke(this->x, this->y);
 								_PlayScene->objects.push_back(effect);
 							}
@@ -176,7 +185,7 @@ void FireBullet::GetBoundingBox(float& left, float& top, float& right, float& bo
 
 FireBullet::FireBullet(float a, float b)
 {
-	FireMario = isDie = false;
+	FireMario = canDelete = false;
 	ObjType = OBJECT_TYPE_FIREBULLET;
 	x = a;
 	y = b;

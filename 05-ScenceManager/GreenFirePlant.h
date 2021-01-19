@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "GameObject.h"
+#include "FirePiranhaPlant.h"
 
 
 #define	GREENFIREPLANT_SPEED_Y		0.03f
@@ -7,7 +7,7 @@
 #define	GREENFIREPLANT_BBOX_WIDTH		16
 
 #define	ATTACK_ZONE_Y	200
-#define	ATTACK_ZONE_X	150
+#define	MAX_ATTACK_ZONE_X	150
 
 #define GREENFIREPLANT_STATE_HIDE		0
 #define GREENFIREPLANT_STATE_APPEAR	100
@@ -20,26 +20,9 @@
 #define GREENFIREPLANT_ANI_ATTACK_UP_LEFT			2
 #define GREENFIREPLANT_ANI_ATTACK_DOWN_LEFT		3
 
-class GreenFirePlant : public CGameObject
+class GreenFirePlant : public FirePiranhaPlant
 {
-public:
-	float Startposy;
-	DWORD CalcAtkTime;
-	DWORD AppearTime;
-
-	float AtkPosY;
-	float StartAtkPosX;
-	float StartAtkPosY;
-
-	float Mario_X;// lấy vị trí mario để khi mario tới tầm thì cây xuất hiện
-	float Mario_Y;// lấy vị trí mario để khi mario tới tầm thì cây xuất hiện
-
-	float VxBullet;
-	float VyBullet;
-	int NumberBullet;
-	bool canAttack, isAttacking;
-	float WarpPipeHeight;
-	bool Stop;
+	
 public:
 	GreenFirePlant();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

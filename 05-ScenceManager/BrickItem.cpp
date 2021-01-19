@@ -1,21 +1,30 @@
-#include "BrickItem.h"
+﻿#include "BrickItem.h"
 #include "ItemBrick.h"
 #include "Coin.h"
 #include "EffectSmoke.h"
+#include "PlayScence.h"
+#include "Item.h"
+#include "Brick.h"
+#include "WarpPipe.h"
+#include "Goomba.h"
+#include "Block.h"
+
 #define BRICKITEM_ANISET_ID	14
 
-BrickItem::BrickItem(int item, float x, float y) : CGameObject()
+BrickItem::BrickItem(int item, float x, float y) : Item()
 {
+	TypeItem = ITEM_TYPE_BRICKITEM;
+	Start_X = x;
+	Start_Y = y;
+	Score = 1000;
+
 	ChangeToCoin = isPressed = isInit = false;
 	Item = item;
 	ObjType = OBJECT_TYPE_BRICKITEM;
-	Start_X = x;
-	Start_Y = y;
+	
 	this->x = x;
 	this->y = y;
-	vx = vy = 0;
 	SetState(BRICKITEM_STATE_INIT);
-	Category = CATEGORY::ITEM;
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(BRICKITEM_ANISET_ID);
@@ -35,7 +44,13 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				y += dy;
 				if (Start_Y - y > BRICKITEM__BBOX)
-					SetState(BRICKITEM_STATE_MOVE);
+				{
+					if(this->x <=_Mario->x)
+						SetState(BRICKITEM_STATE_MOVE_LEFT);
+					else
+						SetState(BRICKITEM_STATE_MOVE_RIGHT);
+				}
+					
 			}
 			else
 			{
@@ -61,39 +76,54 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 					FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-
-					x += min_tx * dx + nx * 0.4f;
-					y += min_ty * dy + ny * 0.4f;
-
-					if (ny != 0) vy = 0;
-
 					for (UINT i = 0; i < coEventsResult.size(); i++)
 					{
 						LPCOLLISIONEVENT e = coEventsResult[i];
 
-						if (dynamic_cast<Brick*>(e->obj))
+						if (e->obj)
 						{
-							x += dx;
-						}
-						else if (dynamic_cast<WarpPipe*>(e->obj))
-						{
+							switch (e->obj->Category)
+							{
+								case CATEGORY::GROUND:
+								{
+									if (ny != 0) vy = 0;
+									if (e->ny < 0)
+									{
+										x += min_tx * dx + nx * 0.4f;
+										if (OnGround == false)
+										{
+											y += min_ty * dy + ny * 0.1f - 0.3f;
+											OnGround = true; // xử lý chạm đất
+										}
+									}
+									else if (e->nx != 0)
+									{
+										y += min_ty * dy + ny * 0.1f - 0.3f;
+										if (GetState() == BRICKITEM_STATE_MOVE_RIGHT)
+											SetState(BRICKITEM_STATE_MOVE_LEFT);
+										else
+											SetState(BRICKITEM_STATE_MOVE_RIGHT);
+									}
+								}
+								break;
 
-							vx = -vx;
-							y += dy;
-						}
-						else if (dynamic_cast<CGoomba*>(e->obj))
-						{
-							
-							x += dx;
-						}
-						else if (dynamic_cast<Block*>(e->obj))
-						{
-							x += dx;
-						}
-						else if (!dynamic_cast<CGoomba*>(e->obj))
-							if (ny != 0)
-								vy = 0;
+								case CATEGORY::OBJECT:
+									CollisionWithObject(e, min_tx, min_ty, nx, ny);
+									break;
+								case CATEGORY::ENEMY:
+									CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+									break;
 
+								case CATEGORY::ITEM:
+									CollisionWithItem(e, min_tx, min_ty, nx, ny);
+									break;
+
+								case CATEGORY::WEAPON:
+									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+									break;
+
+							}
+						}
 					}
 				}
 
@@ -113,7 +143,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (itembrick->Item == NORMAL)
 					{
 						
-						itembrick->isDie = true;
+						itembrick->canDelete = true;
 						/*auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
 						smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
 						_PlayScene->objects.push_back(smoke);*/
@@ -183,18 +213,6 @@ void BrickItem::SetState(int state)
 	}
 	break;
 
-	case BRICKITEM_STATE_MOVE:
-	{
-		isInit = true;
-		if (Item == MUSHROOM)
-		{
-			if (nx == 1)
-				vx = MUSHROOM_SPEED_X;
-			else
-				vx = -MUSHROOM_SPEED_X;
-		}
-	}
-	break;
 	case BRICKITEM_STATE_MOVE_RIGHT:
 	{
 		isInit = true;
@@ -202,11 +220,10 @@ void BrickItem::SetState(int state)
 		{
 			nx = 1;
 			vx = MUSHROOM_SPEED_X;
-
 		}
-		
 	}
 	break;
+
 	case BRICKITEM_STATE_MOVE_LEFT:
 	{
 		isInit = true;
@@ -266,11 +283,3 @@ void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bot
 	
 }
 
-void BrickItem::CaclVx(int objx)
-{
-	//if (objx > x + (BRICKITEM__BBOX /3) )
-	if (objx < x)
-		nx = 1;
-	else
-		nx = -1;
-}

@@ -384,7 +384,7 @@ void World1::Render()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
-		if (objects[i]->isDie != true)
+		if (objects[i]->canDelete != true)
 		{
 			objects[i]->Render();
 		}

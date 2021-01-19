@@ -2,26 +2,31 @@
 #include "PlayScence.h"
 #include "EffectScore.h"
 
-QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : CGameObject()
+QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : Item()
 {
-	isInit = false;
-	Item = item;
-	ObjType = 8;
+	TypeItem = ITEM_TYPE_QUESTIONBRICKITEM;
 	Start_X = x;
 	Start_Y = y;
+
+	Item = item;
+	ObjType = OBJECT_TYPE_QUESTIONBRICKITEM;
+	
 	this->x = x;
 	this->y = y;
 	vx = vy = 0;
 	SetState(QUESTIONBRICKITEM_STATE_INIT);
-	Category = CATEGORY::ITEM;
 	AppearTime = GetTickCount64();
 	switch (item)
 	{
 	case MONEY:
-		score = QUESTIONBRICKITEM_MONEY__SCORE; break;
+		Score = QUESTIONBRICKITEM_MONEY__SCORE; break;
 	case MUSHROOM: case LEAF:
-		score = QUESTIONBRICKITEM__SCORE; break;
+		Score = QUESTIONBRICKITEM__SCORE; break;
 	}
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(QBI_MUSHROOM_ANISET_ID);
+	this->SetAnimationSet(ani_set);
 }
 
 void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -35,11 +40,11 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += MONEY_GRAVITY * dt;
 		if (GetTickCount64() - AppearTime >= 800)
 		{
-			isDie = true;
-			EffectScore* score = new EffectScore(this->x, this->y, this->score);
-			_PlayScene->objects.push_back(score);
+			canDelete = true;
+			EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
+			_PlayScene->objects.push_back(Score);
+			_HUD->UpdateScore(this, 0);
 		}
-			
 		y += dy;
 		
 	}break;
@@ -50,7 +55,12 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			y += dy;
 			if (Start_Y - y > QUESTIONBRICKITEM__BBOX)
-				SetState(QUESTIONBRICKITEM_STATE_MOVE);
+			{
+				if (this->x <= _Mario->x)
+					SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
+				else
+					SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+			}
 		}
 		else
 		{
@@ -76,39 +86,54 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-				
-				x += min_tx * dx + nx * 0.4f;
-				y += min_ty * dy + ny * 0.4f;
-
-				if (ny != 0) vy = 0;
-
 				for (UINT i = 0; i < coEventsResult.size(); i++)
 				{
 					LPCOLLISIONEVENT e = coEventsResult[i];
 
-					if (dynamic_cast<Brick*>(e->obj))
+					if (e->obj)
 					{
-						x += dx;
-					}
-					else if (dynamic_cast<WarpPipe*>(e->obj))
-					{
-						
-						vx = -vx;
-						y += dy;
-					}
-					else if (dynamic_cast<CGoomba*>(e->obj))
-					{
-						DebugOut(L"Goombaa\n");
-						x += dx;
-					}
-					else if (dynamic_cast<Block*>(e->obj))
-					{
-						x += dx;
-					}
-					else if (!dynamic_cast<CGoomba*>(e->obj))
-						if (ny != 0)
-							vy = 0;
+						switch (e->obj->Category)
+						{
+						case CATEGORY::GROUND:
+						{
+							if (ny != 0) vy = 0;
+							if (e->ny < 0)
+							{
+								x += min_tx * dx + nx * 0.4f;
+								if (OnGround == false)
+								{
+									y += min_ty * dy + ny * 0.1f - 0.3f;
+									OnGround = true; // xử lý chạm đất
+								}
+							}
+							else if (e->nx != 0)
+							{
+								y += min_ty * dy + ny * 0.1f - 0.3f;
+								if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_RIGHT)
+									SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
+								else
+									SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+							}
+						}
+						break;
 
+						case CATEGORY::OBJECT:
+							CollisionWithObject(e, min_tx, min_ty, nx, ny);
+							break;
+						case CATEGORY::ENEMY:
+							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::ITEM:
+							CollisionWithItem(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::WEAPON:
+							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+							break;
+
+						}
+					}
 				}
 			}
 
@@ -146,125 +171,6 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		break;
 	}
 	
-	//DebugOut(L"state=%i, nx=%i, vx = %f\n", state,nx,vx);
-	//if (Item == MUSHROOM)
-	//{
-	//	if (isInit == false)
-	//	{
-	//		y += dy;
-	//		if (Start_Y - y > QUESTIONBRICKITEM__BBOX)
-	//			SetState(QUESTIONBRICKITEM_STATE_MOVE);
-	//	}
-	//	else
-	//	{
-	//		vy += MUSHROOM_GRAVITY * dt;
-	//
-	//		vector<LPCOLLISIONEVENT> coEvents;
-	//		vector<LPCOLLISIONEVENT> coEventsResult;
-	//
-	//		coEvents.clear();
-	//
-	//		CalcPotentialCollisions(coObjects, coEvents);
-	//
-	//		if (coEvents.size() == 0)
-	//		{
-	//			x += dx;
-	//			y += dy;
-	//		}
-	//		else
-	//		{
-	//			float min_tx, min_ty, nx = 0, ny;
-	//			float rdx = 0;
-	//			float rdy = 0;
-	//
-	//			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-	//
-	//			//for (UINT i = 0; i < coEventsResult.size(); i++)
-	//			//{
-	//			//	LPCOLLISIONEVENT e = coEventsResult[i];
-	//			//
-	//			//	if (dynamic_cast<Brick*>(e->obj))
-	//			//	{
-	//			//
-	//			//		x += dx;
-	//			//		// cai if nay lam cai gi` ?
-	//			//	/*if (e->nx)
-	//			//		vx = 0; */
-	//			//	}
-	//			//	else if (dynamic_cast<WarpPipe*>(e->obj))
-	//			//	{
-	//			//		DebugOut(L"WarpPipe\n");
-	//			//		vx = -vx;
-	//			//		y += dy;
-	//			//	}
-	//			//	else if (dynamic_cast<CGoomba*>(e->obj))
-	//			//	{
-	//			//		DebugOut(L"Goombaa\n");
-	//			//		x += dx;
-	//			//	}
-	//			//	if (dynamic_cast<Block*>(e->obj))
-	//			//	{
-	//			//		x += dx;
-	//			//	}
-	//			//	if (!dynamic_cast<CGoomba*>(e->obj))
-	//			//		if (ny != 0) vy = 0;
-	//			//	x += min_tx * dx + nx * 0.4f;
-	//			//	y += min_ty * dy + ny * 0.5f;
-	//			//}
-	//
-	//			x += min_tx * dx + nx * 0.4f;
-	//			y += min_ty * dy + ny * 0.4f;
-	//
-	//			if (ny != 0) vy = 0;
-	//
-	//			for (UINT i = 0; i < coEventsResult.size(); i++)
-	//			{
-	//				LPCOLLISIONEVENT e = coEventsResult[i];
-	//
-	//				if (dynamic_cast<Brick*>(e->obj))
-	//				{
-	//					x += dx;
-	//				}
-	//				else if (dynamic_cast<WarpPipe*>(e->obj))
-	//				{
-	//					DebugOut(L"WarpPipe\n");
-	//					vx = -vx;
-	//					y += dy;
-	//				}
-	//				else if (dynamic_cast<CGoomba*>(e->obj))
-	//				{
-	//					DebugOut(L"Goombaa\n");
-	//					x += dx;
-	//				}
-	//				else if (dynamic_cast<Block*>(e->obj))
-	//				{
-	//					x += dx;
-	//				}
-	//				else if (!dynamic_cast<CGoomba*>(e->obj))
-	//					if (ny != 0) 
-	//						vy = 0;
-	//
-	//			}
-	//		}
-	//		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	//	}
-	//}
-	//else if (Item == MONEY)
-	//{
-	//	if (isInit == false)
-	//	{
-	//		Time++;
-	//		y += dy;
-	//		vy += MONEY_GRAVITY * dt;
-	//		if (Time >= MONEY_APPEAR_TIME)
-	//		{
-	//			isDie = true;
-	//			Time = 0;
-	//		}
-	//			
-	//	}
-	//}
-	//DebugOut(L"vx=%f\n",vx);
 }
 
 void QuestionBrickItem::Render()
@@ -326,55 +232,31 @@ void QuestionBrickItem::SetState(int state)
 	}
 	break;
 
-	case QUESTIONBRICKITEM_STATE_MOVE:
-	{
-		isInit = true;
-		if (Item == MUSHROOM)
-		{
-			if (nx == 1)
-				vx = MUSHROOM_SPEED_X;
-			else
-				vx = -MUSHROOM_SPEED_X;
-		}
-		else if (Item == LEAF)
-		{
-			if (nx == 1)
-				vx = LEAF_SPEED_X;
-			else
-				vx = -LEAF_SPEED_X;
-		}
-		
-	}
-	break;
-
 	case QUESTIONBRICKITEM_STATE_MOVE_RIGHT:
 	{
 		isInit = true;
+		nx = RIGHT;
 		if (Item == MUSHROOM)
 		{
-			nx = 1;
 			vx = MUSHROOM_SPEED_X;
-			
 		}
 		else if (Item == LEAF)
 		{
-			nx = 1;
 			vx = LEAF_SPEED_X;
 		}
 	}
 	break;
+
 	case QUESTIONBRICKITEM_STATE_MOVE_LEFT:
 	{
 		isInit = true;
+		nx = LEFT;
 		if (Item == MUSHROOM)
 		{
-			nx = -1;
 			vx = -MUSHROOM_SPEED_X;
-
 		}
 		else if (Item == LEAF)
 		{
-			nx = -1;
 			vx = -LEAF_SPEED_X;
 		}
 	}
@@ -394,11 +276,3 @@ void QuestionBrickItem::GetBoundingBox(float& left, float& top, float& right, fl
 	bottom = y + QUESTIONBRICKITEM__BBOX;
 }
 
-void QuestionBrickItem :: CaclVx(int objx)
-{
-	//if (objx > x + (QUESTIONBRICKITEM__BBOX /3) )
-	if (objx < x)
-		nx = 1;
-	else
-		nx = -1;
-}
