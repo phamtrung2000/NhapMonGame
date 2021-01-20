@@ -24,23 +24,39 @@ void Map::_ParseSection_INFO(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 5) return; // skip invalid lines
-
-	MaxRow = atoi(tokens[0].c_str());
-	MaxColumn = atoi(tokens[1].c_str());
-	TileRow = atoi(tokens[2].c_str());
-	TileCollum = atoi(tokens[3].c_str());
-	TileWidth = atoi(tokens[4].c_str());
+	if (tokens.size() <= 5)
+	{
+		MaxRow = atoi(tokens[0].c_str());
+		MaxColumn = atoi(tokens[1].c_str());
+		TileRow = atoi(tokens[2].c_str());
+		TileCollum = atoi(tokens[3].c_str());
+		TileWidth = atoi(tokens[4].c_str());
+	}
+	else
+	{
+		MaxRow = atoi(tokens[0].c_str());
+		MaxColumn = atoi(tokens[1].c_str());
+		TileRow = atoi(tokens[2].c_str());
+		TileCollum = atoi(tokens[3].c_str());
+		TileWidth = atoi(tokens[4].c_str());
+		TileHeight = atoi(tokens[5].c_str());
+		int A = atoi(tokens[6].c_str());
+		if (A == 1)
+		{
+			IsWorldMap = true;
+		}
+	}
+	
 }
 
 void Map::_ParseSection_ROWS(string line)
 {
 	vector<string> tokens = split(line);
 
-	//if (tokens.size() < 176) return; // skip invalid lines
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		int ID = atoi(tokens[i].c_str());
+
 		TiledID[column][row] = ID;
 		row++;
 	}
@@ -61,38 +77,6 @@ int Map::GetWidth()
 void Map::UnLoad()
 {
 	__instance = NULL;
-}
-
-void Map::LoadMap(int texid, wstring map_txt)
-{
-	texID = texid;
-	ifstream f;
-	f.open(map_txt);
-	// current resource section flag
-	int section = MAP_SECTION_UNKNOWN;
-	char str[MAX_MAP_LINE];
-	while (f.getline(str, MAX_MAP_LINE))
-	{
-		string line(str);
-	
-		if (line[0] == '#') continue;	// skip comment lines	
-	
-		if (line == "[INFO]") { section = MAP_SECTION_INFO; continue; }
-		if (line == "[ROWS]") {
-			section = MAP_SECTION_ROWS; continue;
-		}
-		
-		if (line[0] == '[') { section = MAP_SECTION_UNKNOWN; continue; }
-	
-		switch (section)
-		{
-		case MAP_SECTION_INFO: _ParseSection_INFO(line); break;
-		case MAP_SECTION_ROWS: _ParseSection_ROWS(line); break;
-		}
-	}
-	
-	f.close();
-
 }
 
 void Map::LoadMap(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
@@ -125,6 +109,53 @@ void Map::LoadMap(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
 	f.close();
 	MapWidth = MaxColumn * TileWidth;
 	MapHeight = MaxRow * TileWidth;
+}
+
+void Map::LoadMap1(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
+{
+	texID = texid;
+	ifstream f;
+	f.open(map_txt);
+	// current resource section flag
+	int section = MAP_SECTION_UNKNOWN;
+	char str[MAX_MAP_LINE];
+	while (f.getline(str, MAX_MAP_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[INFO]") { section = MAP_SECTION_INFO; continue; }
+		if (line == "[ROWS]") {
+			section = MAP_SECTION_ROWS; continue;
+		}
+
+		if (line[0] == '[') { section = MAP_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case MAP_SECTION_INFO: _ParseSection_INFO(line); break;
+		case MAP_SECTION_ROWS: _ParseSection_ROWS(line); break;
+		}
+	}
+	f.close();
+	MapWidth = MaxColumn * TileWidth;
+	MapHeight = MaxRow * TileWidth;
+
+	CTextures* texture = CTextures::GetInstance();
+	LPDIRECT3DTEXTURE9 texMap = texture->Get(texID);
+	int id_sprite = 0;
+
+	for (UINT i = 0; i < TileRow; i++)
+	{
+		for (UINT j = 0; j < TileCollum; j++)
+		{
+			int id_Sprite = texID + id_sprite;
+			sprites->Add(id_Sprite, TileWidth * j, TileHeight * i, TileWidth * (j + 1), TileHeight * (i + 1), texMap);
+			id_sprite = id_sprite + 1;
+		}
+	}
+
 }
 
 void Map::DrawMap()
@@ -160,6 +191,23 @@ void Map::DrawMap()
 	//r.bottom = r.top + TileWidth;
 	////DebugOut(L"%d\n",Id);
 	//CGame::GetInstance()->Draw(j * 16, i * 16, CTextures::GetInstance()->Get(300), r.left, r.top, r.right, r.bottom);
+}
+
+void Map::DrawMap1()
+{
+	int firstcol = (int) (Camera::GetInstance()->cam_x / 16);
+	if (firstcol < 0)  
+		firstcol = 0; 
+	int lastcol = firstcol + (SCREEN_WIDTH / 16);
+	for (UINT i = 0; i < MaxRow; i++)
+	{
+		for (UINT j = firstcol; j < lastcol; j++)
+		{
+			float x = TileWidth * j;
+			float y = TileWidth * i;
+			sprites->Get(TiledID[i][j] + texID)->Draw(x, y);
+		}
+	}
 }
 
 Map::~Map()

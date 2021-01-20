@@ -25,16 +25,14 @@
 # MONEY
 18	.\textures\Object\Object.png	68	145	190
 
-
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
-300	textures\World\World1\Scene1.1Tile.png	255	255	255	textures\World\World1\Scene1.1Map.txt
+10000	.\textures\World\World1\Scene1.1Tile.png	255	255	255	.\textures\World\World1\Scene1.1Map.txt
+
 # id	left	top	right	bottom	texture_id
-
-
 [SPRITES]
 #======= BRICK =========
 200	408	225	424	241	2
@@ -273,7 +271,15 @@
 1216	252	275	257	283	16
 # 7
 1217	244	274	251	280	16
-
+#======== CARD =========
+# STAR
+90005	11	41	41	68	17
+# FLOWER
+90006	50	41	80	68	17
+# MUSHROOM
+90007	89	41	119	68	17
+# EMPTY 
+90008	128	41	158	68	17
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -469,7 +475,15 @@
 # tail flying low left 
 1220	1217	100	1215	100
 
-
+#== card == 
+# mushroom
+90005	90005	100
+# flower
+90006	90006	100
+# star
+90007	90007	100
+# empty
+90008	90008	100
 
 [ANIMATION_SETS]
 # BRICK 
@@ -478,10 +492,6 @@
 2	300	301	302
 # ======= RED KOOPAS =========
 3	350	351	352	353	354	355	356	357	358	359
-# ======= GREEN KOOPAS =========
-10	360	361	362	363	364	365	366	367	368	369
-# ======= GREEN FLY KOOPAS =========
-11	360	361	362	363	364	365	366	367	368	369	370	371
 # QUESTION BRICK 
 4	602	603
 #WARPPIPE
@@ -492,17 +502,22 @@
 8	800	801	802	803
 #FirePlant
 9	900	901	902	903	904	905	906	907
-#===== GREEN PLANT ========
-15	910
-#=====  GREEN FIRE PLANT ========
-16	911	912	913	914
-
+# ======= GREEN KOOPAS =========
+10	360	361	362	363	364	365	366	367	368	369
+# ======= GREEN FLY KOOPAS =========
+11	360	361	362	363	364	365	366	367	368	369	370	371
 # ======= COIN ========
 12	800
 # ======= ITEM BRICK ========
 13	201	603
 # ===== BRICK ITEM =====
 14	810	811	812
+#===== GREEN PLANT ========
+15	910
+#=====  GREEN FIRE PLANT ========
+16	911	912	913	914
+# ====== card =======
+19	90008	90005	90006	90007
 # Fire Bullet
 100	1000	1001
 # ====== Effect =======
@@ -516,8 +531,8 @@
 # RIGHT
 1200	1200	1201	1202	1203	1204	1205	1206	1207	1208	1209	1210	1211	1212	1213	1214	1215	1216	1217	1218	1219	1220
 #======== BUTTON P =========
-# Not Press
 1250	811	812
+
 
 
 [OBJECTS]
@@ -529,11 +544,11 @@
 #0	550	368	0
 #0	1200	350	0
 # trước hàng gạch
-0	2064	350	0	2320	352
+#0	2064	350	0	2320	352
 # tren cong' map an
-#0	2272	48	0	2320	352
+0	2272	48	0	2320	352
 #tren dam may
-#0	1500	100	0
+#0	2609	350	0
 
 # BRICK 
 #type	x	y	ani_set_id	type_brick( 0: normal, 1: cloud)
@@ -627,9 +642,9 @@
 16	1856	320	16
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
-50	2688	336	-1	32	32	1
-50	2280	144	-1	16	12	11
-
+50	2280	144	1	16	12	11
+50	2800	384	1	8	32	1
+19	2688	336	19
 # =====  ITEM BRICK ======
 13	1440	128	13	1
 13	1952	400	13	0

@@ -34,6 +34,8 @@
 #define MARIO_STATE_HOLDING_RIGHT		14
 #define MARIO_STATE_HOLDING_LEFT		15
 
+#define MARIO_STATE_ENDSCENE			100
+
 #define MARIO_ANI_BIG_IDLE_RIGHT			0
 #define MARIO_ANI_BIG_IDLE_LEFT				1
 #define MARIO_ANI_SMALL_IDLE_RIGHT			2
@@ -248,6 +250,7 @@ public:
 
 	int nScore; // tăng điểm theo cấp số nhân khi mario nhảy chạm đầu giết quái liên tục + k chạm đất
 	// 1: x1, 2: x2, 3: x4,4: x8,5: x10,6: x20,7 : x40, 8: x80,9 : +1M
+	bool loseControl;
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();

@@ -24,14 +24,14 @@
 17	.\textures\Item\Item.png	68	145	190
 # MONEY
 18	.\textures\Object\Object.png	68	145	190
-
+10000	.\textures\World\World1\Map1.png	255	0	255
 
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
-300	textures\World\World1\Scene1.1Tile.png	255	255	255	textures\World\World1\Scene1.1Map.txt
+10000	.\textures\World\World1\MarioMap1.txt	41	176	11	11	16	16	0
 # id	left	top	right	bottom	texture_id
 
 
@@ -523,7 +523,7 @@
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-0	600	350	0
+0	10	350	0
 
 #---- Ground-----
 7	0	416	-1	3000	16
@@ -536,16 +536,16 @@
 #10	544	350	10
 #10	460	350	10
 # ======= GREEN FLY KOOPAS =========
-#11	500	350	11
+11	550	350	11
 #11	544	350	11
 #11	460	350	11
 # =====  ITEM BRICK ======
-13	460	400	13	1
-13	500	350	13	2
+#13	460	400	13	1
+#13	500	350	13	2
 # ---- Question Brick----
-4	480	400	4	1
-4	520	350	4	0
+#4	480	400	4	1
+#4	520	350	4	0
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
-200	400	300	5	32	200
-200	600	300	5	32	200
+#200	500	300	5	32	200
+#200	600	300	5	32	200

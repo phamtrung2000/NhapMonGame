@@ -183,9 +183,6 @@
     <ClCompile Include="HUD.cpp">
       <Filter>HUD</Filter>
     </ClCompile>
-    <ClCompile Include="ItemCard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MarioOverWorld.cpp">
       <Filter>OverWorld\Player</Filter>
     </ClCompile>
@@ -217,6 +214,9 @@
       <Filter>PlayScene\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Card.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -320,9 +320,6 @@
     <ClInclude Include="HUD.h">
       <Filter>HUD</Filter>
     </ClInclude>
-    <ClInclude Include="ItemCard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EffectHit.h">
       <Filter>PlayScene\Effect</Filter>
     </ClInclude>
@@ -354,6 +351,9 @@
       <Filter>PlayScene\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -28,8 +28,6 @@ void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
 	b = y + COIN_BBOX_HEIGHT;
 }
 
-
-
 Coin::Coin(float x, float y)
 {
 	ObjType = OBJECT_TYPE_COIN;

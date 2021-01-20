@@ -14,8 +14,9 @@ CGameObject::CGameObject()
 	vx = vy = 0;
 	nx = RIGHT;	
 	TimeToDie = 0;
-	isDie = canDelete = false;
+	isDie = canDelete = isDisappear = false;
 	Category = CATEGORY::OBJECT;
+	Width = Height = 0;
 }
 
 void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)

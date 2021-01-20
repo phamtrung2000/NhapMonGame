@@ -303,9 +303,7 @@ void MarioTail::Render()
 			}
 		}
 	}
-	//DebugOut(L"RENDER Tail ani = %i\n", ani);
 	animation_set->at(ani)->Render(x, y, 255);
-	RenderBoundingBox();
 }
 
 void MarioTail::GetBoundingBox(float& left, float& top, float& right, float& bottom)

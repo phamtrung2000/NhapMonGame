@@ -1,4 +1,4 @@
-#include "Enemy.h"
+﻿#include "Enemy.h"
 #include "FireBullet.h"
 #include "PlayScence.h"
 
@@ -44,11 +44,32 @@ Enemy::Enemy() : CGameObject()
 	Score = 0;
 	ReviveTime = Time_isAttacked = 0;
 	Health = 1;
+	StartX = StartY = 0;
 }
 
 void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
+	// đầu màn hình
+	float cam_x = _Camera->cam_x;
+	// chiều dài màn hình
+	int cam_w = CGame::GetInstance()->GetScreenWidth();
+
+	// ra khỏi camera -> delete
+	if (x > cam_x + static_cast<float>(cam_w) || x < cam_x || y > _Map->GetHeight())
+	{
+		isDisappear = true;
+		return;
+	}
+	else
+	{
+		if (isDisappear == true)
+		{
+			SetPosition(StartX, StartY);
+			isDisappear = false;
+		}
+
+	}
 	if (isAttacked == true)
 	{
 		if (Time_isAttacked != 0 && GetTickCount64() - Time_isAttacked > ENEMY_TIME_ISATTACKED)

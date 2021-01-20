@@ -19,6 +19,9 @@
 #include "FireBullet.h"
 #include "WarpPipe.h"
 #include "Block.h"
+#include "Card.h"
+
+Map* map;
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -199,10 +202,21 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		x += GREENPLANT_BBOX_WIDTH / 2;
 	} break;
 	case OBJECT_TYPE_GREENKOOPAS: obj = new GreenKoopas(); break;
-	case OBJECT_TYPE_GREENFLYKOOPAS: obj = new GreenFlyKoopas(); break;
+
+	case OBJECT_TYPE_GREENFLYKOOPAS:
+	{
+		GreenFlyKoopas* enemy = new GreenFlyKoopas();
+		enemy = new GreenFlyKoopas();
+		enemy->StartX = x;
+		enemy->StartY = y;
+		obj = enemy;
+	}
+	break;
+
 	case OBJECT_TYPE_COIN: obj = new Coin(); break;
 	case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
 	case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
+	case OBJECT_TYPE_CARD: obj = new Card(); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -211,7 +225,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
 	break;
-
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -241,8 +254,34 @@ void CPlayScene::_ParseSection_MAP(string line)
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 
-	_Map->LoadMap(texID, pathtxt,MapWidth,MapHeight);
+	_Map->LoadMap1(texID, pathtxt,MapWidth,MapHeight);
 }
+
+//void CPlayScene::_ParseSection_MAP(string line)
+//{
+//
+//	vector<string> tokens = split(line);
+//
+//	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+//
+//	if (tokens.size() < 9) return; // skip invalid lines - an object set must have at least id, x, y
+//
+//	int ID = atoi(tokens[0].c_str());
+//	wstring FilePath_data = ToWSTR(tokens[1]);
+//
+//	int Map_width = atoi(tokens[2].c_str());
+//	int Map_height = atoi(tokens[3].c_str());
+//	int Num_row_read = atoi(tokens[4].c_str());
+//	int Num_col_read = atoi(tokens[5].c_str());
+//	int Tile_width = atoi(tokens[6].c_str());
+//	int Tile_height = atoi(tokens[7].c_str());
+//	int A = atoi(tokens[8].c_str());
+//	map = new Map(ID, FilePath_data.c_str(), Map_width, Map_height, Num_row_read, Num_col_read, Tile_width, Tile_height);
+//	if (A == 1)
+//	{
+//		map->IsWorldMap = true;
+//	}
+//}
 
 void CPlayScene::_ParseSection_HUD(string line)
 {
@@ -484,7 +523,7 @@ void CPlayScene::Update(DWORD dt)
 
 		for (size_t i = 1; i < objects.size(); i++)
 		{
-			if (objects[i]->canDelete == false)
+			if ( objects[i]->canDelete == false && objects[i]->isDisappear == false)
 			{
 				coObjects.push_back(objects[i]);
 				if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
@@ -550,8 +589,8 @@ void CPlayScene::Update(DWORD dt)
 				{
 					objects.erase(objects.begin() + i);
 				}
-				else
-					objects.erase(objects.begin() + i);
+				/*else
+					objects.erase(objects.begin() + i);*/
 			}
 
 		}
@@ -666,7 +705,7 @@ void CPlayScene::Update(DWORD dt)
 		_HUD->Update(dt);
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 		if (_Mario == NULL) return;
-		//DebugOut(L"objects.size() = %i\n", objects.size());
+		DebugOut(L"objects.size() = %i\n", coObjects.size());
 	}
 	else
 	{
@@ -677,16 +716,15 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	// Background đen phía sau
-	_Map->DrawMap();
+	_Map->DrawMap1();
 	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		if (objects[i]->canDelete == false)
+		if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
 		{
 			objects[i]->Render();
 		}
 	}
-	//_Mario->Render();
 	_HUD->Render();
 }
 
@@ -911,7 +949,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	Mario* mario = _Mario;
 
 	// disable control key when Mario die 
-	if (_Mario->GetState() == MARIO_STATE_DIE) return;
+	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE) return;
 
 
 	if (game->IsKeyDown(DIK_LEFT))

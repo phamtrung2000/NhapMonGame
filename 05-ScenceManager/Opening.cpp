@@ -40,7 +40,7 @@ void Opening::_ParseSection_MAP(string line)
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 	map = new Map();
-	map->LoadMap(texID, pathtxt);
+	map->LoadMap(texID, pathtxt,MapWidth, MapHeight);
 }
 
 void Opening::_ParseSection_TEXTURES(string line)

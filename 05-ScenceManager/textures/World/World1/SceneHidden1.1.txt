@@ -30,7 +30,7 @@
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
-400	textures\World\World1\SceneHidden1.1Tile.png	255	255	255	textures\World\World1\SceneHidden1.1Map.txt
+10000	textures\World\World1\SceneHidden1.1Tile.png	255	255	255	textures\World\World1\SceneHidden1.1Map.txt
 # id	left	top	right	bottom	texture_id
 
 

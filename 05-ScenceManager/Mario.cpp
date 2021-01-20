@@ -24,6 +24,7 @@
 #include "ButtonP.h"
 #include "EffectScore.h"
 #include "PlayScence.h"
+#include "Card.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -45,7 +46,7 @@ Mario::Mario(float x, float y) : CGameObject()
 	this->y = y;
 	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning
 		= isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking
-		= endAttack = isLevelUp = test = render_tail = pressS = isLevelDown = false;
+		= endAttack = isLevelUp = test = render_tail = pressS = isLevelDown = loseControl = false;
 	OnGround = true;
 	level_of_walking = level_of_running = 0;
 	nScore = 0;
@@ -384,8 +385,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 
-		
-
 		if (canKick == true) // reset lại canKick và hiện ani đá khi canKick=true
 		{
 			time_attack++;
@@ -606,7 +605,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vx = 0;*/
 			}
 		}
-		
+		else if (GetState() == MARIO_STATE_ENDSCENE)
+		{
+			if (OnGround == true)
+			{
+				level_of_walking = 10;
+				vx = level_of_walking * GIA_TOC;
+			}
+		}
 
 		if (isMaxRunning == true && abs(vx) > MARIO_RUNNING_MAX_SPEED)
 		{
@@ -3003,6 +3009,13 @@ void Mario::SetState(int state)
 	}
 	break;
 
+	case MARIO_STATE_ENDSCENE:
+	{
+		loseControl = true;
+		vy = 0;
+	}
+	break;
+
 	}
 }
 
@@ -3164,7 +3177,7 @@ void Mario::Debug()
 	
 	
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
-	DebugOut(L"y = %f, MaxY = %f\n", y, MaxY);
+	DebugOut(L"x = %f, MaxY = %f\n", x, MaxY);
 }
 
 void Mario::Unload()
@@ -3743,6 +3756,15 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 			x += dx;
 			if (OnGround == false)
 				y += dy;
+		}
+	}
+	else if (e->obj->ObjType == OBJECT_TYPE_CARD)
+	{
+		Card* card = dynamic_cast<Card*>(e->obj);
+		if (card->GetState() == CARD_STATE_NORMAL)
+		{
+			card->SetState(CARD_STATE_EMPTY);
+			this->SetState(MARIO_STATE_ENDSCENE);
 		}
 	}
 }

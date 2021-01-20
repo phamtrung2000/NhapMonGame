@@ -67,12 +67,14 @@ public:
 	int state;
 	int TimeToDie;
 	bool isDie; // chết nhưng chưa xóa, vẫn còn render
+	bool isDisappear; // có thể xóa sau khi chết, ví dụ rùa đã chết nhưng sau khi rớt xuống đất mới xóa
 	bool canDelete; // có thể xóa sau khi chết, ví dụ rùa đã chết nhưng sau khi rớt xuống đất mới xóa
 	bool isInit;
 	DWORD dt; 
 	LPANIMATION_SET animation_set;
 	int ObjType;
 	CATEGORY Category;
+	float Width, Height;
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
