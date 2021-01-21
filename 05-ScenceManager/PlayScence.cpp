@@ -20,8 +20,8 @@
 #include "WarpPipe.h"
 #include "Block.h"
 #include "Card.h"
-
-Map* map;
+#include "FlyWood.h"
+#include"BoomerangEnemy.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -217,6 +217,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
 	case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
 	case OBJECT_TYPE_CARD: obj = new Card(); break;
+	case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x,y); break;
+	case OBJECT_TYPE_BOOMERANGENEMY: obj = new BoomerangEnemy(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -340,6 +342,27 @@ void CPlayScene::_ParseSection_MARIO(string line)
 	f.close();
 }
 
+void CPlayScene::_ParseSection_SETTINGS(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 1) return;
+	if (tokens[0] == "time")
+	{
+		_HUD->PlayTime = (int(atoi(tokens[1].c_str())));
+	}
+	else if (tokens[0] == "cam")
+	{
+		_Camera->SetCamScene(int(atoi(tokens[1].c_str())), int(atoi(tokens[2].c_str())), int(atoi(tokens[3].c_str())) - SCREEN_WIDTH, int(atoi(tokens[4].c_str())));
+		_Camera->SetCamMove(int(atoi(tokens[5].c_str())));
+	}
+	else if (tokens[0] == "scene")
+	{
+		TypeScene = int(atoi(tokens[1].c_str()));
+	}
+
+}
+
 void CPlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
@@ -381,6 +404,9 @@ void CPlayScene::Load()
 		if (line == "[MARIO]") {
 			section = SCENE_SECTION_MARIO; continue;
 		}
+		if (line == "[SETTINGS]") {
+			section = SCENE_FILE_SECTION_SETTINGS; continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 		switch (section)
 		{
@@ -392,6 +418,8 @@ void CPlayScene::Load()
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 		case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
 		case SCENE_SECTION_MARIO: _ParseSection_MARIO(line); break;
+		case SCENE_FILE_SECTION_SETTINGS: _ParseSection_SETTINGS(line); break;
+
 		}
 	}
 
@@ -576,7 +604,7 @@ void CPlayScene::Update(DWORD dt)
 				}
 
 			}
-			else
+			else if(objects[i]->canDelete == true)
 			{
 				if (objects[i]->ObjType == OBJECT_TYPE_FIREBULLET)
 				{
@@ -589,8 +617,8 @@ void CPlayScene::Update(DWORD dt)
 				{
 					objects.erase(objects.begin() + i);
 				}
-				/*else
-					objects.erase(objects.begin() + i);*/
+				else
+					objects.erase(objects.begin() + i);
 			}
 
 		}
@@ -705,7 +733,8 @@ void CPlayScene::Update(DWORD dt)
 		_HUD->Update(dt);
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 		if (_Mario == NULL) return;
-		DebugOut(L"objects.size() = %i\n", coObjects.size());
+		/*DebugOut(L"coObjects.size() = %i\n", coObjects.size());
+		DebugOut(L"objects.size() = %i\n", objects.size());*/
 	}
 	else
 	{

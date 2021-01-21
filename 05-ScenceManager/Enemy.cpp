@@ -47,6 +47,10 @@ Enemy::Enemy() : CGameObject()
 	StartX = StartY = 0;
 }
 
+Enemy::~Enemy()
+{
+}
+
 void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
@@ -55,9 +59,9 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// chiều dài màn hình
 	int cam_w = CGame::GetInstance()->GetScreenWidth();
 
-	DebugOut(L"x = %f, cam_x = %i ,cam_w = %i\n", x, cam_x, cam_w);
+	//DebugOut(L"x = %f, cam_x = %i ,cam_w = %i\n", x, cam_x, cam_w);
 	// ra khỏi camera -> delete
-	if (x > cam_x + static_cast<float>(cam_w) || x < cam_x || y > _Map->GetHeight())
+	if (x > cam_x + static_cast<float>(cam_w) || x + Width < cam_x || y > _Map->GetHeight())
 	{
 		isDisappear = true;
 		return;
@@ -70,6 +74,7 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isDisappear = false;
 		}
 	}
+
 	if (isAttacked == true)
 	{
 		if (Time_isAttacked != 0 && GetTickCount64() - Time_isAttacked > ENEMY_TIME_ISATTACKED)
@@ -78,8 +83,4 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			Time_isAttacked = 0;
 		}
 	}
-	if (isDisappear == true)
-		DebugOut(L"isDisappear == true\n");
-	else
-		DebugOut(L"isDisappear == false\n");
 }

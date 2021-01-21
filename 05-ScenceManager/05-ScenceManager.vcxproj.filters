@@ -222,7 +222,16 @@
     <ClCompile Include="Notification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AutoCamera.cpp">
+    <ClCompile Include="FlyWood.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoomerangEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoomerangWeapon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -365,22 +374,22 @@
     <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AutoCamera.h">
+    <ClInclude Include="FlyWood.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoomerangEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoomerangWeapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="mario-sample.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
-    <Text Include="scene1.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
     <Text Include="textures\map1.txt">
       <Filter>Map</Filter>
-    </Text>
-    <Text Include="OpeningScene.txt">
-      <Filter>Picture/Scene\Scene</Filter>
     </Text>
     <Text Include="textures\Opening\MapOpening.txt">
       <Filter>Picture/Scene\Scene</Filter>

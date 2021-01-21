@@ -401,6 +401,9 @@ void HUD::Update(float dt)
 
 	}
 	
+	int ScreenWidth = CGame::GetInstance()->GetScreenWidth();
+	//SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
+
 }
 
 void HUD::Render()

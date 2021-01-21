@@ -12,6 +12,10 @@ Coin::Coin() : Item()
 	isBrickToCoin = false;
 	AppearTime = 0;
 	Score = COIN_SCORE;
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(12);
+	this->SetAnimationSet(ani_set);
 }
 
 void Coin::Render()

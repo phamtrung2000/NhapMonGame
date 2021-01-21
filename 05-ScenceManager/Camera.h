@@ -17,8 +17,11 @@ public:
 	int maxBottomCam;
 	Camera();
 	~Camera();
-
-	void SetCamPos(float x, float y) { this->cam_x = x; this->cam_y = y; }
+	bool test;
+	//void SetCamPos(float x, float y) { this->cam_x = x; this->cam_y = y; }
+	void SetCamPos(float x, float y);
+	void SetCamPos1(float x, float y,float z);
+	
 	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
 	void SetCamMove(int type) {typeMove = type;}
 	

@@ -814,7 +814,4 @@ void Koopas::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 	}
 }
 
-// x start: 512
-// x max: 592
-// width : 96
 

@@ -10,11 +10,11 @@
 
 CGameObject::CGameObject()
 {
-	x = y = 0;
+	StartX = StartY = x = y = 0;
 	vx = vy = 0;
 	nx = RIGHT;	
 	TimeToDie = 0;
-	isDie = canDelete = isDisappear = false;
+	isInit = isDie = canDelete = isDisappear = false;
 	Category = CATEGORY::OBJECT;
 	Width = Height = 0;
 }
@@ -24,6 +24,7 @@ void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	this->dt = dt;
 	dx = vx*dt;
 	dy = vy*dt;
+
 }
 
 /*

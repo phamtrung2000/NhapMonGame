@@ -32,7 +32,8 @@ using namespace std;
 //#define Scene1_1Text  ".\\textures\World\\World1\\Scene1.1.txt"
 #define Scene1_1Text  ".\\textures\World\\World1\\Scene1.4.txt"
 #define Scene1_1ID		10
-#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.1.txt"
+//#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.1.txt"
+#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.4.txt"
 
 
 #define SceneHidden1_1ID	11

@@ -25,6 +25,8 @@
 #include "EffectScore.h"
 #include "PlayScence.h"
 #include "Card.h"
+#include "FlyWood.h"
+#include "BoomerangWeapon.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -824,27 +826,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						break;
 
 					case CATEGORY::WEAPON:
-					{
-						if (e->obj->ObjType == OBJECT_TYPE_FIREBULLET)
-						{
-							x += dx;
-							if(e->ny < 0)
-								y += dy;
-							if (dynamic_cast<FireBullet*>(e->obj))
-							{
-								FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
-								if (firebullet->FireMario == false)
-								{
-									if (untouchable == false)
-									{
-										DownLevel();
-									}
-								}
-							}
-						}
-
-					}
-					break;
+						CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+						break;
 
 					case CATEGORY::PORTAL:
 					{
@@ -3189,8 +3172,6 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 	Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 	if (enemy != NULL && enemy->isDie == false)
 	{
-		//if (ny != 0) vy = 0;
-
 		if (e->nx != 0)
 		{
 			x += dx;
@@ -3313,7 +3294,10 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 				break;
 
 				default:
-					break;
+				{
+					enemy->canDelete = enemy->isDie = true;
+				}
+				break;
 			}
 		}
 		else if (e->nx != 0)
@@ -3370,7 +3354,11 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 				break;
 
 				default:
-					break;
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+				break;
 			}
 		}
 		else if (e->ny > 0)
@@ -3647,6 +3635,29 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				x += min_tx * dx + nx * 0.4f;
 			}
 		}
+		else if (e->obj->ObjType == OBJECT_TYPE_FLYWOOD)
+		{
+			if (ny != 0) vy = 0;
+			FlyWood* flywood = dynamic_cast<FlyWood*>(e->obj);
+			if (e->nx != 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+				y += min_ty * dy + ny * 0.1f - 0.4f;
+			}
+			else if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+				if (OnGround == false)
+				{
+					y += min_ty * dy + ny * 0.1f - 0.3f;
+					OnGround = true; // xử lý chạm đất
+					isFalling = isFlyingLow = isFlyingHigh = false;
+				}
+				if(flywood->GetState() == FLYWOOD_STATE_MOVE)
+					flywood->SetState(FLYWOOD_STATE_FALL);
+				
+			}
+		}
 	}
 	//else if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK)
 	//{
@@ -3771,4 +3782,32 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 
 void Mario::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
+	if (e->obj->ObjType == OBJECT_TYPE_FIREBULLET)
+	{
+		x += dx;
+		if (e->ny < 0)
+			y += dy;
+		FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
+		if (firebullet->FireMario == false)
+		{
+			if (untouchable == false)
+			{
+				DownLevel();
+			}
+		}
+	}
+	else if (e->obj->ObjType == OBJECT_TYPE_BOOMERANG)
+	{
+		x += dx;
+		if (e->ny < 0)
+			y += dy;
+		BoomerangWeapon* boomerang = dynamic_cast<BoomerangWeapon*>(e->obj);
+		if (boomerang->isMarioWeapon == false)
+		{
+			if (untouchable == false)
+			{
+				DownLevel();
+			}
+		}
+	}
 }

@@ -37,7 +37,7 @@ public:
 
 	void Render()
 	{
-		int ani = -1;
+		int ani = EFFECTSCORE_ANI_100;
 		switch (score)
 		{
 		case 100:

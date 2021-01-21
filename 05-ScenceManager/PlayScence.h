@@ -22,6 +22,7 @@ using namespace std;
 #define SCENE_SECTION_MAP		7
 #define SCENE_SECTION_HUD		8
 #define SCENE_SECTION_MARIO		9
+#define SCENE_FILE_SECTION_SETTINGS 10
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -42,8 +43,11 @@ using namespace std;
 #define OBJECT_TYPE_GREENFIREPLANT			16
 #define OBJECT_TYPE_MARIO_TAIL				17
 #define OBJECT_TYPE_BUTTONP					18
-#define OBJECT_TYPE_CARD				19
+#define OBJECT_TYPE_CARD					19
+#define OBJECT_TYPE_FLYWOOD					20
+#define OBJECT_TYPE_BOOMERANGENEMY			21
 #define OBJECT_TYPE_FIREBULLET				100
+#define OBJECT_TYPE_BOOMERANG				102
 
 #define OBJECT_TYPE_PORTAL	50
 
@@ -59,7 +63,7 @@ class CPlayScene : public CScene
 public:
 	int SceneID;
 	bool Stop;
-
+	int TypeScene;
 	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
 
@@ -75,6 +79,8 @@ public:
 	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
 	void _ParseSection_MARIO(string line); // hàm đọc MARIO trong file txt
+
+	void _ParseSection_SETTINGS(string line);
 
 
 

@@ -195,7 +195,8 @@ void Map::DrawMap()
 
 void Map::DrawMap1()
 {
-	float temp = (Camera::GetInstance()->cam_x / 16);
+	//float temp = (Camera::GetInstance()->cam_x / 16);
+	float temp = (CGame::GetInstance()->GetCamX() / 16);
 	int firstcol = (int)temp;
 	if (firstcol < 0)  
 		firstcol = 0; 
