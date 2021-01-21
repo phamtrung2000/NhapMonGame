@@ -219,6 +219,12 @@
     <ClCompile Include="Card.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Notification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -354,6 +360,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Card.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Notification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

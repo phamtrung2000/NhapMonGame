@@ -17,10 +17,10 @@ public:
 	EffectHit(float x, float y, int _type)
 	{
 		CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-		type = _type;
 		LPANIMATION_SET ani_set = animation_sets->Get(EFFECT_HIT_ANI_SET_ID);
 		this->SetAnimationSet(ani_set); 
 
+		type = _type;
 		this->x = x;
 		this->y = y;
 		Category = CATEGORY::EFFECT;

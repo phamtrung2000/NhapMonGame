@@ -1,14 +1,13 @@
 ﻿#include "HUD.h"
 #include "Mario.h"
 #include "Camera.h"
-#include "Textures.h"
 #include "Game.h"
 
 #include "Goomba.h"
 #include "FirePiranhaPlant.h"
 #include "EffectScore.h"
-#include "Item.h"
 #include "QuestionBrickItem.h"
+#include "Card.h"
 
 #define HEIGHT_SCORE_BROAD 28
 #define ID_TEX_HUB 12
@@ -36,6 +35,8 @@ HUD::HUD()
 	Money = 0;
 	countPlayTime = 0;
 	font = NULL;
+	hasItem1 = hasItem2 = hasItem3 = false;
+	TypeItem[0] = TypeItem[1] = TypeItem[2] = 0;
 }
 
 void HUD::_ParseSection_TEXTURES(string line)
@@ -264,9 +265,9 @@ void HUD::Init()
 
 	auto sprites = CSprites::GetInstance();
 	HUB = sprites->Get(90000);
-	Item1 = sprites->Get(90002);
-	Item2 = sprites->Get(90003);
-	Item3 = sprites->Get(90004);
+	Item1 = sprites->Get(90001);
+	Item2 = sprites->Get(90001);
+	Item3 = sprites->Get(90001);
 	typePlayer = sprites->Get(92001);
 	speed = sprites->Get(91001);
 	push = sprites->Get(91002);
@@ -300,14 +301,15 @@ void HUD::Init(int playtime)
 
 	auto sprites = CSprites::GetInstance();
 	HUB = sprites->Get(90000);
-	Item1 = sprites->Get(90002);
-	Item2 = sprites->Get(90003);
-	Item3 = sprites->Get(90004);
+	Item1 = sprites->Get(90001);
+	Item2 = sprites->Get(90001);
+	Item3 = sprites->Get(90001);
 	typePlayer = sprites->Get(92001);
 	speed = sprites->Get(91001);
 	push = sprites->Get(91002);
 
 	PlayTime = playtime;
+
 }
 
 void HUD::Update(float dt)
@@ -344,6 +346,61 @@ void HUD::Update(float dt)
 
 	information += life + "   " + scoregame + "	            " + timeString + "\n";
 
+	if (TypeItem[0] == 0)
+	{
+		Item1 = CSprites::GetInstance()->Get(90001);
+		Item2 = CSprites::GetInstance()->Get(90001);
+		Item3 = CSprites::GetInstance()->Get(90001);
+		TypeItem[0] = TypeItem[1] = TypeItem[2] = 0;
+	}
+	else
+	{
+		switch (TypeItem[0])
+		{
+		case CARD_MUSHROOM:
+			Item1 = CSprites::GetInstance()->Get(90002);
+		case CARD_FLOWER:
+			Item1 = CSprites::GetInstance()->Get(90003);
+		case  CARD_STAR:
+			Item1 = CSprites::GetInstance()->Get(90004);
+		}
+
+		if (TypeItem[1] == 0)
+		{
+			Item2 = CSprites::GetInstance()->Get(90001);
+			Item3 = CSprites::GetInstance()->Get(90001);
+		}
+		else
+		{
+			switch (TypeItem[1])
+			{
+			case CARD_MUSHROOM:
+				Item2 = CSprites::GetInstance()->Get(90002);
+			case CARD_FLOWER:
+				Item2 = CSprites::GetInstance()->Get(90003);
+			case  CARD_STAR:
+				Item2 = CSprites::GetInstance()->Get(90004);
+			}
+			if (TypeItem[2] == 0)
+			{
+				Item3 = CSprites::GetInstance()->Get(90001);
+			}
+			else
+			{
+				switch (TypeItem[1])
+				{
+				case CARD_MUSHROOM:
+					Item3 = CSprites::GetInstance()->Get(90002);
+				case CARD_FLOWER:
+					Item3 = CSprites::GetInstance()->Get(90003);
+				case  CARD_STAR:
+					Item3 = CSprites::GetInstance()->Get(90004);
+				}
+			}
+		}
+
+	}
+	
 }
 
 void HUD::Render()
@@ -362,6 +419,7 @@ void HUD::Render()
 	CamX = CamX + 60;
 	HUB->Draw(CamX, CAM_Y_HUD_ITEM);
 	// 3 item hình thẻ bài
+	
 	Item1->Draw(CamX + 190, CAM_Y_HUD_ITEM);
 	Item2->Draw(CamX + 215, CAM_Y_HUD_ITEM);
 	Item3->Draw(CamX + 240, CAM_Y_HUD_ITEM);
@@ -391,4 +449,14 @@ void HUD::Unload()
 
 HUD::~HUD()
 {
+}
+
+void HUD::UpdateItem(int _type)
+{
+	if (TypeItem[0] == 0)
+		TypeItem[0] = _type;
+	else if (TypeItem[1] == 0)
+		TypeItem[1] = _type;
+	else if (TypeItem[2] == 0)
+		TypeItem[2] = _type;
 }

@@ -57,7 +57,7 @@ void Map::_ParseSection_ROWS(string line)
 	{
 		int ID = atoi(tokens[i].c_str());
 
-		TiledID[column][row] = ID;
+		TiledID[column][row] = ID - 1;
 		row++;
 	}
 	column++;
@@ -195,7 +195,8 @@ void Map::DrawMap()
 
 void Map::DrawMap1()
 {
-	int firstcol = (int) (Camera::GetInstance()->cam_x / 16);
+	float temp = (Camera::GetInstance()->cam_x / 16);
+	int firstcol = (int)temp;
 	if (firstcol < 0)  
 		firstcol = 0; 
 	int lastcol = firstcol + (SCREEN_WIDTH / 16);

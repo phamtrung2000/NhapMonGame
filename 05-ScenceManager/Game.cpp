@@ -397,10 +397,15 @@ void CGame::Load(LPCWSTR gameFile)
 	f.close();
 
 	DebugOut(L"[INFO] Loading game file : %s has been loaded successfully\n", gameFile);
-	if (current_scene == OpeningSceneID)
-		SwitchScene(current_scene);
-	/*else
-		SwitchScene2(current_scene);*/
+	
+	scenes[current_scene]->Unload();
+	CTextures::GetInstance()->Clear();
+	CSprites::GetInstance()->Clear();
+	CAnimations::GetInstance()->Clear();
+	current_scene = OpeningSceneID;
+	LPSCENE s = scenes[OpeningSceneID];
+	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+	s->Load();
 }
 
 void CGame::SwitchScene(int scene_id)
@@ -408,42 +413,34 @@ void CGame::SwitchScene(int scene_id)
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
 	if (current_scene == OpeningSceneID)
 	{
-		//if (scene_id == World1SceneID) // chuyển sang World Map 1
-		{
-			scenes[current_scene]->Unload();
-			CTextures::GetInstance()->Clear();
-			CSprites::GetInstance()->Clear();
-			CAnimations::GetInstance()->Clear();
-			current_scene = scene_id;
-			LPSCENE s = scenes[scene_id];
-			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-			_Camera->SetCamPos(0.0f, 0.0f);
-			s->Load();
-			_HUD->Init(0);
-			/*World1* world1 = (World1*)s;
-			world1->GetPlayer()->SetPosition(world1->GetPlayer()->x, world1->GetPlayer()->y);*/
-		}
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_HUD->Init(0);
 	}
 	else if (current_scene == World1SceneID)
 	{
 		World1* world1 = (World1*)scenes[current_scene];
 		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
 		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
-		//if (scene_id >= Scene1_1ID)
-		{
-			scenes[current_scene]->Unload();
-			CTextures::GetInstance()->Clear();
-			CSprites::GetInstance()->Clear();
-			CAnimations::GetInstance()->Clear();
-			current_scene = scene_id;
-			LPSCENE s = scenes[scene_id];
-			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 
-			_PlayScene->__instance = (CPlayScene*)s;
-			_Camera->SetCamPos(0.0f, 0.0f);
-			s->Load();
-			_HUD->Init(300);
-		}
+		_PlayScene->__instance = (CPlayScene*)s;
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_HUD->Init(300);
 	}
 	else if (current_scene >= Scene1_1ID)
 	{
@@ -456,7 +453,6 @@ void CGame::SwitchScene(int scene_id)
 			current_scene = scene_id;
 			LPSCENE s = scenes[scene_id];
 			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-			_Camera->SetCamPos(0.0f, 0.0f);
 			s->Load();
 			_HUD->Init(0);
 			World1* world1 = (World1*)s;

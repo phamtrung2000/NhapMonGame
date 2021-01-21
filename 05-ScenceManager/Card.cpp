@@ -9,7 +9,7 @@ Card::Card() : Item()
 	ObjType = OBJECT_TYPE_CARD;
 	timeChange = GetTickCount64();
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(17);
+	LPANIMATION_SET ani_set = animation_sets->Get(19);
 	this->SetAnimationSet(ani_set);
 	hasItem = true;
 	SetState(CARD_STATE_NORMAL);

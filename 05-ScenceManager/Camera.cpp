@@ -13,8 +13,8 @@ Camera* Camera::GetInstance()
 
 Camera::Camera()
 {
-	CySceen = 0;
 	cam_x = cam_y = 0.f;
+	typeMove = 0;
 	this->width = SCREEN_WIDTH;
 	this->height = SCREEN_HEIGHT;
 }
@@ -31,47 +31,64 @@ RECT Camera::GetBound()
 
 void Camera::Update()
 {
-	// Update camera to follow mario
-	float cx, cy;
-	
-	_Mario->GetPosition(cx, cy);
-	cx -= _Game->GetScreenWidth() / 2;
-	if (cx >= MAP_MAX_WIDTH - _Game->GetScreenWidth())
-		cx = MAP_MAX_WIDTH - _Game->GetScreenWidth();
-	// xóa khúc vàng ở sau lúc bắt đầu _Game
-	if (cx < 0)
-	{
-		cx = 0;
-	}
-	if (cx > MAP_MAX_WIDTH)
-		cx = MAP_MAX_WIDTH;
-	
-	cy -= _Game->GetScreenHeight() / 2;
-	if (cy < 0)
-		cy = 0;
-	if (_PlayScene->SceneID == SCENE_ID_HIDDENMAP_1_1)
-	{
-		SetCamPos(cx, 0.0f);
-		_Game->SetCamPos(cx, 0.0f);
+	if (typeMove == 1) {
+		if (cam_x <= maxRightCam)
+			cam_x += 2.2;
+		if (_Mario->x < cam_x)
+		{
+			_Mario->x = cam_x;
+		}
+
+		if (_Mario->x > cam_x + GetWidth() - 48)
+		{
+			_Mario->x = cam_x + GetWidth() - 48;
+		}
 	}
 	else
 	{
-		if ( ((_Mario->canFlyS == true || _Mario->canFlyX == true) && _Mario->OnGround == false ) || _Mario->y <= _Map->GetHeight() / 2)
+		// Update camera to follow mario
+		float cx, cy;
+
+		_Mario->GetPosition(cx, cy);
+		cx -= _Game->GetScreenWidth() / 2;
+		if (cx >= MAP_MAX_WIDTH - _Game->GetScreenWidth())
+			cx = MAP_MAX_WIDTH - _Game->GetScreenWidth();
+		// xóa khúc vàng ở sau lúc bắt đầu _Game
+		if (cx < 0)
 		{
-			SetCamPos(cx, cy);
-			_Game->SetCamPos(cx, cy);
+			cx = 0;
+		}
+		if (cx > MAP_MAX_WIDTH)
+			cx = MAP_MAX_WIDTH;
+
+		cy -= _Game->GetScreenHeight() / 2;
+		if (cy < 0)
+			cy = 0;
+		if (_PlayScene->SceneID == SCENE_ID_HIDDENMAP_1_1)
+		{
+			SetCamPos(cx, 0.0f);
+			_Game->SetCamPos(cx, 0.0f);
 		}
 		else
 		{
-			SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40 );
-			_Game->SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40);
+			if (((_Mario->canFlyS == true || _Mario->canFlyX == true) && _Mario->OnGround == false) || _Mario->y <= _Map->GetHeight() / 2)
+			{
+				SetCamPos(cx, cy);
+				_Game->SetCamPos(cx, cy);
+			}
+			else
+			{
+				SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40);
+				_Game->SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40);
+			}
 		}
+
+
+		//_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
+
+		//CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
+
 	}
-
-
-	//_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
-
-	//CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
 }
 
 void Camera::Update1()

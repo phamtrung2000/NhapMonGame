@@ -2,6 +2,8 @@
 [TEXTURES]
 0	.\textures\Mario\mario1.png	255	255	255
 1	.\textures\Overworld\WorldMap1Title.png	255	255	255
+# ITEM
+17	.\textures\Item\Item.png	68	145	190
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
@@ -20,6 +22,16 @@
 11	16	16	32	32	1
 12	32	16	48	32	1
 13	48	16	64	32	1
+#======== CARD =========
+# STAR
+90005	11	41	41	68	17
+# FLOWER
+90006	50	41	80	68	17
+# MUSHROOM
+90007	89	41	119	68	17
+# EMPTY 
+90008	128	41	158	68	17
+
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ======== SMALL MARIO =========
@@ -28,6 +40,15 @@
 1	2	100	3	100
 # ======== DANCING TREE =========
 10	10	300	11	300	12	300	13	300
+#== card == 
+# mushroom
+90005	90005	100
+# flower
+90006	90006	100
+# star
+90007	90007	100
+# empty
+90008	90008	100
 [ANIMATION_SETS]
 # MARIO
 0	0	1
@@ -37,6 +58,8 @@
 2	-1
 # ======== DANCING TREE =========
 3	10
+# ====== card =======
+19	90008	90005	90006	90007
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # MARIO

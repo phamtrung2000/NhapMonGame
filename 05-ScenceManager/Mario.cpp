@@ -795,7 +795,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (OnGround == false)
 							{
 								float temp = min_ty * dy + ny * 0.1f - 0.3f;
-								DebugOut(L"temp = %f\n", temp);
 								if (y + temp < this->MaxY)
 									y += temp;
 								else
@@ -873,7 +872,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vx = 0;
 		}
 	}
-	Debug();
+	//Debug();
 }
 
 //void Mario::Render()
@@ -3765,6 +3764,7 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 		{
 			card->SetState(CARD_STATE_EMPTY);
 			this->SetState(MARIO_STATE_ENDSCENE);
+			_HUD->UpdateItem(card->TypeItem);
 		}
 	}
 }

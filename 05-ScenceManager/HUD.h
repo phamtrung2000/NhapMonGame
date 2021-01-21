@@ -3,6 +3,7 @@
 #include<fstream>
 #include <string>
 #include"GameObject.h"
+#include "Textures.h"
 
 #define HUD_SECTION_UNKNOWN -1
 #define HUD_SECTION_TEXTURES 2
@@ -30,6 +31,9 @@ class HUD
 	bool isDrawPush;
 	float CamX, CamY;
 public:
+	bool hasItem1, hasItem2, hasItem3;
+	int TypeItem[3];
+
 	int Score, MarioLife, Money;
 	int PlayTime; // thời gian chơi : 300s
 	ULONGLONG countPlayTime; // biến đếm GetTickCount64 để trừ thời gian chơi đi 1
@@ -43,6 +47,8 @@ public:
 	void Render();
 	void Unload();
 	~HUD();
+
+	void UpdateItem(int _type);
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
