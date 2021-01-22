@@ -20,6 +20,11 @@ Map::Map()
 	MaxColumn = column = MaxRow = row = TileWidth = TileRow = TileCollum = 0;
 }
 
+Map::Map(int ID, LPCWSTR FilePath_data, int Num_Rows, int Num_Cols, int Num_row_read, int Num_col_read, int map_width, int map_height)
+{
+
+}
+
 void Map::_ParseSection_INFO(string line)
 {
 	vector<string> tokens = split(line);
@@ -203,7 +208,7 @@ void Map::DrawMap1()
 	int lastcol = firstcol + (SCREEN_WIDTH / 16);
 	for (UINT i = 0; i < MaxRow; i++)
 	{
-		for (UINT j = firstcol; j < lastcol; j++)
+		for (UINT j = firstcol; j <= lastcol; j++)
 		{
 			float x = TileWidth * j;
 			float y = TileWidth * i;

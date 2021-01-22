@@ -58,7 +58,7 @@ void QuestionBrick::Render()
 	if (Item != 10)
 		animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void QuestionBrick::SetState(int state)

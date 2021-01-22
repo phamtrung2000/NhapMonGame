@@ -11,11 +11,15 @@ CPortal::CPortal(float l, float t, float r, float b, int scene_id )
 	Width = r;
 	Height = b;
 	Category = CATEGORY::PORTAL;
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(1);
+	this->SetAnimationSet(ani_set);
 }
 
 void CPortal::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CPortal::GetBoundingBox(float& left, float& top, float& right, float& bottom)

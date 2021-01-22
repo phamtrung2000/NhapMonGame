@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="11" height="1" tilewidth="16" tileheight="16">
+<tileset firstgid="1" name="introScene_bank.png" tilewidth="16" tileheight="16">
+	<image source="introScene_bank.png" width="176" height="16"/>
+</tileset>
+	<layer name="ShoeBox Tile Grab" width="11" height ="1" >
+		<data>
+			<tile gid="1"/>
+			<tile gid="2"/>
+			<tile gid="3"/>
+			<tile gid="4"/>
+			<tile gid="5"/>
+			<tile gid="6"/>
+			<tile gid="7"/>
+			<tile gid="7"/>
+			<tile gid="7"/>
+			<tile gid="7"/>
+			<tile gid="7"/>
+		</data>
+	</layer>
+</map>

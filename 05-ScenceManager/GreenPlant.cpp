@@ -145,7 +145,7 @@ void GreenPlant::Render()
 	if (isInit == true)
 		animation_set->at(ani)->Render(x, y);
 	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void GreenPlant::SetState(int state)

@@ -39,8 +39,8 @@ using namespace std;
 #define SceneHidden1_1ID	11
 
 #define KEYBOARD_BUFFER_SIZE 1024
-#define SCREEN_WIDTH	400
-#define SCREEN_HEIGHT	280 //320
+#define SCREEN_WIDTH	300//400 
+#define SCREEN_HEIGHT	260//280
 
 #define _Mario Mario::GetInstance()
 #define _MarioOverworld MarioOverWorld::GetInstance()
@@ -82,7 +82,8 @@ public:
 	float X_MarioOverworld, Y_MarioOverworld;
 	int Score,Money;
 	ULONGLONG PlayTime;
-public:
+	bool DoneLoad;
+
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
 	void Init(HWND hWnd);

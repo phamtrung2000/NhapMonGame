@@ -27,6 +27,38 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 	InGate = false;
+
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		switch (coObjects->at(i)->Category)
+		{
+		case CATEGORY::PORTAL:
+		{
+			// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+			{
+				if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
+				{
+					SetState(MARIO_OVERWORLD_STATE_IN_GATE);
+					
+					Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
+					if (Scene <= gate->GateNumber)
+						Scene = gate->GateNumber;
+					else if (Scene > gate->GateNumber)
+					{
+						x += dx;
+						y += dy;
+					}
+					
+				}
+			}
+
+
+		}
+		break;
+
+		}
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -50,12 +82,6 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		// TODO: This is a very ugly designed function!!!!
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		// how to push back MarioOverWorld if collides with a moving objects, what if MarioOverWorld is pushed this way into another object?
-		/*if (rdx != 0 && rdx!=dx)
-			x += 2*nx*abs(5); */
-
-			//if (ny != 0 && untouchable == false) vy = 0;
-		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -68,6 +94,7 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					x += dx;
 					y += dy;
+					//ground->BehindGate++;
 				}
 				else
 				{
@@ -83,11 +110,18 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Gate*>(e->obj))
 			{
-				SetState(MARIO_OVERWORLD_STATE_IN_GATE);
-				x += dx;
-				y += dy;
 				Gate* gate = dynamic_cast<Gate*>(e->obj);
-				Scene = gate->GateNumber;
+				SetState(MARIO_OVERWORLD_STATE_IN_GATE);
+				
+				{
+					this->x = gate->x + 1;
+					this->y = gate->y;
+					vx = 0;
+					vy = 0;
+				}
+				if(Scene<= gate->GateNumber)
+					Scene = gate->GateNumber;
+				
 			}
 		}
 	}
@@ -152,7 +186,7 @@ void MarioOverWorld::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+	////RenderBoundingBox();
 }
 
 void MarioOverWorld::SetState(int state)

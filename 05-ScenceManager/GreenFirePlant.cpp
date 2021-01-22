@@ -165,7 +165,7 @@ void GreenFirePlant::Render()
 	if (isInit == true)
 		animation_set->at(ani)->Render(x, y);
 	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void GreenFirePlant::SetState(int state)

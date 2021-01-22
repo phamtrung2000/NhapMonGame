@@ -24,6 +24,7 @@ Koopas::Koopas() : Enemy()
 	CountXmaxXmin = false;
 	isKicked = isHold = isShell = isShell_2 =false;
 	GoAround = false;
+
 }
 
 void Koopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -736,6 +737,7 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 		}
 		else if (e->obj->ObjType == OBJECT_TYPE_ITEMBRICK)
 		{
+			if (ny != 0) vy = 0;
 			ItemBrick* brick = dynamic_cast<ItemBrick*>(e->obj);
 			if (e->ny < 0)
 			{

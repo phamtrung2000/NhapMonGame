@@ -176,8 +176,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}break;
 
 	case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
-	case OBJECT_TYPE_GOOMBA: obj = new Goomba(); break;
-	case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
 	case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
 	case OBJECT_TYPE_WARPPIPE:
 	{
@@ -190,26 +188,52 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
 	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
-	case OBJECT_TYPE_FIREPIRANHAPLANT: obj = new FirePiranhaPlant(); break;
+
+	case OBJECT_TYPE_GOOMBA:
+	{
+		obj = new Goomba();
+		obj->StartX = x;
+		obj->StartY = y;
+	}break;
+	case OBJECT_TYPE_KOOPAS:
+	{
+		obj = new Koopas();
+		obj->StartX = x;
+		obj->StartY = y;
+	}break;
+	
+	case OBJECT_TYPE_FIREPIRANHAPLANT:
+	{
+		obj = new FirePiranhaPlant();
+		obj->StartX = x;
+		obj->StartY = y;
+	}break;
 	case OBJECT_TYPE_GREENPLANT:
 	{
 		obj = new GreenPlant();
 		x += GREENPLANT_BBOX_WIDTH / 2;
+		obj->StartX = x;
+		obj->StartY = y;
 	} break;
 	case OBJECT_TYPE_GREENFIREPLANT:
 	{
 		obj = new GreenFirePlant();
 		x += GREENPLANT_BBOX_WIDTH / 2;
+		obj->StartX = x;
+		obj->StartY = y;
 	} break;
-	case OBJECT_TYPE_GREENKOOPAS: obj = new GreenKoopas(); break;
-
+	case OBJECT_TYPE_GREENKOOPAS:
+	{
+		obj = new GreenKoopas(); 
+		obj->StartX = x;
+		obj->StartY = y;
+	}
+	break;
 	case OBJECT_TYPE_GREENFLYKOOPAS:
 	{
-		GreenFlyKoopas* enemy = new GreenFlyKoopas();
-		enemy = new GreenFlyKoopas();
-		enemy->StartX = x;
-		enemy->StartY = y;
-		obj = enemy;
+		obj = new GreenFlyKoopas();
+		obj->StartX = x;
+		obj->StartY = y;
 	}
 	break;
 
@@ -234,6 +258,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	// General object setup
 	obj->SetPosition(x, y);
+	obj->SetStartPosition(x, y);
 
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 	obj->SetAnimationSet(ani_set);
@@ -778,7 +803,8 @@ CPlayScene* CPlayScene::GetInstance()
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	Mario* mario = _Mario;
-	//if (_Mario->GetState() == MARIO_STATE_DIE) return;
+	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE)
+		return;
 	switch (KeyCode)
 	{
 	case DIK_1:
@@ -915,6 +941,8 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	CGame* game = CGame::GetInstance();
 	//Mario* _Mario = ((CPlayScene*)scence)->GetPlayer();
 	Mario* mario = _Mario;
+	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE)
+		return;
 	switch (KeyCode)
 	{
 	case DIK_A:
@@ -978,7 +1006,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	Mario* mario = _Mario;
 
 	// disable control key when Mario die 
-	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE) return;
+	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE) 
+		return;
 
 
 	if (game->IsKeyDown(DIK_LEFT))
@@ -1011,7 +1040,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				_Mario->SetState(MARIO_STATE_IDLE);
 		}
 	}
-		
 	if (game->IsKeyDown(DIK_X))
 	{
 		if (_Mario->OnGround == true)

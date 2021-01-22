@@ -2,10 +2,12 @@
 start	0
 #scene list
 [SCENES]
-0	OpeningScene.txt
+0	.\textures\Opening\IntroScene.txt
 1	.\textures\Overworld\World1Scene.txt
 #10	.\textures\World\World1\Scene1.4.txt
-10	.\textures\World\World1\SceneHidden1.4.txt
-#10	.\textures\World\World1\Scene1.1.txt
+#10	.\textures\World\World1\SceneHidden1.1.txt
+10	.\textures\World\World1\Scene1.1.txt
 #10	.\textures\World\World1\Scene1.1 - Copy.txt
 11	.\textures\World\World1\SceneHidden1.1.txt
+12	.\textures\World\World1\Scene1.4.txt
+13	.\textures\World\World1\SceneHidden1.4.txt

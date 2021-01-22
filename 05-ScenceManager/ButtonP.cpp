@@ -83,7 +83,7 @@ void ButtonP::Render()
 	}
 	animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void ButtonP::SetState(int state)

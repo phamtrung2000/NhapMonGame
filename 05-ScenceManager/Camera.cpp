@@ -35,68 +35,111 @@ void Camera::Update()
 {
 	float cx, cy;
 	_Mario->GetPosition(cx, cy);
-	float a = _Map->GetHeight(); // 176
-	float b = _Game->GetScreenHeight(); // 242
-	if (a < b)
-	{
-		cy = 0;
-	}
 	
-
+	
 	if (typeMove == 1) 
 	{
+		float a = _Map->GetHeight(); // 176
+		float b = _Game->GetScreenHeight(); // 242
+		if (a < b)
+		{
+			cy = 0;
+		}
+
 		if (cam_x < 0)
 			cam_x = 0;
 		if (cam_x <= maxRightCam)
 			//cam_x += _Map->GetWidth() / 2000;
 			cam_x += 0.5f;
-		
+		_Game->SetCamPos(cam_x, cy);
+		//_Game->SetCamPos(cx, cy);
 		if (cx < cam_x) // bị đẩy
 		{
 			_Mario->x = cam_x;
 		}
 
-		//_Game->SetCamPos(cx, cy);
 	}
 	else
 	{
-		cx -= _Game->GetScreenWidth() / 2;
-		if (cx >= MAP_MAX_WIDTH - _Game->GetScreenWidth())
-			cx = MAP_MAX_WIDTH - _Game->GetScreenWidth();
-		// xóa khúc vàng ở sau lúc bắt đầu _Game
-		if (cx < 0)
+		float a = _Map->GetHeight(); // 192
+		float b = _Game->GetScreenHeight(); // 222
+		cx -= SCREEN_WIDTH / 2;
+		if (a < b)
 		{
-			cx = 0;
-		}
-		if (cx > MAP_MAX_WIDTH)
-			cx = MAP_MAX_WIDTH;
-
-		if (a > b)
-		{
-			cy -= _Game->GetScreenHeight() / 2;
-		}
-		
-		if (cy < 0)
-			cy = 0;
-		if (_PlayScene->SceneID == SCENE_ID_HIDDENMAP_1_1)
-		{
-			SetCamPos(cx, 0.0f);
-			_Game->SetCamPos(cx, 0.0f);
-		}
-		else
-		{
-			if (((_Mario->canFlyS == true || _Mario->canFlyX == true) && _Mario->OnGround == false) || _Mario->y <= _Map->GetHeight() / 2)
+			cy -= SCREEN_HEIGHT / 2;
+			if (cx <= maxLeftCam)
 			{
-				SetCamPos(cx, cy);
+				cx = maxLeftCam; 
+			}
+			else if (cx >= maxRightCam)
+			{
+				cx = maxRightCam;
+			}
+
+			if (cy <= maxTopCam)
+			{
+				cy = maxTopCam; //
+			}
+			else if (cy >= maxBottomCam)
+			{
+				cy = maxBottomCam;
 			}
 			else
 			{
-				//SetCamPos(cx, (SCREEN_HEIGHT * 3 / 4) + 40);
-				SetCamPos(cx, cy + 10);
+				if (cy >= maxBottomCam - SCREEN_HEIGHT / 2)
+					cy = maxBottomCam - SCREEN_HEIGHT / 2;
 			}
+			SetCamPos(cx, cy + 10);
 		}
+		else
+		{
+			cy -= SCREEN_HEIGHT / 2;
+			if (cx <= maxLeftCam)
+			{
+				cx = maxLeftCam; //
+			}
+			else if (cx >= maxRightCam)
+			{
+				cx = maxRightCam;
+			}
+
+			if (cy <= maxTopCam)
+			{
+				cy = maxTopCam; //
+			}
+			else if (cy >= maxBottomCam)
+			{
+				cy = maxBottomCam;
+			}
+			else
+			{
+				float a = maxBottomCam - SCREEN_HEIGHT / 2 - 30;
+				/*if (cy < maxBottomCam - SsCREEN_HEIGHT / 2 - 30)
+					cy = maxBottomCam - SCREEN_HEIGHT / 2 - 30;*/
+				float y1 = _Mario->y;
+				float y2 = _Map->GetHeight() / 2;
+				if (((_Mario->canFlyS == true || _Mario->canFlyX == true) && _Mario->OnGround == false))
+				{
+					
+				}
+				else if (y1 <= y2)
+				{
+					cy = cy + 40;
+				}
+				else
+				{
+					cy = maxBottomCam - SCREEN_HEIGHT / 2 - 30;
+				}
+			}
+			SetCamPos(cx, cy);
+		}
+			
+
+		
 
 	}
+	/*DebugOut(L"cx %f, cy %f\n", cx, cy);
+	DebugOut(L"X %f, Y %f\n", _Mario->x + _Mario->Width, _Mario->y);*/
 }
 
 void Camera::Update1()

@@ -44,7 +44,6 @@ Enemy::Enemy() : CGameObject()
 	Score = 0;
 	ReviveTime = Time_isAttacked = 0;
 	Health = 1;
-	StartX = StartY = 0;
 }
 
 Enemy::~Enemy()
@@ -61,7 +60,7 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	//DebugOut(L"x = %f, cam_x = %i ,cam_w = %i\n", x, cam_x, cam_w);
 	// ra khỏi camera -> delete
-	if (x > cam_x + static_cast<float>(cam_w) || x + Width < cam_x || y > _Map->GetHeight())
+	if (x > cam_x + static_cast<float>(cam_w) + 100 || x + Width < cam_x - 100 || y > _Map->GetHeight())
 	{
 		isDisappear = true;
 		return;

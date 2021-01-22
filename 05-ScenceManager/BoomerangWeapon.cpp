@@ -91,6 +91,6 @@ void BoomerangWeapon::Render()
 	}
 	animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 

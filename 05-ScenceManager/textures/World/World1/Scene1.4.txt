@@ -583,15 +583,14 @@ scene	2
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
 # bắt đầu
-#0	0	80	0	2320	352
-0	1936	30	0	2320	352
-
+0	0	80	0	2320	352
+#0	1936	30	0	2320	352
 #----Block----
-6	240	368	6	48	48
+6	1968	128	6	48	36
 
 #---- Ground-----
 7	0	112	400	160	64
-7	1920	400	160	128	16
+7	1920	160	400	128	16
 # =====  ITEM BRICK ======
 13	224	112	13	0
 13	240	112	13	0
@@ -715,7 +714,7 @@ scene	2
 #======== FLY WOOD =========
 20	368	80	20
 20	560	112	20
-20	560	112	20
+20	560	144	20
 20	592	64	20
 20	624	160	20
 20	752	96	20
@@ -729,17 +728,6 @@ scene	2
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
 200	1936	96	5	32	64	true
-
-[OBJECTS]
-# type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
-# MARIO
-0	208	80	0
-#---- Ground-----
-7	0	176	-1	480	16
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
-#50	352	0	-1	32	2	10
-#======= WARPPIPE =========
-#objtype	x	y	aniset_id	width	height	HiddenWorld
-200	112	144	5	32	32	true
+50	1944	120	1	6	6	13

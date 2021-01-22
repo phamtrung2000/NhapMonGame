@@ -128,11 +128,13 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BoomerangEnemy.cpp" />
     <ClCompile Include="BoomerangWeapon.cpp" />
+    <ClCompile Include="BreakItemBrick.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickItem.cpp" />
     <ClCompile Include="ButtonP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="Curtain.cpp" />
     <ClCompile Include="DancingTree.cpp" />
     <ClCompile Include="EffectHit.cpp" />
     <ClCompile Include="EffectScore.cpp" />
@@ -147,6 +149,7 @@
     <ClCompile Include="GreenKoopas.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemBrick.cpp" />
     <ClCompile Include="Card.cpp" />
@@ -180,11 +183,13 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="BoomerangEnemy.h" />
     <ClInclude Include="BoomerangWeapon.h" />
+    <ClInclude Include="BreakItemBrick.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickItem.h" />
     <ClInclude Include="ButtonP.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="Curtain.h" />
     <ClInclude Include="DancingTree.h" />
     <ClInclude Include="EffectHit.h" />
     <ClInclude Include="EffectScore.h" />
@@ -199,6 +204,7 @@
     <ClInclude Include="GreenKoopas.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="IntroScene.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemBrick.h" />
     <ClInclude Include="Card.h" />
@@ -232,10 +238,11 @@
     <Text Include="textures\Opening\MapOpening.txt" />
     <Text Include="textures\Overworld\World1Scene.txt" />
     <Text Include="textures\Overworld\World2Map.txt" />
-    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
-    <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />
-    <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />
+    <Text Include="textures\World\World1\Scene1.1Map.txt" />
+    <Text Include="textures\World\World1\Scene1.4.txt" />
+    <Text Include="textures\World\World1\Scene1.4Map.txt" />
+    <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -250,7 +257,6 @@
     <Image Include="textures\ScoreBoard - Copy.png" />
     <Image Include="textures\sprites.png" />
     <Image Include="textures\World\World1\SceneHidden1.1Tile.png" />
-    <Image Include="textures\World\World1\Scene1.1Tile.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

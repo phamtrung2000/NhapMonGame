@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include "QuestionBrick.h"
 #include"GreenFlyKoopas.h"
+#include"QuestionBrickItem.h"
+
 MarioTail::MarioTail(float x, float y)
 {
 	ObjType = OBJECT_TYPE_MARIO_TAIL;
@@ -129,16 +131,26 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
 				{
 					ItemBrick* brick = dynamic_cast<ItemBrick*>(coObjects->at(i));
-					if(brick->Item==NORMAL)
-						coObjects->at(i)->canDelete = true;
-					else if (brick->Item == BUTTONP && brick->hasItem == true)
+					if (brick->Item == NORMAL)
+					{
+						brick->SetState(ITEMBRICK_STATE_DIE);
+					}
+					else if (brick->hasItem == true)
 					{
 						brick->SetState(BRICK_STATE_COLLISION);
-						BrickItem* brickitem = new BrickItem(BUTTONP, brick->x , brick->y - 16);
-						_PlayScene->objects.push_back(brickitem);
-						auto effect = new EffectSmoke(brick->x , brick->y - 16);
-						_PlayScene->objects.push_back(effect);
 						brick->hasItem = false;
+						if (brick->Item == BUTTONP)
+						{
+							BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
+							_PlayScene->objects.push_back(brickitem);
+							auto effect = new EffectSmoke(brick->x, brick->y - 16);
+							_PlayScene->objects.push_back(effect);
+						}
+						else
+						{
+							BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
+							_PlayScene->objects.push_back(brickitem);
+						}
 					}
 				}
 				else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICK)
@@ -147,6 +159,23 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (brick->GetState() == BRICK_STATE_NORMAL)
 					{
 						brick->SetState(BRICK_STATE_COLLISION);
+						brick->hasItem = false;
+						if (brick->Item > MONEY)
+						{
+							switch (_Mario->level)
+							{
+							case MARIO_LEVEL_SMALL:
+							{
+								brick->Item = MUSHROOM;
+							}break;
+
+							default:
+								brick->Item = LEAF;
+								break;
+							}
+						}
+						QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
+						_PlayScene->objects.push_back(questionbrickitem);
 					}
 				}
 

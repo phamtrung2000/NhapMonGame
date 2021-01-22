@@ -18,8 +18,11 @@ Brick::Brick(int type)
 
 void Brick::Render()
 {
-	animation_set->at(0)->Render(x, y);
-	RenderBoundingBox();
+	int ani = 0;
+	if (Type == CLOUD)
+		ani = 1;
+	animation_set->at(ani)->Render(x, y);
+	//RenderBoundingBox();
 }
 
 void Brick::GetBoundingBox(float &l, float &t, float &r, float &b)

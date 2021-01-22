@@ -22,7 +22,6 @@ public:
 	ULONGLONG ReviveTime;
 	bool isAttacked; // để xử lý vụ quẩy đuôi hiện quá nhiều effect hit
 	ULONGLONG Time_isAttacked;
-	float StartX, StartY;
 	Enemy();
 	~Enemy();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};

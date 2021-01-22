@@ -369,7 +369,7 @@ void World1::Update(DWORD dt)
 
 	_Camera->Update();
 	_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
-	CGame::GetInstance()->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
+	CGame::GetInstance()->SetCamPos( (MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4); // chuẩn
 	_HUD->Update(dt);
 	//DebugOut(L"cam y = %f\n", _Camera->cam_y);
 }
@@ -378,8 +378,7 @@ void World1::Render()
 {
 	// Background đen phía sau
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
-	_Game->Draw(-100, -50, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255);
-
+	_Game->Draw((MapWidth - _Game->GetScreenWidth()) / 2, (MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
 	_Map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -407,12 +406,6 @@ void World1::Unload()
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
-//World1* World1::GetInstance()
-//{
-//	if (__instance == NULL) __instance = new World1();
-//	return __instance;
-//}
-
 void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	CGame* game = CGame::GetInstance();
@@ -435,8 +428,11 @@ void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 	}
 	else if (game->IsKeyDown(DIK_RETURN))
 	{
-		if(mario->Scene > 0 && mario->GetState() == MARIO_OVERWORLD_STATE_IN_GATE)
+		if (mario->Scene > 0 && mario->GetState() == MARIO_OVERWORLD_STATE_IN_GATE && mario->Scene % 2 == 0)
+		{
 			CGame::GetInstance()->SwitchScene(mario->Scene);
+		}
+			
 	}
 }
 
@@ -449,6 +445,4 @@ void World1ScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 	MarioOverWorld* mario = ((World1*)scence)->GetPlayer();
-	
-	
 }

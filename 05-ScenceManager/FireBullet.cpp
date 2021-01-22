@@ -10,6 +10,7 @@
 #include "PlayScence.h"
 #include "GreenFlyKoopas.h"
 
+
 void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// đầu màn hình
@@ -172,7 +173,7 @@ void FireBullet::Render()
 	}
 	animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void FireBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)

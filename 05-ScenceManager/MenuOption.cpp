@@ -15,7 +15,7 @@ void MenuOption::Render()
 	else
 		ani = 1;
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void MenuOption::GetBoundingBox(float& left, float& top, float& right, float& bottom)

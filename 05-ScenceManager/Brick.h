@@ -6,6 +6,9 @@
 #define BRICK_BBOX_WIDTH  16
 #define BRICK_BBOX_HEIGHT 16
 
+#define BRICK_NORMAL_ANI 0
+#define BRICK_CLOUD_ANI 1
+
 class Brick : public CGameObject
 {
 public:

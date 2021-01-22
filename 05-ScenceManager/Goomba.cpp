@@ -148,7 +148,7 @@ void Goomba::Render()
 	animation_set->at(ani)->Render(x, y);
 	
 	//DebugOut(L"5.Render Goomba Ani: %i, State=%i, TimeToDie=%i\n", ani, state,TimeToDie);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Goomba::SetState(int state)
@@ -303,7 +303,7 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 //
 //	animation_set->at(ani)->Render(x, y);
 //
-//	RenderBoundingBox();
+//	//RenderBoundingBox();
 //}
 //
 //void Goomba::SetState(int state)

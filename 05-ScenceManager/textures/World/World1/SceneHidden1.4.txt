@@ -33,7 +33,7 @@
 [MAP]
 10000	.\textures\World\World1\SceneHidden1.4Tile.png	255	255	255	.\textures\World\World1\SceneHidden1.4Map.txt
 [SETTINGS]
-cam	0	0	6176	0	0
+cam	0	10	490	192	0
 time	300
 scene	2
 # id	left	top	right	bottom	texture_id
@@ -609,7 +609,8 @@ scene	2
 #50	352	0	-1	32	2	10
 # ======= BOOMERANG ENEMY =========
 21	32	112	21
-
+# =====  CARD ======
+19	368	96	19
 
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld

@@ -22,8 +22,8 @@
 14	.\textures\Effect\enemy.png	68	145	190
 # ITEM
 17	.\textures\Item\Item.png	68	145	190
-
-
+# MONEY
+18	.\textures\Object\Object.png	68	145	190
 
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
@@ -31,8 +31,11 @@
 .\textures\HUD\HUD.txt
 [MAP]
 10000	textures\World\World1\SceneHidden1.1Tile.png	255	255	255	textures\World\World1\SceneHidden1.1Map.txt
+[SETTINGS]
+cam	0	0	6176	0	0
+time	300
+scene	2
 # id	left	top	right	bottom	texture_id
-
 
 [SPRITES]
 #======= BRICK =========
@@ -136,9 +139,10 @@
 # MushRoom
 800	300	189	316	205	2
 #Money
-801	303	99	313	115	2
-802	322	99	330	115	2
-803	341	99	347	115	2
+801	11	11	21	27	18
+802	26	11	40	27	18
+803	45	11	55	27	18
+806	60	11	74	27	18
 # Leaf Left
 804	300	208	316	222	2
 # Leaf Right 
@@ -323,7 +327,7 @@
 603	404	100
 # ==== Question Brick Item =====
 # Money
-800	801	50	802	50	803	50	802	50
+800	801	100	802	100	803	100	806	100
 # MushRoom
 801	800	100
 # Leaf Left
