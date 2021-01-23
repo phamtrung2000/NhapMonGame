@@ -579,11 +579,11 @@ scene	2
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
 # bắt đầu
-#0	10	360	0	2336	352
+0	10	360	0	2336	352
 # tren cong' map an
 #0	2272	48	0	2336	352
 # trước hàng gạch
-0	2200	350	0	2336	352
+#0	2200	350	0	2336	352
 # trên đám mây
 #0	1500	100	0	2336	352
 #0	2600	350	0	2336	352

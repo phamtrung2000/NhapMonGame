@@ -41,7 +41,7 @@ Mario* Mario::GetInstance()
 Mario::Mario(float x, float y) : CGameObject()
 {
 	ObjType = OBJECT_TYPE_MARIO;
-	level = MARIO_LEVEL_TAIL;
+	level = MARIO_LEVEL_SMALL;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
 	start_y = y;
