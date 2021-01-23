@@ -26,6 +26,8 @@
 18	.\textures\Object\Object.png	68	145	190
 # boomerang
 19	.\textures\Enemy\enemy.png	68	145	190
+# course clear
+20	.\textures\World\end_scene_text.png	1	1	1
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
 [HUD]
@@ -314,7 +316,8 @@ scene	2
 90007	89	41	119	68	17
 # EMPTY 
 90008	128	41	158	68	17
-
+#--CoursClear
+90010	0	0	165	60	20
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ====== BRICK =========
@@ -541,7 +544,8 @@ scene	2
 90007	90007	100
 # empty
 90008	90008	100
-
+# course clear
+90010	90010	100
 [ANIMATION_SETS]
 # BRICK 
 1	200
@@ -595,7 +599,8 @@ scene	2
 1200	1200	1201	1202	1203	1204	1205	1206	1207	1208	1209	1210	1211	1212	1213	1214	1215	1216	1217	1218	1219	1220
 #======== BUTTON P =========
 1250	811	812
-
+# course clear
+1251	90010	100
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type

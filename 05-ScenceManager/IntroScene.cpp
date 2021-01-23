@@ -9,10 +9,15 @@
 #define MAP_MAX_WIDTH 2816
 using namespace std;
 
-IntroScene::IntroScene(int id, LPCWSTR filePath) :
-	CScene(id, filePath)
+IntroScene::IntroScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
 	key_handler = new IntroSceneKeyHandler(this);
+	curtain = new Curtain();
+	Part2 = new Curtain();
+	Part3 = new Curtain();
+	Number = new Curtain();
+	Choose = new Curtain();
+	IntroMap = new Map();
 }
 
 /*
@@ -160,25 +165,25 @@ void IntroScene::_ParseSection_OBJECTS(string line)
 	{
 	case OBJECT_TYPE_CURTAIN:
 
-		obj = new Curtain();
+		obj = new Curtain(x,y,0);
 		obj->SetPosition(x, y);
 		curtain = (Curtain*)obj;
 		break;
 	case OBJECT_TYPE_PART:
-		obj = new Curtain();
+		obj = new Curtain(x, y, 1);
 		obj->SetPosition(x, y);
 		Part2 = (Curtain*)obj;
 		break;
 	case OBJECT_TYPE_PART_2:
-		obj = new Curtain(x, y);
+		obj = new Curtain(x, y, 2);
 		Part3 = (Curtain*)obj;
 		break;
 	case OBJECT_TYPE_NUMBER:
-		obj = new Curtain(x, y);
+		obj = new Curtain(x, y, 3);
 		Number = (Curtain*)obj;
 		break;
 	case OBJECT_TYPE_PICK:
-		obj = new Curtain(x, y);
+		obj = new Curtain(x, y, 4);
 		Choose = (Curtain*)obj;
 		break;
 	default:
@@ -332,7 +337,7 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 	Curtain* Pick = ((IntroScene*)scence)->Choose;
 	switch (KeyCode)
 	{
-	case DIK_W:
+	case DIK_W: 
 		ct->IsUp = true;
 		Part2->IsDown = true;
 		break;
@@ -353,8 +358,24 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_UP:
 		Pick->choose = false;
 		break;
+	case DIK_RETURN:
+		ct->StopRender = true;
+		if(Part2->StopRender== false && Part2->IsDown == false )
+			Part2->IsDown = true;
+		else if (Part3->StopRender == true)
+		{
+			Part2->StopRender = true;
+			Part3->StopRender = false;
+		}
+		else
+		{
+			if (!Pick->StopRender)
+				CGame::GetInstance()->SwitchScene(1);
+		}
+		break;
 	}
 }
+// vx = -0.005500, vy = 0.217000, state = 7
 
 void IntroSceneKeyHandler::OnKeyUp(int KeyCode)
 {

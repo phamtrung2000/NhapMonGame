@@ -45,14 +45,15 @@ void Camera::Update()
 		{
 			cy = 0;
 		}
-
 		if (cam_x < 0)
 			cam_x = 0;
 		if (cam_x <= maxRightCam)
 			//cam_x += _Map->GetWidth() / 2000;
 			cam_x += 0.5f;
-		_Game->SetCamPos(cam_x, cy);
-		//_Game->SetCamPos(cx, cy);
+		else
+			cam_x = maxRightCam;
+		//_Game->SetCamPos(cam_x, cy);
+		_Game->SetCamPos(cx, cy);
 		if (cx < cam_x) // bị đẩy
 		{
 			_Mario->x = cam_x;

@@ -1,7 +1,6 @@
 #pragma once
 #include "Weapon.h"
 
-#define BOOMERANG_ANI_SET_ID 102
 #define ANI_BOOMERANG_THROW_RIGHT	0
 #define	ANI_BOOMERANG_THROW_LEFT	1
 #define ANI_BOOMERANG_HOLD_RIGHT	2

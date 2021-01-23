@@ -27,6 +27,7 @@
 #include "Card.h"
 #include "FlyWood.h"
 #include "BoomerangWeapon.h"
+#include "Notification.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -55,7 +56,7 @@ Mario::Mario(float x, float y) : CGameObject()
 	time_attack = time_fly = iChangeLevelTime = FlyTimePer1 = TimeJumpS = 0;
 	ani = 0;
 	NumberBullet = 2;
-	untouchable_start = ChangeLevelTime = UntouchtableTime  = 0;
+	untouchable_start = ChangeLevelTime = UntouchtableTime = 0;
 	MaxY = 0;
 }
 
@@ -119,7 +120,7 @@ void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 
 	case MARIO_LEVEL_TAIL:
 	{
-		
+
 		if (nx == LEFT)
 		{
 			left = x;
@@ -155,7 +156,7 @@ void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (isLevelUp == true )
+	if (isLevelUp == true)
 	{
 		iChangeLevelTime++;
 		switch (level)
@@ -219,7 +220,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				iChangeLevelTime = ChangeLevelTime = 0;
 				level++;
 				y += static_cast<__int64>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
-				
+
 			}
 		}break;
 		}
@@ -238,7 +239,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					y += static_cast<__int64>(MARIO_BIG_BBOX_HEIGHT - MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT);
 					test = true;
-				
+
 				}
 				else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0 && test == true)
 				{
@@ -296,7 +297,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}break;
 		}
 		y = static_cast<int>(y);
-		
+
 	}
 	else
 	{
@@ -348,8 +349,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 		}
+		else
+		{
+			CGame::GetInstance()->SwitchScene(Scene);
+			return;
+		}
 
-		if ( OnGround == false )
+		if (OnGround == false)
 		{
 			if (level_of_running > 0)
 				level_of_running--;
@@ -376,7 +382,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					isAttacking = false;
 				}
 			}
-			
+
 		}
 
 		if (TimeUseFireBullet != 0)
@@ -649,7 +655,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					isMaxRunning = false;
 			}
 		}
-			
+
 
 		switch (level)
 		{
@@ -707,7 +713,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
 					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 					{
-				
+
 						if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
 						{
 							coObjects->at(i)->canDelete = true;
@@ -736,8 +742,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}
 					}
-				
-					
+
+
 				}
 				break;
 
@@ -749,13 +755,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (enemy->TypeEnemy == ENEMYTYPE_KOOPAS)
 						{
 							Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-							if (koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT && isHolding == true)						
+							if (koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT && isHolding == true)
 							{
 								if (untouchable == false)
 									DownLevel();
 							}
 						}
-						
+
 					}
 
 				}
@@ -764,7 +770,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			}
 		}
-		
+
 
 		// turn off collision when die 
 		if (state != MARIO_STATE_DIE)
@@ -780,7 +786,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				UntouchtableTime = 0;
 				untouchable = false;
 			}
-			
+
 		}
 
 		// No collision occured, proceed normally
@@ -801,7 +807,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
-				
+
 				if (e->obj)
 				{
 					switch (e->obj->Category)
@@ -822,7 +828,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									y += temp;
 								else
 									y = float(MaxY - 0.5);
-								
+
 								OnGround = true; // xử lý chạm đất
 								isFalling = isFlyingLow = isFlyingHigh = false;
 							}
@@ -1801,55 +1807,55 @@ void Mario::Render()
 	{
 		switch (level)
 		{
-			case MARIO_LEVEL_BIG:
+		case MARIO_LEVEL_BIG:
+		{
+			if (nx == RIGHT)
 			{
-				if (nx == RIGHT)
+				if (iChangeLevelTime > 0 && iChangeLevelTime < ITIME_LEVEL_UP / 2)
 				{
-					if (iChangeLevelTime > 0 && iChangeLevelTime < ITIME_LEVEL_UP / 2)
-					{
-						if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
-							ani = MARIO_ANI_BIG_IDLE_RIGHT;
-						else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
-							ani = MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG;
-					}
-					else
-					{
-						if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0) // 0->14 30 60
-							ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-						else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0) //15->29 45 75
-							ani = MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG;
-					}
-				}
-				else if (nx == LEFT)
-				{
-					if (iChangeLevelTime > 0 && iChangeLevelTime < ITIME_LEVEL_UP / 2)
-					{
-						if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
-							ani = MARIO_ANI_BIG_IDLE_LEFT;
-						else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
-							ani = MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG;
-					}
-					else
-					{
-						if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
-							ani = MARIO_ANI_SMALL_IDLE_LEFT;
-						else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
-							ani = MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG;
-					}
-				}
-
-				if (untouchable == true)
-				{
-					if (UntouchtableTime % 3 == 0)
-						animation_set->at(ani)->Render(x, y, 32);
-					else
-						animation_set->at(ani)->Render(x, y, 255);
+					if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
+						ani = MARIO_ANI_BIG_IDLE_RIGHT;
+					else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
+						ani = MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG;
 				}
 				else
-					animation_set->at(ani)->Render(x, y, 128);
-			
+				{
+					if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0) // 0->14 30 60
+						ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+					else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0) //15->29 45 75
+						ani = MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG;
+				}
 			}
-			break;
+			else if (nx == LEFT)
+			{
+				if (iChangeLevelTime > 0 && iChangeLevelTime < ITIME_LEVEL_UP / 2)
+				{
+					if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
+						ani = MARIO_ANI_BIG_IDLE_LEFT;
+					else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
+						ani = MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG;
+				}
+				else
+				{
+					if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 == 0)
+						ani = MARIO_ANI_SMALL_IDLE_LEFT;
+					else if ((iChangeLevelTime / LEVEL_UP_DIVIDE) % 2 != 0)
+						ani = MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG;
+				}
+			}
+
+			if (untouchable == true)
+			{
+				if (UntouchtableTime % 3 == 0)
+					animation_set->at(ani)->Render(x, y, 32);
+				else
+					animation_set->at(ani)->Render(x, y, 255);
+			}
+			else
+				animation_set->at(ani)->Render(x, y, 128);
+
+		}
+		break;
 		}
 	}
 	else
@@ -2678,7 +2684,7 @@ void Mario::Render()
 				animation_set->at(ani)->Render(x, y, alpha);
 		}
 		else*/
-		
+
 
 		////RenderBoundingBox();
 	}
@@ -2834,15 +2840,18 @@ void Mario::SetState(int state)
 
 	case MARIO_STATE_SITDOWN:
 	{
-		if (isSitDown == false && level > MARIO_LEVEL_SMALL)
+		if (isSitDown == false )
 		{
 			isSitDown = true;
 			// sprite ngồi heigh chỉ có 18 còn sprite idle thì heigh = 28 nên phải trừ bớt để k bị lỗi sprite
 			// sau khi +10 thì phải -10 lại bên idle để không bị lỗi mario thụt xuống dưới
-			if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_FIRE)
-				y = y + (MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_BBOX_SITDOWN_HEIGHT);
-			else
-				y = y + (MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_BBOX_SITDOWN_HEIGHT);
+			if (level > MARIO_LEVEL_SMALL)
+			{
+				if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_FIRE)
+					y = y + (MARIO_BIG_BBOX_HEIGHT - MARIO_BIG_BBOX_SITDOWN_HEIGHT);
+				else
+					y = y + (MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_BBOX_SITDOWN_HEIGHT);
+			}
 		}
 	}
 	break;
@@ -2968,7 +2977,7 @@ void Mario::SetState(int state)
 		if (level_of_walking < MAX_LEVEL_OF_WALKING)
 			level_of_walking++;
 
-		if (vx > 0 )
+		if (vx > 0)
 		{
 			vx -= float(4 * GIA_TOC);
 			if (level_of_running > 2 && canFlyX == false && canFlyS == false)
@@ -3141,15 +3150,15 @@ void Mario::Debug()
 		DebugOut(L"State = FLYING_HIGH_LEFT\t"); break;
 	case MARIO_STATE_ENDSCENE:
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
-		
+
 	}
-	
+
 	if (OnGround == true)
 		DebugOut(L"OnGround == true\t");
 	else
 		DebugOut(L"OnGround == false\t");
-	
-	
+
+
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
 	DebugOut(L"x = %f, MaxY = %f\n", x, MaxY);
 }
@@ -3180,82 +3189,66 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 		{
 			switch (enemy->TypeEnemy)
 			{
-				case ENEMYTYPE_GOOMBA:
+			case ENEMYTYPE_GOOMBA:
+			{
+				this->vy = -MARIO_JUMP_DEFLECT_SPEED;
+				Goomba* goomba = dynamic_cast<Goomba*>(enemy);
+				goomba->SetState(GOOMBA_STATE_DIE);
+				this->nScore++;
+				_HUD->UpdateScore(goomba, nScore);
+			}
+			break;
+
+			case ENEMYTYPE_KOOPAS:
+			{
+				this->vy = -MARIO_JUMP_DEFLECT_SPEED;
+				this->y -= 1;
+				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+				if (koopas->Health > 1)
 				{
-					this->vy = -MARIO_JUMP_DEFLECT_SPEED;
-					Goomba* goomba = dynamic_cast<Goomba*>(enemy);
-					goomba->SetState(GOOMBA_STATE_DIE);
+					koopas->Health--;
 					this->nScore++;
-					_HUD->UpdateScore(goomba, nScore);
+					_HUD->UpdateScore(e->obj, nScore);
 				}
-				break;
-
-				case ENEMYTYPE_KOOPAS:
+				else
 				{
-					this->vy = -MARIO_JUMP_DEFLECT_SPEED;
-					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-					if (koopas->Health > 1)
+					if (koopas->vx != 0 && koopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 					{
-						koopas->Health--;
+						koopas->SetState(KOOPAS_STATE_SHELL);
+						koopas->ReviveTime = GetTickCount64();
 						this->nScore++;
-						_HUD->UpdateScore(e->obj, nScore);
+						_HUD->UpdateScore(koopas, nScore);
 					}
-					else
+					else if (koopas->vx != 0 && koopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
 					{
-						if (koopas->vx != 0 && koopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
-						{
-							koopas->SetState(KOOPAS_STATE_SHELL);
-							koopas->ReviveTime = GetTickCount64();
-							this->nScore++;
-							_HUD->UpdateScore(koopas, nScore);
-						}
-						else if (koopas->vx != 0 && koopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
-						{
-							koopas->SetState(KOOPAS_STATE_SHELL_2);
-							koopas->vy = 0;
-							koopas->ReviveTime = GetTickCount64();
-							this->nScore++;
-							_HUD->UpdateScore(koopas, nScore);
-						}
-						else if (koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2 || koopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
-						{
-							if (this->x <= koopas->x)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							else
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							koopas->isKicked = true;
-							this->nScore++;
-							_HUD->UpdateScore(koopas, nScore);
-						}
+						koopas->SetState(KOOPAS_STATE_SHELL_2);
+						koopas->vy = 0;
+						koopas->ReviveTime = GetTickCount64();
+						this->nScore++;
+						_HUD->UpdateScore(koopas, nScore);
+					}
+					else if (koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2 || koopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
+					{
+						if (this->x <= koopas->x)
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+						else
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+						koopas->isKicked = true;
+						this->nScore++;
+						_HUD->UpdateScore(koopas, nScore);
 					}
 				}
-				break;
+			}
+			break;
 
-				case ENEMYTYPE_PLANT:
+			case ENEMYTYPE_PLANT:
+			{
+				if (dynamic_cast<FirePiranhaPlant*>(enemy))
 				{
-					if (dynamic_cast<FirePiranhaPlant*>(enemy))
+					FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(enemy);
+					if (e->ny < 0)
 					{
-						FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(enemy);
-						if (e->ny < 0)
-						{
-							if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - FIREPIRANHAPLANT_BBOX_HEIGHT))
-							{
-								// cho cây thụt xuống ngang với miệng cống
-								plant->y += 1;
-								plant->Stop = true;
-							}
-							else
-							{
-								if (untouchable == false)
-									DownLevel();
-							}
-						}
-					}
-					else if (dynamic_cast<GreenFirePlant*>(enemy))
-					{
-						GreenFirePlant* plant = dynamic_cast<GreenFirePlant*>(enemy);
-
-						if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENFIREPLANT_BBOX_HEIGHT))
+						if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - FIREPIRANHAPLANT_BBOX_HEIGHT))
 						{
 							// cho cây thụt xuống ngang với miệng cống
 							plant->y += 1;
@@ -3267,14 +3260,75 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 								DownLevel();
 						}
 					}
-					else if (dynamic_cast<GreenPlant*>(enemy))
+				}
+				else if (dynamic_cast<GreenFirePlant*>(enemy))
+				{
+					GreenFirePlant* plant = dynamic_cast<GreenFirePlant*>(enemy);
+
+					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENFIREPLANT_BBOX_HEIGHT))
 					{
-						GreenPlant* plant = dynamic_cast<GreenPlant*>(enemy);
-						if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENPLANT_BBOX_HEIGHT))
+						// cho cây thụt xuống ngang với miệng cống
+						plant->y += 1;
+						plant->Stop = true;
+					}
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+				}
+				else if (dynamic_cast<GreenPlant*>(enemy))
+				{
+					GreenPlant* plant = dynamic_cast<GreenPlant*>(enemy);
+					if (INT(plant->Startposy - plant->y) <= (plant->WarpPipeHeight - GREENPLANT_BBOX_HEIGHT))
+					{
+						// cho cây thụt xuống ngang với miệng cống
+						plant->y += 1;
+						plant->isBlocked = true;
+					}
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+				}
+			}
+			break;
+
+			default:
+			{
+				enemy->canDelete = enemy->isDie = true;
+			}
+			break;
+			}
+		}
+		else if (e->nx != 0)
+		{
+			switch (enemy->TypeEnemy)
+			{
+			case ENEMYTYPE_GOOMBA: case ENEMYTYPE_PLANT:
+			{
+				if (untouchable == false)
+					DownLevel();
+			}
+			break;
+
+			case ENEMYTYPE_KOOPAS:
+			{
+				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+				if (abs(koopas->vx) > 0 && koopas->isHold == false)
+				{
+
+					if (koopas->isShell == true || koopas->isShell_2 == true)
+					{
+						if (koopas->OnGroud == false)
 						{
-							// cho cây thụt xuống ngang với miệng cống
-							plant->y += 1;
-							plant->isBlocked = true;
+							this->canKick = koopas->isKicked = true;
+							if (this->nx == RIGHT)
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							else if (this->nx == LEFT)
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+							koopas->vy -= 0.05f;
 						}
 						else
 						{
@@ -3282,104 +3336,17 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 								DownLevel();
 						}
 					}
-				}
-				break;
-
-				default:
-				{
-					enemy->canDelete = enemy->isDie = true;
-				}
-				break;
-			}
-		}
-		else if (e->nx != 0)
-		{
-			switch (enemy->TypeEnemy)
-			{
-				case ENEMYTYPE_GOOMBA : case ENEMYTYPE_PLANT:
-				{
-					if (untouchable == false)
-						DownLevel();
-				}
-				break;
-
-				case ENEMYTYPE_KOOPAS:
-				{
-					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-					if (koopas->vx != 0 && koopas->isHold == false)
-					{
-						if (untouchable == false)
-							DownLevel();
-					}
-					else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
-					{
-						if (e->nx == LEFT)
-						{
-							if (pressA == true)
-							{
-								isHolding = true;
-								koopas->nx = 1;
-								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-							}
-							else if (koopas->vy >= 0)
-							{
-								this->canKick = koopas->isKicked = true;
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							}
-						}
-						else if (e->nx == RIGHT)
-						{
-							if (pressA == true)
-							{
-								isHolding = true;
-								koopas->nx = -1;
-								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-							}
-							else if (koopas->vy >= 0)
-							{
-								this->canKick = koopas->isKicked = true;
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							}
-						}
-					}
-				}
-				break;
-
-				default:
-				{
-					if (untouchable == false)
-						DownLevel();
-				}
-				break;
-			}
-		}
-		else if (e->ny > 0)
-		{
-			switch (enemy->TypeEnemy)
-			{
-				case ENEMYTYPE_KOOPAS:
-				{
-					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-					if (koopas->isShell == false && koopas->isShell_2 == false)
-					{
-						if (untouchable == false)
-							DownLevel();
-					}
 					else
 					{
-						if (OnGround == false)
+						if (untouchable == false)
+							DownLevel();
+					}
+					/*if (koopas->Health == 1)
+					{
+						if (koopas->OnGroud == true)
 						{
-							x += dx;
-							y += dy;
-						}
-						else
-						{
-							if (ny != 0) vy = 0;
-						}
-						if (pressA == true)
-						{
-							isHolding = true;
-							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							if (untouchable == false)
+								DownLevel();
 						}
 						else
 						{
@@ -3391,17 +3358,104 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 							koopas->vy -= 0.05f;
 						}
 					}
-				}
-				break;
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}*/
 
-				default:
+				}
+				else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+				{
+					if (e->nx == LEFT)
+					{
+						if (pressA == true)
+						{
+							isHolding = true;
+							koopas->nx = 1;
+							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+						}
+						else if (koopas->vy >= 0)
+						{
+							this->canKick = koopas->isKicked = true;
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+						}
+					}
+					else if (e->nx == RIGHT)
+					{
+						if (pressA == true)
+						{
+							isHolding = true;
+							koopas->nx = -1;
+							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+						}
+						else if (koopas->vy >= 0)
+						{
+							this->canKick = koopas->isKicked = true;
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+						}
+					}
+				}
+			}
+			break;
+
+			default:
+			{
+				if (untouchable == false)
+					DownLevel();
+			}
+			break;
+			}
+		}
+		else if (e->ny > 0)
+		{
+			switch (enemy->TypeEnemy)
+			{
+			case ENEMYTYPE_KOOPAS:
+			{
+				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+				if (koopas->isShell == false && koopas->isShell_2 == false)
 				{
 					if (untouchable == false)
 						DownLevel();
 				}
-				break;
+				else
+				{
+					if (OnGround == false)
+					{
+						x += dx;
+						y += dy;
+					}
+					else
+					{
+						if (ny != 0) vy = 0;
+					}
+					if (pressA == true)
+					{
+						isHolding = true;
+						koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+					}
+					else
+					{
+						this->canKick = koopas->isKicked = true;
+						if (this->nx == RIGHT)
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+						else if (this->nx == LEFT)
+							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+						koopas->vy -= 0.05f;
+					}
+				}
 			}
-			
+			break;
+
+			default:
+			{
+				if (untouchable == false)
+					DownLevel();
+			}
+			break;
+			}
+
 		}
 	}
 }
@@ -3487,7 +3541,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				}
 				else if (e->nx != 0)
 				{
-					if(this->OnGround == true)
+					if (this->OnGround == true)
 						y += min_ty * dy + ny * 0.1f - 0.4f;
 					else
 						y += min_ty * dy + ny * 0.4f;
@@ -3583,11 +3637,13 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					{
 						if (e->ny < 0)
 						{
-							if (isSitDown == true &&
-								this->x + MARIO_TAIL_WIDTH <= pipe->x + pipe->Width / 2 &&
-								this->x + MARIO_TAIL_WIDTH >= pipe->x + pipe->Width / 2 - 10)
+							/*if (isSitDown == true &&
+								this->x + Width <= pipe->x + pipe->Width / 2 &&
+								this->x + Width >= pipe->x + pipe->Width / 2 - 14)*/
+							if (isSitDown == true)
 							{
 								GoHiddenWorld = true;
+								Scene = pipe->SceneID;
 								vy = 0.03f;
 							}
 						}
@@ -3595,13 +3651,14 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 						{
 							GoHiddenWorld = true;
 							vy = -0.03f;
+							Scene = pipe->SceneID;
 							y += dy;
 						}
 					}
 				}
 				else if (e->nx != 0)
 				{
-					float a = min_ty * dy +ny * 0.2f - 0.4f;
+					float a = min_ty * dy + ny * 0.2f - 0.4f;
 					if (OnGround == false)
 					{
 						y += min_ty * dy + ny * 0.2f - 0.4f;
@@ -3610,7 +3667,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					{
 						y += min_ty * dy + ny * 0.2f;
 					}
-					
+
 				}
 			}
 		}
@@ -3618,7 +3675,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		{
 			if (ny != 0) vy = 0;
 			Brick* brick = dynamic_cast<Brick*>(e->obj);
-			if (brick->Type == CLOUD) // mây
+			if (brick->Type == BRICK_CLOUD) // mây
 			{
 				if (isFlyingHigh == true) // đang bay thì xuyên qua
 				{
@@ -3659,9 +3716,9 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					OnGround = true; // xử lý chạm đất
 					isFalling = isFlyingLow = isFlyingHigh = false;
 				}
-				if(flywood->GetState() == FLYWOOD_STATE_MOVE)
+				if (flywood->GetState() == FLYWOOD_STATE_MOVE)
 					flywood->SetState(FLYWOOD_STATE_FALL);
-				
+
 			}
 		}
 	}
@@ -3782,6 +3839,13 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 			card->SetState(CARD_STATE_EMPTY);
 			this->SetState(MARIO_STATE_ENDSCENE);
 			_HUD->UpdateItem(card->TypeItem);
+			float a = _Map->GetWidth();
+			float b = _Map->GetHeight();
+			float c = a - a / 10;
+			float d = int(c) % 100;
+			Notification* noti = new Notification(c + d, _Map->GetHeight(), card->TypeItem);
+			_PlayScene->objects.push_back(noti);
+			_PlayScene->CourseClear = true;
 		}
 	}
 }

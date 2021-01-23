@@ -14,6 +14,8 @@ using namespace std;
 #define LEFT -1
 #define RIGHT 1
 
+#define OBJECT_BBOX_WIDTH_HEIGHT 16
+
 class CGameObject; 
 typedef CGameObject * LPGAMEOBJECT;
 

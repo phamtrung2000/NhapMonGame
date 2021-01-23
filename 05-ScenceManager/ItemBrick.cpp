@@ -22,13 +22,13 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 	if (isDie == true)
 	{
-		BreakItemBrick* breakbrick1 = new BreakItemBrick(RIGHT, this->x, this->y, 0.05f, -0.1f);
+		BreakItemBrick* breakbrick1 = new BreakItemBrick(RIGHT, this->x, this->y, 0.1f, -0.3f);
 		_PlayScene->objects.push_back(breakbrick1);
-		BreakItemBrick* breakbrick2 = new BreakItemBrick(RIGHT, this->x, this->y, 0.05f, -0.02f);
+		BreakItemBrick* breakbrick2 = new BreakItemBrick(RIGHT, this->x, this->y, 0.15f, -0.02f);
 		_PlayScene->objects.push_back(breakbrick2);
-		BreakItemBrick* breakbrick3 = new BreakItemBrick(LEFT, this->x, this->y, 0.05f, -0.1f);
+		BreakItemBrick* breakbrick3 = new BreakItemBrick(LEFT, this->x, this->y, 0.1f, -0.3f);
 		_PlayScene->objects.push_back(breakbrick3);
-		BreakItemBrick* breakbrick4 = new BreakItemBrick(LEFT, this->x, this->y, 0.05f, -0.02f);
+		BreakItemBrick* breakbrick4 = new BreakItemBrick(LEFT, this->x, this->y, 0.15f, -0.02f);
 		_PlayScene->objects.push_back(breakbrick4);
 		canDelete = true;
 	}

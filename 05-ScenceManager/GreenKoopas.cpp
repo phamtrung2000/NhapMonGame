@@ -76,7 +76,10 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 						this->y = _Mario->y + 5;
 					}
 				}
-
+				if (vy < 0)
+				{
+					OnGroud = false;
+				}
 				vector<LPCOLLISIONEVENT> coEvents;
 				vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -114,6 +117,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 									if (e->ny < 0)
 									{
 										x += min_tx * dx + nx * 0.4f;
+										OnGroud = true;
 									}
 									else if (e->nx != 0)
 									{
@@ -249,6 +253,11 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 			if (state != KOOPAS_STATE_DIE)
 				CalcPotentialCollisions(coObjects, coEvents);
 
+			if (vy < 0)
+			{
+				OnGroud = false;
+			}
+
 			if (coEvents.size() == 0)
 			{
 				x += dx;
@@ -281,6 +290,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 								if (e->ny < 0)
 								{
 									x += min_tx * dx + nx * 0.4f;
+									OnGroud = true;
 								}
 								else if (e->nx != 0)
 								{
@@ -340,6 +350,8 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 {
 	if (e->obj != NULL)
 	{
+		if (e->ny < 0)
+			OnGroud = true;
 		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
@@ -446,18 +458,18 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 		}
 		else if (e->obj->ObjType == OBJECT_TYPE_BRICK)
 		{
-		if (ny != 0) vy = 0;
-		Brick* brick = dynamic_cast<Brick*>(e->obj);
+			if (ny != 0) vy = 0;
+			Brick* brick = dynamic_cast<Brick*>(e->obj);
 
-		if (e->nx != 0)
-		{
-			x += min_tx * dx + nx * 0.4f;
-			y += min_ty * dy + ny * 0.1f - 0.4f;
-		}
-		else if (e->ny < 0)
-		{
-			x += min_tx * dx + nx * 0.4f;
-		}
+			if (e->nx != 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+				y += min_ty * dy + ny * 0.1f - 0.4f;
+			}
+			else if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+			}
 		}
 	}
 }

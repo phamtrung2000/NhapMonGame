@@ -65,6 +65,7 @@ public:
 	int SceneID;
 	bool Stop;
 	int TypeScene;
+	bool CourseClear;
 	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
 

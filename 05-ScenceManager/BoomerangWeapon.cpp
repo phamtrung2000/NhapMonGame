@@ -5,9 +5,7 @@
 #define BOOMERANG_SPEED_X 0.06f
 #define BOOMERANG_SPEED_Y 0.003f
 #define BOOMERANG_GRAVITY 0.0001f
-#define BOOMERANG_ATBEGIN 40
-#define BOOMERANG_ATLAST 10
-
+#define BOOMERANG_ANI_SET_ID 102
 
 BoomerangWeapon::BoomerangWeapon(float nx, float x, float y) : Weapon()
 {

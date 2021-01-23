@@ -583,8 +583,8 @@ scene	2
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
 # bắt đầu
-0	0	80	0	2320	352
-#0	1936	30	0	2320	352
+#0	0	80	0	2320	352
+0	1936	30	0	2320	352
 #----Block----
 6	1968	128	6	48	36
 

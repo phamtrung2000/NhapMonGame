@@ -11,6 +11,19 @@
 
 #define BRICKITEM_ANISET_ID	14
 
+#define BRICKITEM_MUSHROOM_ANI	0
+#define MUSHROOM_GRAVITY				0.0007f
+#define MUSHROOM_SPEED_X				0.05f 
+#define MUSHROOM_SPEED_Y				0.02f 
+
+
+#define	BUTTONP_ANI_NORMAL		1
+#define	BUTTONP_ANI_PRESS		2
+#define	BUTTONP_BBOX_WIDTH	16
+#define BUTTONP_BBOX_HEIGHT	16	
+#define BUTTONP_PRESS_BBOX_HEIGHT	6
+
+
 BrickItem::BrickItem(int item, float x, float y) : Item()
 {
 	TypeItem = ITEM_TYPE_BRICKITEM;
@@ -27,9 +40,9 @@ BrickItem::BrickItem(int item, float x, float y) : Item()
 	SetState(BRICKITEM_STATE_INIT);
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(BRICKITEM_ANISET_ID);
+	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICKITEM);
 	this->SetAnimationSet(ani_set);
-	
+	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
 }
 
 void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -43,7 +56,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (isInit == false)
 			{
 				y += dy;
-				if (Start_Y - y > BRICKITEM__BBOX)
+				if (Start_Y - y > Height)
 				{
 					if(this->x <=_Mario->x)
 						SetState(BRICKITEM_STATE_MOVE_LEFT);
@@ -260,19 +273,19 @@ void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bot
 {
 	left = x;
 	top = y;
-	right = x + BRICKITEM__BBOX;
+	right = x + OBJECT_BBOX_WIDTH_HEIGHT;
 	switch (Item)
 	{
 		case MUSHROOM:
 		{
-			bottom = y + BRICKITEM__BBOX;
+			bottom = y + OBJECT_BBOX_WIDTH_HEIGHT;
 		}break;
 
 		case BUTTONP:
 		{
 			if (isPressed == false)
 			{
-				bottom = y + BUTTONP_BBOX_HEIGHT;
+				bottom = y + OBJECT_BBOX_WIDTH_HEIGHT;
 			}
 			else
 			{

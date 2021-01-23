@@ -24,7 +24,6 @@
 17	.\textures\Item\Item.png	68	145	190
 # MONEY
 18	.\textures\Object\Object.png	68	145	190
-10000	.\textures\World\World1\Map1.png	255	0	255
 
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
@@ -32,18 +31,28 @@
 .\textures\HUD\HUD.txt
 [MAP]
 10000	.\textures\World\World1\Scene1.1Tile.png	255	255	255	.\textures\World\World1\Scene1.1Map.txt
+[SETTINGS]
+cam	0	0	2816	432	0
+time	300
+scene	2
 # id	left	top	right	bottom	texture_id
-
-
 [SPRITES]
 #======= BRICK =========
+# Normal
 200	408	225	424	241	2
+# Cloud
+250	139	11	155	27	18
 #======= ITEM BRICK =========
 201	372	135	388	151	2
 202	354	135	370	151	2
 203	336	135	352	151	2
 204	318	135	334	151	2
 205	300	135	316	151	2
+# Break item brick
+# Left
+210	168	15	176	23	18
+# Right
+211	180	15	188	23	18
 #GOOMBA
 300	9	11	25	27	6
 301	32	11	48	27	6
@@ -124,10 +133,20 @@
 404	372	117	388	133	2
 
 #WarpPipe
+# Green
+# start left
 500	5	86	21	102	4
+#start right
 501	21	86	37	102	4
+# body left
 502	5	102	21	118	4
+# body right
 503	21	102	37	118	4
+# Black
+504	7	36	23	52	18
+505	27	36	43	52	18
+506	8	55	23	71	18
+507	27	55	42	71	18
 
 #block
 600	5	86	21	102	4
@@ -273,14 +292,28 @@
 1216	252	275	257	283	16
 # 7
 1217	244	274	251	280	16
-
+#======== CARD =========
+# STAR
+90005	11	41	41	68	17
+# FLOWER
+90006	50	41	80	68	17
+# MUSHROOM
+90007	89	41	119	68	17
+# EMPTY 
+90008	128	41	158	68	17
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ====== BRICK =========
 200	200	100
+250	250	100
 # ====== ITEM BRICK =========
 201	201	100	202	100	203	100	204	100	205	100
+# ====== Break ITEM BRICK =========
+# Left
+210	210	100
+# Right
+211	211	100
 # ==== GOOMBA  =========
 # walk
 300	300	100	301	100
@@ -336,10 +369,16 @@
 #walk right
 371	50040	100	50041	100	50042	100
 #WarpPipe
+# Green
 500	500	100
 501	501	100
 502	502	100
 503	503	100
+# Black
+504	504	100
+505	505	100
+506	506	100
+507	507	100
 # ==== QUESTION MARK BRICK =========
 602	400	1000	400	100	401	100	402	100	403	100
 # Empty
@@ -469,40 +508,53 @@
 # tail flying low left 
 1220	1217	100	1215	100
 
-
+#== card == 
+# mushroom
+90005	90005	100
+# flower
+90006	90006	100
+# star
+90007	90007	100
+# empty
+90008	90008	100
 
 [ANIMATION_SETS]
 # BRICK 
-1	200
+1	200	250
 # GOOMBA
 2	300	301	302
 # ======= RED KOOPAS =========
 3	350	351	352	353	354	355	356	357	358	359
-# ======= GREEN KOOPAS =========
-10	360	361	362	363	364	365	366	367	368	369
-# ======= GREEN FLY KOOPAS =========
-11	360	361	362	363	364	365	366	367	368	369	370	371
 # QUESTION BRICK 
 4	602	603
 #WARPPIPE
-5	500	501	502	503
+5	500	501	502	503	504	505	506	507
 #BLOCK
 6	200
 #QuestionBrickItem
 8	800	801	802	803
 #FirePlant
 9	900	901	902	903	904	905	906	907
-#===== GREEN PLANT ========
-15	910
-#=====  GREEN FIRE PLANT ========
-16	911	912	913	914
-
+# ======= GREEN KOOPAS =========
+10	360	361	362	363	364	365	366	367	368	369
+# ======= GREEN FLY KOOPAS =========
+11	360	361	362	363	364	365	366	367	368	369	370	371
 # ======= COIN ========
 12	800
 # ======= ITEM BRICK ========
 13	201	603
+# ======= Break ITEM BRICK ========
+22	210	211
 # ===== BRICK ITEM =====
 14	810	811	812
+#===== GREEN PLANT ========
+15	910
+#=====  GREEN FIRE PLANT ========
+16	911	912	913	914
+# ====== card =======
+19	90008	90005	90006	90007
+
+
 # Fire Bullet
 100	1000	1001
 # ====== Effect =======
@@ -516,36 +568,38 @@
 # RIGHT
 1200	1200	1201	1202	1203	1204	1205	1206	1207	1208	1209	1210	1211	1212	1213	1214	1215	1216	1217	1218	1219	1220
 #======== BUTTON P =========
-# Not Press
 1250	811	812
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
-0	10	350	0
+0	480	350	0
+
+# BRICK 
+#type	x	y	ani_set_id	type_brick( 0: normal, 1: cloud)
+#1	500	336	1	0
+#1	480	336	1	1
 
 #---- Ground-----
 7	0	416	-1	3000	16
 # ======= RED KOOPAS =========
-#3	544	350	3
-#3	500	350	3
+#3	490	300	3
 # GOOMBA
 #2	544	400	2
 # ======= GREEN KOOPAS =========
 #10	544	350	10
-#10	460	350	10
 # ======= GREEN FLY KOOPAS =========
 11	550	350	11
-#11	544	350	11
-#11	460	350	11
 # =====  ITEM BRICK ======
-#13	460	400	13	1
-#13	500	350	13	2
+#13	544	400	13	1
+#13	528	400	13	1
+#6	544	360	6	48	48
+#6	450	360	6	64	64
 # ---- Question Brick----
 #4	480	400	4	1
 #4	520	350	4	0
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
-#200	500	300	5	32	200
-#200	600	300	5	32	200
+#200	300	300	5	32	200
+200	600	300	5	32	200

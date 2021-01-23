@@ -116,6 +116,7 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 						if (e->obj)
 						{
+							isInit = true;
 							switch (e->obj->Category)
 							{
 							case CATEGORY::GROUND:
@@ -581,3 +582,4 @@ void GreenFlyKoopas::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float
 {
 	GreenKoopas::CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 }
+

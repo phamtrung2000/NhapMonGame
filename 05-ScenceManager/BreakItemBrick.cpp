@@ -3,6 +3,11 @@
 
 #define	BREAKITEMBRICK_GRAVITY		0.0007f
 
+#define BREAKITEMBRICK_LEFT_ANI 0
+#define BREAKITEMBRICK_RIGHT_ANI 1
+
+#define BREAKITEMBREAKITEMBRICK_ANI_SET_ID 22
+
 BreakItemBrick::BreakItemBrick(int direction,float _x, float _y, float _vx, float _vy)
 {
 	ObjType = OBJECT_TYPE_BREAKITEMBRICK;
@@ -15,6 +20,7 @@ BreakItemBrick::BreakItemBrick(int direction,float _x, float _y, float _vx, floa
 	vy = _vy;
 	Category = CATEGORY::EFFECT;
 	SetPosition(_x, _y);
+	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT / 2;
 }
 
 void BreakItemBrick::Render()
@@ -30,8 +36,8 @@ void BreakItemBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x;
 	t = y;
-	r = x + BREAKITEMBRICK_BBOX_WIDTH;
-	b = y + BREAKITEMBRICK_BBOX_HEIGHT;
+	r = x + OBJECT_BBOX_WIDTH_HEIGHT/2;
+	b = y + OBJECT_BBOX_WIDTH_HEIGHT/2;
 }
 
 void BreakItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

@@ -20,6 +20,7 @@
 #define KOOPAS_STATE_SHELL_WALKING_RIGHT	6
 #define KOOPAS_STATE_SHELL_WALKING_LEFT		7
 #define KOOPAS_STATE_SHELL_2				8
+#define KOOPAS_STATE_INIT			9
 
 #define KOOPAS_ANI_WALKING_LEFT				0
 #define KOOPAS_ANI_WALKING_RIGHT			1
@@ -43,7 +44,7 @@ class Koopas : public Enemy
 {
 public:
 	Koopas();
-	bool isKicked, GoAround, isShell,isShell_2, isHold;
+	bool isKicked, isShell,isShell_2, isHold;
 	float X_max, X_min;
 	bool CountXmaxXmin;
 

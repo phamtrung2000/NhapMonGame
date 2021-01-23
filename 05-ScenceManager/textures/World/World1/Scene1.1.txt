@@ -24,7 +24,8 @@
 17	.\textures\Item\Item.png	68	145	190
 # MONEY
 18	.\textures\Object\Object.png	68	145	190
-
+# course clear
+19	.\textures\World\end_scene_text.png	1	1	1
 # không để dưới 2 cái này
 # HUD : 12, 13 bên file HUD.txt
 [HUD]
@@ -133,10 +134,20 @@ scene	2
 404	372	117	388	133	2
 
 #WarpPipe
+# Green
+# start left
 500	5	86	21	102	4
+#start right
 501	21	86	37	102	4
+# body left
 502	5	102	21	118	4
+# body right
 503	21	102	37	118	4
+# Black
+504	7	36	23	52	18
+505	27	36	43	52	18
+506	8	55	23	71	18
+507	27	55	42	71	18
 
 #block
 600	5	86	21	102	4
@@ -291,7 +302,8 @@ scene	2
 90007	89	41	119	68	17
 # EMPTY 
 90008	128	41	158	68	17
-
+#--CoursClear
+90010	0	0	165	60	19
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ====== BRICK =========
@@ -359,10 +371,16 @@ scene	2
 #walk right
 371	50040	100	50041	100	50042	100
 #WarpPipe
+# Green
 500	500	100
 501	501	100
 502	502	100
 503	503	100
+# Black
+504	504	100
+505	505	100
+506	506	100
+507	507	100
 # ==== QUESTION MARK BRICK =========
 602	400	1000	400	100	401	100	402	100	403	100
 # Empty
@@ -501,7 +519,8 @@ scene	2
 90007	90007	100
 # empty
 90008	90008	100
-
+# course clear
+90010	90010	100
 [ANIMATION_SETS]
 # BRICK 
 1	200	250
@@ -512,7 +531,7 @@ scene	2
 # QUESTION BRICK 
 4	602	603
 #WARPPIPE
-5	500	501	502	503
+5	500	501	502	503	504	505	506	507
 #BLOCK
 6	200
 #QuestionBrickItem
@@ -553,9 +572,8 @@ scene	2
 1200	1200	1201	1202	1203	1204	1205	1206	1207	1208	1209	1210	1211	1212	1213	1214	1215	1216	1217	1218	1219	1220
 #======== BUTTON P =========
 1250	811	812
-
-
-
+# course clear
+1251	90010	100
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
@@ -563,11 +581,12 @@ scene	2
 # bắt đầu
 #0	10	360	0	2336	352
 # tren cong' map an
-#0	2272	48	0	2336	352
+0	2272	48	0	2336	352
 # trước hàng gạch
-0	2200	350	0	2336	352
+#0	2200	350	0	2336	352
 # trên đám mây
 #0	1500	100	0	2336	352
+#0	2600	350	0	2336	352
 # BRICK 
 #type	x	y	ani_set_id	type_brick( 0: normal, 1: cloud)
 1	1504	336	1	0
@@ -611,7 +630,7 @@ scene	2
 #2	725	368	2
 # ======= RED KOOPAS =========
 3	544	350	3
-3	2088	355	3
+3	2096	300	3
 # ======= GREEN KOOPAS =========
 10	1472	370	10
 # ======= GREEN FLY KOOPAS =========
@@ -660,7 +679,7 @@ scene	2
 16	1856	320	16
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
-50	2280	144	1	16	12	11
+#50	2280	144	1	16	12	11
 #50	2800	384	1	8	32	1
 # =====  CARD ======
 19	2688	336	19
@@ -712,9 +731,9 @@ scene	2
 12	1840	128	12
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
-200	352	368	5	32	48
-200	1792	384	5	32	32
-200	1856	368	5	32	48
-200	2272	112	5	32	192	true
-200	2272	384	5	32	32
-200	2336	384	5	32	32
+200	352	368	5	32	48	0	0
+200	1792	384	5	32	32	0	0
+200	1856	368	5	32	48	0	0
+200	2272	112	5	32	192	0	11
+200	2272	384	5	32	32	0	0
+200	2336	384	5	32	32	0	0

@@ -2,23 +2,42 @@
 #include "PlayScence.h"
 #include "BoomerangWeapon.h"
 
-#define ENNEMY_WALKING_SPEED 0.05f
-#define BOOMERANG_WIDTH_BBOX 16
-#define BOOMERANG_HEIGHT_BBOX 24
-#define BOOMERANG_TIME_DIE 300
+#define BOOMERANGENEMY_DIE_DEFLECT_SPEED	0.25f
+#define BOOMERANGENEMY_WALKING_SPEED	0.05f
+#define	BOOMERANGENEMY_GRAVITY			0.0007f
 #define BOOMERANG_JUMP_DEFLECT_SPEED 0.6f
+
+#define BOOMERANGENEMY_ANI_WALKING_RIGHT	0
+#define BOOMERANGENEMY_ANI_WALKING_LEFT		1
+#define BOOMERANGENEMY_ANI_THROWING_RIGHT	2
+#define BOOMERANGENEMY_ANI_THROWING_LEFT	3
+#define BOOMERANGENEMY_ANI_DIE_RIGHT		4
+#define BOOMERANGENEMY_ANI_DIE_LEFT	5
+
+#define BOOMERANGENEMY_SCORE	100
+#define BOOMERANGENEMY_TIMETODIE	20
+
+#define BOOMERANGENEMY_WIDTH_BBOX 16
+#define BOOMERANGENEMY_HEIGHT_BBOX 24
+#define BOOMERANG_TIME_DIE 300
+
+
 
 BoomerangEnemy::BoomerangEnemy() : Enemy()
 {
 	countThrow = 0;
 	ObjType = OBJECT_TYPE_BOOMERANGENEMY;
 	CanThrow = false;
-	Width = BOOMERANG_WIDTH_BBOX;
-	Height = BOOMERANG_HEIGHT_BBOX;
+	Width = BOOMERANGENEMY_WIDTH_BBOX;
+	Height = BOOMERANGENEMY_HEIGHT_BBOX;
 	SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
 	TimeToThrow = GetTickCount64();
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BOOMERANGENEMY);
+	this->SetAnimationSet(ani_set);
 }
 
 BoomerangEnemy::BoomerangEnemy(float x, float y) : Enemy()
@@ -26,14 +45,18 @@ BoomerangEnemy::BoomerangEnemy(float x, float y) : Enemy()
 	countThrow = 0;
 	ObjType = OBJECT_TYPE_BOOMERANGENEMY;
 	CanThrow = false;
-	Width = BOOMERANG_WIDTH_BBOX;
-	Height = BOOMERANG_HEIGHT_BBOX;
+	Width = BOOMERANGENEMY_WIDTH_BBOX;
+	Height = BOOMERANGENEMY_HEIGHT_BBOX;
 	SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
 	StartX = x;
 	StartY = y;
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
 	TimeToThrow = 100;
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BOOMERANGENEMY);
+	this->SetAnimationSet(ani_set);
 }
 
 void BoomerangEnemy::GetBoundingBox(float& left, float& top, float& right, float& bottom)

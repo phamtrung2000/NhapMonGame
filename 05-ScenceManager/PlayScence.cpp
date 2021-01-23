@@ -29,12 +29,18 @@ CPlayScene::CPlayScene()
 {
 	SceneID = 0;
 	key_handler = new CPlayScenceKeyHandler(this);
+	Stop = false;
+	TypeScene = 0;
+	CourseClear = false;
 }
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
 	SceneID = id;
 	key_handler = new CPlayScenceKeyHandler(this);
+	Stop = false;
+	TypeScene = 0;
+	CourseClear = false;
 }
 
 void CPlayScene::_ParseSection_TEXTURES(string line)
@@ -179,11 +185,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
 	case OBJECT_TYPE_WARPPIPE:
 	{
-		if (tokens.size() > 6 && tokens[6] == "true")
-			obj = new WarpPipe(width, height, true);
-		else
-			obj = new WarpPipe(width, height, false);
-
+		obj = new WarpPipe(width, height, atoi(tokens[6].c_str()), atoi(tokens[7].c_str()));
 	}break;
 
 	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
@@ -780,6 +782,10 @@ void CPlayScene::Render()
 		}
 	}
 	_HUD->Render();
+	/*if (CourseClear == true)
+	{
+		CSprites::GetInstance()->Get(90010)->Draw(_Map->GetWidth() - 250, _Map->GetHeight() - 150);
+	}*/
 }
 
 void CPlayScene::Unload()

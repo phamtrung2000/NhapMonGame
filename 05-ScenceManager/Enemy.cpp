@@ -2,6 +2,12 @@
 #include "FireBullet.h"
 #include "PlayScence.h"
 
+void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	if (e->ny < 0)
+		OnGroud = true;
+}
+
 void Enemy::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
 	x += dx;
@@ -44,6 +50,7 @@ Enemy::Enemy() : CGameObject()
 	Score = 0;
 	ReviveTime = Time_isAttacked = 0;
 	Health = 1;
+	OnGroud = false;
 }
 
 Enemy::~Enemy()
@@ -69,7 +76,14 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (isDisappear == true)
 		{
+			/*Enemy* enemy = new Enemy();
+			enemy->SetPosition(StartX, StartY);
+			enemy->SetStartPosition(StartX, StartY);
+			_PlayScene->objects.push_back(enemy);
+			this->canDelete = true;*/
+
 			SetPosition(StartX, StartY);
+			SetState(ENEMY_STATE_WALKING_LEFT);
 			isDisappear = false;
 		}
 	}

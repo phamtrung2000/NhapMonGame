@@ -22,6 +22,7 @@ public:
 	ULONGLONG ReviveTime;
 	bool isAttacked; // để xử lý vụ quẩy đuôi hiện quá nhiều effect hit
 	ULONGLONG Time_isAttacked;
+	bool OnGroud;
 	Enemy();
 	~Enemy();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) {};
@@ -30,7 +31,7 @@ public:
 	virtual void SetState(int state) {};
 	virtual void Revival() {};
 	virtual void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
-	virtual void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
+	virtual void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) ;
 	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 };

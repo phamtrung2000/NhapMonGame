@@ -358,11 +358,11 @@ void HUD::Update(float dt)
 		switch (TypeItem[0])
 		{
 		case CARD_MUSHROOM:
-			Item1 = CSprites::GetInstance()->Get(90002);
+			Item1 = CSprites::GetInstance()->Get(90002); break;
 		case CARD_FLOWER:
-			Item1 = CSprites::GetInstance()->Get(90003);
+			Item1 = CSprites::GetInstance()->Get(90003); break;
 		case  CARD_STAR:
-			Item1 = CSprites::GetInstance()->Get(90004);
+			Item1 = CSprites::GetInstance()->Get(90004); break;
 		}
 
 		if (TypeItem[1] == 0)
@@ -375,11 +375,11 @@ void HUD::Update(float dt)
 			switch (TypeItem[1])
 			{
 			case CARD_MUSHROOM:
-				Item2 = CSprites::GetInstance()->Get(90002);
+				Item2 = CSprites::GetInstance()->Get(90002); break;
 			case CARD_FLOWER:
-				Item2 = CSprites::GetInstance()->Get(90003);
+				Item2 = CSprites::GetInstance()->Get(90003); break;
 			case  CARD_STAR:
-				Item2 = CSprites::GetInstance()->Get(90004);
+				Item2 = CSprites::GetInstance()->Get(90004); break;
 			}
 			if (TypeItem[2] == 0)
 			{
@@ -390,11 +390,11 @@ void HUD::Update(float dt)
 				switch (TypeItem[1])
 				{
 				case CARD_MUSHROOM:
-					Item3 = CSprites::GetInstance()->Get(90002);
+					Item3 = CSprites::GetInstance()->Get(90002); break;
 				case CARD_FLOWER:
-					Item3 = CSprites::GetInstance()->Get(90003);
+					Item3 = CSprites::GetInstance()->Get(90003); break;
 				case  CARD_STAR:
-					Item3 = CSprites::GetInstance()->Get(90004);
+					Item3 = CSprites::GetInstance()->Get(90004); break;
 				}
 			}
 		}

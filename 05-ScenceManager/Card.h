@@ -7,7 +7,7 @@
 #define CARD_MUSHROOM	3
 
 
-#define TIME_CHANGE 200
+#define TIME_CHANGE 500
 #define CARD_WIDTH	30
 #define CARD_HEIGHT	28
 
