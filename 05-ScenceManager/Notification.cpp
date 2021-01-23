@@ -48,7 +48,7 @@ void Notification::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		Item1 = CSprites::GetInstance()->Get(90004);
 	}
 	else
-		Item1 = CSprites::GetInstance()->Get(90004);
+		Item1 = CSprites::GetInstance()->Get(90003);
 
 	if (y < _Map->GetHeight() - 150)
 	{

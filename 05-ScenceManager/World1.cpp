@@ -430,8 +430,17 @@ void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		if (mario->Scene > 0 && mario->GetState() == MARIO_OVERWORLD_STATE_IN_GATE && mario->Scene % 2 == 0)
 		{
-			CGame::GetInstance()->SwitchScene(mario->Scene);
+			if (mario->Scene == 10)
+			{
+				CGame::GetInstance()->SwitchScene(mario->Scene);
+			}
+			else
+			{
+				CGame::GetInstance()->SwitchScene2(mario->Scene);
+			}
+			
 		}
+		
 			
 	}
 }

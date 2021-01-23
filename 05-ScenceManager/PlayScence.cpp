@@ -43,6 +43,16 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 	CourseClear = false;
 }
 
+CPlayScene::CPlayScene(int id, LPCWSTR filePath, int mariolv)
+{
+	SceneID = id;
+	key_handler = new CPlayScenceKeyHandler(this);
+	Stop = false;
+	TypeScene = 0;
+	CourseClear = false;
+	MarioLevel = mariolv;
+}
+
 void CPlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -177,7 +187,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		
 		obj = _Mario;
 		//_Mario = (Mario*)obj;
-
+			
 		DebugOut(L"[INFO] Player object created!\n");
 	}break;
 
@@ -1043,7 +1053,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			if (_Mario->isFlyingLow == true)
 				_Mario->SetState(MARIO_STATE_FLY_LOW);
 			else
-				_Mario->SetState(MARIO_STATE_IDLE);
+				mario->SetState(MARIO_STATE_IDLE);
 		}
 	}
 	if (game->IsKeyDown(DIK_X))

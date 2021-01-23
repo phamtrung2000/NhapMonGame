@@ -66,11 +66,13 @@ public:
 	bool Stop;
 	int TypeScene;
 	bool CourseClear;
+	int MarioLevel;
 	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
-
+	Mario* player;
 	CPlayScene();
 	CPlayScene(int id, LPCWSTR filePath);
+	CPlayScene(int id, LPCWSTR filePath, int mariolv);
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);

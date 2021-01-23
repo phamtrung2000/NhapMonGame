@@ -33,7 +33,7 @@
 [MAP]
 10000	.\textures\World\World1\Scene1.4Tile.png	255	255	255	.\textures\World\World1\Scene1.4Map.txt
 [SETTINGS]
-cam	0	0	6176	0	1
+cam	0	10	2048	176	1
 time	300
 scene	2
 # id	left	top	right	bottom	texture_id
@@ -583,8 +583,8 @@ scene	2
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
 # MARIO
 # bắt đầu
-#0	0	80	0	2320	352
-0	1936	30	0	2320	352
+0	0	80	0	2320	352
+#0	1936	30	0	2320	352
 #----Block----
 6	1968	128	6	48	36
 
@@ -727,7 +727,7 @@ scene	2
 20	1776	96	20
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
-200	1936	96	5	32	64	true
+200	1936	96	5	32	64	0	13
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
 50	1944	120	1	6	6	13

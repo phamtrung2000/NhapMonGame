@@ -619,4 +619,4 @@ scene	2
 
 #======= WARPPIPE =========
 #objtype	x	y	aniset_id	width	height	HiddenWorld
-200	112	144	5	32	32	true
+200	112	144	5	32	32	0	0

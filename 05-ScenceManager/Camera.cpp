@@ -43,7 +43,7 @@ void Camera::Update()
 		float b = _Game->GetScreenHeight(); // 242
 		if (a < b)
 		{
-			cy = 0;
+			cy = 10;
 		}
 		if (cam_x < 0)
 			cam_x = 0;
@@ -52,8 +52,8 @@ void Camera::Update()
 			cam_x += 0.5f;
 		else
 			cam_x = maxRightCam;
-		//_Game->SetCamPos(cam_x, cy);
-		_Game->SetCamPos(cx, cy);
+		_Game->SetCamPos(cam_x, cy);
+		//_Game->SetCamPos(cx, cy);
 		if (cx < cam_x) // bị đẩy
 		{
 			_Mario->x = cam_x;

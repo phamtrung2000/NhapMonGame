@@ -426,7 +426,199 @@ void CGame::Load(LPCWSTR gameFile)
 
 void CGame::SwitchScene(int scene_id)
 {
+	//DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+	if (current_scene == OpeningSceneID)
+	{
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_HUD->Init(0);
+	}
+	else if (current_scene == World1SceneID)
+	{
+		MarioLevel = _Mario->level;
+		World1* world1 = (World1*)scenes[current_scene];
+		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
+		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+		_PlayScene->__instance = (CPlayScene*)s;
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_Mario->SetLevel(MarioLevel);
+		_HUD->Init(300);
+	}
+	else if (current_scene >= Scene1_1ID)
+	{
+		MarioLevel = _Mario->level;
+		if (scene_id == World1SceneID) // chuyển sang World Map 1
+		{
+			scenes[current_scene]->Unload();
+			CTextures::GetInstance()->Clear();
+			CSprites::GetInstance()->Clear();
+			CAnimations::GetInstance()->Clear();
+			int a = current_scene;
+			current_scene = scene_id;
+			LPSCENE s = scenes[scene_id];
+			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+			s->Load();
+			_HUD->Init(0);
+			World1* world1 = (World1*)s;
+			MarioOverWorld* mario = world1->GetPlayer();
+			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
+			mario->Scene = a + 1;
+		}
+		else if (scene_id >= Scene1_1ID)
+		{
+			//int a = scene_id - scene_id / 10;
+			int a = scene_id;
+			if (a % 2 == 0) // map ẩn -> map thường
+			{
+				scenes[current_scene]->Unload();
+				CTextures::GetInstance()->Clear();
+				CSprites::GetInstance()->Clear();
+				CAnimations::GetInstance()->Clear();
+				current_scene = scene_id;
+				LPSCENE s = scenes[scene_id];
+				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+				_PlayScene->__instance = (CPlayScene*)s;
+				_Camera->SetCamPos(0.0f, 0.0f);
+				s->Load();
+				float newx = _Mario->NewX;
+				float newy = _Mario->NewY;
+				_Mario->SetPosition(newx, newy);
+				_Mario->SetLevel(MarioLevel);
+				_HUD->Init(_HUD->PlayTime);
+			}
+			else
+			{
+				scenes[current_scene]->Unload();
+				CTextures::GetInstance()->Clear();
+				CSprites::GetInstance()->Clear();
+				CAnimations::GetInstance()->Clear();
+				current_scene = scene_id;
+				LPSCENE s = scenes[scene_id];
+				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+				_PlayScene->__instance = (CPlayScene*)s;
+				_Camera->SetCamPos(0.0f, 0.0f);
+				s->Load();
+				_Mario->SetLevel(MarioLevel);
+				_HUD->Init(_HUD->PlayTime);
+			}
+		}
+	}
+}
+
+void CGame::SwitchScene2(int scene_id)
+{
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+	if (current_scene == OpeningSceneID)
+	{
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_HUD->Init(0);
+	}
+	else if (current_scene == World1SceneID)
+	{
+		World1* world1 = (World1*)scenes[current_scene];
+		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
+		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
+		scenes[current_scene]->Unload();
+		CTextures::GetInstance()->Clear();
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+		current_scene = scene_id;
+		LPSCENE s = scenes[scene_id];
+		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+		_PlayScene->__instance = (CPlayScene*)s;
+		_Camera->SetCamPos(0.0f, 0.0f);
+		s->Load();
+		_Mario->SetLevel(MarioLevel);
+		_HUD->Init(300);
+	}
+	else if (current_scene >= Scene1_1ID)
+	{
+		if (scene_id == World1SceneID) // chuyển sang World Map 1
+		{
+			scenes[current_scene]->Unload();
+			CTextures::GetInstance()->Clear();
+			CSprites::GetInstance()->Clear();
+			CAnimations::GetInstance()->Clear();
+			int a = current_scene;
+			current_scene = scene_id;
+			LPSCENE s = scenes[scene_id];
+			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+			s->Load();
+			_HUD->Init(0);
+			World1* world1 = (World1*)s;
+			MarioOverWorld* mario = world1->GetPlayer();
+			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
+			//mario->Scene = a + 1;
+		}
+		else if (scene_id >= Scene1_1ID)
+		{
+			int a = scene_id - scene_id / 10;
+			if (a % 2 != 0) // map ẩn -> map thường
+			{
+				scenes[current_scene]->Unload();
+				CTextures::GetInstance()->Clear();
+				CSprites::GetInstance()->Clear();
+				CAnimations::GetInstance()->Clear();
+				current_scene = scene_id;
+				LPSCENE s = scenes[scene_id];
+				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+				_PlayScene->__instance = (CPlayScene*)s;
+				_Camera->SetCamPos(0.0f, 0.0f);
+				s->Load();
+				_Mario->SetPosition(_Mario->NewX, _Mario->NewY);
+				_HUD->Init(_HUD->PlayTime);
+			}
+			else
+			{
+				scenes[current_scene]->Unload();
+				CTextures::GetInstance()->Clear();
+				CSprites::GetInstance()->Clear();
+				CAnimations::GetInstance()->Clear();
+				current_scene = scene_id;
+				LPSCENE s = scenes[scene_id];
+				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
+
+				_PlayScene->__instance = (CPlayScene*)s;
+				_Camera->SetCamPos(0.0f, 0.0f);
+				s->Load();
+				_HUD->Init(_HUD->PlayTime);
+			}
+		}
+	}
+}
+
+void CGame::SwitchScene3(int scene_id, int level)
+{
+	//DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+	Mario* mario = _Mario;
 	if (current_scene == OpeningSceneID)
 	{
 		scenes[current_scene]->Unload();
@@ -514,95 +706,5 @@ void CGame::SwitchScene(int scene_id)
 			}
 		}
 	}
-}
-
-void CGame::SwitchScene2(int scene_id)
-{
-	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
-	if (current_scene == OpeningSceneID)
-	{
-		scenes[current_scene]->Unload();
-		CTextures::GetInstance()->Clear();
-		CSprites::GetInstance()->Clear();
-		CAnimations::GetInstance()->Clear();
-		current_scene = scene_id;
-		LPSCENE s = scenes[scene_id];
-		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-		_Camera->SetCamPos(0.0f, 0.0f);
-		s->Load();
-		_HUD->Init(0);
-	}
-	else if (current_scene == World1SceneID)
-	{
-		World1* world1 = (World1*)scenes[current_scene];
-		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
-		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
-		scenes[current_scene]->Unload();
-		CTextures::GetInstance()->Clear();
-		CSprites::GetInstance()->Clear();
-		CAnimations::GetInstance()->Clear();
-		current_scene = scene_id;
-		LPSCENE s = scenes[scene_id];
-		CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-
-		_PlayScene->__instance = (CPlayScene*)s;
-		_Camera->SetCamPos(0.0f, 0.0f);
-		s->Load();
-		_HUD->Init(300);
-	}
-	else if (current_scene >= Scene1_1ID)
-	{
-		if (scene_id == World1SceneID) // chuyển sang World Map 1
-		{
-			scenes[current_scene]->Unload();
-			CTextures::GetInstance()->Clear();
-			CSprites::GetInstance()->Clear();
-			CAnimations::GetInstance()->Clear();
-			int a = current_scene;
-			current_scene = scene_id;
-			LPSCENE s = scenes[scene_id];
-			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-			s->Load();
-			_HUD->Init(0);
-			World1* world1 = (World1*)s;
-			MarioOverWorld* mario = world1->GetPlayer();
-			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
-			//mario->Scene = a + 1;
-		}
-		else if (scene_id >= Scene1_1ID)
-		{
-			int a = scene_id - scene_id / 10;
-			if (a % 2 != 0) // map ẩn -> map thường
-			{
-				scenes[current_scene]->Unload();
-				CTextures::GetInstance()->Clear();
-				CSprites::GetInstance()->Clear();
-				CAnimations::GetInstance()->Clear();
-				current_scene = scene_id;
-				LPSCENE s = scenes[scene_id];
-				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-
-				_PlayScene->__instance = (CPlayScene*)s;
-				_Camera->SetCamPos(0.0f, 0.0f);
-				s->Load();
-				_Mario->SetPosition(_Mario->NewX, _Mario->NewY);
-				_HUD->Init(_HUD->PlayTime);
-			}
-			else
-			{
-				scenes[current_scene]->Unload();
-				CTextures::GetInstance()->Clear();
-				CSprites::GetInstance()->Clear();
-				CAnimations::GetInstance()->Clear();
-				current_scene = scene_id;
-				LPSCENE s = scenes[scene_id];
-				CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
-
-				_PlayScene->__instance = (CPlayScene*)s;
-				_Camera->SetCamPos(0.0f, 0.0f);
-				s->Load();
-				_HUD->Init(_HUD->PlayTime);
-			}
-		}
-	}
+	_Mario->SetLevel(level);
 }

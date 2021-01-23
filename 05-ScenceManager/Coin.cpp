@@ -5,6 +5,7 @@
 
 Coin::Coin() : Item()
 {
+	Category = CATEGORY::ITEM;
 	TypeItem = ITEM_TYPE_COIN;
 
 	ObjType = OBJECT_TYPE_COIN;

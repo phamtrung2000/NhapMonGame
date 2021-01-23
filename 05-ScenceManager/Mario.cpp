@@ -702,76 +702,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vector<LPCOLLISIONEVENT> coEventsResult;
 
 		coEvents.clear();
-		if (state != MARIO_STATE_DIE)
-		{
-			for (UINT i = 0; i < coObjects->size(); i++)
-			{
-				switch (coObjects->at(i)->Category)
-				{
-				case CATEGORY::ITEM:
-				{
-					// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-					{
-
-						if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
-						{
-							coObjects->at(i)->canDelete = true;
-							_HUD->UpdateScore(coObjects->at(i), 0);
-						}
-						else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
-						{
-							QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(coObjects->at(i));
-							questionbrickitem->canDelete = true;
-							_HUD->UpdateScore(questionbrickitem, 0);
-							if (questionbrickitem->Item >= this->level)
-								UpLevel();
-						}
-						else if (coObjects->at(i)->ObjType == OBJECT_TYPE_BRICKITEM)
-						{
-							BrickItem* brickitem = dynamic_cast<BrickItem*>(coObjects->at(i));
-
-							switch (brickitem->Item)
-							{
-							case MUSHROOM:
-							{
-								brickitem->canDelete = true;
-								_HUD->UpdateScore(brickitem, nScore);
-							}
-							break;
-							}
-						}
-					}
-
-
-				}
-				break;
-
-				case CATEGORY::ENEMY:
-				{
-					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-					{
-						Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
-						if (enemy->TypeEnemy == ENEMYTYPE_KOOPAS)
-						{
-							Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-							if (koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT && isHolding == true)
-							{
-								if (untouchable == false)
-									DownLevel();
-							}
-						}
-
-					}
-
-				}
-				break;
-				}
-
-			}
-		}
-
-
+		
 		// turn off collision when die 
 		if (state != MARIO_STATE_DIE)
 			CalcPotentialCollisions(coObjects, coEvents);
@@ -880,6 +811,70 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			x = static_cast<float>(MAP_MAX_WIDTH - Width - 1);
 			vx = 0;
+		}
+
+		for (UINT i = 0; i < coObjects->size(); i++)
+		{
+			switch (coObjects->at(i)->Category)
+			{
+			case CATEGORY::ITEM:
+			{
+				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+				{
+
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
+					{
+						coObjects->at(i)->canDelete = true;
+						_HUD->UpdateScore(coObjects->at(i), 0);
+					}
+					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+					{
+						QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(coObjects->at(i));
+						questionbrickitem->canDelete = true;
+						_HUD->UpdateScore(questionbrickitem, 0);
+						if (questionbrickitem->Item >= this->level)
+							UpLevel();
+					}
+					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_BRICKITEM)
+					{
+						BrickItem* brickitem = dynamic_cast<BrickItem*>(coObjects->at(i));
+
+						switch (brickitem->Item)
+						{
+						case MUSHROOM:
+						{
+							brickitem->canDelete = true;
+							_HUD->UpdateScore(brickitem, nScore);
+						}
+						break;
+						}
+					}
+				}
+			}
+			break;
+
+			/*case CATEGORY::ENEMY:
+			{
+				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+				{
+					Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
+					if (enemy->TypeEnemy == ENEMYTYPE_KOOPAS)
+					{
+						Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+						if (koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT && isHolding == true)
+						{
+							if (untouchable == false)
+								DownLevel();
+						}
+					}
+
+				}
+
+			}
+			break;*/
+			}
+
 		}
 	}
 	Debug();
@@ -3553,7 +3548,9 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				// mario nhảy từ dưới lên va chạm gạch 
 				if (e->ny > 0)
 				{
-					y += min_ty * dy + ny * 0.4f;
+					if (nx != 0) vx = 0;
+					if (ny != 0)vy = 0;
+					//y += min_ty * dy + ny * 0.4f;
 					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
 					// cả 2 đều làm cho mario k nhảy đươc tiếp + rớt xuống
 					if (brick->hasItem == true)
@@ -3607,15 +3604,9 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					y += min_ty * dy + ny * 0.4f;
 				}
 				else if (e->nx != 0)
-				{/*
-					float temp = min_ty * dy + ny * 0.1f - 0.3f;
-					DebugOut(L"temp = %f\n", temp);
-					if (y + temp < this->MaxY)
-						y += temp;
-					else
-						y = float(MaxY - 0.5);*/
-
-					x += min_tx * dx + nx * 0.4f;
+				{
+					if (nx != 0) vx = 0;
+					if (ny != 0)vy = 0;
 					y += min_ty * dy + ny * 0.4f;
 				}
 			}
@@ -3833,17 +3824,19 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 	}
 	else if (e->obj->ObjType == OBJECT_TYPE_CARD)
 	{
+		if (ny != 0) vy = 0;
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
 		Card* card = dynamic_cast<Card*>(e->obj);
 		if (card->GetState() == CARD_STATE_NORMAL)
 		{
 			card->SetState(CARD_STATE_EMPTY);
 			this->SetState(MARIO_STATE_ENDSCENE);
 			_HUD->UpdateItem(card->TypeItem);
-			float a = _Map->GetWidth();
-			float b = _Map->GetHeight();
-			float c = a - a / 10;
-			float d = int(c) % 100;
-			Notification* noti = new Notification(c + d, _Map->GetHeight(), card->TypeItem);
+			float a = _Mario->x;
+			float b = _Mario->y;
+			float c = a - 100;
+			Notification* noti = new Notification(c, b + 50 , card->TypeItem);
 			_PlayScene->objects.push_back(noti);
 			_PlayScene->CourseClear = true;
 		}

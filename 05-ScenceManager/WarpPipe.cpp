@@ -61,24 +61,24 @@ void WarpPipe::Render()
 {
 	if (Color == COLOR_GREEN)
 	{
-		//int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
-		//for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
-		//{
-		//	// vẽ phần đầu
-		//	if (i < 2)
-		//		animation_set->at(i)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
-		//	// vẽ bên trái, i = 2, 4 , 6
-		//	else if (i % 2 == 0)
-		//	{
-		//		animation_set->at(Ani_Body_Left)->Render(x, Y);
-		//	}
-		//	//vẽ bên phải
-		//	else
-		//	{
-		//		animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, Y);
-		//		Y += OBJECT_BBOX_WIDTH_HEIGHT;
-		//	}
-		//}
+		int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
+		for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
+		{
+			// vẽ phần đầu
+			if (i < 2)
+				animation_set->at(i)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
+			// vẽ bên trái, i = 2, 4 , 6
+			else if (i % 2 == 0)
+			{
+				animation_set->at(Ani_Body_Left)->Render(x, Y);
+			}
+			//vẽ bên phải
+			else
+			{
+				animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, Y);
+				Y += OBJECT_BBOX_WIDTH_HEIGHT;
+			}
+		}
 	}
 	else
 	{

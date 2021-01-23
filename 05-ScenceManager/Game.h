@@ -83,6 +83,7 @@ public:
 	int Score,Money;
 	ULONGLONG PlayTime;
 	bool DoneLoad;
+	int MarioLevel;
 
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
@@ -95,7 +96,8 @@ public:
 	void Load(LPCWSTR gameFile);
 	LPSCENE GetCurrentScene() { return scenes[current_scene]; }
 	void SwitchScene(int scene_id);
-	void SwitchScene2(int scene_id); // hàm chuyển cảnh nhưng thay đổi tọa độ mario thay vì khởi tạo như file scnene.txt
+	void SwitchScene2(int scene_id); // hàm chuyển cảnh nhưng thay đổi tọa độ mario thay vì khởi tạo như file scnene.txt ở world map
+	void SwitchScene3(int scene_id, int level);
 	int GetScreenWidth() { return screen_width; }
 	int GetScreenHeight() { return screen_height; }
 	float GetCamX() { return cam_x; }
