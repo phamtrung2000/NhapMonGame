@@ -67,8 +67,11 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (isDisappear == true)
 		{
 			SetPosition(StartX, StartY);
-			if(Health == 2)
+			if (Health == 2)
+			{
 				SetState(KOOPAS_STATE_FLY_DOWN);
+				StartChangeUpDown = GetTickCount64();
+			}
 			else
 				SetState(ENEMY_STATE_WALKING_LEFT);
 			isDisappear = false;

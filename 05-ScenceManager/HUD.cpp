@@ -329,7 +329,7 @@ void HUD::Init(int playtime)
 
 }
 
-void HUD::Update(float dt)
+void HUD::Update(DWORD dt)
 {
 	string scoregame = to_string(this->Score);
 	while (scoregame.length() < 7)

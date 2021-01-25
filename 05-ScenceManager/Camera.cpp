@@ -180,10 +180,10 @@ void Camera::Update()
 		else
 			cam_x = maxRightCam;
 		// camera tu dong di chuyen
-		//_Game->SetCamPos(cam_x, cy);
+		_Game->SetCamPos(cam_x, cy);
 		
 		// cuoi map
-		_Game->SetCamPos(maxRightCam, cy);
+		//_Game->SetCamPos(maxRightCam, cy);
 
 		//_Game->SetCamPos(cx - 100, cy);
 		if (cx < cam_x) // bị đẩy

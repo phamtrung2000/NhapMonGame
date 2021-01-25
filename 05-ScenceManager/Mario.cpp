@@ -304,7 +304,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
-	loseControl = false;
+		loseControl = false;
 		// Calculate dx, dy 
 		CGameObject::Update(dt);
 
@@ -355,8 +355,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 		{
-			CGame::GetInstance()->SwitchScene(Scene);
-			return;
+			if (StartGoHiddenWorld != 0 && GetTickCount64() - StartGoHiddenWorld > 1000)
+			{
+				CGame::GetInstance()->SwitchScene(Scene);
+				return;
+			}
 		}
 
 		if (OnGround == false)
@@ -3177,10 +3180,10 @@ void Mario::Debug()
 
 	}
 
-	if (isAttacking == true)
-		DebugOut(L"isAttacking == true\t");
+	if (GoHiddenWorld == true)
+		DebugOut(L"GoHiddenWorld == true\t");
 	else
-		DebugOut(L"isAttacking == false\t");
+		DebugOut(L"GoHiddenWorld == false\t");
 
 
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
@@ -3872,6 +3875,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 								GoHiddenWorld = true;
 								Scene = pipe->SceneID;
 								vy = 0.03f;
+								StartGoHiddenWorld = GetTickCount64();
+								y += dy;
 							}
 						}
 						else if (e->ny > 0)
@@ -4028,9 +4033,8 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 			Coin* coin = dynamic_cast<Coin*>(e->obj);
 			coin->canDelete = true;
 			_HUD->UpdateScore(coin, 0);
-			x += dx;
-			if (OnGround == false)
-				y += dy;
+			/*if (OnGround == false)
+				y += dy;*/
 		}
 	}
 	else if (e->obj->ObjType == OBJECT_TYPE_CARD)

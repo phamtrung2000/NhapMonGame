@@ -11,6 +11,7 @@
 #include "Mario.h"
 #include "Ground.h"
 #include "EffectHit.h"
+#include "QuestionBrickItem.h"
 
 Koopas::Koopas() : Enemy()
 {
@@ -742,8 +743,30 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
 						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 				}
-				if (brick->GetState() == BRICK_STATE_NORMAL && brick->Item < 10 && (isShell == true || isShell_2 == true))
+				/*if (brick->GetState() == BRICK_STATE_NORMAL && brick->Item < 10 && (isShell == true || isShell_2 == true))
+					brick->SetState(BRICK_STATE_COLLISION);*/
+				
+				if (brick->GetState() == BRICK_STATE_NORMAL && (isShell == true || isShell_2 == true))
+				{
 					brick->SetState(BRICK_STATE_COLLISION);
+					brick->hasItem = false;
+					if (brick->Item > MONEY)
+					{
+						switch (_Mario->level)
+						{
+						case MARIO_LEVEL_SMALL:
+						{
+							brick->Item = MUSHROOM;
+						}break;
+
+						default:
+							brick->Item = LEAF;
+							break;
+						}
+					}
+					QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
+					_PlayScene->objects.push_back(questionbrickitem);
+				}
 			}
 			else if (e->ny < 0)
 			{

@@ -369,7 +369,7 @@ void World1::Update(DWORD dt)
 
 	_Camera->Update();
 	_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
-	CGame::GetInstance()->SetCamPos( (MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4); // chuẩn
+	CGame::GetInstance()->SetCamPos( (float)(MapWidth - game->GetScreenWidth()) / 2, (float)(MapHeight - game->GetScreenHeight()) / 4); // chuẩn
 	_HUD->Update(dt);
 	//DebugOut(L"cam y = %f\n", _Camera->cam_y);
 }
@@ -378,9 +378,9 @@ void World1::Render()
 {
 	// Background đen phía sau
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
-	_Game->Draw((MapWidth - _Game->GetScreenWidth()) / 2, (MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
+	_Game->Draw((int)(MapWidth - _Game->GetScreenWidth()) / 2, (int)(MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
 	_Map->DrawMap();
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
 		if (objects[i]->canDelete != true)
@@ -396,7 +396,7 @@ void World1::Render()
 */
 void World1::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();

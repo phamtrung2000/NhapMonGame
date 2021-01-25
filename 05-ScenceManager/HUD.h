@@ -43,7 +43,7 @@ public:
 	void LoadHUD(wstring);
 	void Init();
 	void Init(int playtime);
-	void Update(float dt);
+	void Update(DWORD dt);
 	void Render();
 	void Unload();
 	~HUD();

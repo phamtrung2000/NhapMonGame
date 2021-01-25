@@ -15,26 +15,6 @@
 #define BLACKAni_Body_Left		6
 #define BLACKAni_Body_Right		7
 
-WarpPipe::WarpPipe(int W, int H)
-{
-	HiddenWorld = false;
-	Width = W;
-	Height = H;
-	ObjType = OBJECT_TYPE_WARPPIPE;
-	Category = CATEGORY::OBJECT;
-	Color = COLOR_GREEN;
-}
-
-WarpPipe::WarpPipe(int W, int H,bool a)
-{
-	HiddenWorld = a;
-	Width = W;
-	Height = H;
-	ObjType = OBJECT_TYPE_WARPPIPE;
-	Category = CATEGORY::OBJECT;
-	Color = COLOR_GREEN;
-}
-
 WarpPipe::WarpPipe(int W, int H, int color,int scene)
 {
 	Width = W;
