@@ -14,6 +14,10 @@ ItemBrick::ItemBrick(int item, float x, float y) : CGameObject()
 	isInit = false;
 	SetState(BRICK_STATE_NORMAL);
 	Category = CATEGORY::OBJECT;
+	if (item == MONEYX10)
+		CountMoney = 10;
+	else
+		CountMoney = 0;
 }
 
 void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -43,11 +47,24 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			}
 			y += dy;
 
-			//
-			if (Start_Y < y)
+			if (Item != MONEYX10)
 			{
-				y = Start_Y;
-				SetState(BRICK_STATE_EMPTY);
+				if (Start_Y < y)
+				{
+					y = Start_Y;
+					SetState(BRICK_STATE_EMPTY);
+				}
+			}
+			else
+			{
+				if (Start_Y < y)
+				{
+					y = Start_Y;
+					SetState(BRICK_STATE_NORMAL);
+				}
+				//CountMoney--;
+				if(CountMoney == 0)
+					SetState(BRICK_STATE_EMPTY);
 			}
 		}
 	}
@@ -57,21 +74,15 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 void ItemBrick::Render()
 {
 	int ani = 0;
-	if (vy == 0)
-	{
+	if (hasItem == true)
 		ani = ANI_BRICK_NORMAL;
-		if (isCollision == true)
-			ani = ANI_BRICK_COLLISION;
-	}
 	else
-	{
 		ani = ANI_BRICK_COLLISION;
-	}
-	/*if(isCollision==true)
-		DebugOut(L"isCollision==true\n");
+
+	/*	DebugOut(L"isCollision==true\n");
 	else
 		DebugOut(L"isCollision==false\n");
-	DebugOut(L"State = %i, Ani = %i\n", state, ani);*/
+	DebugOut(L"State = %i, Ani = %i, count = %i\n", state, ani, CountMoney);*/
 	
 	animation_set->at(ani)->Render(x, y);
 
@@ -87,6 +98,7 @@ void ItemBrick::SetState(int state)
 	case BRICK_STATE_NORMAL:
 	{
 		vy = 0;
+		isCollision = false;
 	}
 	break;
 
@@ -100,7 +112,7 @@ void ItemBrick::SetState(int state)
 	case BRICK_STATE_EMPTY:
 	{
 		vy = 0;
-		isCollision = true;
+		hasItem = false;
 	}break;
 
 	case ITEMBRICK_STATE_DIE:

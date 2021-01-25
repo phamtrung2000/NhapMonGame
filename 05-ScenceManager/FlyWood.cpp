@@ -62,7 +62,7 @@ void FlyWood::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (isCollision == true)
 		{
 			vx = 0;
-			vy += FLYWOOD_GRAVITY * dt;
+			vy += MARIO_GRAVITY * dt;
 			if (y > _Map->GetHeight())
 				canDelete = true;
 		}

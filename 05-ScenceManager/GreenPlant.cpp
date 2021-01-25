@@ -20,7 +20,6 @@ void GreenPlant::CalcAttackZone()
 {
 	if (abs(x - Mario_X) <= MAX_ATTACK_ZONE_X && abs(x - Mario_X) >= MIN_ATTACK_ZONE_X && x - Mario_X >= 0)
 	{
-		
 		// cây đang trạng thái núp và số đạn = 1 thì mới xuất hiện
 		// nếu không có điều kiện số đạn = 1 thì sẽ lặp vô tận 
 		if (GetState() == GREENPLANT_STATE_HIDE && Stop == false)
@@ -43,7 +42,7 @@ void GreenPlant::CalcAttackZone()
 				vy = 0;
 				canAttack = true;
 			}
-			if (NumberBullet == 0)
+			if (NumberBullet == 1)
 				SetState(FIREPIRANHAPLANT_STATE_HIDE);
 		}
 		else
@@ -54,14 +53,14 @@ void GreenPlant::CalcAttackZone()
 void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
-	
+
 	// cho cây mới vô rớt nhanh xuống, chạm đất để isInit = true
 	if (isInit == false)
 		vy += 0.005 * dt;
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 	// bắt đầu đếm thời gian xuất hiện
-	if (Stop==true && AppearTime == 0)
+	if (Stop == true && AppearTime == 0)
 	{
 		AppearTime = GetTickCount64();
 	}
@@ -76,8 +75,8 @@ void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(GREENPLANT_STATE_HIDE);
 		}
 	}
-	
-		
+
+
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -144,8 +143,6 @@ void GreenPlant::Render()
 	ani = GREENPLANT_ANI_APPEAR_HIDE;
 	if (isInit == true)
 		animation_set->at(ani)->Render(x, y);
-	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
-	//RenderBoundingBox();
 }
 
 void GreenPlant::SetState(int state)

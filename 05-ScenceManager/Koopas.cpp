@@ -15,17 +15,19 @@
 Koopas::Koopas() : Enemy()
 {
 	ObjType = OBJECT_TYPE_KOOPAS;
+	SetState(KOOPAS_STATE_WALKING_LEFT);
 	Score = KOOPAS_SCORE;
 	TypeEnemy = ENEMYTYPE_KOOPAS;
 
 	X_max = MAX;
 	X_min = MIN;
 	CountXmaxXmin = false;
-	isKicked = isHold = isShell = isShell_2 =false;
-	SetState(KOOPAS_STATE_INIT);
+	isKicked = isHold = isShell = isShell_2 = false;
+	Width = KOOPAS_BBOX_WIDTH;
+	Height = KOOPAS_BBOX_HEIGHT;
 }
 
-void Koopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
+void Koopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -39,7 +41,7 @@ void Koopas::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		right = x + KOOPAS_BBOX_WIDTH;
 		bottom = y + KOOPAS_BBOX_HEIGHT;
 	}
-		
+
 	if (isHold == true)
 	{
 		left = left - 1.f;
@@ -131,14 +133,12 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								if (dynamic_cast<Ground*>(e->obj))
 								{
-									CountXmaxXmin = false;
 									X_min = MIN;
 									X_max = MAX;
 									if (ny != 0) vy = 0;
 									if (e->ny < 0)
 									{
 										x += min_tx * dx + nx * 0.4f;
-										OnGroud = true;
 									}
 									else if (e->nx != 0)
 									{
@@ -254,7 +254,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 			else if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || GetState() == KOOPAS_STATE_SHELL_HOLD)
-				&& GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
+				&& ReviveTime != 0 && GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
 			{
 				canRevive = true;
 				if (GetTickCount64() - ReviveTime > KOOPAS_REVIVE_TIME)
@@ -264,11 +264,6 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
 					SetState(KOOPAS_STATE_WALKING_RIGHT);
 				}
-			}
-
-			if (vy < 0)
-			{
-				OnGroud = false;
 			}
 
 			vector<LPCOLLISIONEVENT> coEvents;
@@ -307,14 +302,12 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (dynamic_cast<Ground*>(e->obj))
 							{
-								CountXmaxXmin = false;
 								X_min = MIN;
 								X_max = MAX;
 								if (ny != 0) vy = 0;
 								if (e->ny < 0)
 								{
 									x += min_tx * dx + nx * 0.4f;
-									OnGroud = true;
 								}
 								else if (e->nx != 0)
 								{
@@ -353,39 +346,23 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							y += dy;
 						}
 						break;
-
-						case CATEGORY::PLAYER:
+						
+						/*case CATEGORY::PLAYER:
 						{
-							if (e->ny < 0)
+							Mario* mario = dynamic_cast<Mario*>(e->obj);
+							if (e->nx != 0)
 							{
-								Mario* mario = _Mario;
-								x += dx;
-								y += dy;
-								if (this->isShell == false && this->isShell_2 == false)
-								{
-									if (mario->untouchable == false)
-										mario->DownLevel();
-								}
-								else
-								{
-									if (mario->pressA == true)
-									{
-										mario->isHolding = true;
-										this->SetState(KOOPAS_STATE_SHELL_HOLD);
-									}
-									else
-									{
-										mario->canKick = this->isKicked = true;
-										if (this->nx == RIGHT)
-											this->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-										else if (this->nx == LEFT)
-											this->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-										this->vy -= 0.05f;
-									}
-								}
+
 							}
-							
-						}
+							else if (e->ny < 0)
+							{
+
+							}
+							else
+							{
+
+							}
+						}*/
 
 						}
 					}
@@ -395,6 +372,19 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		}
 	}
+
+
+	/*	if (isHold)
+			DebugOut(L"isHold = true\n");
+		else
+			DebugOut(L"isHold = false\n");
+
+		if (isKicked)
+			DebugOut(L"isKicked = true\n");
+		else
+			DebugOut(L"isKicked = false\n");
+
+		DebugOut(L"vx = %f, dx = %f, state = %i\n", vx, dx, state);*/
 }
 
 void Koopas::Render()
@@ -413,7 +403,7 @@ void Koopas::Render()
 		if (canRevive == true)
 			ani = KOOPAS_ANI_SHELL_2_REVIVE;
 	}
-	if (vx > 0 && isHold==false)
+	if (vx > 0 && isHold == false)
 	{
 		ani = KOOPAS_ANI_WALKING_RIGHT;
 		if (isShell == true)
@@ -425,7 +415,7 @@ void Koopas::Render()
 			ani = KOOPAS_ANI_SHELL_2_WALKING_RIGHT;
 		}
 	}
-	else if (vx < 0 && isHold==false)
+	else if (vx < 0 && isHold == false)
 	{
 		ani = KOOPAS_ANI_WALKING_LEFT;
 		if (isShell == true)
@@ -437,11 +427,9 @@ void Koopas::Render()
 			ani = KOOPAS_ANI_SHELL_2_WALKING_LEFT;
 		}
 	}
-	
-	
+
 	animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
 }
 
 void Koopas::SetState(int state)
@@ -458,7 +446,6 @@ void Koopas::SetState(int state)
 		isShell_2 = false;
 		vx = 0;
 		isKicked = false;
-	
 	}
 	break;
 
@@ -468,16 +455,14 @@ void Koopas::SetState(int state)
 		isShell_2 = true;
 		isKicked = false;
 		vx = 0;
-		
 	}
 	break;
 
 	case KOOPAS_STATE_SHELL_HOLD:
 	{
-		isHold =  true;
+		isHold = true;
 		y = (INT16)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
 		vy = 0;
-		CountXmaxXmin = false;
 	}
 	break;
 
@@ -496,9 +481,7 @@ void Koopas::SetState(int state)
 	{
 		isHold = isShell = isShell_2 = false;
 		vx = KOOPAS_WALKING_SPEED;
-	
 		nx = 1;
-		//CountXmaxXmin = false;
 	}break;
 
 	case KOOPAS_STATE_WALKING_LEFT:
@@ -514,7 +497,6 @@ void Koopas::SetState(int state)
 		vx = KOOPAS_SHELL_SPEED;
 		nx = RIGHT;
 		isHold = false;
-		//CountXmaxXmin = false;
 	}break;
 
 	case KOOPAS_STATE_SHELL_WALKING_LEFT:
@@ -522,16 +504,7 @@ void Koopas::SetState(int state)
 		vx = -KOOPAS_SHELL_SPEED;
 		nx = LEFT;
 		isHold = false;
-		//CountXmaxXmin = false;
 	}break;
-
-	case KOOPAS_STATE_INIT:
-	{
-		vx = 0;
-		nx = LEFT;
-		isHold = isShell = isShell_2 = false;
-	}break;
-	
 
 	}
 
@@ -627,7 +600,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				{
 					enemy->nx = this->nx;
 					enemy->SetState(GOOMBA_STATE_DIE_2);
-					
+
 					auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
 					_PlayScene->objects.push_back(hit);
 					_Mario->nScore++;
@@ -693,33 +666,8 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 
 void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
-	Enemy::CollisionWithObject(e, min_tx, min_ty, nx, ny);
-	
 	if (e->obj != NULL)
 	{
-		if (e->ny < 0)
-		{
-			OnGroud = true;
-			if (CountXmaxXmin == false)
-			{
-				float a = vx;
-				if (e->obj->ObjType == OBJECT_TYPE_ITEMBRICK || e->obj->ObjType == OBJECT_TYPE_BRICK)
-				{
-					X_min = e->obj->x - ITEMBRICK_WIDTH / 2 - 2;
-					X_max = X_min + ITEMBRICK_WIDTH - 2;
-					CountXmaxXmin = true;
-					SetState(KOOPAS_STATE_WALKING_RIGHT);
-				}
-				else
-				{
-					X_min = e->obj->x;
-					X_max = X_min + (e->obj->Width - 16);
-					CountXmaxXmin = true;
-					SetState(KOOPAS_STATE_WALKING_RIGHT);
-				}
-
-			}
-		}
 		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
@@ -728,8 +676,15 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 			{
 				x += dx;
 			}
-			else if (e->ny < 0 )
+			else if (e->ny < 0)
 			{
+				if (CountXmaxXmin == false)
+				{
+					Block* block = dynamic_cast<Block*>(e->obj);
+					X_min = block->x;
+					X_max = X_min + (block->Width - 16);
+					CountXmaxXmin = true;
+				}
 				x += min_tx * dx + nx * 0.4f;
 			}
 		}
@@ -760,7 +715,7 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 						this->nx = -this->nx;
 						this->vx = -this->vx;
 					}
-				
+
 				}
 			}
 			else if (e->ny != 0)
@@ -802,6 +757,12 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 			if (e->ny < 0)
 			{
 				this->x += min_tx * dx + nx * 0.4f;
+				if (CountXmaxXmin == false)
+				{
+					X_min = brick->x - ITEMBRICK_WIDTH / 2 - 2;
+					X_max = X_min + ITEMBRICK_WIDTH - 2;
+					CountXmaxXmin = true;
+				}
 			}
 			else if (e->nx != 0)
 			{
@@ -814,7 +775,7 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 				}
 				else
 				{
-					brick->SetState(ITEMBRICK_STATE_DIE);
+					brick->canDelete = true;
 					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
 						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
 					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
@@ -827,11 +788,24 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 		{
 			if (ny != 0) vy = 0;
 			Brick* brick = dynamic_cast<Brick*>(e->obj);
-		
+
 			if (e->nx != 0)
 			{
-				x += min_tx * dx + nx * 0.4f;
 				y += min_ty * dy + ny * 0.1f - 0.4f;
+				if (isShell == false && isShell_2 == false)
+				{
+					if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
+						SetState(KOOPAS_STATE_WALKING_RIGHT);
+				}
+				else
+				{
+					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+				}
 			}
 			else if (e->ny < 0)
 			{

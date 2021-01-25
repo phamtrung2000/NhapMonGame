@@ -35,7 +35,7 @@
 [MAP]
 10000	.\textures\World\World1\SceneHidden1.4Tile.png	255	255	255	.\textures\World\World1\SceneHidden1.4Map.txt
 [SETTINGS]
-cam	0	10	490	192	0
+cam	0	30	490	30	0
 time	300
 scene	2
 # id	left	top	right	bottom	texture_id

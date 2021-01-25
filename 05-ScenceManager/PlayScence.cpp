@@ -22,6 +22,7 @@
 #include "Card.h"
 #include "FlyWood.h"
 #include"BoomerangEnemy.h"
+#include "RedFlyKoopas.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -244,6 +245,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GREENFLYKOOPAS:
 	{
 		obj = new GreenFlyKoopas();
+		obj->StartX = x;
+		obj->StartY = y;
+	}
+	break;
+	case OBJECT_TYPE_REDFLYKOOPAS:
+	{
+		obj = new RedFlyKoopas();
 		obj->StartX = x;
 		obj->StartY = y;
 	}
@@ -526,6 +534,7 @@ void CPlayScene::Update(DWORD dt)
 
 	if (this->Stop == false)
 	{
+		_Camera->Update();
 		// Tạo đạn lửa khi _Mario bắn lửa
 		if (_Mario->level == MARIO_LEVEL_FIRE && _Mario->isAttacking == true && (_Mario->ani == MARIO_ANI_FIRE_ATTACK_RIGHT_2 || _Mario->ani == MARIO_ANI_FIRE_ATTACK_LEFT_2))
 		{
@@ -538,7 +547,6 @@ void CPlayScene::Update(DWORD dt)
 					FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
 					fb->FireMario = true;
 					// chiều của viên đạn
-					fb->nx = _Mario->nx;
 
 					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
@@ -560,7 +568,6 @@ void CPlayScene::Update(DWORD dt)
 					FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
 					fb->FireMario = true;
 					// chiều của viên đạn
-					fb->nx = _Mario->nx;
 
 					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
@@ -766,7 +773,7 @@ void CPlayScene::Update(DWORD dt)
 			objects[i]->Update(dt, &coObjects);
 		}
 		//_Mario->Update(dt, &coObjects);
-		_Camera->Update();
+		
 		_HUD->Update(dt);
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 		if (_Mario == NULL) return;
@@ -775,6 +782,7 @@ void CPlayScene::Update(DWORD dt)
 	}
 	else
 	{
+		if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
 		_Mario->Update(dt, &coObjects);
 	}
 }
@@ -853,7 +861,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_U:
 	{
-		_Mario->UpLevel();
+		//_Mario->UpLevel();
+		_Mario->untouchable = true;
 	}break;
 
 	case DIK_I:
@@ -863,7 +872,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_S:
 	{
-		//DebugOut(L"\nDown S\n");
+		DebugOut(L"Down S\n");
 		_Mario->pressS = true;
 		if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isFalling == true)
 		{
@@ -1022,7 +1031,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	Mario* mario = _Mario;
 
 	// disable control key when Mario die 
-	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE) 
+	if (_Mario->GetState() == MARIO_STATE_DIE || _Mario->GetState() == MARIO_STATE_ENDSCENE || _Mario->loseControl==true) 
 		return;
 
 

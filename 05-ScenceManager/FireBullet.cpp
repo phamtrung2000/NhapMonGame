@@ -9,7 +9,7 @@
 #include "Utils.h"
 #include "PlayScence.h"
 #include "GreenFlyKoopas.h"
-
+#include "BoomerangEnemy.h"
 
 void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -81,6 +81,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									this->canDelete = true;
 									auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
 									_PlayScene->objects.push_back(hit);
+									_HUD->UpdateScore(goomba, 1);
 								}
 							}
 						}break;
@@ -99,10 +100,27 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								this->canDelete = true;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
 								_PlayScene->objects.push_back(hit);
+								_HUD->UpdateScore(koopas, 1);
 								
 							}
 						}
 						break;
+
+						case ENEMYTYPE_BOOMERANG:
+						{
+							BoomerangEnemy* boom = dynamic_cast<BoomerangEnemy*>(e->obj);
+							if (boom->isDie == false)
+							{
+								boom->nx = this->Direction;
+								boom->SetState(BOOMERANGENEMY_STATE_DIE_2);
+								this->canDelete = true;
+								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
+								_PlayScene->objects.push_back(hit);
+								_HUD->UpdateScore(boom, 1);
+							}
+						}
+						break;
+
 
 						default:
 							e->obj->canDelete = this->canDelete = true;
@@ -190,6 +208,7 @@ FireBullet::FireBullet(float a, float b)
 	ObjType = OBJECT_TYPE_FIREBULLET;
 	x = a;
 	y = b;
+	this->Direction = _Mario->nx;
 	Category = CATEGORY::WEAPON;
 	SetSpeed(FIREBULLET_VX_SPEED * _Mario->nx, 0);
 }

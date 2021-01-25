@@ -11,7 +11,7 @@
 Goomba::Goomba() : Enemy()
 {
 	ObjType = OBJECT_TYPE_GOOMBA;
-	SetState(GOOMBA_STATE_WALKING_RIGHT);
+	SetState(GOOMBA_STATE_WALKING_LEFT);
 	Score = GOOMBA_SCORE;
 	TypeEnemy = ENEMYTYPE_GOOMBA;
 }
@@ -197,7 +197,12 @@ void Goomba::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 
 void Goomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
-	if (dynamic_cast<WarpPipe*>(e->obj) || dynamic_cast<QuestionBrick*>(e->obj))
+	if (dynamic_cast<Block*>(e->obj))
+	{
+		this->vx = this->nx * GOOMBA_WALKING_SPEED;
+		x += dx;
+	}
+	else
 	{
 		if (e->nx != 0)
 		{
@@ -205,12 +210,11 @@ void Goomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 			this->vx = this->nx * GOOMBA_WALKING_SPEED;
 			x += dx;
 		}
-
-	}
-	else if (dynamic_cast<Block*>(e->obj))
-	{
-		this->vx = this->nx * GOOMBA_WALKING_SPEED;
-		x += dx;
+		else
+		{
+			x += dx;
+			this->y += min_ty * dy + ny * 0.1f - 0.5f;
+		}
 	}
 }
 

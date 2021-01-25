@@ -8,6 +8,7 @@
 #include "WarpPipe.h"
 #include "Goomba.h"
 #include "Block.h"
+#include "EffectScore.h"
 
 #define BRICKITEM_ANISET_ID	14
 
@@ -19,9 +20,14 @@
 
 #define	BUTTONP_ANI_NORMAL		1
 #define	BUTTONP_ANI_PRESS		2
+
 #define	BUTTONP_BBOX_WIDTH	16
 #define BUTTONP_BBOX_HEIGHT	16	
 #define BUTTONP_PRESS_BBOX_HEIGHT	6
+
+#define BRICKITEM_MONEY_ANI		3
+#define MONEY_GRAVITY					0.0007f
+#define MONEY_SPEED_Y					0.3f
 
 
 BrickItem::BrickItem(int item, float x, float y) : Item()
@@ -29,7 +35,13 @@ BrickItem::BrickItem(int item, float x, float y) : Item()
 	TypeItem = ITEM_TYPE_BRICKITEM;
 	Start_X = x;
 	Start_Y = y;
-	Score = 1000;
+	switch (item)
+	{
+	case BRICKITEM_MONEY:
+		Score = 100; break;
+	case MUSHROOM:
+		Score = 1000; break;
+	}
 
 	ChangeToCoin = isPressed = isInit = false;
 	Item = item;
@@ -43,6 +55,13 @@ BrickItem::BrickItem(int item, float x, float y) : Item()
 	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICKITEM);
 	this->SetAnimationSet(ani_set);
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+
+	if (item == BRICKITEM_MONEY)
+		AppearTime = GetTickCount64();
+	else
+		AppearTime = 0;
+
+
 }
 
 void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -144,38 +163,51 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}break;
 
-	case BUTTONP:
-	{
-		if (isPressed == true && ChangeToCoin == false)
+		case BUTTONP:
 		{
-			for (UINT i = 0; i < coObjects->size(); i++)
+			if (isPressed == true && ChangeToCoin == false)
 			{
-				if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
+				for (UINT i = 0; i < coObjects->size(); i++)
 				{
-					ItemBrick* itembrick = (ItemBrick*)coObjects->at(i);
-					if (itembrick->Item == NORMAL)
+					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
 					{
+						ItemBrick* itembrick = (ItemBrick*)coObjects->at(i);
+						if (itembrick->Item == NORMAL)
+						{
 						
-						itembrick->canDelete = true;
-						/*auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
-						smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
-						_PlayScene->objects.push_back(smoke);*/
+							itembrick->canDelete = true;
+							/*auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
+							smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
+							_PlayScene->objects.push_back(smoke);*/
 						
-						Coin* coin = new Coin();
-						coin->SetPosition(itembrick->x, itembrick->y);
-						coin->isBrickToCoin = true;
-						coin->AppearTime = GetTickCount64();
-						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-						LPANIMATION_SET ani_set = animation_sets->Get(12);
-						coin->SetAnimationSet(ani_set);
-						_PlayScene->objects.push_back(coin);
+							Coin* coin = new Coin();
+							coin->SetPosition(itembrick->x, itembrick->y);
+							coin->isBrickToCoin = true;
+							coin->AppearTime = GetTickCount64();
+							CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+							LPANIMATION_SET ani_set = animation_sets->Get(12);
+							coin->SetAnimationSet(ani_set);
+							_PlayScene->objects.push_back(coin);
+						}
 					}
 				}
+				ChangeToCoin = true;
 			}
-			ChangeToCoin = true;
-		}
-	}break;
+		}break;
 
+		case BRICKITEM_MONEY:
+		{
+			vy += MONEY_GRAVITY * dt;
+			if (GetTickCount64() - AppearTime >= 800)
+			{
+				canDelete = true;
+				EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
+				_PlayScene->objects.push_back(Score);
+				_HUD->UpdateScore(this, 0);
+			}
+			y += dy;
+
+		}break;
 	}
 }
 
@@ -196,6 +228,9 @@ void BrickItem::Render()
 				ani = BUTTONP_ANI_PRESS;
 		}break;
 
+		case BRICKITEM_MONEY:
+			ani = BRICKITEM_MONEY_ANI;
+			break;
 	}
 
 	animation_set->at(ani)->Render(x, y);
@@ -220,6 +255,10 @@ void BrickItem::SetState(int state)
 
 			case BUTTONP:
 				isPressed = false;
+				break;
+
+			case BRICKITEM_MONEY:
+				vy = -MONEY_SPEED_Y;
 				break;
 		}
 

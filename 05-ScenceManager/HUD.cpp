@@ -8,6 +8,7 @@
 #include "EffectScore.h"
 #include "QuestionBrickItem.h"
 #include "Card.h"
+#include "BrickItem.h"
 
 #define HEIGHT_SCORE_BROAD 28
 #define ID_TEX_HUB 12
@@ -124,9 +125,24 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 
 				case ITEM_TYPE_BRICKITEM:
 				{
-					this->MarioLife++;
-					EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, 10000);
-					_PlayScene->objects.push_back(effectscore);
+					BrickItem* bitem = dynamic_cast<BrickItem*>(item);
+					switch (bitem->Item)
+					{
+						case MUSHROOM:
+						{
+							this->MarioLife++;
+							EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, 10000);
+							_PlayScene->objects.push_back(effectscore);
+						}
+					break;
+						case MONEY:
+						{
+							score = item->Score;
+							this->Score += item->Score;
+							this->Money++;
+						}
+					}
+					
 				}
 				break;
 

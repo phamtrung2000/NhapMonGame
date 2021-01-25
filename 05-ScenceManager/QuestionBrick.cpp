@@ -69,7 +69,7 @@ void QuestionBrick::SetState(int state)
 	{
 	case BRICK_STATE_NORMAL:
 	{
-		vy = 0;
+		vx = vy = 0;
 	}
 	break;
 

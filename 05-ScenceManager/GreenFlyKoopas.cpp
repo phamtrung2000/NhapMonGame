@@ -40,7 +40,45 @@ void GreenFlyKoopas::GetBoundingBox(float& left, float& top, float& right, float
 
 void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	Enemy::Update(dt, coObjects);
+	//Enemy::Update(dt, coObjects);
+
+	CGameObject::Update(dt, coObjects);
+	// đầu màn hình
+	float cam_x = _Camera->cam_x;
+	float camxx = _Game->GetCamX();
+	float camy = _Game->GetCamY();
+	// chiều dài màn hình
+	int cam_w = CGame::GetInstance()->GetScreenWidth();
+	int cam_h = CGame::GetInstance()->GetScreenHeight();
+
+	//DebugOut(L"x = %f, cam_x = %i ,cam_w = %i\n", x, cam_x, cam_w);
+	float a = camy + static_cast<float>(cam_h) - 50;
+	float b = camy - 50;
+	// ra khỏi camera -> delete
+	if ((StartX > camxx + static_cast<float>(cam_w) + 100 || StartX + this->Width < camxx - 100))
+		//&& ( StartY > a || StartY + this->Height < b))
+	{
+		isDisappear = true;
+		return;
+	}
+	else
+	{
+		if (isDisappear == true)
+		{
+			SetPosition(StartX, StartY);
+			SetState(ENEMY_STATE_WALKING_LEFT);
+			isDisappear = false;
+		}
+	}
+
+	if (isAttacked == true)
+	{
+		if (Time_isAttacked != 0 && GetTickCount64() - Time_isAttacked > ENEMY_TIME_ISATTACKED)
+		{
+			isAttacked = false;
+			Time_isAttacked = 0;
+		}
+	}
 	if (isDisappear == false)
 	{
 		if (GetState() == KOOPAS_STATE_SHELL_HOLD)

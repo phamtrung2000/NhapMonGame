@@ -78,8 +78,6 @@ void CGameObject::CalcPotentialCollisions(
 
 		if (e->t > 0 && e->t <= 1.0f)
 			coEvents.push_back(e);
-		/*if(IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true && e->t > 0 && e->t <= 1.0f)
-			coEvents.push_back(e);*/
 		else
 			delete e;
 	}
@@ -105,8 +103,8 @@ void CGameObject::FilterCollision(
 
 	for (UINT i = 0; i < coEvents.size(); i++)
 	{
-
 		LPCOLLISIONEVENT c = coEvents[i];
+
 		if (c->t < min_tx && c->nx != 0) {
 			min_tx = c->t; nx = c->nx; min_ix = i; rdx = c->dx;
 		}
@@ -116,8 +114,8 @@ void CGameObject::FilterCollision(
 		}
 	}
 
-	if (min_ix>=0) coEventsResult.push_back(coEvents[min_ix]);
-	if (min_iy>=0) coEventsResult.push_back(coEvents[min_iy]);
+	if (min_ix >= 0) coEventsResult.push_back(coEvents[min_ix]);
+	if (min_iy >= 0) coEventsResult.push_back(coEvents[min_iy]);
 }
 
 

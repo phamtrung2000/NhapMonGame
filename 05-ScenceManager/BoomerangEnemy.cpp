@@ -27,6 +27,7 @@ BoomerangEnemy::BoomerangEnemy() : Enemy()
 {
 	countThrow = 0;
 	ObjType = OBJECT_TYPE_BOOMERANGENEMY;
+	TypeEnemy = ENEMYTYPE_BOOMERANG;
 	CanThrow = false;
 	Width = BOOMERANGENEMY_WIDTH_BBOX;
 	Height = BOOMERANGENEMY_HEIGHT_BBOX;
@@ -52,11 +53,12 @@ BoomerangEnemy::BoomerangEnemy(float x, float y) : Enemy()
 	StartY = y;
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
-	TimeToThrow = 100;
-
+	TimeToThrow = 300;
+	TypeEnemy = ENEMYTYPE_BOOMERANG;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BOOMERANGENEMY);
 	this->SetAnimationSet(ani_set);
+	weapon = NULL;
 }
 
 void BoomerangEnemy::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -69,153 +71,182 @@ void BoomerangEnemy::GetBoundingBox(float& left, float& top, float& right, float
 
 void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	Enemy::Update(dt, coObjects);
-	if (isDisappear == false)
 	{
-		if (vx < 0 && x < 0)
+		Enemy::Update(dt, coObjects);
+		if (isDisappear == false)
 		{
-			x = 0;
-			vx = -vx;
-			nx = -nx;
-		}
-		TimeToThrow++;
-		if (_Mario->x < this->x)
-		{
-			nx = LEFT;
-			if (TimeToMove != 0 && GetTickCount64() - TimeToMove > 1500 && abs(_Mario->x - this->x) >= 20)
-			{
-				vx = -vx;
-				TimeToMove = GetTickCount64();
-			}
+			//if (GetState() != BOOMERANGENEMY_STATE_DIE)
+			vy += BOOMERANGENEMY_GRAVITY * dt;
 
-			if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
+			if (state == BOOMERANGENEMY_STATE_DIE)
 			{
-				SetState(BOOMERANGENEMY_STATE_JUMPING_RIGHT);
-				TimeToJump = GetTickCount64();
-			}
-
-			if (TimeToThrow != 0 && TimeToThrow > 400)
-			{
-				SetState(BOOMERANGENEMY_STATE_THROWING_LEFT);
-				TimeStartThrow = GetTickCount64();
-				TimeToThrow = 0;
-			}
-		}
-		else
-		{
-			nx = RIGHT;
-			if (TimeToMove != 0 && GetTickCount64() - TimeToMove > 1500 && abs(_Mario->x - this->x) >= 20)
-			{
-				vx = -vx;
-				TimeToMove = GetTickCount64();
-			}
-
-			if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
-			{
-				SetState(BOOMERANGENEMY_STATE_JUMPING_LEFT);
-				TimeToJump = GetTickCount64();
-			}
-
-			if (TimeToThrow != 0 && TimeToThrow > 400)
-			{
-				SetState(BOOMERANGENEMY_STATE_THROWING_RIGHT);
-				TimeStartThrow = GetTickCount64();
-				TimeToThrow = 0;
-			}
-		}
-			
-		if (CanThrow == true) 
-		{
-			if (isThrow == false)
-			{
-				CreateBoomerang();
-				isThrow = true;
-			}
-			if (isThrow == true)
-			{
-				ULONGLONG  a = GetTickCount64() - TimeStartThrow;
-				weapon->SetPosition(this->x - 2, this->y - 5);
-				if (TimeStartThrow != 0 && a > 1000)
+				x += dx;
+				y += dy;
+				weapon->canDelete = true;
+				if (y > _Map->GetHeight() + 50)
 				{
-					weapon->SetSpeed(this->nx * 0.1f, -0.015f);
-					isThrow = true;
-					TimeStartThrow = 0;
-					if (nx == RIGHT)
-						SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
-					else
-						SetState(BOOMERANGENEMY_STATE_WALKING_LEFT);
-					CanThrow = isThrow = false;
-					
+					canDelete = true;
+				}
+				return;
+			}
+			else if (state == BOOMERANGENEMY_STATE_DIE_2)
+			{
+				x += dx;
+				y += dy;
+				weapon->canDelete = true;
+				if (y > _Map->GetHeight() + 50)
+				{
+					canDelete = true;
+				}
+				return;
+			}
+			if (vx < 0 && x < 0)
+			{
+				x = 0;
+				vx = -vx;
+				nx = -nx;
+			}
+			TimeToThrow++;
+			if (_Mario->x < this->x)
+			{
+				nx = LEFT;
+				if (TimeToMove != 0 && GetTickCount64() - TimeToMove > 1500 && abs(_Mario->x - this->x) >= 20)
+				{
+					vx = -vx;
+					TimeToMove = GetTickCount64();
+				}
+
+				if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
+				{
+					SetState(BOOMERANGENEMY_STATE_JUMPING_RIGHT);
+					TimeToJump = GetTickCount64();
+				}
+
+				if (TimeToThrow != 0 && TimeToThrow > 400)
+				{
+					SetState(BOOMERANGENEMY_STATE_THROWING_LEFT);
+					TimeStartThrow = GetTickCount64();
+					TimeToThrow = 0;
 				}
 			}
-			
-		}
-
-		vy += BOOMERANGENEMY_GRAVITY * dt;
-		vector<LPCOLLISIONEVENT> coEvents;
-		vector<LPCOLLISIONEVENT> coEventsResult;
-		coEvents.clear();
-
-		CalcPotentialCollisions(coObjects, coEvents);
-
-		if (coEvents.size() == 0) {
-			x += dx;
-			y += dy;
-		}
-		else 
-		{
-			float min_tx, min_ty, nx = 0, ny;
-			float rdx = 0;
-			float rdy = 0;
-
-			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-			if (ny != 0) vy = 0;
-			for (UINT i = 0; i < coEventsResult.size(); i++) {
-				LPCOLLISIONEVENT e = coEventsResult[i];
-				if (e->obj)
+			else
+			{
+				nx = RIGHT;
+				if (TimeToMove != 0 && GetTickCount64() - TimeToMove > 1500 && abs(_Mario->x - this->x) >= 20)
 				{
-					switch (e->obj->Category)
+					vx = -vx;
+					TimeToMove = GetTickCount64();
+				}
+
+				if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
+				{
+					SetState(BOOMERANGENEMY_STATE_JUMPING_LEFT);
+					TimeToJump = GetTickCount64();
+				}
+
+				if (TimeToThrow != 0 && TimeToThrow > 400)
+				{
+					SetState(BOOMERANGENEMY_STATE_THROWING_RIGHT);
+					TimeStartThrow = GetTickCount64();
+					TimeToThrow = 0;
+				}
+			}
+
+			if (CanThrow == true)
+			{
+				if (isThrow == false)
+				{
+					CreateBoomerang();
+					isThrow = true;
+				}
+				if (isThrow == true)
+				{
+					ULONGLONG  a = GetTickCount64() - TimeStartThrow;
+					weapon->SetPosition(this->x - 2, this->y - 5);
+					weapon->SetSpeed(0, 0);
+					if (TimeStartThrow != 0 && a > 1000)
 					{
-					case CATEGORY::GROUND:
+						weapon->SetSpeed(this->nx * 0.1f, -0.015f);
+						isThrow = true;
+						TimeStartThrow = 0;
+						if (nx == RIGHT)
+							SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
+						else
+							SetState(BOOMERANGENEMY_STATE_WALKING_LEFT);
+						CanThrow = isThrow = false;
+
+					}
+				}
+
+			}
+
+
+			vector<LPCOLLISIONEVENT> coEvents;
+			vector<LPCOLLISIONEVENT> coEventsResult;
+			coEvents.clear();
+
+			CalcPotentialCollisions(coObjects, coEvents);
+
+			if (coEvents.size() == 0) {
+				x += dx;
+				y += dy;
+			}
+			else
+			{
+				float min_tx, min_ty, nx = 0, ny;
+				float rdx = 0;
+				float rdy = 0;
+
+				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+				if (ny != 0) vy = 0;
+				for (UINT i = 0; i < coEventsResult.size(); i++) {
+					LPCOLLISIONEVENT e = coEventsResult[i];
+					if (e->obj)
 					{
-						if (dynamic_cast<Ground*>(e->obj))
+						switch (e->obj->Category)
 						{
-							if (ny != 0) vy = 0;
-							if (e->ny < 0)
+						case CATEGORY::GROUND:
+						{
+							if (dynamic_cast<Ground*>(e->obj))
 							{
-								x += min_tx * dx + nx * 0.4f;
-								y += min_ty * dy + ny * 0.1f - 0.3f;
+								if (ny != 0) vy = 0;
+								if (e->ny < 0)
+								{
+									x += min_tx * dx + nx * 0.4f;
+									y += min_ty * dy + ny * 0.1f - 0.3f;
+								}
+
 							}
-							
+						}
+						break;
+
+						case CATEGORY::OBJECT:
+							CollisionWithObject(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::ENEMY:
+							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::ITEM:
+							CollisionWithItem(e, min_tx, min_ty, nx, ny);
+							break;
+
+						case CATEGORY::WEAPON:
+							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+							break;
+
+
 						}
 					}
-					break;
-
-					case CATEGORY::OBJECT:
-						CollisionWithObject(e, min_tx, min_ty, nx, ny);
-						break;
-
-					case CATEGORY::ENEMY:
-						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-						break;
-
-					case CATEGORY::ITEM:
-						CollisionWithItem(e, min_tx, min_ty, nx, ny);
-						break;
-
-					case CATEGORY::WEAPON:
-						CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-						break;
-
-
-					}
 				}
 			}
+			// clean up collision events
+			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 		}
-		// clean up collision events
-		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
+	
 }
 
 
@@ -267,7 +298,7 @@ void BoomerangEnemy::SetState(int state)
 
 	case BOOMERANGENEMY_STATE_DIE:
 	{
-		vx = 0;
+		vx = 0.0f;
 		vy = BOOMERANGENEMY_GRAVITY;
 		isDie = true;
 	}break;
@@ -353,7 +384,7 @@ void BoomerangEnemy::CreateBoomerang()
 void BoomerangEnemy::Render()
 {
 	int ani = BOOMERANGENEMY_ANI_WALKING_RIGHT;
-	if (state == BOOMERANGENEMY_STATE_DIE)
+	if (isDie == true )
 	{
 		if (nx == RIGHT)
 			ani = BOOMERANGENEMY_ANI_DIE_RIGHT;

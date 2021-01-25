@@ -1,5 +1,6 @@
 #include "Item.h"
 
+#define BRICKITEM_MONEY							3
 #define MUSHROOM						1
 #define BUTTONP							2
 
@@ -15,6 +16,7 @@ public:
 	int Item;
 	// BUTTON P
 	bool isPressed, ChangeToCoin;
+	ULONGLONG AppearTime;
 
 	BrickItem(int item, float x = 0.0f, float y = 0.0f);
 	~BrickItem() {};

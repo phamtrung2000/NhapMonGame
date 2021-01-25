@@ -13,6 +13,7 @@ class FireBullet :	public CGameObject
 {
 public:
 	bool FireMario;
+	int Direction;
 	FireBullet(float a, float b);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();

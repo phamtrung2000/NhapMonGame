@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #define ITEMBRICK_SPEED_Y	0.05f
@@ -15,7 +15,7 @@
 #define NORMAL	0
 #define MUSHROOM 1
 #define BUTTONP	2
-
+#define MONEYX10 3
 #define ITEMBRICK_WIDTH	16.0f
 #define ITEMBRICK_ANISET_ID	13
 
@@ -27,6 +27,7 @@ public:
 	bool hasItem;
 	int Item;
 	bool check;
+	int CountMoney;
 public:
 	ItemBrick(int item, float x = 0.0f, float y = 0.0f);
 	void Render();
@@ -34,4 +35,3 @@ public:
 	void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };
-

@@ -28,6 +28,8 @@
 #include "FlyWood.h"
 #include "BoomerangWeapon.h"
 #include "Notification.h"
+#include "BoomerangEnemy.h"
+#include "RedFlyKoopas.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -41,6 +43,7 @@ Mario* Mario::GetInstance()
 Mario::Mario(float x, float y) : CGameObject()
 {
 	ObjType = OBJECT_TYPE_MARIO;
+	Category = CATEGORY::PLAYER;
 	level = MARIO_LEVEL_SMALL;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
@@ -301,6 +304,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
+	loseControl = false;
 		// Calculate dx, dy 
 		CGameObject::Update(dt);
 
@@ -313,7 +317,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				time_fly = 0;
 				canFlyX = isFlyingHigh = false;
 				vy = 0;
-				//SetState(MARIO_STATE_IDLE);
+				SetState(MARIO_STATE_IDLE);
 			}
 		}
 		else if (canFlyS == true)
@@ -330,7 +334,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				time_fly = 0;
 				isMaxRunning = canFlyS = isFlyingHigh = false;
 				vy = 0;
-				//SetState(MARIO_STATE_IDLE);
+				SetState(MARIO_STATE_IDLE);
 			}
 		}
 
@@ -357,7 +361,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (OnGround == false)
 		{
-			if (level_of_running > 0)
+			if (level_of_running > 0 && isMaxRunning == false)
 				level_of_running--;
 			if (pressS == false && TimeJumpS != 0 && GetTickCount64() - TimeJumpS > 100 && isFalling == false)
 			{
@@ -468,11 +472,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else
 					{
-						vx = level_of_walking * GIA_TOC;
+						if (isMaxRunning == false)
+							vx = level_of_walking * GIA_TOC;
+						else
+							vx = MARIO_RUNNING_MAX_SPEED;
 					}
 				}
 			}
-			if (isSitDown == true) // TH vừa ngồi vừa đi thì ưu tiên ani đi bộ
+			if (isSitDown == true && level != MARIO_LEVEL_SMALL) // TH vừa ngồi vừa đi thì ưu tiên ani đi bộ
 			{
 				y = y - 10;
 				isSitDown = false;
@@ -553,7 +560,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			}
-			if (isSitDown == true)
+			if (isSitDown == true && level != MARIO_LEVEL_SMALL)
 			{
 				y = y - 10;
 				isSitDown = false;
@@ -675,11 +682,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}break;
 		}
 
-		if (vy < 0 && y < 0)
-		{
-			y = 0;
-		}
-		else if (y > _Map->GetHeight())
+		if (y > _Map->GetHeight())
 		{
 			SetState(MARIO_STATE_DIE);
 			CGame::GetInstance()->SwitchScene2(1);
@@ -725,6 +728,69 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			x += dx;
 			y += dy;
+			for (UINT i = 0; i < coObjects->size(); i++)
+			{
+				switch (coObjects->at(i)->Category)
+				{
+				case CATEGORY::ITEM:
+				{
+					// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+					{
+
+						if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
+						{
+							coObjects->at(i)->canDelete = true;
+							_HUD->UpdateScore(coObjects->at(i), 0);
+						}
+						else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
+						{
+							QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(coObjects->at(i));
+							questionbrickitem->canDelete = true;
+							_HUD->UpdateScore(questionbrickitem, 0);
+							if (questionbrickitem->Item >= this->level)
+								UpLevel();
+						}
+						else if (coObjects->at(i)->ObjType == OBJECT_TYPE_BRICKITEM)
+						{
+							BrickItem* brickitem = dynamic_cast<BrickItem*>(coObjects->at(i));
+
+							switch (brickitem->Item)
+							{
+							case MUSHROOM:
+							{
+								brickitem->canDelete = true;
+								_HUD->UpdateScore(brickitem, nScore);
+							}
+							break;
+							}
+						}
+					}
+				}
+				break;
+
+				case CATEGORY::ENEMY:
+				{
+					// trường hợp cầm rùa và rùa hồi sinh di chuyển va chạm
+					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+					{
+						Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
+						if (enemy->TypeEnemy == ENEMYTYPE_KOOPAS)
+						{
+							Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+							if ((koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT) && isHolding == true)
+							{
+								if (untouchable == false)
+									DownLevel();
+							}
+						}
+
+					}
+				}
+				break;
+				}
+
+			}
 		}
 		else
 		{
@@ -773,7 +839,31 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					break;
 
 					case CATEGORY::OBJECT:
-						CollisionWithObject(e, min_tx, min_ty, nx, ny);
+						if (e->obj->ObjType == OBJECT_TYPE_FLYWOOD)
+						{
+							if (ny != 0) vy = 0;
+							FlyWood* flywood = dynamic_cast<FlyWood*>(e->obj);
+							if (e->nx != 0)
+							{
+								if (rdx != 0 && rdx != dx)
+									x += nx * abs(rdx);
+								y += min_ty * dy + ny * 0.1f - 0.4f;
+							}
+							else if (e->ny < 0)
+							{
+								x += min_tx * dx + nx * 0.4f;
+								if (OnGround == false)
+								{
+									y += min_ty * dy + ny * 0.1f - 0.3f;
+									OnGround = true; // xử lý chạm đất
+									isFalling = isFlyingLow = isFlyingHigh = false;
+								}
+								if (flywood->GetState() == FLYWOOD_STATE_MOVE)
+									flywood->SetState(FLYWOOD_STATE_FALL);
+							}
+						}
+						else 
+							CollisionWithObject(e, min_tx, min_ty, nx, ny);
 						break;
 					case CATEGORY::ENEMY:
 						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
@@ -813,69 +903,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vx = 0;
 		}
 
-		for (UINT i = 0; i < coObjects->size(); i++)
-		{
-			switch (coObjects->at(i)->Category)
-			{
-			case CATEGORY::ITEM:
-			{
-				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-				{
-
-					if (coObjects->at(i)->ObjType == OBJECT_TYPE_COIN)
-					{
-						coObjects->at(i)->canDelete = true;
-						_HUD->UpdateScore(coObjects->at(i), 0);
-					}
-					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICKITEM)
-					{
-						QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(coObjects->at(i));
-						questionbrickitem->canDelete = true;
-						_HUD->UpdateScore(questionbrickitem, 0);
-						if (questionbrickitem->Item >= this->level)
-							UpLevel();
-					}
-					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_BRICKITEM)
-					{
-						BrickItem* brickitem = dynamic_cast<BrickItem*>(coObjects->at(i));
-
-						switch (brickitem->Item)
-						{
-						case MUSHROOM:
-						{
-							brickitem->canDelete = true;
-							_HUD->UpdateScore(brickitem, nScore);
-						}
-						break;
-						}
-					}
-				}
-			}
-			break;
-
-			/*case CATEGORY::ENEMY:
-			{
-				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-				{
-					Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
-					if (enemy->TypeEnemy == ENEMYTYPE_KOOPAS)
-					{
-						Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-						if (koopas->GetState() == KOOPAS_STATE_WALKING_LEFT || koopas->GetState() == KOOPAS_STATE_WALKING_RIGHT && isHolding == true)
-						{
-							if (untouchable == false)
-								DownLevel();
-						}
-					}
-
-				}
-
-			}
-			break;*/
-			}
-
-		}
+		
 	}
 	Debug();
 }
@@ -2790,7 +2818,7 @@ void Mario::SetState(int state)
 			/*else if (level_of_running == 0)
 				vx = 0;*/
 		}
-		if (isSitDown == true)
+		if (isSitDown == true && level != MARIO_LEVEL_SMALL)
 		{
 			y = y - 10;
 			isSitDown = false;
@@ -3047,23 +3075,23 @@ void Mario::DownLevel()
 		SetState(MARIO_STATE_DIE);
 	else
 	{
+		loseControl = true;
+		
 		switch (level)
 		{
 		case MARIO_LEVEL_BIG:
 		{
-			/*if (isSitDown == true)
-				y += static_cast<FLOAT>(MARIO_BIG_BBOX_SITDOWN_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
-			else
-				y += static_cast<FLOAT>(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);*/
+			
+			if (isSitDown == true)
+				y -= static_cast<FLOAT>(MARIO_BIG_BBOX_SITDOWN_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) + 5;
+			
 			_PlayScene->Stop = true;
 		}break;
 
 		case MARIO_LEVEL_TAIL:
 		{
-			////y -= static_cast<FLOAT>(MARIO_TAIL_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
-			//auto effect = new EffectSmoke(this->x, this->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
-			//_PlayScene->objects.push_back(effect);
-			//_PlayScene->Stop = true;
+			if (isSitDown == true)
+				y -=  2;
 		}break;
 
 		case MARIO_LEVEL_FIRE:
@@ -3087,6 +3115,7 @@ void Mario::UpLevel()
 {
 	if (level < MARIO_LEVEL_FIRE)
 	{
+		loseControl = true;
 		switch (level) // không xử lý level tail ở đây mà xử lý bên mario tail vì bị lỗi hiện smoke trước mà đuôi vẫn chưa xóa
 		{
 		case MARIO_LEVEL_BIG:
@@ -3148,14 +3177,14 @@ void Mario::Debug()
 
 	}
 
-	if (OnGround == true)
-		DebugOut(L"OnGround == true\t");
+	if (isAttacking == true)
+		DebugOut(L"isAttacking == true\t");
 	else
-		DebugOut(L"OnGround == false\t");
+		DebugOut(L"isAttacking == false\t");
 
 
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
-	DebugOut(L"x = %f, MaxY = %f\n", x, MaxY);
+	DebugOut(L"y = %f, vx = %f, vy = %f\n", y, vx, vy);
 }
 
 void Mario::Unload()
@@ -3170,13 +3199,11 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 	{
 		if (e->nx != 0)
 		{
-			x += dx;
 			y += min_ty * dy + ny * 0.4f;
 		}
 		else if (e->ny < 0)
 		{
 			x += min_tx * dx + nx * 0.4f;
-			y += dy;
 			isFalling = isFlyingLow = isFlyingHigh = false;
 		}
 
@@ -3194,10 +3221,53 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			}
 			break;
 
+			//case ENEMYTYPE_KOOPAS:
+			//{
+			//	this->vy = -MARIO_JUMP_DEFLECT_SPEED;
+			//	this->y -= 1;
+			//	Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+			//	if (koopas->Health > 1)
+			//	{
+			//		koopas->Health--;
+			//		if (koopas->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
+			//			koopas->SetState(KOOPAS_STATE_WALKING_LEFT);
+			//		this->nScore++;
+			//		_HUD->UpdateScore(e->obj, nScore);
+			//	}
+			//	else
+			//	{
+			//		if (koopas->vx != 0 && koopas->isShell_2 == false) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+			//		{
+			//			koopas->SetState(KOOPAS_STATE_SHELL);
+			//			koopas->ReviveTime = GetTickCount64();
+			//			this->nScore++;
+			//			_HUD->UpdateScore(koopas, nScore);
+			//		}
+			//		else if (koopas->vx != 0 && koopas->isShell_2 == true) // bao gồm 4 trạng thái : rùa đi trái/phải, mai rùa đi trái/phải
+			//		{
+			//			koopas->SetState(KOOPAS_STATE_SHELL_2);
+			//			koopas->vy = 0;
+			//			koopas->ReviveTime = GetTickCount64();
+			//			this->nScore++;
+			//			_HUD->UpdateScore(koopas, nScore);
+			//		}
+			//		else if (koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2 || koopas->GetState() == KOOPAS_STATE_SHELL_HOLD)
+			//		{
+			//			if (this->x <= koopas->x)
+			//				koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//			else
+			//				koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//			koopas->isKicked = true;
+			//			this->nScore++;
+			//			_HUD->UpdateScore(koopas, nScore);
+			//		}
+			//	}
+			//}
+			//break;
+
 			case ENEMYTYPE_KOOPAS:
 			{
 				this->vy = -MARIO_JUMP_DEFLECT_SPEED;
-				this->y -= 1;
 				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
 				if (koopas->Health > 1)
 				{
@@ -3290,9 +3360,20 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			}
 			break;
 
+			case ENEMYTYPE_BOOMERANG:
+			{
+				this->vy = -MARIO_JUMP_DEFLECT_SPEED;
+				BoomerangEnemy* boom = dynamic_cast<BoomerangEnemy*>(enemy);
+				boom->SetState(BOOMERANGENEMY_STATE_DIE);
+				this->nScore++;
+				_HUD->UpdateScore(boom, nScore);
+			}
+			break;
+
 			default:
 			{
 				enemy->canDelete = enemy->isDie = true;
+				_HUD->UpdateScore(enemy, nScore);
 			}
 			break;
 			}
@@ -3308,88 +3389,247 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			}
 			break;
 
+			//case ENEMYTYPE_KOOPAS:
+			//{
+			//	Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+			//	if (koopas->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
+			//	{
+			//		if (koopas->isHold == false)
+			//		{
+			//			if (koopas->isShell == true || koopas->isShell_2 == true)
+			//			{
+			//				if (koopas->OnGroud == false)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					if (this->nx == RIGHT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//					else if (this->nx == LEFT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//					koopas->vy -= 0.05f;
+			//				}
+			//				else
+			//				{
+			//					if (untouchable == false)
+			//						DownLevel();
+			//				}
+			//			}
+			//			else
+			//			{
+			//				if (untouchable == false)
+			//					DownLevel();
+			//			}
+			//			/*if (koopas->Health == 1)
+			//			{
+			//				if (koopas->OnGroud == true)
+			//				{
+			//					if (untouchable == false)
+			//						DownLevel();
+			//				}
+			//				else
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					if (this->nx == RIGHT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//					else if (this->nx == LEFT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//					koopas->vy -= 0.05f;
+			//				}
+			//			}
+			//			else
+			//			{
+			//				if (untouchable == false)
+			//					DownLevel();
+			//			}*/
+			//
+			//		}
+			//		else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+			//		{
+			//			if (e->nx == LEFT)
+			//			{
+			//				if (pressA == true)
+			//				{
+			//					isHolding = true;
+			//					koopas->nx = 1;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+			//				}
+			//				else if (koopas->vy >= 0)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//				}
+			//			}
+			//			else if (e->nx == RIGHT)
+			//			{
+			//				if (pressA == true)
+			//				{
+			//					isHolding = true;
+			//					koopas->nx = -1;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+			//				}
+			//				else if (koopas->vy >= 0)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//				}
+			//			}
+			//		}
+			//	}
+			//	else
+			//	{
+			//		if (abs(koopas->vx) > 0 && koopas->isHold == false)
+			//		{
+			//			if (koopas->isShell == true || koopas->isShell_2 == true)
+			//			{
+			//				if (koopas->OnGroud == false)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					if (this->nx == RIGHT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//					else if (this->nx == LEFT)
+			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//					koopas->vy -= 0.05f;
+			//				}
+			//				else
+			//				{
+			//					if (untouchable == false)
+			//						DownLevel();
+			//				}
+			//			}
+			//			else
+			//			{
+			//				if (untouchable == false)
+			//					DownLevel();
+			//			}
+			//		}
+			//		else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+			//		{
+			//			if (e->nx == LEFT)
+			//			{
+			//				if (pressA == true)
+			//				{
+			//					isHolding = true;
+			//					koopas->nx = 1;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+			//				}
+			//				else if (koopas->vy >= 0)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+			//				}
+			//			}
+			//			else if (e->nx == RIGHT)
+			//			{
+			//				if (pressA == true)
+			//				{
+			//					isHolding = true;
+			//					koopas->nx = -1;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+			//				}
+			//				else if (koopas->vy >= 0)
+			//				{
+			//					this->canKick = koopas->isKicked = true;
+			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+			//break;
+
 			case ENEMYTYPE_KOOPAS:
 			{
-				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-				if (abs(koopas->vx) > 0 && koopas->isHold == false)
+				if (enemy->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
 				{
-
-					if (koopas->isShell == true || koopas->isShell_2 == true)
+					RedFlyKoopas* koopas = dynamic_cast<RedFlyKoopas*>(enemy);
+					if (koopas->isHold == false)
 					{
-						if (koopas->OnGroud == false)
-						{
-							this->canKick = koopas->isKicked = true;
-							if (this->nx == RIGHT)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							else if (this->nx == LEFT)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							koopas->vy -= 0.05f;
-						}
-						else
-						{
-							if (untouchable == false)
-								DownLevel();
-						}
-					}
-					else
-					{
-						if (untouchable == false)
-							DownLevel();
-					}
-					/*if (koopas->Health == 1)
-					{
-						if (koopas->OnGroud == true)
+						if (koopas->Health == 2)
 						{
 							if (untouchable == false)
 								DownLevel();
 						}
 						else
 						{
-							this->canKick = koopas->isKicked = true;
-							if (this->nx == RIGHT)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							else if (this->nx == LEFT)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							koopas->vy -= 0.05f;
+							if (koopas->vx != 0 )
+							{
+								if (untouchable == false)
+									DownLevel();
+							}
 						}
 					}
-					else
+					else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
 					{
-						if (untouchable == false)
-							DownLevel();
-					}*/
+						if (e->nx == LEFT)
+						{
+							if (pressA == true)
+							{
+								isHolding = true;
+								koopas->nx = 1;
+								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							}
+							else if (koopas->vy >= 0)
+							{
+								this->canKick = koopas->isKicked = true;
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							}
+						}
+						else if (e->nx == RIGHT)
+						{
+							if (pressA == true)
+							{
+								isHolding = true;
+								koopas->nx = -1;
+								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							}
+							else if (koopas->vy >= 0)
+							{
+								this->canKick = koopas->isKicked = true;
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+							}
+						}
+					}
 
 				}
-				else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+				else
 				{
-					if (e->nx == LEFT)
+					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+					if (koopas->vx != 0 && koopas->isHold == false)
 					{
-						if (pressA == true)
+						if (untouchable == false)
+							DownLevel();
+					}
+					else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
+					{
+						if (e->nx == LEFT)
 						{
-							isHolding = true;
-							koopas->nx = 1;
-							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							if (pressA == true)
+							{
+								isHolding = true;
+								koopas->nx = 1;
+								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							}
+							else if (koopas->vy >= 0)
+							{
+								this->canKick = koopas->isKicked = true;
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							}
 						}
-						else if (koopas->vy >= 0)
+						else if (e->nx == RIGHT)
 						{
-							this->canKick = koopas->isKicked = true;
-							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							if (pressA == true)
+							{
+								isHolding = true;
+								koopas->nx = -1;
+								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							}
+							else if (koopas->vy >= 0)
+							{
+								this->canKick = koopas->isKicked = true;
+								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+							}
 						}
 					}
-					else if (e->nx == RIGHT)
-					{
-						if (pressA == true)
-						{
-							isHolding = true;
-							koopas->nx = -1;
-							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-						}
-						else if (koopas->vy >= 0)
-						{
-							this->canKick = koopas->isKicked = true;
-							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-						}
-					}
+
 				}
 			}
 			break;
@@ -3483,21 +3723,13 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 	// đi theo kiểu lên đồi ???????? -> y -= dx nx ....
 	else
 	{
-		if (e->nx != 0)
-		{
-			isRunning = false;
-			if (level_of_running > 0 && canFlyS == false && canFlyX == false)
-				level_of_running--;
-
-			if (level_of_walking > 10)
-				level_of_walking -= 10;
-		}
 		if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK)
 		{
+			if (ny != 0) vy = 0;
 			if (dynamic_cast<QuestionBrick*>(e->obj))
 			{
 				QuestionBrick* brick = dynamic_cast<QuestionBrick*>(e->obj);
-				if (ny != 0) vy = 0;
+				
 				// mario nhảy từ dưới lên va chạm gạch 
 				if (e->ny > 0)
 				{
@@ -3521,7 +3753,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 								break;
 							}
 						}
-						QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y);
+						QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
 						_PlayScene->objects.push_back(questionbrickitem);
 					}
 				}
@@ -3549,14 +3781,12 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				if (e->ny > 0)
 				{
 					if (nx != 0) vx = 0;
-					if (ny != 0)vy = 0;
-					//y += min_ty * dy + ny * 0.4f;
+					
 					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
 					// cả 2 đều làm cho mario k nhảy đươc tiếp + rớt xuống
 					if (brick->hasItem == true)
 					{
 						brick->SetState(BRICK_STATE_COLLISION);
-						brick->hasItem = false;
 						switch (brick->Item)
 						{
 						case BUTTONP:
@@ -3577,31 +3807,28 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 
 						case NORMAL:
 						{
-							brick->canDelete = true;
+							brick->SetState(ITEMBRICK_STATE_DIE);
 							vy = 0;
 						}
 						break;
+
+						case MONEYX10:
+						{
+							BrickItem* brickitem = new BrickItem(MONEYX10, brick->x, brick->y - 3);
+							_PlayScene->objects.push_back(brickitem);
+							brick->CountMoney--;
+						}
+
 						}
 					}
-					else
-						vy = 0;
+					vy = 0;
 				}
 				else if (e->ny < 0) // mario đi trên gạch "?"
 				{
-					if (ny != 0) vy = 0;
 					OnGround = true; // xử lý chạm đất
 					isFalling = isFlyingLow = isFlyingHigh = false;
 
-					//if (OnGround == false)
-					//{
-					//	
-					//	OnGround = true; // xử lý chạm đất
-					//	isFalling = isFlyingLow = isFlyingHigh = false;
-					//	
-					//}
-					//this->MaxY = brick->y - this->Height;
 					x += min_tx * dx + nx * 0.4f;
-					y += min_ty * dy + ny * 0.4f;
 				}
 				else if (e->nx != 0)
 				{
@@ -3613,6 +3840,15 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		}
 		else if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE)
 		{
+			if (e->nx != 0)
+			{
+				isRunning = false;
+				if (level_of_running > 0 && canFlyS == false && canFlyX == false)
+					level_of_running--;
+
+				if (level_of_walking > 10)
+					level_of_walking -= 10;
+			}
 			if (dynamic_cast<WarpPipe*>(e->obj))
 			{
 				if (ny != 0) vy = 0;
@@ -3676,40 +3912,15 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			}
 			if (e->nx != 0)
 			{
-				//level_of_running = level_of_walking = 0; // không hiện vụ giảm vận tốc khi thả nút di chuyện
-				//vx = 0.0f;
+				if (nx != 0) vx = 0;
+				if (ny != 0)vy = 0;
 				y += min_ty * dy + ny * 0.1f - 0.4f;
 			}
 			else if (e->ny < 0)
 			{
-				if (OnGround == false)
-					y += min_ty * dy + ny * 0.1f - 0.3f;
 				OnGround = true; // xử lý chạm đất
 				isFalling = isFlyingLow = isFlyingHigh = false;
 				x += min_tx * dx + nx * 0.4f;
-			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_FLYWOOD)
-		{
-			if (ny != 0) vy = 0;
-			FlyWood* flywood = dynamic_cast<FlyWood*>(e->obj);
-			if (e->nx != 0)
-			{
-				x += min_tx * dx + nx * 0.4f;
-				y += min_ty * dy + ny * 0.1f - 0.4f;
-			}
-			else if (e->ny < 0)
-			{
-				x += min_tx * dx + nx * 0.4f;
-				if (OnGround == false)
-				{
-					y += min_ty * dy + ny * 0.1f - 0.3f;
-					OnGround = true; // xử lý chạm đất
-					isFalling = isFlyingLow = isFlyingHigh = false;
-				}
-				if (flywood->GetState() == FLYWOOD_STATE_MOVE)
-					flywood->SetState(FLYWOOD_STATE_FALL);
-
 			}
 		}
 	}
@@ -3865,7 +4076,7 @@ void Mario::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		if (e->ny < 0)
 			y += dy;
 		BoomerangWeapon* boomerang = dynamic_cast<BoomerangWeapon*>(e->obj);
-		if (boomerang->isMarioWeapon == false)
+		if (boomerang->isMarioWeapon == false && boomerang->vx != 0)
 		{
 			if (untouchable == false)
 			{

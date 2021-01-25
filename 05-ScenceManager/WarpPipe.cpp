@@ -124,7 +124,5 @@ void WarpPipe::Render()
 			
 		}
 	}
-	
-
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }

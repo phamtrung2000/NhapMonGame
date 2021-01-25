@@ -37,6 +37,7 @@ void BoomerangWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 	Time++;
+
 	if (Time <= 150)
 	{
 		x += dx;
