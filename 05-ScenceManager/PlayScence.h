@@ -48,6 +48,7 @@ using namespace std;
 #define OBJECT_TYPE_BOOMERANGENEMY			21
 #define OBJECT_TYPE_BREAKITEMBRICK			22
 #define OBJECT_TYPE_REDFLYKOOPAS			23
+#define OBJECT_TYPE_LISTBRICK			24
 #define OBJECT_TYPE_FIREBULLET				100
 #define OBJECT_TYPE_BOOMERANG				102
 
@@ -70,7 +71,6 @@ public:
 	int MarioLevel;
 	static CPlayScene* __instance;
 	vector<LPGAMEOBJECT> objects;
-	Mario* player;
 	CPlayScene();
 	CPlayScene(int id, LPCWSTR filePath);
 	CPlayScene(int id, LPCWSTR filePath, int mariolv);

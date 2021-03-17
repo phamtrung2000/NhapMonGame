@@ -34,17 +34,17 @@ IntroScene::IntroScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 #define SCENE_SECTION_MAP	7
 #define SCENE_SECTION_HUD	8
 #define SCENE_SECTION_HUD_TIME	9
-#define OBJECT_TYPE_MARIO			0
-#define OBJECT_TYPE_BRICK			1
-#define OBJECT_TYPE_GOOMBA			2
-#define OBJECT_TYPE_KOOPAS			3
-#define OBJECT_TYPE_GROUND			4
-#define OBJECT_TYPE_WARPPIPE		5
-#define OBJECT_TYPE_BLOCK			6
-#define OBJECT_TYPE_QUESTIONBRICK	7
-#define OBJECT_TYPE_FIREPIRANHAPLANT	8
-#define UNKNOW_ITEM	18
-#define OBJECT_TYPE_RED_KOOPAS			9
+//#define OBJECT_TYPE_MARIO			0
+//#define OBJECT_TYPE_BRICK			1
+//#define OBJECT_TYPE_GOOMBA			2
+//#define OBJECT_TYPE_KOOPAS			3
+//#define OBJECT_TYPE_GROUND			4
+//#define OBJECT_TYPE_WARPPIPE		5
+//#define OBJECT_TYPE_BLOCK			6
+//#define OBJECT_TYPE_QUESTIONBRICK	7
+//#define OBJECT_TYPE_FIREPIRANHAPLANT	8
+//#define UNKNOW_ITEM	18
+//#define OBJECT_TYPE_RED_KOOPAS			9
 
 
 #define MUSHROOM_ANISET_ID	8
@@ -108,7 +108,7 @@ void IntroScene::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -130,7 +130,7 @@ void IntroScene::_ParseSection_ANIMATION_SETS(string line)
 
 	CAnimations* animations = CAnimations::GetInstance();
 
-	for (int i = 1; i < tokens.size(); i++)
+	for (unsigned int i = 1; i < tokens.size(); i++)
 	{
 		int ani_id = atoi(tokens[i].c_str());
 
@@ -152,8 +152,8 @@ void IntroScene::_ParseSection_OBJECTS(string line)
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	float x = (float)atof(tokens[1].c_str());
+	float y = (float)atof(tokens[2].c_str());
 	int ani_set_id;
 
 	int Id = ani_set_id = atoi(tokens[3].c_str());
@@ -287,7 +287,7 @@ void IntroScene::Update(DWORD dt)
 			Ct->StopRender = false;
 		}
 	}
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
 			objects[i]->Update(dt, &coObjects);
@@ -299,7 +299,7 @@ void IntroScene::Render()
 {
 	if (CGame::GetInstance()->DoneLoad)
 		IntroMap->DrawMap1();
-	for (int i = 1; i < objects.size(); i++)
+	for (unsigned int i = 1; i < objects.size(); i++)
 	{
 		if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
 			objects[i]->Render();
@@ -313,7 +313,7 @@ void IntroScene::Render()
 */
 void IntroScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();

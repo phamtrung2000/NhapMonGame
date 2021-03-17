@@ -106,7 +106,7 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			coEvents.clear();
 
-			if (state != KOOPAS_STATE_DIE)
+			if (state != ENEMY_STATE_DIE_IS_JUMPED)
 				CalcPotentialCollisions(coObjects, coEvents);
 
 			if (coEvents.size() == 0)
@@ -235,7 +235,7 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 					coEvents.clear();
 
-					if (state != KOOPAS_STATE_DIE)
+					if (state != ENEMY_STATE_DIE_IS_JUMPED)
 						CalcPotentialCollisions(coObjects, coEvents);
 
 					if (coEvents.size() != 0)
@@ -316,9 +316,9 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						canRevive = false;
 						y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
 						if (_Mario->nx == RIGHT)
-							SetState(KOOPAS_STATE_WALKING_LEFT);
+							SetState(ENEMY_STATE_WALKING_LEFT);
 						else
-							SetState(KOOPAS_STATE_WALKING_RIGHT);
+							SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 				}
 			}
@@ -356,7 +356,7 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else
 						{
-							if (GetState() == KOOPAS_STATE_DIE)
+							if (GetState() == ENEMY_STATE_DIE_IS_JUMPED)
 							{
 								if (this->y > _Map->GetHeight())
 									canDelete = true;
@@ -370,15 +370,15 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 
-				if (GetState() == KOOPAS_STATE_WALKING_RIGHT || GetState() == KOOPAS_STATE_WALKING_LEFT)
+				if (GetState() == ENEMY_STATE_WALKING_RIGHT || GetState() == ENEMY_STATE_WALKING_LEFT)
 				{
 					if (x >= X_max && vx > 0)
 					{
-						SetState(KOOPAS_STATE_WALKING_LEFT);
+						SetState(ENEMY_STATE_WALKING_LEFT);
 					}
 					else if (x <= X_min && vx < 0)
 					{
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 				}
 				else if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || GetState() == KOOPAS_STATE_SHELL_HOLD)
@@ -390,7 +390,7 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						ReviveTime = 0;
 						canRevive = false;
 						y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 				}
 
@@ -399,7 +399,7 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				coEvents.clear();
 
-				if (state != KOOPAS_STATE_DIE)
+				if (state != ENEMY_STATE_DIE_IS_JUMPED)
 					CalcPotentialCollisions(coObjects, coEvents);
 
 				if (coEvents.size() == 0)
@@ -566,7 +566,7 @@ void RedFlyKoopas::SetState(int state)
 	}
 	break;
 
-	case KOOPAS_STATE_DIE:
+	case ENEMY_STATE_DIE_IS_JUMPED:
 	{
 		isShell = false;
 		isShell_2 = true;
@@ -577,7 +577,7 @@ void RedFlyKoopas::SetState(int state)
 	}
 	break;
 
-	case KOOPAS_STATE_WALKING_RIGHT:
+	case ENEMY_STATE_WALKING_RIGHT:
 	{
 		isHold = isShell = isShell_2 = false;
 		vx = KOOPAS_WALKING_SPEED;
@@ -586,7 +586,7 @@ void RedFlyKoopas::SetState(int state)
 		//CountXmaxXmin = false;
 	}break;
 
-	case KOOPAS_STATE_WALKING_LEFT:
+	case ENEMY_STATE_WALKING_LEFT:
 	{
 		isHold = isShell = isShell_2 = false;
 		vx = -KOOPAS_WALKING_SPEED;
@@ -607,13 +607,6 @@ void RedFlyKoopas::SetState(int state)
 		vx = -KOOPAS_SHELL_SPEED;
 		nx = LEFT;
 		isHold = false;
-	}break;
-
-	case KOOPAS_STATE_INIT:
-	{
-		vx = 0;
-		nx = LEFT;
-		isHold = isShell = isShell_2 = false;
 	}break;
 
 	case KOOPAS_STATE_FLY_DOWN:
@@ -683,10 +676,10 @@ void RedFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float m
 					y += min_ty * dy + ny * 0.2f - 0.4f;
 					if (isShell == false && isShell_2 == false)
 					{
-						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-							SetState(KOOPAS_STATE_WALKING_LEFT);
-						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-							SetState(KOOPAS_STATE_WALKING_RIGHT);
+						if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+							SetState(ENEMY_STATE_WALKING_LEFT);
+						else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+							SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 					else
 					{
@@ -704,10 +697,10 @@ void RedFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float m
 				{
 					if (isShell == false && isShell_2 == false)
 					{
-						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-							SetState(KOOPAS_STATE_WALKING_LEFT);
-						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-							SetState(KOOPAS_STATE_WALKING_RIGHT);
+						if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+							SetState(ENEMY_STATE_WALKING_LEFT);
+						else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+							SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 					else
 					{
@@ -741,10 +734,10 @@ void RedFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float m
 				{
 					if (isShell == false && isShell_2 == false)
 					{
-						if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-							SetState(KOOPAS_STATE_WALKING_LEFT);
-						else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-							SetState(KOOPAS_STATE_WALKING_RIGHT);
+						if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+							SetState(ENEMY_STATE_WALKING_LEFT);
+						else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+							SetState(ENEMY_STATE_WALKING_RIGHT);
 					}
 					else
 					{

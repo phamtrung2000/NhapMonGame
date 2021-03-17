@@ -12,7 +12,7 @@
 GreenKoopas::GreenKoopas() : Koopas()
 {
 	ObjType = OBJECT_TYPE_GREENKOOPAS;
-	SetState(KOOPAS_STATE_WALKING_LEFT);
+	SetState(ENEMY_STATE_WALKING_LEFT);
 }
 
 GreenKoopas::~GreenKoopas()
@@ -85,7 +85,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 
 				coEvents.clear();
 
-				if (state != KOOPAS_STATE_DIE)
+				if (state != ENEMY_STATE_DIE_IS_JUMPED)
 					CalcPotentialCollisions(coObjects, coEvents);
 
 				if (coEvents.size() != 0)
@@ -166,9 +166,9 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 					canRevive = false;
 					y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
 					if (_Mario->nx == RIGHT)
-						SetState(KOOPAS_STATE_WALKING_LEFT);
+						SetState(ENEMY_STATE_WALKING_LEFT);
 					else
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 			}
 		}
@@ -207,7 +207,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 					}
 					else
 					{
-						if (GetState() == KOOPAS_STATE_DIE)
+						if (GetState() == ENEMY_STATE_DIE_IS_JUMPED)
 						{
 							if (this->y > _Map->GetHeight())
 								canDelete = true;
@@ -221,15 +221,15 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 				}
 			}
 
-			if (GetState() == KOOPAS_STATE_WALKING_RIGHT || GetState() == KOOPAS_STATE_WALKING_LEFT)
+			if (GetState() == ENEMY_STATE_WALKING_RIGHT || GetState() == ENEMY_STATE_WALKING_LEFT)
 			{
 				if (x >= X_max && vx > 0)
 				{
-					SetState(KOOPAS_STATE_WALKING_LEFT);
+					SetState(ENEMY_STATE_WALKING_LEFT);
 				}
 				else if (x <= X_min && vx < 0)
 				{
-					SetState(KOOPAS_STATE_WALKING_RIGHT);
+					SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 			}
 			else if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || GetState() == KOOPAS_STATE_SHELL_HOLD)
@@ -241,7 +241,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 					ReviveTime = 0;
 					canRevive = false;
 					y = (INT16)(y - (KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL) - 1);
-					SetState(KOOPAS_STATE_WALKING_RIGHT);
+					SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 			}
 
@@ -250,7 +250,7 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 
 			coEvents.clear();
 
-			if (state != KOOPAS_STATE_DIE)
+			if (state != ENEMY_STATE_DIE_IS_JUMPED)
 				CalcPotentialCollisions(coObjects, coEvents);
 
 			if (vy < 0)
@@ -373,10 +373,10 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 				y += min_ty * dy + ny * 0.2f - 0.4f;
 				if (isShell == false && isShell_2 == false)
 				{
-					if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-						SetState(KOOPAS_STATE_WALKING_LEFT);
-					else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 				else
 				{
@@ -403,10 +403,10 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 			{
 				if (isShell == false && isShell_2 == false)
 				{
-					if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-						SetState(KOOPAS_STATE_WALKING_LEFT);
-					else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 				else
 				{
@@ -440,10 +440,10 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 			{
 				if (isShell == false && isShell_2 == false)
 				{
-					if (GetState() == KOOPAS_STATE_WALKING_RIGHT)
-						SetState(KOOPAS_STATE_WALKING_LEFT);
-					else if (GetState() == KOOPAS_STATE_WALKING_LEFT)
-						SetState(KOOPAS_STATE_WALKING_RIGHT);
+					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 				else
 				{

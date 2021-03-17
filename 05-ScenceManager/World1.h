@@ -10,6 +10,7 @@ using namespace std;
 #include "Ground.h"
 #include "Map.h"
 #include "Gate.h"
+#include "PlayScence.h"
 
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TEXTURES 2
@@ -21,7 +22,6 @@ using namespace std;
 #define SCENE_SECTION_HUD		8
 
 #define OBJECT_TYPE_MARIOOVERWORLD	0
-#define OBJECT_TYPE_GROUND			1
 #define OBJECT_TYPE_GATE			2
 #define OBJECT_TYPE_DANCINGTREE		3
 

@@ -104,7 +104,7 @@ void World1::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -126,7 +126,7 @@ void World1::_ParseSection_ANIMATION_SETS(string line)
 
 	CAnimations* animations = CAnimations::GetInstance();
 
-	for (int i = 1; i < tokens.size(); i++)
+	for (unsigned int i = 1; i < tokens.size(); i++)
 	{
 		int ani_id = atoi(tokens[i].c_str());
 
@@ -148,8 +148,8 @@ void World1::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	float x = (float)atof(tokens[1].c_str());
+	float y = (float)atof(tokens[2].c_str());
 	int ani_set_id = atoi(tokens[3].c_str());
 	if (object_type == OBJECT_TYPE_GROUND)
 	{
@@ -158,7 +158,7 @@ void World1::_ParseSection_OBJECTS(string line)
 	}
 	else if (object_type == OBJECT_TYPE_GATE)
 	{
-		GateNumber = atof(tokens[4].c_str());
+		GateNumber = (int)atof(tokens[4].c_str());
 	}
 
 
@@ -183,15 +183,15 @@ void World1::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_GROUND:
 	{
-		width = atof(tokens[4].c_str());
-		height = atof(tokens[5].c_str());
+		width = (int)atof(tokens[4].c_str());
+		height = (int)atof(tokens[5].c_str());
 		if (tokens.size() <= 6)
 		{
 			obj = new Ground(width, height);
 		}
 		else
 		{
-			int BehindGate = atof(tokens[6].c_str());
+			int BehindGate = (int) atof(tokens[6].c_str());
 			obj = new Ground(width, height, BehindGate);
 		}
 		
@@ -368,7 +368,7 @@ void World1::Update(DWORD dt)
 	CGame* game = CGame::GetInstance();
 
 	_Camera->Update();
-	_Camera->SetCamPos((MapWidth - game->GetScreenWidth()) / 2, (MapHeight - game->GetScreenHeight()) / 4);
+	_Camera->SetCamPos((float)((MapWidth - game->GetScreenWidth()) / 2), (float)((MapHeight - game->GetScreenHeight()) / 4));
 	CGame::GetInstance()->SetCamPos( (float)(MapWidth - game->GetScreenWidth()) / 2, (float)(MapHeight - game->GetScreenHeight()) / 4); // chuẩn
 	_HUD->Update(dt);
 	//DebugOut(L"cam y = %f\n", _Camera->cam_y);
@@ -382,7 +382,7 @@ void World1::Render()
 	_Map->DrawMap();
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		//if (objects[i]->GetState() != GOOMBA_STATE_DIE)
+		//if (objects[i]->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
 		if (objects[i]->canDelete != true)
 		{
 			objects[i]->Render();

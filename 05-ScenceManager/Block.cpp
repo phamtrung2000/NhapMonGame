@@ -9,8 +9,8 @@ void Block::Render()
 Block::Block(int W, int H)
 {
 	ObjType = OBJECT_TYPE_BLOCK;
-	Width = W;
-	Height = H;
+	Width = (float) W;
+	Height = (float)H;
 	Category = CATEGORY::OBJECT;
 }
 

@@ -8,8 +8,6 @@
 class CPortal : public CGameObject
 {
 	int scene_id;	// target scene to switch to 
-	int Width;
-	int Height;
 public:
 	CPortal(float l, float t, float r, float b, int scene_id);
 	virtual void Render();

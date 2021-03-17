@@ -78,6 +78,8 @@ public:
 	CATEGORY Category;
 	float Width, Height;
 	float StartX, StartY;
+	bool IsInList;
+	bool IsMovingObject;
 public: 
 	void SetPosition(float x, float y) { this->x = x, this->y = y;}
 	void SetStartPosition(float x, float y) { this->StartX = x, this->StartY = y; }

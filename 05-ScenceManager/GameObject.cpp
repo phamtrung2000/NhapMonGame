@@ -10,13 +10,19 @@
 
 CGameObject::CGameObject()
 {
+	IsInList = IsMovingObject = false;
+	dt = 0;
+	ObjType = 0;
+	state = 0;
 	StartX = StartY = x = y = 0;
 	vx = vy = 0;
+	dx = dy = 0;
 	nx = RIGHT;	
 	TimeToDie = 0;
 	isInit = isDie = canDelete = isDisappear = false;
 	Category = CATEGORY::OBJECT;
 	Width = Height = 0;
+	animation_set = NULL;
 }
 
 void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -150,10 +156,10 @@ RECT CGameObject::GetRect()
 	float l, t, r, b;
 	RECT rect;
 	GetBoundingBox(l, t, r, b);
-	rect.left = l;
-	rect.top = t;
-	rect.right = r;
-	rect.bottom = b;
+	rect.left = (long)l;
+	rect.top = (long)t;
+	rect.right = (long)r;
+	rect.bottom = (long) b;
 	return rect;
 
 }

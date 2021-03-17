@@ -67,17 +67,18 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 					
 
-						switch (enemy->TypeEnemy)
+						switch (enemy->EnemyType)
 						{
 
-						case ENEMYTYPE_GOOMBA:
+						case ENEMY_TYPE_GOOMBA:
 						{
 							Goomba* goomba = dynamic_cast<Goomba*>(e->obj);
 							if (e->nx != 0 || e->ny != 0)
 							{
-								if (goomba->GetState() != GOOMBA_STATE_DIE)
+								if (goomba->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
 								{
-									goomba->SetState(GOOMBA_STATE_DIE_2);
+									goomba->nx = this->Direction;
+									goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 									this->canDelete = true;
 									auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
 									_PlayScene->objects.push_back(hit);
@@ -86,17 +87,18 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}break;
 
-						case ENEMYTYPE_KOOPAS:
+						case ENEMY_TYPE_KOOPAS:
 						{
 							Koopas* koopas = dynamic_cast<Koopas*>(e->obj);
-							if (koopas->GetState() != KOOPAS_STATE_DIE)
+							if (koopas->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
 							{
 								if (e->obj->ObjType == OBJECT_TYPE_GREENFLYKOOPAS)
 								{
 									GreenFlyKoopas* koopas = dynamic_cast<GreenFlyKoopas*>(e->obj);
 									koopas->Health--;
 								}
-								koopas->SetState(KOOPAS_STATE_DIE);
+								koopas->nx = this->Direction;
+								koopas->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 								this->canDelete = true;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
 								_PlayScene->objects.push_back(hit);
@@ -106,7 +108,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						break;
 
-						case ENEMYTYPE_BOOMERANG:
+						case ENEMY_TYPE_BOOMERANG_ENEMY:
 						{
 							BoomerangEnemy* boom = dynamic_cast<BoomerangEnemy*>(e->obj);
 							if (boom->isDie == false)
@@ -121,6 +123,17 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						break;
 
+						case ENEMY_TYPE_PLANT:
+						{
+							if (e->nx != 0 || e->ny != 0)
+							{
+								e->obj->canDelete = true;
+								this->canDelete = true;
+								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
+								_PlayScene->objects.push_back(hit);
+								_HUD->UpdateScore(e->obj, 1);
+							}
+						}break;
 
 						default:
 							e->obj->canDelete = this->canDelete = true;

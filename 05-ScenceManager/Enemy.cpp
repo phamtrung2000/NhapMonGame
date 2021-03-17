@@ -6,17 +6,19 @@
 Enemy::Enemy() : CGameObject()
 {
 	Category = CATEGORY::ENEMY;
-	TypeEnemy = -1;
+	EnemyType = -1;
 	canRevive = isAttacked = false;
-	Score = 100;
+	Score = ENEMY_SCORE;
 	ReviveTime = Time_isAttacked = 0;
 	Health = 1;
 	OnGroud = false;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+	SetState(ENEMY_STATE_INIT);
 }
 
 Enemy::~Enemy()
 {
+
 }
 
 void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -57,6 +59,47 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isAttacked = false;
 			Time_isAttacked = 0;
 		}
+	}
+}
+
+void Enemy::SetState(int state)
+{
+	CGameObject::SetState(state);
+	switch (state)
+	{
+		case ENEMY_STATE_DIE_IS_JUMPED:
+		{
+			vx = vy = 0;
+			isDie = true;
+		}
+		break;
+
+		case ENEMY_STATE_DIE_IS_ATTACKED:
+		{
+			vx = nx * abs(vx);
+			isDie = true;
+		}
+		break;
+
+		case ENEMY_STATE_INIT:
+		{
+			vx = vy = 0.0f;
+		}
+		break;
+
+		case ENEMY_STATE_WALKING_RIGHT:
+		{
+			nx = RIGHT;
+			vx = nx * ENEMY_WALKING_SPEED;
+		}
+		break;
+
+		case ENEMY_STATE_WALKING_LEFT:
+		{
+			nx = LEFT;
+			vx = nx * ENEMY_WALKING_SPEED;
+		}
+		break;
 	}
 }
 

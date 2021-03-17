@@ -14,20 +14,22 @@ Camera* Camera::GetInstance()
 
 Camera::Camera()
 {
-	cam_x = cam_y = 0.f;
-	typeMove = 0;
+	maxBottomCam = maxLeftCam = maxRightCam = maxTopCam
+		= ShakeTime = typeMove = 0;
+	cam_x = cam_y = 0.0f;
 	this->width = SCREEN_WIDTH;
 	this->height = SCREEN_HEIGHT;
-	test = false;
+	Shake = test = false;
 }
+
 RECT Camera::GetBound()
 {
 	RECT bound;
 
-	bound.left = cam_x;
-	bound.top = cam_y;
-	bound.right = cam_x + width;;
-	bound.bottom = cam_y + height;
+	bound.left = (long)cam_x;
+	bound.top = (long)cam_y;
+	bound.right = (long)cam_x + width;;
+	bound.bottom = (long) cam_y + height;
 	return bound;
 }
 
@@ -166,8 +168,8 @@ void Camera::Update()
 	
 	if (typeMove == 1) 
 	{
-		float a = _Map->GetHeight(); // 176
-		float b = _Game->GetScreenHeight(); // 242
+		float a = (float)_Map->GetHeight(); // 176
+		float b = (float)_Game->GetScreenHeight(); // 242
 		if (a < b)
 		{
 			cy = 10;
@@ -194,37 +196,47 @@ void Camera::Update()
 	}
 	else
 	{
-		float cx, cy;
 		_Mario->GetPosition(cx, cy);
 		cx -= width / 2;
 		cy -= height / 2;
 		if (_Mario->canFlyX == true || _Mario->canFlyS == true)
 		{
-			if (cy <= maxTopCam)
+			/*DebugOut(L"TH1 : _Mario->canFlyX == true || _Mario->canFlyS == true\n");
+			DebugOut(L"cy OLD = %f\n", cy);*/
+
+			if (cy <= maxTopCam - 40)
 			{
+				DebugOut(L"TH1, cy = %f\n", cy);
 				cy = maxTopCam;
 			}
 			else if (cy >= maxBottomCam)
 			{
+				DebugOut(L"TH2\n");
 				cy = maxBottomCam;
 			}
 			else
 			{
 				float temp = maxBottomCam - SCREEN_HEIGHT / 2;
-				if (cy < 220)
+				if (cy < 230)
 				{
+					DebugOut(L"TH3, cy = %f\n", cy);
 					SetCamPos(cx, cy + 40);
+					//SetCamPos(cx, cy);
 					return;
 				}
 				else if (cy >= temp)
 				{
+					DebugOut(L"TH4\n");
 					cy = maxBottomCam;
 				}
 			}
+
+			DebugOut(L"cy NEW = %f, maxBottomCam = %f, maxTopCam = %f\n", cy, maxBottomCam, maxTopCam);
 			SetCamPos(cx, cy);
 		}
 		else
 		{
+			/*DebugOut(L"TH2 : else \n");*/
 			if (cx <= maxLeftCam)
 			{
 				cx = maxLeftCam;
@@ -234,6 +246,7 @@ void Camera::Update()
 				cx = maxRightCam;
 			}
 
+		
 			if (cy <= maxTopCam)
 			{
 				cy = maxTopCam;
@@ -244,20 +257,30 @@ void Camera::Update()
 			}
 			else
 			{
-				if (cy >= maxBottomCam - SCREEN_HEIGHT / 2 - 32)
+				if (cy >= maxBottomCam - SCREEN_HEIGHT / 2 - 32 || _Mario->OnGround == false)
 					cy = maxBottomCam;
 			}
-			SetCamPos(cx, cy);
+			if (Shake == false)
+				SetCamPos(cx, cy);
+			else
+			{
+				ShakeTime++;
+				if (ShakeTime < 5)
+					SetCamPos(cx, cy - 10);
+				else if (ShakeTime < 10)
+					SetCamPos(cx, cy + 10);
+				else if (ShakeTime < 15)
+					SetCamPos(cx, cy - 10);
+				else if (ShakeTime < 20)
+					SetCamPos(cx, cy + 10);
+				else
+					Shake = false;
+			}
+			
 		}
 	}
 	//DebugOut(L"X %f, Y %f\n", _Mario->x + _Mario->Width, _Mario->y);
 }
-
-void Camera::Update1()
-{
-	
-}
-
 
 Camera::~Camera()
 {

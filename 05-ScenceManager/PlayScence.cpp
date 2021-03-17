@@ -23,6 +23,7 @@
 #include "FlyWood.h"
 #include"BoomerangEnemy.h"
 #include "RedFlyKoopas.h"
+#include "ListBrick.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -33,6 +34,7 @@ CPlayScene::CPlayScene()
 	Stop = false;
 	TypeScene = 0;
 	CourseClear = false;
+	MarioLevel = 1;
 }
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) : CScene(id, filePath)
@@ -42,6 +44,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 	Stop = false;
 	TypeScene = 0;
 	CourseClear = false;
+	MarioLevel = 1;
 }
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath, int mariolv)
@@ -103,7 +106,7 @@ void CPlayScene::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -125,7 +128,7 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 
 	CAnimations* animations = CAnimations::GetInstance();
 
-	for (int i = 1; i < tokens.size(); i++)
+	for (unsigned int i = 1; i < tokens.size(); i++)
 	{
 		int ani_id = atoi(tokens[i].c_str());
 
@@ -147,16 +150,16 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	float x = (float) atof(tokens[1].c_str());
+	float y = (float)atof(tokens[2].c_str());
 	if (object_type == OBJECT_TYPE_BLOCK || object_type == OBJECT_TYPE_WARPPIPE || object_type == OBJECT_TYPE_GROUND)
 	{
-		width = atof(tokens[4].c_str());
-		height = atof(tokens[5].c_str());
+		width = (int)atof(tokens[4].c_str());
+		height = (int)atof(tokens[5].c_str());
 	}
 	else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK || object_type == OBJECT_TYPE_ITEMBRICK)
 	{
-		Item = atof(tokens[4].c_str());
+		Item = (int)atof(tokens[4].c_str());
 	}
 
 	int ani_set_id = atoi(tokens[3].c_str());
@@ -171,8 +174,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		if (tokens.size() > 4)
 		{
-			float NewX = atof(tokens[4].c_str());
-			float NewY = atof(tokens[5].c_str());
+			float NewX = (float) atof(tokens[4].c_str());
+			float NewY = (float)atof(tokens[5].c_str());
 			_Mario->SetPosition(x, y);
 			_Mario->start_x = x;
 			_Mario->start_y = y;
@@ -201,7 +204,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
 	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
-
+	case OBJECT_TYPE_LISTBRICK:
+	{
+		int NumberBrick = (int)atof(tokens[4].c_str());
+		vector<int>ListBrickType;
+		for (int i = 0; i < NumberBrick; i++)
+		{
+			int BrickType = (int)atof(tokens[5 + i].c_str());
+			ListBrickType.push_back(BrickType);
+		}
+		obj = new ListBrick(NumberBrick,ListBrickType, x, y);
+		break;
+	}
 	case OBJECT_TYPE_GOOMBA:
 	{
 		obj = new Goomba();
@@ -265,9 +279,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BOOMERANGENEMY: obj = new BoomerangEnemy(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
+		float r = (float)atof(tokens[4].c_str());
+		float b = (float)atof(tokens[5].c_str());
+		int scene_id = (int)atoi(tokens[6].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
 	break;
@@ -398,7 +412,7 @@ void CPlayScene::_ParseSection_SETTINGS(string line)
 	}
 	else if (tokens[0] == "cam")
 	{
-		_Camera->SetCamScene(int(atoi(tokens[1].c_str())), int(atoi(tokens[2].c_str())), int(atoi(tokens[3].c_str())) - SCREEN_WIDTH, int(atoi(tokens[4].c_str())));
+		_Camera->SetCamScene((float)(atoi(tokens[1].c_str())), (float)(atoi(tokens[2].c_str())), (float)(atoi(tokens[3].c_str())) - SCREEN_WIDTH, (float)(atoi(tokens[4].c_str())));
 		_Camera->SetCamMove(int(atoi(tokens[5].c_str())));
 	}
 	else if (tokens[0] == "scene")
@@ -790,7 +804,7 @@ void CPlayScene::Update(DWORD dt)
 void CPlayScene::Render()
 {
 	// Background đen phía sau
-	_Map->DrawMap1();
+	//_Map->DrawMap1();
 	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
@@ -837,7 +851,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		_Mario->y = _Mario->y - MARIO_SMALL_BBOX_HEIGHT - 1;
 		_Mario->OnGround = false;
 	}break;
-
+	
+	break;
 	case DIK_2:
 	{
 		_Mario->SetLevel(MARIO_LEVEL_BIG);
@@ -861,8 +876,8 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_U:
 	{
-		//_Mario->UpLevel();
-		_Mario->untouchable = true;
+		_Mario->UpLevel();
+		//_Mario->untouchable = true;
 	}break;
 
 	case DIK_I:

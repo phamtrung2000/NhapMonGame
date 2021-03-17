@@ -192,6 +192,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 				ChangeToCoin = true;
+				_Camera->Shake = true;
 			}
 		}break;
 

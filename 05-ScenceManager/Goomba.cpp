@@ -11,20 +11,19 @@
 Goomba::Goomba() : Enemy()
 {
 	ObjType = OBJECT_TYPE_GOOMBA;
-	SetState(GOOMBA_STATE_WALKING_LEFT);
-	Score = GOOMBA_SCORE;
-	TypeEnemy = ENEMYTYPE_GOOMBA;
+	EnemyType = ENEMY_TYPE_GOOMBA;
+	SetState(ENEMY_STATE_WALKING_LEFT);
 }
 
 void Goomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state != GOOMBA_STATE_DIE_2)
+	if (state != ENEMY_STATE_DIE_IS_ATTACKED)
 	{
 		left = x;
 		top = y;
 		right = x + GOOMBA_BBOX_WIDTH;
 
-		if (state == GOOMBA_STATE_DIE)
+		if (state == ENEMY_STATE_DIE_IS_JUMPED)
 			bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 		else
 			bottom = y + GOOMBA_BBOX_HEIGHT;
@@ -35,17 +34,17 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	Enemy::Update(dt, coObjects);
 
-	if (GetState() != GOOMBA_STATE_DIE)
+	if (GetState() != ENEMY_STATE_DIE_IS_JUMPED)
 		vy += GOOMBA_GRAVITY * dt;
 
-	if (state == GOOMBA_STATE_DIE)
+	if (state == ENEMY_STATE_DIE_IS_JUMPED)
 	{
 		if (TimeToDie <= GOOMBA_TIMETODIE)
 			TimeToDie++;
 		else
 			canDelete = true;
 	}
-	else if (state == GOOMBA_STATE_DIE_2)
+	else if (state == ENEMY_STATE_DIE_IS_ATTACKED)
 	{
 		if(y > _Map->GetHeight())
 			canDelete = true;
@@ -63,7 +62,7 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	coEvents.clear();
 
-	if (state != GOOMBA_STATE_DIE)
+	if (state != ENEMY_STATE_DIE_IS_JUMPED)
 		CalcPotentialCollisions(coObjects, coEvents);
 
 	if (coEvents.size() == 0)
@@ -99,10 +98,10 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						else if (e->nx != 0)
 						{
 							//y += min_ty * dy + ny * 0.4f;
-							if (GetState() == GOOMBA_STATE_WALKING_RIGHT)
-								SetState(GOOMBA_STATE_WALKING_LEFT);
+							if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+								SetState(ENEMY_STATE_WALKING_LEFT);
 							else
-								SetState(GOOMBA_STATE_WALKING_RIGHT);
+								SetState(ENEMY_STATE_WALKING_RIGHT);
 						}
 					}
 				}
@@ -137,11 +136,11 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Goomba::Render()
 {
 	int ani = GOOMBA_ANI_WALKING;
-	if (state == GOOMBA_STATE_DIE) 
+	if (state == ENEMY_STATE_DIE_IS_JUMPED)
 	{
 		ani = GOOMBA_ANI_DIE;
 	}
-	else if (state == GOOMBA_STATE_DIE_2)
+	else if (state == ENEMY_STATE_DIE_IS_ATTACKED)
 	{
 		ani = GOOMBA_ANI_DIE_2;
 	}
@@ -153,37 +152,30 @@ void Goomba::Render()
 
 void Goomba::SetState(int state)
 {
-	CGameObject::SetState(state);
+	Enemy::SetState(state);
 	switch (state)
 	{
-		case GOOMBA_STATE_DIE:
+		case ENEMY_STATE_DIE_IS_JUMPED:
 		{
 			y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
-			vx = 0;
-			vy = 0;
-			isDie = true;
 		}
 		break;
 
-		case GOOMBA_STATE_DIE_2:
+		case ENEMY_STATE_DIE_IS_ATTACKED:
 		{
-			vx = this->nx * abs(vx);
 			vy = -GOOMBA_DIE_DEFLECT_SPEED;
-			isDie = true;
 		}
 		break;
 
-		case GOOMBA_STATE_WALKING_RIGHT:
+		case ENEMY_STATE_WALKING_RIGHT:
 		{
 			vx = GOOMBA_WALKING_SPEED;
-			nx = RIGHT;
 		}
 		break;
 
-		case GOOMBA_STATE_WALKING_LEFT:
+		case ENEMY_STATE_WALKING_LEFT:
 		{
 			vx = -GOOMBA_WALKING_SPEED;
-			nx = LEFT;
 		}
 		break;
 	}
@@ -228,8 +220,6 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 	Enemy::CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 }
 
-
-
 //#include "Goomba.h"
 //#include "WarpPipe.h"
 //#include "QuestionBrick.h"
@@ -249,7 +239,7 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 //	top = y;
 //	right = x + GOOMBA_BBOX_WIDTH;
 //
-//	if (state == GOOMBA_STATE_DIE)
+//	if (state == ENEMY_STATE_DIE_IS_JUMPED)
 //		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 //	else
 //		bottom = y + GOOMBA_BBOX_HEIGHT;
@@ -261,7 +251,7 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 //	//
 //	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 //	// 
-//	if (state != GOOMBA_STATE_DIE)
+//	if (state != ENEMY_STATE_DIE_IS_JUMPED)
 //		vy += GRAVITY * dt;
 //	vector<LPCOLLISIONEVENT> coEvents;
 //	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -301,7 +291,7 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 //void Goomba::Render()
 //{
 //	int ani = GOOMBA_ANI_WALKING;
-//	if (state == GOOMBA_STATE_DIE) {
+//	if (state == ENEMY_STATE_DIE_IS_JUMPED) {
 //		ani = GOOMBA_ANI_DIE;
 //	}
 //
@@ -315,7 +305,7 @@ void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 //	CGameObject::SetState(state);
 //	switch (state)
 //	{
-//	case GOOMBA_STATE_DIE:
+//	case ENEMY_STATE_DIE_IS_JUMPED:
 //		y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
 //		vx = 0;
 //		vy = 0;

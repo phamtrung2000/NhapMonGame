@@ -6,7 +6,6 @@
 #define	GREENPLANT_BBOX_WIDTH	16
 
 #define	ATTACK_ZONE_Y	200
-#define	MAX_ATTACK_ZONE_X	100
 
 #define GREENPLANT_STATE_HIDE		0
 #define GREENPLANT_STATE_APPEAR		100
@@ -21,7 +20,7 @@ class GreenPlant : public FirePiranhaPlant
 {
 public:
 	float Startposy;
-	DWORD AppearTime;
+	ULONGLONG AppearTime;
 
 	// lấy vị trí mario để khi mario tới tầm thì cây xuất hiện
 	float Mario_X;

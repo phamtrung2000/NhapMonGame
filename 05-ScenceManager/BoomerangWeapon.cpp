@@ -7,7 +7,7 @@
 #define BOOMERANG_GRAVITY 0.0001f
 #define BOOMERANG_ANI_SET_ID 102
 
-BoomerangWeapon::BoomerangWeapon(float nx, float x, float y) : Weapon()
+BoomerangWeapon::BoomerangWeapon(int nx, float x, float y) : Weapon()
 {
 	isMarioWeapon = false;
 	ObjType = OBJECT_TYPE_BOOMERANG;

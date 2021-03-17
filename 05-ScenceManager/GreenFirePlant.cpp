@@ -53,21 +53,21 @@ void GreenFirePlant::CalcAtkPos()
 	{
 		// mario trên, cây dưới -> đạn bay lên trên
 		if (Mario_Y < y)
-			VyBullet = -0.01;
+			VyBullet = -0.01f;
 		// mario dưới, cây trên -> đạn bay xuống
 		else
-			VyBullet = 0.01;
+			VyBullet = 0.01f;
 	}
 	// mario và cây cách xa 1 đoạn
 	else
 	{
 		if (Mario_Y < y)
-			VyBullet = -0.03;
+			VyBullet = -0.03f;
 		else
-			VyBullet = 0.05;
+			VyBullet = 0.05f;
 
 	}
-	VxBullet = -0.05;
+	VxBullet = -0.05f;
 	nx = -1;
 }
 
@@ -77,7 +77,7 @@ void GreenFirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// cho cây mới vô rớt nhanh xuống, chạm đất để isInit = true
 	if (isInit == false)
-		vy += 0.005 * dt;
+		vy += 0.005f * dt;
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 

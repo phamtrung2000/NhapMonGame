@@ -17,12 +17,8 @@ Map* Map::GetInstance()
 Map::Map()
 {
 	texID = 0;
-	MaxColumn = column = MaxRow = row = TileWidth = TileRow = TileCollum = 0;
-}
-
-Map::Map(int ID, LPCWSTR FilePath_data, int Num_Rows, int Num_Cols, int Num_row_read, int Num_col_read, int map_width, int map_height)
-{
-
+	MaxColumn = column = MaxRow = row = TileWidth = TileHeight = TileRow = TileCollum = 0;
+	IsWorldMap = false;
 }
 
 void Map::_ParseSection_INFO(string line)
@@ -58,7 +54,7 @@ void Map::_ParseSection_ROWS(string line)
 {
 	vector<string> tokens = split(line);
 
-	for (int i = 0; i < tokens.size(); i++)
+	for (unsigned int i = 0; i < tokens.size(); i++)
 	{
 		int ID = atoi(tokens[i].c_str());
 
@@ -151,9 +147,9 @@ void Map::LoadMap1(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
 	LPDIRECT3DTEXTURE9 texMap = texture->Get(texID);
 	int id_sprite = 0;
 
-	for (UINT i = 0; i < TileRow; i++)
+	for (int i = 0; i < TileRow; i++)
 	{
-		for (UINT j = 0; j < TileCollum; j++)
+		for (int j = 0; j < TileCollum; j++)
 		{
 			int id_Sprite = texID + id_sprite;
 			sprites->Add(id_Sprite, TileWidth * j, TileHeight * i, TileWidth * (j + 1), TileHeight * (i + 1), texMap);
@@ -179,7 +175,7 @@ void Map::DrawMap()
 			r.right = r.left + TileWidth;
 			r.bottom = r.top + TileWidth;
 
-			CGame::GetInstance()->Draw(j * TileWidth, i * TileWidth, CTextures::GetInstance()->Get(texID), r.left, r.top, r.right, r.bottom);
+			CGame::GetInstance()->Draw((float)(j * TileWidth), (float)(i * TileWidth), CTextures::GetInstance()->Get(texID), r.left, r.top, r.right, r.bottom);
 		}
 
 
@@ -206,12 +202,12 @@ void Map::DrawMap1()
 	if (firstcol < 0)  
 		firstcol = 0; 
 	int lastcol = firstcol + (SCREEN_WIDTH / 16);
-	for (UINT i = 0; i < MaxRow; i++)
+	for ( int i = 0; i < MaxRow; i++)
 	{
-		for (UINT j = firstcol; j <= lastcol; j++)
+		for ( int j = firstcol; j <= lastcol; j++)
 		{
-			float x = TileWidth * j;
-			float y = TileWidth * i;
+			float x = (float)(TileWidth * j);
+			float y = (float)(TileWidth * i);
 			sprites->Get(TiledID[i][j] + texID)->Draw(x, y);
 		}
 	}

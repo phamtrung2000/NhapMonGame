@@ -16,6 +16,7 @@
 #include "RedFlyKoopas.h"
 #include "BoomerangEnemy.h"
 #include "FirePiranhaPlant.h"
+#include "ListBrick.h"
 
 MarioTail::MarioTail(float x, float y)
 {
@@ -131,66 +132,92 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
 			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 			{
-				if (coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
+				if (coObjects->at(i)->Category == CATEGORY::OBJECT)
 				{
-					ItemBrick* brick = dynamic_cast<ItemBrick*>(coObjects->at(i));
-					if (brick->Item == NORMAL)
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
 					{
-						brick->SetState(ITEMBRICK_STATE_DIE);
-					}
-					else if (brick->hasItem == true)
-					{
-						brick->SetState(BRICK_STATE_COLLISION);
-						if (brick->Item == BUTTONP)
+						ItemBrick* brick = dynamic_cast<ItemBrick*>(coObjects->at(i));
+						if (brick->Item == NORMAL)
 						{
-							BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
-							_PlayScene->objects.push_back(brickitem);
-							auto effect = new EffectSmoke(brick->x, brick->y - 16);
-							_PlayScene->objects.push_back(effect);
+							brick->SetState(ITEMBRICK_STATE_DIE);
+						}
+						else if (brick->GetState() == BRICK_STATE_NORMAL)
+						{
+							brick->SetState(BRICK_STATE_COLLISION);
+							brick->hasItem = false;
+							if (brick->Item == BUTTONP)
+							{
+								BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
+								_PlayScene->objects.push_back(brickitem);
+								auto effect = new EffectSmoke(brick->x, brick->y - 16);
+								_PlayScene->objects.push_back(effect);
+							}
+							else
+							{
+								BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
+								_PlayScene->objects.push_back(brickitem);
+							}
+						}
+					}
+					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICK)
+					{
+						QuestionBrick* brick = dynamic_cast<QuestionBrick*>(coObjects->at(i));
+						if (brick->GetState() == BRICK_STATE_NORMAL)
+						{
+							brick->SetState(BRICK_STATE_COLLISION);
+							brick->hasItem = false;
+							if (brick->Item > MONEY)
+							{
+								switch (_Mario->level)
+								{
+								case MARIO_LEVEL_SMALL:
+								{
+									brick->Item = MUSHROOM;
+								}break;
+
+								default:
+									brick->Item = LEAF;
+									break;
+								}
+							}
+							QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
+							_PlayScene->objects.push_back(questionbrickitem);
+						}
+					}
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_LISTBRICK)
+					{
+						ListBrick* listbrick = dynamic_cast<ListBrick*>(coObjects->at(i));
+						if (listbrick->Bricks.size() == 1)
+						{
+							listbrick->DeleteBrick(0);
+							listbrick->canDelete = true;
 						}
 						else
 						{
-							BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
-							_PlayScene->objects.push_back(brickitem);
-						}
-					}
-				}
-				else if (coObjects->at(i)->ObjType == OBJECT_TYPE_QUESTIONBRICK)
-				{
-					QuestionBrick* brick = dynamic_cast<QuestionBrick*>(coObjects->at(i));
-					if (brick->GetState() == BRICK_STATE_NORMAL)
-					{
-						brick->SetState(BRICK_STATE_COLLISION);
-						brick->hasItem = false;
-						if (brick->Item > MONEY)
-						{
-							switch (_Mario->level)
+							if (_Mario->nx == LEFT)
 							{
-							case MARIO_LEVEL_SMALL:
+								listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
+								listbrick->Bricks.pop_back();
+							}
+							else
 							{
-								brick->Item = MUSHROOM;
-							}break;
-
-							default:
-								brick->Item = LEAF;
-								break;
+								listbrick->DeleteBrick(0);
+								listbrick->Bricks.erase(listbrick->Bricks.begin());
 							}
 						}
-						QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
-						_PlayScene->objects.push_back(questionbrickitem);
+						
 					}
 				}
-
 				else if (coObjects->at(i)->Category == CATEGORY::ENEMY)
 				{
 					Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
-					if (enemy->isAttacked == false && enemy->TypeEnemy!= ENEMYTYPE_PLANT)
+					if (enemy->isAttacked == false && enemy->EnemyType!= ENEMY_TYPE_PLANT)
 					{
 						auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
 						_PlayScene->objects.push_back(hit);
 						enemy->isAttacked = true;
 						enemy->Time_isAttacked = GetTickCount64();
-						if (enemy->TypeEnemy != ENEMYTYPE_KOOPAS)
+						if (enemy->EnemyType != ENEMY_TYPE_KOOPAS)
 						{
 							_Mario->nScore++;
 							_HUD->UpdateScore(enemy, _Mario->nScore);
@@ -199,9 +226,10 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (coObjects->at(i)->ObjType == OBJECT_TYPE_GOOMBA)
 					{
 						Goomba* goomba = dynamic_cast<Goomba*>(coObjects->at(i));
-						if (goomba->GetState() == GOOMBA_STATE_WALKING_RIGHT || goomba->GetState() == GOOMBA_STATE_WALKING_LEFT)
+						if (goomba->isDie==false)
 						{
-							goomba->SetState(GOOMBA_STATE_DIE_2);
+							goomba->nx = _Mario->nx;
+							goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 						}
 					}
 					else if(coObjects->at(i)->ObjType == OBJECT_TYPE_KOOPAS || coObjects->at(i)->ObjType == OBJECT_TYPE_GREENKOOPAS)					
@@ -268,7 +296,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							
 						}
 					}
-					else if (enemy->TypeEnemy == ENEMYTYPE_PLANT)
+					else if (enemy->EnemyType == ENEMY_TYPE_PLANT)
 					{
 						FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(enemy);
 						if (plant->GetState() != FIREPIRANHAPLANT_STATE_HIDE)
@@ -770,7 +798,6 @@ void MarioTail::Render()
 			}
 		}
 	}
-	DebugOut(L"RENDER ani = %i\n", ani);
 	animation_set->at(ani)->Render(x, y, 255);
 }
 

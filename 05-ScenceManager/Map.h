@@ -27,8 +27,7 @@ public:
 
 	static Map* GetInstance();
 	Map();
-	Map(int ID, LPCWSTR FilePath_data, int Num_Rows, int  Num_Cols, int Num_row_read, int Num_col_read, int map_width = 16, int map_height = 16);
-
+	
 	void LoadMap(int texid, wstring map_txt, int& a, int& b);
 	void LoadMap1(int texid, wstring map_txt, int& MapWidth, int& MapHeight);
 	void DrawMap();

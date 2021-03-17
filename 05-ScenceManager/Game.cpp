@@ -1,6 +1,5 @@
 ﻿#include "Game.h"
 #include "PlayScence.h"
-#include "Opening.h"
 #include "World1.h"
 #include "IntroScene.h"
 CGame * CGame::__instance = NULL;

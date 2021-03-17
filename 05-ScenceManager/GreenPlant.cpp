@@ -7,7 +7,8 @@ GreenPlant::GreenPlant() : FirePiranhaPlant()
 {
 	ObjType = OBJECT_TYPE_GREENPLANT;
 	isBlocked = Stop = isInit = false;
-	WarpPipeHeight = WarpPipeWidth = AppearTime = 0;
+	WarpPipeHeight = WarpPipeWidth = 0;
+	AppearTime = 0;
 	SetState(GREENPLANT_STATE_HIDE);
 }
 
@@ -56,7 +57,7 @@ void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// cho cây mới vô rớt nhanh xuống, chạm đất để isInit = true
 	if (isInit == false)
-		vy += 0.005 * dt;
+		vy += 0.005f * dt;
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 	// bắt đầu đếm thời gian xuất hiện

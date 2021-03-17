@@ -10,7 +10,7 @@ FirePiranhaPlant::FirePiranhaPlant() : Enemy()
 	CalcAtkTime = 0;
 	SetState(FIREPIRANHAPLANT_STATE_HIDE);
 	Score = FIREPIRANHAPLANT_SCORE;
-	TypeEnemy = ENEMYTYPE_PLANT;
+	EnemyType = ENEMY_TYPE_PLANT;
 }
 
 // cây xuất hiện nhưng chưa chắc tấn công, phải nằm trong vùng tấn công
@@ -89,7 +89,7 @@ void FirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// cho cây mới vô rớt nhanh xuống, chạm đất để isInit = true
 	if (isInit == false)
-		vy += 0.005 * dt;
+		vy += 0.005f * dt;
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 	

@@ -6,6 +6,7 @@ Curtain::Curtain()
 	choose = StopRender = IsAppear = IsDown = IsUp = false;
 	//AppearTime = 0;
 	AppearTime = GetTickCount64();
+	Type = 0;
 }
 Curtain::Curtain(float X, float Y)
 {
@@ -13,6 +14,7 @@ Curtain::Curtain(float X, float Y)
 	choose = IsAppear = IsDown = IsUp = false;
 	//AppearTime = 0;
 	AppearTime = GetTickCount64();
+	Type = 0;
 }
 
 Curtain::Curtain(float X, float Y, int type)
@@ -83,7 +85,7 @@ void Curtain::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	{
 		if (AppearTime != 0 && GetTickCount64() - AppearTime > 1000)
 		{
-			vy = -0.1;
+			vy = -0.1f;
 			AppearTime = 0;
 			IsUp = true;
 		}
@@ -95,7 +97,7 @@ void Curtain::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	else if (Type == 1)
 	{
 		if (GetTickCount64() - AppearTime > 4000 || IsDown == true)
-			vy = 0.23;
+			vy = 0.23f;
 		if (GetTickCount64() - AppearTime > 8000)
 			StopRender = true;
 		

@@ -17,12 +17,13 @@ ButtonP::ButtonP(float X, float Y)
 
 void ButtonP::SetBrickToCoin()
 {
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		ItemBrick* brick = dynamic_cast<ItemBrick*>(Bricks[i]);
 		brick->check = true;
 	}
 }
+
 void ButtonP::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;

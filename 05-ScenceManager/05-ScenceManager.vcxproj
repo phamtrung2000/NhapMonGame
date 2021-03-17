@@ -147,6 +147,7 @@
     <ClCompile Include="GreenFirePlant.cpp" />
     <ClCompile Include="GreenFlyKoopas.cpp" />
     <ClCompile Include="GreenKoopas.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="IntroScene.cpp" />
@@ -154,9 +155,9 @@
     <ClCompile Include="ItemBrick.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Koopas.cpp" />
+    <ClCompile Include="ListBrick.cpp" />
     <ClCompile Include="MarioTail.cpp" />
     <ClCompile Include="Notification.cpp" />
-    <ClCompile Include="Opening.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="GreenPlant.cpp" />
     <ClCompile Include="MarioOverWorld.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="GreenFirePlant.h" />
     <ClInclude Include="GreenFlyKoopas.h" />
     <ClInclude Include="GreenKoopas.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="IntroScene.h" />
@@ -210,9 +212,9 @@
     <ClInclude Include="ItemBrick.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="Koopas.h" />
+    <ClInclude Include="ListBrick.h" />
     <ClInclude Include="MarioTail.h" />
     <ClInclude Include="Notification.h" />
-    <ClInclude Include="Opening.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="GreenPlant.h" />
     <ClInclude Include="MarioOverWorld.h" />

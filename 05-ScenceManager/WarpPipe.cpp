@@ -17,8 +17,8 @@
 
 WarpPipe::WarpPipe(int W, int H, int color,int scene)
 {
-	Width = W;
-	Height = H;
+	Width = (float)W;
+	Height = (float)H;
 	ObjType = OBJECT_TYPE_WARPPIPE;
 	Category = CATEGORY::OBJECT;
 	Color = color;
@@ -41,7 +41,7 @@ void WarpPipe::Render()
 {
 	if (Color == COLOR_GREEN)
 	{
-		int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
+		int Y = (int)y + OBJECT_BBOX_WIDTH_HEIGHT;
 		for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
 		{
 			// vẽ phần đầu
@@ -50,12 +50,12 @@ void WarpPipe::Render()
 			// vẽ bên trái, i = 2, 4 , 6
 			else if (i % 2 == 0)
 			{
-				animation_set->at(Ani_Body_Left)->Render(x, Y);
+				animation_set->at(Ani_Body_Left)->Render(x, (float)Y);
 			}
 			//vẽ bên phải
 			else
 			{
-				animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, Y);
+				animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, (float)Y);
 				Y += OBJECT_BBOX_WIDTH_HEIGHT;
 			}
 		}
@@ -81,7 +81,7 @@ void WarpPipe::Render()
 		//}
 		//int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
 
-		int Y = y;
+		int Y = (int)y;
 		for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
 		{
 			// vẽ phần đầu
@@ -95,12 +95,12 @@ void WarpPipe::Render()
 				//vẽ bên phải
 				else
 				{
-					animation_set->at(BLACKAni_Body_Right)->Render(x  + OBJECT_BBOX_WIDTH_HEIGHT, Y);
+					animation_set->at(BLACKAni_Body_Right)->Render((float)(x  + OBJECT_BBOX_WIDTH_HEIGHT), (float)Y);
 					Y += OBJECT_BBOX_WIDTH_HEIGHT;
 				}
 			}
 			else
-				animation_set->at(i + 2)->Render((i - 2) * OBJECT_BBOX_WIDTH_HEIGHT + x, Y);
+				animation_set->at(i + 2)->Render((float)((i - 2) * OBJECT_BBOX_WIDTH_HEIGHT + x), (float)Y);
 			
 		}
 	}

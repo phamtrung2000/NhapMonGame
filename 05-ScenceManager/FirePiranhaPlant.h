@@ -29,8 +29,8 @@ class FirePiranhaPlant : public Enemy
 {
 public:
 	float Startposy;
-	DWORD CalcAtkTime;
-	DWORD AppearTime;
+	ULONGLONG CalcAtkTime;
+	ULONGLONG AppearTime;
 
 	float AtkPosY;
 	float StartAtkPosX;

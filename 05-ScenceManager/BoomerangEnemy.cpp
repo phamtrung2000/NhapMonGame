@@ -27,14 +27,14 @@ BoomerangEnemy::BoomerangEnemy() : Enemy()
 {
 	countThrow = 0;
 	ObjType = OBJECT_TYPE_BOOMERANGENEMY;
-	TypeEnemy = ENEMYTYPE_BOOMERANG;
+	EnemyType = ENEMY_TYPE_BOOMERANG_ENEMY;
 	CanThrow = false;
 	Width = BOOMERANGENEMY_WIDTH_BBOX;
 	Height = BOOMERANGENEMY_HEIGHT_BBOX;
 	SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
-	TimeToThrow = GetTickCount64();
+	TimeToThrow = 0;
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BOOMERANGENEMY);
@@ -54,7 +54,7 @@ BoomerangEnemy::BoomerangEnemy(float x, float y) : Enemy()
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
 	TimeToThrow = 300;
-	TypeEnemy = ENEMYTYPE_BOOMERANG;
+	EnemyType = ENEMY_TYPE_BOOMERANG_ENEMY;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BOOMERANGENEMY);
 	this->SetAnimationSet(ani_set);

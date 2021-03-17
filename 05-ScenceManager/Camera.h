@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 
 class Camera
@@ -11,10 +11,12 @@ public:
 	int width; // width screen
 	int height; // height screen
 	int typeMove; // 1: right; -1: left; 2: bot; -2: top; 0: follow player
-	int maxTopCam;
-	int maxLeftCam;
-	int maxRightCam;
-	int maxBottomCam;
+	float maxTopCam;
+	float maxLeftCam;
+	float maxRightCam;
+	float maxBottomCam;
+	bool Shake; // rung lắc màn hình khi đạp nút P
+	int ShakeTime; // thời gian rung lắc màn hình
 	Camera();
 	~Camera();
 	bool test;

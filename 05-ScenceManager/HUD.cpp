@@ -29,6 +29,9 @@ HUD* HUD::GetInstance()
 
 HUD::HUD() 
 {
+	HUB = Item1 = Item2 = Item3 = push = NULL;
+	speed = typePlayer = NULL;
+	NumSpeed = 0;
 	isDrawPush = true;
 	CamX = CamY = 0.f;
 	MarioLife = 4;
@@ -90,7 +93,7 @@ void HUD::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -278,7 +281,7 @@ void HUD::Init()
 	// chiều dài màn hình
 	int ScreenWidth = CGame::GetInstance()->GetScreenWidth();
 	//SetRect(&rect, CamX + (SCREEN_WIDTH / 10) + 10, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
-	SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
+	SetRect(&rect, (int)(CamX + 39), (int)CamY, (int)(CamX + static_cast<float>(ScreenWidth)), (int)(CamY + (SCREEN_HEIGHT * 3 / 4) - 10));
 
 	auto sprites = CSprites::GetInstance();
 	HUB = sprites->Get(90000);
@@ -314,7 +317,7 @@ void HUD::Init(int playtime)
 	// chiều dài màn hình
 	int ScreenWidth = CGame::GetInstance()->GetScreenWidth();
 	//SetRect(&rect, CamX + (SCREEN_WIDTH / 10) + 10, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
-	SetRect(&rect, CamX + 39, CamY, CamX + static_cast<float>(ScreenWidth), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
+	SetRect(&rect, (int)(CamX + 39), (int)CamY, (int)(CamX + static_cast<float>(ScreenWidth)), (int)(CamY + (SCREEN_HEIGHT * 3 / 4) - 10));
 
 	auto sprites = CSprites::GetInstance();
 	HUB = sprites->Get(90000);
@@ -559,7 +562,7 @@ void HUD::Render()
 	LPD3DXSPRITE spriteHandler = _Game->GetSpriteHandler();
 	int a = _Game->current_scene;
 	if (a == 1)
-		SetRect(&rect, _Game->GetCamX() + 80, CamY + 15, CamX + static_cast<float>(CGame::GetInstance()->GetScreenWidth()), CamY + (SCREEN_HEIGHT * 3 / 4) - 10);
+		SetRect(&rect, (int)(_Game->GetCamX() + 80), (int)(CamY + 15), (int)(CamX + static_cast<float>(CGame::GetInstance()->GetScreenWidth())), (int)(CamY + (SCREEN_HEIGHT * 3 / 4) - 10));
 	if (font)
 		font->DrawTextA(spriteHandler, information.c_str(), -1, &rect, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
 
