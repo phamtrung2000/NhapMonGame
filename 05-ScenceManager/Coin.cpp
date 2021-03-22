@@ -22,7 +22,6 @@ Coin::Coin() : Item()
 void Coin::Render()
 {
 	animation_set->at(COIN_ANI)->Render(x, y);
-	//RenderBoundingBox();
 }
 
 void Coin::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -54,7 +53,5 @@ void Coin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		_PlayScene->objects.push_back(itembrick);
 
 		this->canDelete = true;
-		isBrickToCoin = false;
-		AppearTime = 0;
 	}
 }

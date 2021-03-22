@@ -9,6 +9,7 @@
 #include "Goomba.h"
 #include "Block.h"
 #include "EffectScore.h"
+#include "ListBrick.h"
 
 #define BRICKITEM_ANISET_ID	14
 
@@ -169,26 +170,57 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				for (UINT i = 0; i < coObjects->size(); i++)
 				{
-					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_ITEMBRICK)
+					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_LISTBRICK)
 					{
-						ItemBrick* itembrick = (ItemBrick*)coObjects->at(i);
-						if (itembrick->Item == NORMAL)
+						ListBrick* listbrick = (ListBrick*)coObjects->at(i);
+						for (int i = 0; i < listbrick->Bricks.size();)
 						{
-						
-							itembrick->canDelete = true;
-							/*auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
-							smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
-							_PlayScene->objects.push_back(smoke);*/
-						
-							Coin* coin = new Coin();
-							coin->SetPosition(itembrick->x, itembrick->y);
-							coin->isBrickToCoin = true;
-							coin->AppearTime = GetTickCount64();
-							CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-							LPANIMATION_SET ani_set = animation_sets->Get(12);
-							coin->SetAnimationSet(ani_set);
-							_PlayScene->objects.push_back(coin);
+							if (listbrick->Bricks.at(i)->Item == NORMAL)
+							{
+								ItemBrick* itembrick = listbrick->Bricks.at(i);
+								//itembrick->canDelete = true;
+
+								auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
+								smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
+								_PlayScene->objects.push_back(smoke);
+
+								Coin* coin = new Coin();
+								coin->SetPosition(itembrick->x , itembrick->y);
+								coin->isBrickToCoin = true;
+								coin->AppearTime = GetTickCount64();
+								CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+								LPANIMATION_SET ani_set = animation_sets->Get(12);
+								coin->SetAnimationSet(ani_set);
+								_PlayScene->objects.push_back(coin);
+
+								listbrick->Bricks.erase(listbrick->Bricks.begin() + i);
+							}
+							else
+							{
+								//i++;
+								int j = i;
+								ListBrick* listbrick1 = new ListBrick();
+								for (j; j < listbrick->Bricks.size(); j++)
+								{
+									if (listbrick->Bricks.at(j)->Item == NORMAL) // viên đầu tiên k bao h là normal
+									{
+										break;
+									}
+									else
+									{
+										ItemBrick* itembrick = listbrick->Bricks.at(j);
+										if (listbrick1->Bricks.size() == 0)
+										{
+											listbrick1->y = itembrick->y;
+										}
+										listbrick1->Bricks.push_back(itembrick);
+									}
+								}
+								_PlayScene->objects.push_back(listbrick1);
+								i = j;
+							}
 						}
+						listbrick->canDelete = true;
 					}
 				}
 				ChangeToCoin = true;

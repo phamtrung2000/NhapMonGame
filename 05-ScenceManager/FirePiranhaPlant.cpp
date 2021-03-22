@@ -2,7 +2,7 @@
 #include "PlayScence.h"
 #include "WarpPipe.h"
 
-FirePiranhaPlant::FirePiranhaPlant() : Enemy()
+FirePiranhaPlant::FirePiranhaPlant() : GreenPlant()
 {
 	ObjType = OBJECT_TYPE_FIREPIRANHAPLANT;
 	Stop = isInit = canAttack = isAttacking = false;

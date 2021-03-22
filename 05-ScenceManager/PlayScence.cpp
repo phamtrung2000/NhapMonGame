@@ -401,6 +401,234 @@ void CPlayScene::_ParseSection_MARIO(string line)
 	f.close();
 }
 
+void CPlayScene::_ParseSection_OBJECT(string line)
+{
+	vector<string> tokens = split(line);
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
+void CPlayScene::_ParseSection_ENEMY(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
+void CPlayScene::_ParseSection_ITEM(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
+void CPlayScene::_ParseSection_EFFECT(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
+void CPlayScene::_ParseSection_WEAPON(string line)
+{
+	vector<string> tokens = split(line);
+
+	//if (tokens.size() < 6) return; // skip invalid lines
+
+	wstring pathtxt = ToWSTR(tokens[0]);
+
+	ifstream f;
+	f.open(pathtxt);
+	// current resource section flag
+	int section = HUD_SECTION_UNKNOWN;
+
+	char str[MAX_HUD_LINE];
+	while (f.getline(str, MAX_HUD_LINE))
+	{
+		string line(str);
+
+		if (line[0] == '#') continue;	// skip comment lines	
+
+		if (line == "[TEXTURES]") {
+			section = SCENE_SECTION_TEXTURES; continue;
+		}
+		if (line == "[SPRITES]") {
+			section = SCENE_SECTION_SPRITES; continue;
+		}
+		if (line == "[ANIMATIONS]") {
+			section = SCENE_SECTION_ANIMATIONS; continue;
+		}
+		if (line == "[ANIMATION_SETS]") {
+			section = SCENE_SECTION_ANIMATION_SETS; continue;
+		}
+
+		if (line[0] == '[') { section = HUD_SECTION_UNKNOWN; continue; }
+
+		switch (section)
+		{
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		}
+	}
+	f.close();
+}
+
 void CPlayScene::_ParseSection_SETTINGS(string line)
 {
 	vector<string> tokens = split(line);
@@ -454,14 +682,29 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
-		if (line == "[MAP]") {
-			section = SCENE_SECTION_MAP; continue;
+		if (line == "[EFFECT]") {
+			section = SCENE_SECTION_EFFECT; continue;
+		}
+		if (line == "[ENEMY]") {
+			section = SCENE_SECTION_ENEMY; continue;
 		}
 		if (line == "[HUD]") {
 			section = SCENE_SECTION_HUD; continue;
 		}
+		if (line == "[ITEM]") {
+			section = SCENE_SECTION_ITEM; continue;
+		}
 		if (line == "[MARIO]") {
 			section = SCENE_SECTION_MARIO; continue;
+		}
+		if (line == "[OBJECT]") {
+			section = SCENE_SECTION_OBJECT; continue;
+		}
+		if (line == "[WEAPON]") {
+			section = SCENE_SECTION_WEAPON; continue;
+		}
+		if (line == "[MAP]") {
+			section = SCENE_SECTION_MAP; continue;
 		}
 		if (line == "[SETTINGS]") {
 			section = SCENE_FILE_SECTION_SETTINGS; continue;
@@ -474,11 +717,16 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
-		case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
-		case SCENE_SECTION_MARIO: _ParseSection_MARIO(line); break;
-		case SCENE_FILE_SECTION_SETTINGS: _ParseSection_SETTINGS(line); break;
 
+		case SCENE_SECTION_EFFECT: _ParseSection_EFFECT(line); break;
+		case SCENE_SECTION_ENEMY: _ParseSection_ENEMY(line); break;
+		case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
+		case SCENE_SECTION_ITEM: _ParseSection_ITEM(line); break;
+		case SCENE_SECTION_MARIO: _ParseSection_MARIO(line); break;
+		case SCENE_SECTION_OBJECT: _ParseSection_OBJECT(line); break;
+		case SCENE_SECTION_WEAPON: _ParseSection_WEAPON(line); break;
+		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+		case SCENE_FILE_SECTION_SETTINGS: _ParseSection_SETTINGS(line); break;
 		}
 	}
 
@@ -803,8 +1051,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	// Background đen phía sau
-	//_Map->DrawMap1();
+	_Map->DrawMap1();
 	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{

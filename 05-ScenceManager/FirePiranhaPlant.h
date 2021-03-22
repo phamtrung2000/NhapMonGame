@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Enemy.h"
+#include "GreenPlant.h"
 
 #define	FIREPIRANHAPLANT_SPEED_Y		0.03f
 #define	FIREPIRANHAPLANT_BBOX_HEIGHT	32
@@ -25,7 +25,7 @@
 #define FIREPIRANHAPLANT_ANI_ATTACK_DOWN_LEFT		7
 #define FIREPIRANHAPLANT_SCORE 100
 
-class FirePiranhaPlant : public Enemy
+class FirePiranhaPlant : public GreenPlant
 {
 public:
 	float Startposy;

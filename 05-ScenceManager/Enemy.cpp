@@ -83,7 +83,8 @@ void Enemy::SetState(int state)
 
 		case ENEMY_STATE_INIT:
 		{
-			vx = vy = 0.0f;
+			vx = 0.0f;
+			vy = 0.1f;
 		}
 		break;
 
@@ -123,15 +124,11 @@ void Enemy::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 {
 	if (e->obj->ObjType == OBJECT_TYPE_FIREBULLET)
 	{
-		if (dynamic_cast<FireBullet*>(e->obj))
+		FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
+		if (firebullet->FireMario == false)
 		{
-			FireBullet* firebullet = dynamic_cast<FireBullet*>(e->obj);
-			if (firebullet->FireMario == false)
-			{
-				x += dx;
-				this->y += min_ty * dy + ny * 0.1f - 0.5f;
-			}
-
+			x += dx;
+			this->y += min_ty * dy + ny * 0.1f - 0.5f;
 		}
 	}
 	else
@@ -141,5 +138,17 @@ void Enemy::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			y += dy;
 		else
 			this->y += min_ty * dy + ny * 0.1f - 0.5f;
+	}
+}
+
+void Enemy::CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	Mario* mario = dynamic_cast<Mario*>(e->obj);
+	if (e->nx != 0)
+	{
+		if (mario->untouchable == true)
+		{
+			x += dx;
+		}
 	}
 }

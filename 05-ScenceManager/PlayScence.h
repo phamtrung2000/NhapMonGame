@@ -19,10 +19,16 @@ using namespace std;
 #define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
-#define SCENE_SECTION_MAP		7
-#define SCENE_SECTION_HUD		8
-#define SCENE_SECTION_MARIO		9
-#define SCENE_FILE_SECTION_SETTINGS 10
+
+#define SCENE_SECTION_EFFECT	7
+#define SCENE_SECTION_ENEMY		8
+#define SCENE_SECTION_HUD		9
+#define SCENE_SECTION_ITEM		10
+#define SCENE_SECTION_MARIO		11
+#define SCENE_SECTION_OBJECT	12
+#define SCENE_SECTION_WEAPON	13
+#define SCENE_SECTION_MAP		14
+#define SCENE_FILE_SECTION_SETTINGS 15
 
 #define OBJECT_TYPE_MARIO	0
 #define OBJECT_TYPE_BRICK	1
@@ -81,13 +87,15 @@ public:
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 
-	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
+	void _ParseSection_EFFECT(string line); // hàm đọc MARIO trong file txt
+	void _ParseSection_ENEMY(string line); // hàm đọc MARIO trong file txt
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
+	void _ParseSection_ITEM(string line); // hàm đọc MARIO trong file txt
 	void _ParseSection_MARIO(string line); // hàm đọc MARIO trong file txt
-
+	void _ParseSection_OBJECT(string line); // hàm đọc MARIO trong file txt
+	void _ParseSection_WEAPON(string line); // hàm đọc MARIO trong file txt
+	void _ParseSection_MAP(string line); // hàm đọc Map trong file txt
 	void _ParseSection_SETTINGS(string line);
-
-
 
 	virtual void Load();
 	virtual void Load2(float, float); // load cảnh + tọa độ mới của mario

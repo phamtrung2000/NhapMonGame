@@ -26,6 +26,7 @@ MarioTail::MarioTail(float x, float y)
 	Category = CATEGORY::WEAPON;
 	isInvisible = false;
 }
+
 void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (_Mario->isLevelUp == true)
@@ -190,19 +191,16 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (listbrick->Bricks.size() == 1)
 						{
 							listbrick->DeleteBrick(0);
-							listbrick->canDelete = true;
 						}
 						else
 						{
 							if (_Mario->nx == LEFT)
 							{
 								listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
-								listbrick->Bricks.pop_back();
 							}
 							else
 							{
 								listbrick->DeleteBrick(0);
-								listbrick->Bricks.erase(listbrick->Bricks.begin());
 							}
 						}
 						
@@ -298,7 +296,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else if (enemy->EnemyType == ENEMY_TYPE_PLANT)
 					{
-						FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(enemy);
+						GreenPlant* plant = dynamic_cast<GreenPlant*>(enemy);
 						if (plant->GetState() != FIREPIRANHAPLANT_STATE_HIDE)
 						{
 							auto hit = new EffectHit(plant->x, plant->y, TYPE_TAIL);

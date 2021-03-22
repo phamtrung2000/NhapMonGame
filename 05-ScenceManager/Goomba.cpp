@@ -123,6 +123,9 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 				break;
 
+				case CATEGORY::PLAYER:
+					CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
+					break;
 				
 				}
 			}
@@ -218,6 +221,11 @@ void Goomba::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 void Goomba::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
 	Enemy::CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+}
+
+void Goomba::CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	Enemy::CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
 }
 
 //#include "Goomba.h"

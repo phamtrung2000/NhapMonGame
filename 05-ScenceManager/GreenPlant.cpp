@@ -3,13 +3,16 @@
 #include "WarpPipe.h"
 #include "FirePiranhaPlant.h"
 
-GreenPlant::GreenPlant() : FirePiranhaPlant()
+GreenPlant::GreenPlant() : Enemy()
 {
 	ObjType = OBJECT_TYPE_GREENPLANT;
 	isBlocked = Stop = isInit = false;
 	WarpPipeHeight = WarpPipeWidth = 0;
 	AppearTime = 0;
 	SetState(GREENPLANT_STATE_HIDE);
+
+	Score = FIREPIRANHAPLANT_SCORE;
+	EnemyType = ENEMY_TYPE_PLANT;
 }
 
 GreenPlant::~GreenPlant()
@@ -27,7 +30,7 @@ void GreenPlant::CalcAttackZone()
 		{
 			SetState(GREENPLANT_STATE_APPEAR);
 		}
-		if (y - Startposy <= -WarpPipeHeight && Stop == false)
+		if (y - StartY <= -WarpPipeHeight && Stop == false)
 		{
 			vy = 0;
 			if (GetState() == GREENPLANT_STATE_APPEAR && Stop == false)
@@ -36,15 +39,12 @@ void GreenPlant::CalcAttackZone()
 	}
 	else
 	{
-		if (GetState() == FIREPIRANHAPLANT_STATE_APPEAR && NumberBullet == 1)
+		if (GetState() == FIREPIRANHAPLANT_STATE_APPEAR )
 		{
-			if (y - Startposy <= -WarpPipeHeight)
+			if (y - StartY <= -WarpPipeHeight)
 			{
-				vy = 0;
-				canAttack = true;
-			}
-			if (NumberBullet == 1)
 				SetState(FIREPIRANHAPLANT_STATE_HIDE);
+			}
 		}
 		else
 			SetState(FIREPIRANHAPLANT_STATE_HIDE);
@@ -120,7 +120,7 @@ void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (isInit == false)
 				{
 					isInit = true;
-					Startposy = e->obj->y - GREENPLANT_BBOX_HEIGHT;
+					StartY = e->obj->y - GREENPLANT_BBOX_HEIGHT;
 				}
 				Stop = false;
 			}
@@ -133,7 +133,7 @@ void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		DebugOut(L"isBlocked = true\n");
 	else
 		DebugOut(L"isBlocked = false\n");
-	DebugOut(L"state = %i,vx = %f, vy %f, y %f, start y %f, distance %i\n", state, vx, vy, y, Startposy, INT(Startposy - y));
+	DebugOut(L"state = %i,vx = %f, vy %f, y %f, start y %f, distance %i\n", state, vx, vy, y, StartY, INT(StartY - y));
 	DebugOut(L"height %f\n", WarpPipeHeight);*/
 }
 

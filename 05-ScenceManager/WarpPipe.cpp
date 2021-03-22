@@ -39,70 +39,70 @@ void WarpPipe::GetBoundingBox(float& left, float& top, float& right, float& bott
 
 void WarpPipe::Render()
 {
-	if (Color == COLOR_GREEN)
-	{
-		int Y = (int)y + OBJECT_BBOX_WIDTH_HEIGHT;
-		for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
-		{
-			// vẽ phần đầu
-			if (i < 2)
-				animation_set->at(i)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
-			// vẽ bên trái, i = 2, 4 , 6
-			else if (i % 2 == 0)
-			{
-				animation_set->at(Ani_Body_Left)->Render(x, (float)Y);
-			}
-			//vẽ bên phải
-			else
-			{
-				animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, (float)Y);
-				Y += OBJECT_BBOX_WIDTH_HEIGHT;
-			}
-		}
-	}
-	else
-	{
-		//for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
-		//{
-		//	// vẽ phần đầu
-		//	if (i < 2)
-		//		animation_set->at(i + 4)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
-		//	// vẽ bên trái, i = 2, 4 , 6
-		//	else if (i % 2 == 0)
-		//	{
-		//		animation_set->at(BLACKAni_Body_Left)->Render(x, Y);
-		//	}
-		//	//vẽ bên phải
-		//	else
-		//	{
-		//		animation_set->at(BLACKAni_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, Y);
-		//		Y += OBJECT_BBOX_WIDTH_HEIGHT;
-		//	}
-		//}
-		//int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
+	//if (Color == COLOR_GREEN)
+	//{
+	//	int Y = (int)y + OBJECT_BBOX_WIDTH_HEIGHT;
+	//	for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
+	//	{
+	//		// vẽ phần đầu
+	//		if (i < 2)
+	//			animation_set->at(i)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
+	//		// vẽ bên trái, i = 2, 4 , 6
+	//		else if (i % 2 == 0)
+	//		{
+	//			animation_set->at(Ani_Body_Left)->Render(x, (float)Y);
+	//		}
+	//		//vẽ bên phải
+	//		else
+	//		{
+	//			animation_set->at(Ani_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, (float)Y);
+	//			Y += OBJECT_BBOX_WIDTH_HEIGHT;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	//for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
+	//	//{
+	//	//	// vẽ phần đầu
+	//	//	if (i < 2)
+	//	//		animation_set->at(i + 4)->Render(i * OBJECT_BBOX_WIDTH_HEIGHT + x, y);
+	//	//	// vẽ bên trái, i = 2, 4 , 6
+	//	//	else if (i % 2 == 0)
+	//	//	{
+	//	//		animation_set->at(BLACKAni_Body_Left)->Render(x, Y);
+	//	//	}
+	//	//	//vẽ bên phải
+	//	//	else
+	//	//	{
+	//	//		animation_set->at(BLACKAni_Body_Right)->Render(x + OBJECT_BBOX_WIDTH_HEIGHT, Y);
+	//	//		Y += OBJECT_BBOX_WIDTH_HEIGHT;
+	//	//	}
+	//	//}
+	//	//int Y = y + OBJECT_BBOX_WIDTH_HEIGHT;
 
-		int Y = (int)y;
-		for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
-		{
-			// vẽ phần đầu
-			if (i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2 - 2)
-			{
-				// vẽ bên trái, i = 2, 4 , 6
-				if (i % 2 == 0)
-				{
-					animation_set->at(BLACKAni_Body_Left)->Render(x +1 , y);
-				}
-				//vẽ bên phải
-				else
-				{
-					animation_set->at(BLACKAni_Body_Right)->Render((float)(x  + OBJECT_BBOX_WIDTH_HEIGHT), (float)Y);
-					Y += OBJECT_BBOX_WIDTH_HEIGHT;
-				}
-			}
-			else
-				animation_set->at(i + 2)->Render((float)((i - 2) * OBJECT_BBOX_WIDTH_HEIGHT + x), (float)Y);
-			
-		}
-	}
-	//RenderBoundingBox();
+	//	int Y = (int)y;
+	//	for (int i = 0; i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2; i++)
+	//	{
+	//		// vẽ phần đầu
+	//		if (i < (Height / OBJECT_BBOX_WIDTH_HEIGHT) * 2 - 2)
+	//		{
+	//			// vẽ bên trái, i = 2, 4 , 6
+	//			if (i % 2 == 0)
+	//			{
+	//				animation_set->at(BLACKAni_Body_Left)->Render(x +1 , y);
+	//			}
+	//			//vẽ bên phải
+	//			else
+	//			{
+	//				animation_set->at(BLACKAni_Body_Right)->Render((float)(x  + OBJECT_BBOX_WIDTH_HEIGHT), (float)Y);
+	//				Y += OBJECT_BBOX_WIDTH_HEIGHT;
+	//			}
+	//		}
+	//		else
+	//			animation_set->at(i + 2)->Render((float)((i - 2) * OBJECT_BBOX_WIDTH_HEIGHT + x), (float)Y);
+	//		
+	//	}
+	//}
+	RenderBoundingBox();
 }

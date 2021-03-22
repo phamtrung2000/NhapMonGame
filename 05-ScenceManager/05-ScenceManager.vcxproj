@@ -238,10 +238,15 @@
     <ClInclude Include="World1.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="textures\Enemy\Enemy.txt" />
+    <Text Include="textures\Item\Item.txt" />
     <Text Include="textures\map1.txt" />
+    <Text Include="textures\Mario\Mario.txt" />
+    <Text Include="textures\Object\Object.txt" />
     <Text Include="textures\Opening\MapOpening.txt" />
     <Text Include="textures\Overworld\World1Scene.txt" />
     <Text Include="textures\Overworld\World2Map.txt" />
+    <Text Include="textures\Weapon\Weapon.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />

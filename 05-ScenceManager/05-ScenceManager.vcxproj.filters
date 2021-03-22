@@ -436,6 +436,11 @@
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />
     <Text Include="textures\World\World1\Scene1.4Map.txt" />
+    <Text Include="textures\Mario\Mario.txt" />
+    <Text Include="textures\Weapon\Weapon.txt" />
+    <Text Include="textures\Object\Object.txt" />
+    <Text Include="textures\Enemy\Enemy.txt" />
+    <Text Include="textures\Item\Item.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\misc1.png">

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "FirePiranhaPlant.h"
+#include "Enemy.h"
 
 #define	GREENPLANT_SPEED_Y		0.03f
 #define	GREENPLANT_BBOX_HEIGHT	24
@@ -13,18 +13,18 @@
 #define GREENPLANT_STATE_STOP		300
 
 #define GREENPLANT_ANI_APPEAR_HIDE	0
-#define APPEAR_TIME 500
+#define APPEAR_TIME 300
 
 
-class GreenPlant : public FirePiranhaPlant
+class GreenPlant : public Enemy
 {
 public:
-	float Startposy;
 	ULONGLONG AppearTime;
 
 	// lấy vị trí mario để khi mario tới tầm thì cây xuất hiện
 	float Mario_X;
 	float Mario_Y;
+
 	float WarpPipeHeight, WarpPipeWidth;
 
 	bool Stop, isBlocked;
