@@ -1204,12 +1204,11 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_LEFT:
 	{
 		//DebugOut(L"DIK_LEFT	\n");
-		if (_Mario->GetState() == MARIO_STATE_WALKING_RIGHT)
-		{
-			//_Mario->SetState(MARIO_STATE_WALKING_LEFT);
-			_Mario->nx = -1;
-
-		}
+		//if (_Mario->GetState() == MARIO_STATE_WALKING_RIGHT)
+		//{
+		//	//_Mario->SetState(MARIO_STATE_WALKING_LEFT);
+		//	_Mario->nx = -1;
+		//}
 	}
 	break;
 
@@ -1299,13 +1298,15 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 	if (game->IsKeyDown(DIK_LEFT))
 	{
-		_Mario->SetState(MARIO_STATE_WALKING_LEFT);
+		if(_Mario->isAttacking != true)
+			_Mario->SetState(MARIO_STATE_WALKING_LEFT);
 	}
 	else if (game->IsKeyDown(DIK_RIGHT))
 	{
-		if(_Mario->canFlyS == true && _Mario->isFlyingHigh==true)
+		/*if(_Mario->canFlyS == true && _Mario->isFlyingHigh==true)
 			_Mario->SetState(MARIO_STATE_FLY_HIGH);
-		else
+		else*/
+		if (_Mario->isAttacking != true)
 			_Mario->SetState(MARIO_STATE_WALKING_RIGHT);
 	}
 	else if (game->IsKeyDown(DIK_DOWN))

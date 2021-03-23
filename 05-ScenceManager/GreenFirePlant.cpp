@@ -77,7 +77,7 @@ void GreenFirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// cho cây mới vô rớt nhanh xuống, chạm đất để isInit = true
 	if (isInit == false)
-		vy += 0.005f * dt;
+		vy += 0.001f * dt;
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 
@@ -162,10 +162,8 @@ void GreenFirePlant::Render()
 		ani = GREENFIREPLANT_ANI_APPEAR_HIDE_UP_LEFT;
 	else
 		ani = GREENFIREPLANT_ANI_APPEAR_HIDE_DOWN_LEFT;
-	if (isInit == true)
+	//if (isInit == true)
 		animation_set->at(ani)->Render(x, y);
-	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
-	//RenderBoundingBox();
 }
 
 void GreenFirePlant::SetState(int state)

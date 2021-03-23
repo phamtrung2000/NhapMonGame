@@ -397,7 +397,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					isAttacking = false;
 				}
 			}
-
 		}
 
 		if (TimeUseFireBullet != 0)
@@ -656,9 +655,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vx = MARIO_RUNNING_MAX_SPEED;
 					//vy += 0.0003 * dt;
 				}
-
 			}
-
 			else
 				vx = -MARIO_RUNNING_MAX_SPEED;
 		}
@@ -915,7 +912,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		
 	}
-	//Debug();
+	Debug();
 }
 
 //void Mario::Render()
@@ -3198,14 +3195,14 @@ void Mario::Debug()
 
 	}
 
-	/*if (GoHiddenWorld == true)
-		DebugOut(L"GoHiddenWorld == true\t");
+	if (isAttacking == true)
+		DebugOut(L"isAttacking == true\t");
 	else
-		DebugOut(L"GoHiddenWorld == false\t");*/
+		DebugOut(L"isAttacking == false\t");
 
 
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
-	DebugOut(L" vx = %f, level_of_walking = %i, x = %f\n", vx, level_of_walking, x);
+	DebugOut(L" nx = %i\n", nx);
 }
 
 void Mario::Unload()

@@ -663,8 +663,11 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 {
 	if (e->obj != NULL)
 	{
+		// lúc mới vào game, rùa sẽ ở trạng thái Init rớt từ trên xuống, khi chạm vật thể thì bắt đầu di chuyển
+		// để tránh lỗi vụ rớt lệch khỏi viên gạch
 		if(GetState() == ENEMY_STATE_INIT)
 			SetState(ENEMY_STATE_WALKING_LEFT);
+
 		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
@@ -700,7 +703,7 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 				}
 				else
 				{
-					if (isKicked == true)
+					/*if (isKicked == true || isAttacked == true)
 					{
 						if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
 							SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
@@ -711,8 +714,12 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 					{
 						this->nx = -this->nx;
 						this->vx = -this->vx;
-					}
+					}*/
 
+					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 				}
 			}
 			else if (e->ny != 0)

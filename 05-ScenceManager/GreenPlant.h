@@ -13,7 +13,7 @@
 #define GREENPLANT_STATE_STOP		300
 
 #define GREENPLANT_ANI_APPEAR_HIDE	0
-#define APPEAR_TIME 300
+#define APPEAR_TIME 500
 
 
 class GreenPlant : public Enemy
@@ -44,4 +44,5 @@ public:
 
 	void GetEnemyPos(float eX, float eY) { Mario_X = eX; Mario_Y = eY; }
 	void CalcAttackZone();
+	void ChangeStateHideAppear();
 };

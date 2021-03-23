@@ -185,7 +185,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							_PlayScene->objects.push_back(questionbrickitem);
 						}
 					}
-					if (coObjects->at(i)->ObjType == OBJECT_TYPE_LISTBRICK)
+					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_LISTBRICK)
 					{
 						ListBrick* listbrick = dynamic_cast<ListBrick*>(coObjects->at(i));
 						if (listbrick->Bricks.size() == 1)
@@ -194,13 +194,18 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else
 						{
-							if (_Mario->nx == LEFT)
+							int direction = 0;
+							if(_Mario->endAttack == false)
+								direction = _Mario->nx;
+							if (direction == LEFT)
 							{
-								listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
+								if (_Mario->time_attack > 2 * TIME_ATTACK && _Mario->time_attack <= 3 * TIME_ATTACK)
+									listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
 							}
 							else
 							{
-								listbrick->DeleteBrick(0);
+								if (_Mario->time_attack > 2 * TIME_ATTACK && _Mario->time_attack <= 3 * TIME_ATTACK)
+									listbrick->DeleteBrick(0);
 							}
 						}
 						
@@ -234,17 +239,20 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						Koopas* koopas = dynamic_cast<Koopas*>(coObjects->at(i));
 						koopas->vy = -0.2f;
-						if (_Mario->nx == RIGHT)
+						//if (_Mario->nx == RIGHT)
+						if (_Mario->x <= koopas->x)
 						{
+							koopas->vx = 0.05f;
 							koopas->SetState(KOOPAS_STATE_SHELL_2);
 							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 						}
 						else
 						{
+							koopas->vx = -0.05f;
 							koopas->SetState(KOOPAS_STATE_SHELL_2);
 							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
 						}
-						koopas->vx = _Mario->nx * 0.05f;
+						
 						koopas->ReviveTime = GetTickCount64();
 					}
 					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_GREENFLYKOOPAS)
