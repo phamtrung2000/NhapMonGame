@@ -1,9 +1,9 @@
-#include "ListBrick.h"
+﻿#include "ListItemBrick.h"
 #include "BreakItemBrick.h"
 #include "BrickItem.h"
 #include "EffectSmoke.h"
 
-void ListBrick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void ListItemBrick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
@@ -11,15 +11,16 @@ void ListBrick::GetBoundingBox(float& left, float& top, float& right, float& bot
 	bottom = top + Height;
 }
 
-void ListBrick::Render()
+void ListItemBrick::Render()
 {
 	for (int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Render();
 	}
+	RenderBoundingBox();
 }
 
-void ListBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void ListItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (Bricks.size() == 0)
 	{
@@ -28,7 +29,6 @@ void ListBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	ItemBrick* firstbrick = Bricks.front();
 	x = firstbrick->x;
-	//y = firstbrick->y;
 	Width = Bricks.size() * 16;
 	for (int i = 0; i < Bricks.size(); i++)
 	{
@@ -37,7 +37,7 @@ void ListBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 }
 
-void ListBrick::DeleteBrick(int vitri)
+void ListItemBrick::DeleteBrick(int vitri)
 {
 	ItemBrick* brick = Bricks.at(vitri);
 	if (brick->hasItem == true && brick->isCollision==false)
@@ -83,4 +83,44 @@ void ListBrick::DeleteBrick(int vitri)
 			}
 		}
 	}
+}
+
+int ListItemBrick::ViTriGachVaCham(float Obj_x,float width)
+{
+	if (Bricks.size() == 1)
+	{
+		return 0;
+	}
+	else if (Bricks.size() == 2)
+	{
+		int vitri = 0;
+		if ((Obj_x <= Bricks.at(0)->x) || (Obj_x + width / 2 <= Bricks.at(0)->x + 16 && Obj_x + Width / 2 > Bricks.at(0)->x))// sure đụng viên đầu tiên
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	else
+	{
+		if (Obj_x <= Bricks.at(0)->x) // sure đụng viên đầu tiên
+		{
+			return 0;
+		}
+		else if (Obj_x + width >= Bricks.at(Bricks.size() - 1)->x + 16) // sure đụng viên cuối
+		{
+			return Bricks.size() - 1;
+		}
+		else
+		{
+			int vitri = (Obj_x + width - Bricks.at(0)->x) / 16;
+			int tempx = Bricks.at(vitri)->x;
+			if (Obj_x < Bricks.at(vitri)->x && tempx - Obj_x > 8)
+				vitri--;
+			return vitri;
+		}
+	}
+	return 0;
 }

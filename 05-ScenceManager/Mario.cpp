@@ -30,7 +30,8 @@
 #include "Notification.h"
 #include "BoomerangEnemy.h"
 #include "RedFlyKoopas.h"
-#include "ListBrick.h"
+#include "ListItemBrick.h"
+#include "ListQuestionBrick.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -789,14 +790,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								if (untouchable == false)
 									DownLevel();
+								isHolding = false;
 							}
 						}
-
 					}
 				}
 				break;
 				}
-
 			}
 		}
 		else
@@ -912,7 +912,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		
 	}
-	Debug();
+	//Debug();
 }
 
 //void Mario::Render()
@@ -3972,11 +3972,11 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				x += min_tx * dx + nx * 0.4f;
 			}
 		}
-		else if (e->obj->ObjType == OBJECT_TYPE_LISTBRICK)
+		else if (e->obj->ObjType == OBJECT_TYPE_LISTITEMBRICK)
 		{
 			if (ny != 0) vy = 0;
 			int vitrilist2 = 0;
-			ListBrick* listbrick = dynamic_cast<ListBrick*>(e->obj);
+			ListItemBrick* listbrick = dynamic_cast<ListItemBrick*>(e->obj);
 			// mario nhảy từ dưới lên va chạm gạch 
 			if (e->ny > 0)
 			{
@@ -3990,13 +3990,13 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					float l, t, r, b;
 					int vitri = 0;
 					GetBoundingBox(l, t, r, b);
-					if (l < listbrick->Bricks.at(0)->x) // sure đụng viên đầu tiên
+					if ((l <= listbrick->Bricks.at(0)->x) || ( l + Width/2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
 					{
 						vitri = 0;
 						listbrick->DeleteBrick(vitri);
 						//listbrick->Bricks.erase(listbrick->Bricks.begin());
 					}
-					else if (r > listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+					else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
 					{
 						vitri = 1;
 						listbrick->DeleteBrick(vitri);
@@ -4031,11 +4031,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 							vitri--;
 						if (listbrick->Bricks.at(vitri)->Item == NORMAL)
 						{
-							/*ListBrick* listbrick1 = new ListBrick(vitri, listbrick->Bricks.at(0)->x, listbrick->Bricks.at(0)->y);
-							ListBrick* listbrick2 = new ListBrick(listbrick->Bricks.size() - 1 - vitri, listbrick->Bricks.at(vitri + 1)->x, listbrick->Bricks.at(vitri + 1)->y);
-							*/
-							ListBrick* listbrick1 = new ListBrick(listbrick->Bricks, 0, vitri - 1);
-							ListBrick* listbrick2 = new ListBrick(listbrick->Bricks, vitri + 1, listbrick->Bricks.size() - 1);
+							ListItemBrick* listbrick1 = new ListItemBrick(listbrick->Bricks, 0, vitri - 1);
+							ListItemBrick* listbrick2 = new ListItemBrick(listbrick->Bricks, vitri + 1, listbrick->Bricks.size() - 1);
 							
 							listbrick->canDelete = true;
 							_PlayScene->objects.push_back(listbrick1);
@@ -4045,6 +4042,82 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 						{
 
 						}
+						listbrick->DeleteBrick(vitri);
+						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+					}
+				}
+			}
+			else if (e->ny < 0) // mario đi trên gạch "?"
+			{
+				OnGround = true; // xử lý chạm đất
+				isFalling = isFlyingLow = isFlyingHigh = false;
+
+				x += min_tx * dx + nx * 0.4f;
+			}
+			else if (e->nx != 0)
+			{
+				//if (nx != 0) vx = 0;
+				if (ny != 0)vy = 0;
+				y += min_ty * dy + ny * 0.4f;
+				if (level_of_walking > 10)
+					level_of_walking = 10;
+			}
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_LISTQUESTIONBRICK)
+		{
+			if (ny != 0) vy = 0;
+			int vitrilist2 = 0;
+			ListQuestionBrick* listbrick = dynamic_cast<ListQuestionBrick*>(e->obj);
+			// mario nhảy từ dưới lên va chạm gạch 
+			if (e->ny > 0)
+			{
+				vy = 0;
+				if (listbrick->Bricks.size() == 1)
+				{
+					listbrick->DeleteBrick(0);
+				}
+				else if (listbrick->Bricks.size() == 2)
+				{
+					float l, t, r, b;
+					int vitri = 0;
+					GetBoundingBox(l, t, r, b);
+					if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
+					{
+						vitri = 0;
+						listbrick->DeleteBrick(vitri);
+					}
+					else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+					{
+						vitri = 1;
+						listbrick->DeleteBrick(vitri);
+					}
+				}
+				else
+				{
+					float l, t, r, b;
+					int vitri = 0;
+					GetBoundingBox(l, t, r, b);
+					if (l <= listbrick->Bricks.at(0)->x) // sure đụng viên đầu tiên
+					{
+						vitri = 0;
+						listbrick->DeleteBrick(vitri);
+
+						//listbrick->Bricks.erase(listbrick->Bricks.begin());
+					}
+					else if (r >= listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x + 16) // sure đụng viên cuối
+					{
+						vitri = listbrick->Bricks.size() - 1;
+						listbrick->DeleteBrick(vitri);
+						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+					}
+					else
+					{
+						int vitri = (r - listbrick->Bricks.at(0)->x) / 16;
+						//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
+						//	vitri--;
+						int tempx = listbrick->Bricks.at(vitri)->x;
+						if (l < listbrick->Bricks.at(vitri)->x && tempx - l > 8)
+							vitri--;
 						listbrick->DeleteBrick(vitri);
 						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
 					}

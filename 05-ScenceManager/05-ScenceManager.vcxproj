@@ -155,7 +155,8 @@
     <ClCompile Include="ItemBrick.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Koopas.cpp" />
-    <ClCompile Include="ListBrick.cpp" />
+    <ClCompile Include="ListItemBrick.cpp" />
+    <ClCompile Include="ListQuestionBrick.cpp" />
     <ClCompile Include="MarioTail.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -212,7 +213,8 @@
     <ClInclude Include="ItemBrick.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="Koopas.h" />
-    <ClInclude Include="ListBrick.h" />
+    <ClInclude Include="ListItemBrick.h" />
+    <ClInclude Include="ListQuestionBrick.h" />
     <ClInclude Include="MarioTail.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Map.h" />

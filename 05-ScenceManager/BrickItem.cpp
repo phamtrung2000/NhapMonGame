@@ -9,7 +9,7 @@
 #include "Goomba.h"
 #include "Block.h"
 #include "EffectScore.h"
-#include "ListBrick.h"
+#include "ListItemBrick.h"
 
 #define BRICKITEM_ANISET_ID	14
 
@@ -170,9 +170,9 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				for (UINT i = 0; i < coObjects->size(); i++)
 				{
-					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_LISTBRICK)
+					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_LISTITEMBRICK)
 					{
-						ListBrick* listbrick = (ListBrick*)coObjects->at(i);
+						ListItemBrick* listbrick = (ListItemBrick*)coObjects->at(i);
 						for (int i = 0; i < listbrick->Bricks.size();)
 						{
 							if (listbrick->Bricks.at(i)->Item == NORMAL)
@@ -199,7 +199,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								//i++;
 								int j = i;
-								ListBrick* listbrick1 = new ListBrick();
+								ListItemBrick* listbrick1 = new ListItemBrick();
 								for (j; j < listbrick->Bricks.size(); j++)
 								{
 									if (listbrick->Bricks.at(j)->Item == NORMAL) // viên đầu tiên k bao h là normal

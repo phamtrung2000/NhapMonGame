@@ -248,8 +248,10 @@ public:
 	ULONGLONG TimeJumpS; // thời điểm nhảy bằng nút S để làm vụ thả S thì rớt xuống 
 	bool pressS;
 
-	int nScore; // tăng điểm theo cấp số nhân khi mario nhảy chạm đầu giết quái liên tục + k chạm đất
+	// tăng điểm theo cấp số nhân khi mario nhảy chạm đầu giết quái liên tục + k chạm đất
 	// 1: x1, 2: x2, 3: x4,4: x8,5: x10,6: x20,7 : x40, 8: x80,9 : +1M
+	int nScore;
+	
 	bool loseControl;
 	ULONGLONG StartGoHiddenWorld;
 	int Scene;

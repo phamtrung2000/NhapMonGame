@@ -23,7 +23,8 @@
 #include "FlyWood.h"
 #include"BoomerangEnemy.h"
 #include "RedFlyKoopas.h"
-#include "ListBrick.h"
+#include "ListItemBrick.h"
+#include "ListQuestionBrick.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -204,7 +205,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
 	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
-	case OBJECT_TYPE_LISTBRICK:
+	case OBJECT_TYPE_LISTITEMBRICK:
 	{
 		int NumberBrick = (int)atof(tokens[4].c_str());
 		vector<int>ListBrickType;
@@ -213,9 +214,21 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			int BrickType = (int)atof(tokens[5 + i].c_str());
 			ListBrickType.push_back(BrickType);
 		}
-		obj = new ListBrick(NumberBrick,ListBrickType, x, y);
-		break;
+		obj = new ListItemBrick(NumberBrick,ListBrickType, x, y);\
 	}
+	break;
+	case OBJECT_TYPE_LISTQUESTIONBRICK:
+	{
+		int NumberBrick = (int)atof(tokens[4].c_str());
+		vector<int>ListBrickType;
+		for (int i = 0; i < NumberBrick; i++)
+		{
+			int BrickType = (int)atof(tokens[5 + i].c_str());
+			ListBrickType.push_back(BrickType);
+		}
+		obj = new ListQuestionBrick(NumberBrick, ListBrickType, x, y); \
+	}
+	break;
 	case OBJECT_TYPE_GOOMBA:
 	{
 		obj = new Goomba();
@@ -1051,7 +1064,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	_Map->DrawMap1();
+	//_Map->DrawMap1();
 	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
@@ -1143,8 +1156,11 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 		else
 		{
-			_Mario->SetState(MARIO_STATE_JUMP);
-			_Mario->TimeJumpS = GetTickCount64();
+			if (_Mario->isFalling == false)
+			{
+				_Mario->SetState(MARIO_STATE_JUMP);
+				_Mario->TimeJumpS = GetTickCount64();
+			}
 		}
 			
 		if (_Mario->GetLevel() == MARIO_LEVEL_TAIL)

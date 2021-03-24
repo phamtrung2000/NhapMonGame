@@ -36,19 +36,22 @@ void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	float a = camy + static_cast<float>(cam_h) - 50;
 	float b = camy - 50;
 	// ra khỏi camera -> delete
-	if ((StartX > camxx + static_cast<float>(cam_w) + 150 || StartX + this->Width < camxx - 150) )
-		//&& ( StartY > a || StartY + this->Height < b))
+	if (EnemyType != ENEMY_TYPE_KOOPAS)
 	{
-		isDisappear = true;
-		return;
-	}
-	else
-	{
-		if (isDisappear == true)
+		if ((StartX > camxx + static_cast<float>(cam_w) + 150 || StartX + this->Width < camxx - 150))
+			//&& ( StartY > a || StartY + this->Height < b))
 		{
-			SetPosition(StartX, StartY);
-			SetState(ENEMY_STATE_WALKING_LEFT);
-			isDisappear = false;
+			isDisappear = true;
+			return;
+		}
+		else
+		{
+			if (isDisappear == true)
+			{
+				SetPosition(StartX, StartY);
+				SetState(ENEMY_STATE_WALKING_LEFT);
+				isDisappear = false;
+			}
 		}
 	}
 
@@ -76,6 +79,7 @@ void Enemy::SetState(int state)
 
 		case ENEMY_STATE_DIE_IS_ATTACKED:
 		{
+			vy = -0.1f;
 			vx = nx * abs(vx);
 			isDie = true;
 		}

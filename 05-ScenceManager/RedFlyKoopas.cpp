@@ -491,13 +491,13 @@ void RedFlyKoopas::Render()
 		if (isShell == true)
 		{
 			ani = KOOPAS_ANI_SHELL;
-			if (canRevive == true)
+			if (ReviveTime != 0 && GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
 				ani = KOOPAS_ANI_SHELL_REVIVE;
 		}
 		else if (isShell_2 == true)
 		{
 			ani = KOOPAS_ANI_SHELL_2;
-			if (canRevive == true)
+			if (ReviveTime != 0 && GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
 				ani = KOOPAS_ANI_SHELL_2_REVIVE;
 		}
 		if (vx > 0 && isHold == false)

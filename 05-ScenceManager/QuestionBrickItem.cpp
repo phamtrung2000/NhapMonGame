@@ -35,140 +35,140 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 	switch (Item)
 	{
-	case MONEY:
-	{
-		vy += MONEY_GRAVITY * dt;
-		if (GetTickCount64() - AppearTime >= 800)
+		case MONEY:
 		{
-			canDelete = true;
-			EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
-			_PlayScene->objects.push_back(Score);
-			_HUD->UpdateScore(this, 0);
-		}
-		y += dy;
-		
-	}break;
-
-	case MUSHROOM:
-	{
-		if (isInit == false)
-		{
-			y += dy;
-			if (Start_Y - y > QUESTIONBRICKITEM__BBOX)
+			vy += MONEY_GRAVITY * dt;
+			if (GetTickCount64() - AppearTime >= 800)
 			{
-				if (this->x <= _Mario->x)
-					SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
-				else
-					SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+				canDelete = true;
+				EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
+				_PlayScene->objects.push_back(Score);
+				_HUD->UpdateScore(this, 0);
 			}
-		}
-		else
+			y += dy;
+		
+		}break;
+
+		case MUSHROOM:
 		{
-			vy += MUSHROOM_GRAVITY * dt;
-
-			vector<LPCOLLISIONEVENT> coEvents;
-			vector<LPCOLLISIONEVENT> coEventsResult;
-
-			coEvents.clear();
-
-			CalcPotentialCollisions(coObjects, coEvents);
-
-			if (coEvents.size() == 0)
+			if (isInit == false)
 			{
-				x += dx;
 				y += dy;
+				if (Start_Y - y > QUESTIONBRICKITEM__BBOX)
+				{
+					if (this->x <= _Mario->x)
+						SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
+					else
+						SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+				}
 			}
 			else
 			{
-				float min_tx, min_ty, nx = 0, ny;
-				float rdx = 0;
-				float rdy = 0;
+				vy += MUSHROOM_GRAVITY * dt;
 
-				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+				vector<LPCOLLISIONEVENT> coEvents;
+				vector<LPCOLLISIONEVENT> coEventsResult;
 
-				for (UINT i = 0; i < coEventsResult.size(); i++)
+				coEvents.clear();
+
+				CalcPotentialCollisions(coObjects, coEvents);
+
+				if (coEvents.size() == 0)
 				{
-					LPCOLLISIONEVENT e = coEventsResult[i];
+					x += dx;
+					y += dy;
+				}
+				else
+				{
+					float min_tx, min_ty, nx = 0, ny;
+					float rdx = 0;
+					float rdy = 0;
 
-					if (e->obj)
+					FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+					for (UINT i = 0; i < coEventsResult.size(); i++)
 					{
-						switch (e->obj->Category)
+						LPCOLLISIONEVENT e = coEventsResult[i];
+
+						if (e->obj)
 						{
-						case CATEGORY::GROUND:
-						{
-							if (ny != 0) vy = 0;
-							if (e->ny < 0)
+							switch (e->obj->Category)
 							{
-								x += min_tx * dx + nx * 0.4f;
-								if (OnGround == false)
+							case CATEGORY::GROUND:
+							{
+								if (ny != 0) vy = 0;
+								if (e->ny < 0)
+								{
+									x += min_tx * dx + nx * 0.4f;
+									if (OnGround == false)
+									{
+										y += min_ty * dy + ny * 0.1f - 0.3f;
+										OnGround = true; // xử lý chạm đất
+									}
+								}
+								else if (e->nx != 0)
 								{
 									y += min_ty * dy + ny * 0.1f - 0.3f;
-									OnGround = true; // xử lý chạm đất
+									if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_RIGHT)
+										SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
+									else
+										SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
 								}
 							}
-							else if (e->nx != 0)
-							{
-								y += min_ty * dy + ny * 0.1f - 0.3f;
-								if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_RIGHT)
-									SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
-								else
-									SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+							break;
+
+							case CATEGORY::OBJECT:
+								CollisionWithObject(e, min_tx, min_ty, nx, ny);
+								break;
+							case CATEGORY::ENEMY:
+								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+								break;
+
+							case CATEGORY::ITEM:
+								CollisionWithItem(e, min_tx, min_ty, nx, ny);
+								break;
+
+							case CATEGORY::WEAPON:
+								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+								break;
+
 							}
-						}
-						break;
-
-						case CATEGORY::OBJECT:
-							CollisionWithObject(e, min_tx, min_ty, nx, ny);
-							break;
-						case CATEGORY::ENEMY:
-							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::ITEM:
-							CollisionWithItem(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::WEAPON:
-							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-							break;
-
 						}
 					}
 				}
+
+				for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 			}
+		}break;
 
-			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-		}
-	}break;
-
-	case LEAF:
-	{
-		x += dx;
-		y += dy;
-		if (isInit == false)
+		case LEAF:
 		{
-			if (static_cast<float>(Start_Y - y) >= static_cast < float> (3.5 * QUESTIONBRICKITEM__BBOX))
+			x += dx;
+			y += dy;
+			if (isInit == false)
 			{
-				vy = 0;
-				SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
-			}
+				if (static_cast<float>(Start_Y - y) >= static_cast < float> (3.5 * QUESTIONBRICKITEM__BBOX))
+				{
+					vy = 0;
+					SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+				}
 			
-		}
-		else
-		{
-			vy += LEAF_GRAVITY * dt;
-			if (x - Start_X >=  QUESTIONBRICKITEM__BBOX)
-			{
-				SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
 			}
-			else if (x - Start_X <= 0)
+			else
 			{
-				SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+				vy += LEAF_GRAVITY * dt;
+				if (x - Start_X >=  QUESTIONBRICKITEM__BBOX)
+				{
+					SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
+				}
+				else if (x - Start_X <= 0)
+				{
+					SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
+				}
 			}
-		}
-	}break;
-	default:
-		break;
+		}break;
+		default:
+			break;
 	}
 	
 }

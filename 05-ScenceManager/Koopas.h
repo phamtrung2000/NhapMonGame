@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Enemy.h"
 
@@ -17,6 +17,7 @@
 #define KOOPAS_STATE_SHELL_HOLD				7
 #define KOOPAS_STATE_SHELL_WALKING_RIGHT	8
 #define KOOPAS_STATE_SHELL_WALKING_LEFT		9
+#define KOOPAS_STATE_DIE					10
 
 #define KOOPAS_ANI_WALKING_LEFT				0
 #define KOOPAS_ANI_WALKING_RIGHT			1
@@ -42,7 +43,7 @@ public:
 	Koopas();
 	bool isKicked, isShell,isShell_2, isHold;
 	float X_max, X_min;
-	bool CountXmaxXmin;
+	bool CountXmaxXmin; // đã tính Xmax Xmin hay chưa để khỏi tính lại
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

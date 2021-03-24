@@ -208,7 +208,7 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 				this->Score += score;
 			}
 			
-			EffectScore* effectscore = new EffectScore(enemy->x, enemy->y - 5, score);
+			EffectScore* effectscore = new EffectScore(enemy->x, enemy->y - 10, score);
 			_PlayScene->objects.push_back(effectscore);
 		}
 		break;

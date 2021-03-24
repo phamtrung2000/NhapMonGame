@@ -246,7 +246,10 @@
     <ClCompile Include="Grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ListBrick.cpp">
+    <ClCompile Include="ListItemBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListQuestionBrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -413,7 +416,10 @@
     <ClInclude Include="Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListBrick.h">
+    <ClInclude Include="ListItemBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListQuestionBrick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
