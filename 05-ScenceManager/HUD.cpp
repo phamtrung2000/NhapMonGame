@@ -120,7 +120,7 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 					this->Score += qbitem->Score;
 					if (qbitem->Item != MONEY)
 					{
-						EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, score);
+						EffectScore* effectscore = new EffectScore(_Mario->x - 2, _Mario->y - 20, score);
 						_PlayScene->objects.push_back(effectscore);
 					}
 				}

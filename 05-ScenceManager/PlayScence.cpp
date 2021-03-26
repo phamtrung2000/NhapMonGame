@@ -25,6 +25,7 @@
 #include "RedFlyKoopas.h"
 #include "ListItemBrick.h"
 #include "ListQuestionBrick.h"
+#include "RedGoomba.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -171,37 +172,34 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
-	{
-		if (tokens.size() > 4)
+		case OBJECT_TYPE_MARIO:
 		{
-			float NewX = (float) atof(tokens[4].c_str());
-			float NewY = (float)atof(tokens[5].c_str());
-			_Mario->SetPosition(x, y);
-			_Mario->start_x = x;
-			_Mario->start_y = y;
-			_Mario->NewX = NewX;
-			_Mario->NewY = NewY;
-		}
-		else
-		{
-			_Mario->SetPosition(x, y);
-			_Mario->start_x = x;
-			_Mario->start_y = y;
-		}
+			if (tokens.size() > 4)
+			{
+				float NewX = (float) atof(tokens[4].c_str());
+				float NewY = (float)atof(tokens[5].c_str());
+				_Mario->SetPosition(x, y);
+				_Mario->start_x = x;
+				_Mario->start_y = y;
+				_Mario->NewX = NewX;
+				_Mario->NewY = NewY;
+			}
+			else
+			{
+				_Mario->SetPosition(x, y);
+				_Mario->start_x = x;
+				_Mario->start_y = y;
+			}
 		
-		obj = _Mario;
-		//_Mario = (Mario*)obj;
+			obj = _Mario;
+			//_Mario = (Mario*)obj;
 			
-		DebugOut(L"[INFO] Player object created!\n");
-	}break;
+			DebugOut(L"[INFO] Player object created!\n");
+		}break;
 
-	case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
-	case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
-	case OBJECT_TYPE_WARPPIPE:
-	{
-		obj = new WarpPipe(width, height, atoi(tokens[6].c_str()), atoi(tokens[7].c_str()));
-	}break;
+		case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
+		case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
+		case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height, atoi(tokens[6].c_str()), atoi(tokens[7].c_str()));break;
 
 	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
 	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
@@ -279,6 +277,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_REDFLYKOOPAS:
 	{
 		obj = new RedFlyKoopas();
+		obj->StartX = x;
+		obj->StartY = y;
+	}
+	break;
+	case OBJECT_TYPE_REDGOOMBA:
+	{
+		obj = new RedGoomba();
 		obj->StartX = x;
 		obj->StartY = y;
 	}
@@ -1057,14 +1062,21 @@ void CPlayScene::Update(DWORD dt)
 	}
 	else
 	{
-		if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
+		//if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
 		_Mario->Update(dt, &coObjects);
+		for (size_t i = 1; i < objects.size(); i++)
+		{
+			if (objects[i]->IsMovingObject == false)
+			{
+				objects[i]->Update(dt, &coObjects);
+			}
+		}
 	}
 }
 
 void CPlayScene::Render()
 {
-	//_Map->DrawMap1();
+	_Map->DrawMap1();
 	
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
@@ -1180,8 +1192,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_X:
 	{
-		//DebugOut(L"Down X\n");
-		_Mario->SetState(MARIO_STATE_JUMP_LOW);
+		DebugOut(L"Down X\n");
 	}
 	break;
 

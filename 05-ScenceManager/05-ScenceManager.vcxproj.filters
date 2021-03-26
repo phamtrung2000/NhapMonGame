@@ -252,6 +252,9 @@
     <ClCompile Include="ListQuestionBrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RedGoomba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -420,6 +423,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ListQuestionBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RedGoomba.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

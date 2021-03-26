@@ -148,9 +148,6 @@ void Goomba::Render()
 		ani = GOOMBA_ANI_DIE_2;
 	}
 	animation_set->at(ani)->Render(x, y);
-	
-	//DebugOut(L"5.Render Goomba Ani: %i, State=%i, TimeToDie=%i\n", ani, state,TimeToDie);
-	//RenderBoundingBox();
 }
 
 void Goomba::SetState(int state)

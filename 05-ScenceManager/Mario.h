@@ -252,9 +252,12 @@ public:
 	// 1: x1, 2: x2, 3: x4,4: x8,5: x10,6: x20,7 : x40, 8: x80,9 : +1M
 	int nScore;
 	
+	// Kiểm tra trạng thái mario k điều khiển được khi Up/Down LV, khi hết scene,.....
 	bool loseControl;
 	ULONGLONG StartGoHiddenWorld;
 	int Scene;
+
+	ULONGLONG StartToDie; // khi mario chết có 1 khoảng tg mario đứng yên rồi mới nhảy lên
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();

@@ -14,6 +14,7 @@ Enemy::Enemy() : CGameObject()
 	OnGroud = false;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
 	SetState(ENEMY_STATE_INIT);
+	IsMovingObject = true;
 }
 
 Enemy::~Enemy()

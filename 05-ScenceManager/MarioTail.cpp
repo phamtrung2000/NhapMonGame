@@ -18,6 +18,7 @@
 #include "FirePiranhaPlant.h"
 #include "ListItemBrick.h"
 #include "ListQuestionBrick.h"
+#include "RedGoomba.h"
 
 MarioTail::MarioTail(float x, float y)
 {
@@ -252,13 +253,25 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							_HUD->UpdateScore(enemy, _Mario->nScore);
 						}
 					}
-					if (coObjects->at(i)->ObjType == OBJECT_TYPE_GOOMBA)
+					if (enemy->EnemyType == ENEMY_TYPE_GOOMBA)
 					{
-						Goomba* goomba = dynamic_cast<Goomba*>(coObjects->at(i));
-						if (goomba->isDie==false)
+						if (enemy->ObjType == OBJECT_TYPE_GOOMBA)
 						{
-							goomba->nx = _Mario->nx;
-							goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
+							Goomba* goomba = dynamic_cast<Goomba*>(coObjects->at(i));
+							if (goomba->isDie == false)
+							{
+								goomba->nx = _Mario->nx;
+								goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
+							}
+						}
+						else if (enemy->ObjType == OBJECT_TYPE_REDGOOMBA)
+						{
+							RedGoomba* goomba = dynamic_cast<RedGoomba*>(coObjects->at(i));
+							if (goomba->isDie == false)
+							{
+								goomba->nx = _Mario->nx;
+								goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
+							}
 						}
 					}
 					else if(coObjects->at(i)->ObjType == OBJECT_TYPE_KOOPAS || coObjects->at(i)->ObjType == OBJECT_TYPE_GREENKOOPAS)					

@@ -420,8 +420,6 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 		}
 	}
-
-	DebugOut(L"y = %f\n", y);
 }
 
 void Koopas::Render()
@@ -466,7 +464,6 @@ void Koopas::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
 }
 
 void Koopas::SetState(int state)
@@ -955,8 +952,12 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 				if (listbrick->Bricks.at(vitri)->state == BRICK_STATE_COLLISION)
 				{
 					SetState(KOOPAS_STATE_SHELL_2);
-					vy = -0.1f;
-					vx = this->nx * 0.05f;
+					if(this->nx == LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					vy = -0.07f;
+					vx = this->nx * 0.04f;
 				}
 			}
 			else if (e->nx != 0)

@@ -62,8 +62,9 @@ Mario::Mario(float x, float y) : CGameObject()
 	TimeJumpS = 0;
 	ani = 0;
 	NumberBullet = 2;
-	untouchable_start = ChangeLevelTime = UntouchtableTime = 0;
+	untouchable_start = ChangeLevelTime = UntouchtableTime = StartToDie = 0;
 	MaxY = 0;
+	IsMovingObject = true;
 }
 
 void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -200,6 +201,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isLevelUp = test = false;
 				_PlayScene->Stop = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng tăng LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level++;
@@ -212,6 +214,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				_PlayScene->Stop = false;
 				isLevelUp = test = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng tăng LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level++;
@@ -225,6 +228,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				_PlayScene->Stop = false;
 				isLevelUp = test = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng tăng LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level++;
@@ -269,10 +273,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					test = false;
 				}
 			}
+
 			if (iChangeLevelTime >= ITIME_LEVEL_UP)
 			{
 				isLevelDown = test = false;
 				_PlayScene->Stop = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng giảm LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level--;
@@ -286,6 +292,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				_PlayScene->Stop = false;
 				isLevelDown = test = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng giảm LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level = MARIO_LEVEL_BIG;
@@ -300,6 +307,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				_PlayScene->Stop = false;
 				isLevelDown = test = false;
+				loseControl = false; // hủy trạng thái k điều khiển được sau hiệu ứng giảm LV
 				iChangeLevelTime = 0;
 				ChangeLevelTime = 0;
 				level = MARIO_LEVEL_BIG;
@@ -313,9 +321,30 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
-		loseControl = false;
 		// Calculate dx, dy 
 		CGameObject::Update(dt);
+
+		if (GetState() == MARIO_STATE_DIE)
+		{
+			if (GetTickCount64() - StartToDie > 500 && StartToDie != 0)
+			{
+				vy = -MARIO_DIE_DEFLECT_SPEED;
+				StartToDie = 0;
+			}
+			if (StartToDie == 0 && vy != 0)
+			{
+				vy += MARIO_GRAVITY * dt;
+				y += dy;
+			}
+			if (y > _Map->GetHeight())
+			{
+				CGame::GetInstance()->SwitchScene2(1);
+				_HUD->MarioLife--;
+				_PlayScene->Stop = false;
+			}
+			return;
+		}
+
 
 		if (canFlyX == true)
 		{
@@ -384,6 +413,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				isFalling = true;
 			if (nScore >= 9)
 				nScore = 0;
+		}
+		else
+		{
+			// reset lại khi chạm đất
+			if (TimeJumpS != 0)
+				TimeJumpS = 0;
 		}
 
 		if (isAttacking == true) // reset lại isAttacking và hiện ani quất đuôi khi isAttacking=true
@@ -691,13 +726,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}break;
 		}
 
-		if (y > _Map->GetHeight())
-		{
-			SetState(MARIO_STATE_DIE);
-			CGame::GetInstance()->SwitchScene2(1);
-			_HUD->MarioLife--;
-			return;
-		}
+		
 		if (vx < 0 && x < 0)
 		{
 			x = 0;
@@ -716,7 +745,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		coEvents.clear();
 		
 		// turn off collision when die 
-		if (state != MARIO_STATE_DIE)
+		if (GetState() != MARIO_STATE_DIE)
 			CalcPotentialCollisions(coObjects, coEvents);
 
 		// reset untouchable timer if untouchable time has passed
@@ -823,7 +852,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (e->ny < 0)
 						{
 							x += min_tx * dx + nx * 0.4f;
-							if (ny != 0) vy = 0;
+							//  có thêm đk GetState() != MARIO_STATE_DIE để tránh lỗi mario chết nhưng k nhảy lên mà rớt thẳng xuống vì gán vy = 0 thay vì -0.2
+							if (ny != 0 && GetState() != MARIO_STATE_DIE) vy = 0;
 							this->MaxY = ground->y - this->Height;
 							if (OnGround == false)
 							{
@@ -912,7 +942,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		
 	}
-	//Debug();
+	Debug();
 }
 
 //void Mario::Render()
@@ -2857,8 +2887,9 @@ void Mario::SetState(int state)
 
 	case MARIO_STATE_DIE:
 	{
-		vx = 0.0f;
-		vy = -MARIO_DIE_DEFLECT_SPEED;
+		vx = vy = 0.0f;
+		StartToDie = GetTickCount64();
+		_PlayScene->Stop = true;
 	}
 	break;
 
@@ -3093,7 +3124,7 @@ void Mario::DownLevel()
 		SetState(MARIO_STATE_DIE);
 	else
 	{
-		loseControl = true;
+		//loseControl = true;
 		
 		switch (level)
 		{
@@ -3192,17 +3223,16 @@ void Mario::Debug()
 		DebugOut(L"State = FLYING_HIGH_LEFT\t"); break;
 	case MARIO_STATE_ENDSCENE:
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
-
 	}
 
-	if (isAttacking == true)
-		DebugOut(L"isAttacking == true\t");
+	/*if (loseControl == true)
+		DebugOut(L"loseControl == true\t");
 	else
-		DebugOut(L"isAttacking == false\t");
+		DebugOut(L"loseControl == false\t");*/
 
 
 	//DebugOut(L"vx = %f, vy = %f, level_of_walking = %i, level_of_running = %i\n", vx, vy, level_of_walking, level_of_running);
-	DebugOut(L" nx = %i\n", nx);
+	DebugOut(L" vy = %f, y = %f\n", vy, y);
 }
 
 void Mario::Unload()
@@ -3213,7 +3243,7 @@ void Mario::Unload()
 void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
 	Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-	if (enemy != NULL && enemy->isDie == false)
+	if (enemy != NULL && enemy->isDie == false && this->state != MARIO_STATE_DIE)
 	{
 		if (untouchable == true)
 		{
@@ -3255,9 +3285,13 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			case ENEMY_TYPE_GOOMBA:
 			{
 				this->vy = -MARIO_JUMP_DEFLECT_SPEED;
-				enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 				this->nScore++;
 				_HUD->UpdateScore(enemy, nScore);
+				enemy->Health--;
+				if (enemy->Health == 0)
+				{
+					enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+				}
 			}
 			break;
 
@@ -3422,12 +3456,12 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 		{
 			switch (enemy->EnemyType)
 			{
-			case ENEMY_TYPE_GOOMBA: case ENEMY_TYPE_PLANT:
-			{
-				if (untouchable == false)
-					DownLevel();
-			}
-			break;
+				case ENEMY_TYPE_GOOMBA: case ENEMY_TYPE_PLANT:
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+				break;
 
 			//case ENEMY_TYPE_KOOPAS:
 			//{

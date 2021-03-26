@@ -223,7 +223,6 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 		{
-
 			//DebugOut(L"x max %f, x min %f, x %f, state %i\n", X_max, X_min, x, state);
 			canRevive = false;
 			if (isShell == false && isShell_2 == false)
