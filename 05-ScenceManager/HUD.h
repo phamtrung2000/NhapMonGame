@@ -14,6 +14,13 @@
 #define COIN_SCORE 50
 #define QUESTIONBRICKITEM_SCORE 1000
 
+
+#define HEIGHT_SCORE_BROAD 28
+#define ID_TEX_HUB 41
+
+#define CAM_Y_HUD_ITEM	_Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 10
+#define CAM_Y_HUD_ITEM1	_Game->GetCamY() + (SCREEN_HEIGHT * 3 / 4) - 10
+
 class HUD
 {
 	static HUD* __instance;

@@ -377,7 +377,7 @@ void World1::Update(DWORD dt)
 void World1::Render()
 {
 	// Background đen phía sau
-	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
+	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
 	_Game->Draw((int)(MapWidth - _Game->GetScreenWidth()) / 2, (int)(MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
 	_Map->DrawMap();
 	for (unsigned int i = 0; i < objects.size(); i++)

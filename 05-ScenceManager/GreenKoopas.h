@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Koopas.h"
 
 #define GREENKOOPAS_WALKING_SPEED				0.05f
@@ -38,3 +38,4 @@ public:
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 
 };
+

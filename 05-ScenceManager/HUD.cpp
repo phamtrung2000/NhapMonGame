@@ -10,14 +10,7 @@
 #include "Card.h"
 #include "BrickItem.h"
 
-#define HEIGHT_SCORE_BROAD 28
-#define ID_TEX_HUB 12
-
-
-#define CAM_Y_HUD_ITEM	_Camera->cam_y + (SCREEN_HEIGHT * 3 / 4) - 10
-#define CAM_Y_HUD_ITEM1	_Game->GetCamY() + (SCREEN_HEIGHT * 3 / 4) - 10
 HUD* HUD::__instance = NULL;
-
 
 HUD* HUD::GetInstance()
 {
@@ -525,7 +518,7 @@ void HUD::Render()
 	CamX = _Game->GetCamX();
 	CamY = _Game->GetCamY() + (SCREEN_HEIGHT * 3 / 4) - 5;
 	//================ Vẽ HUD ======================
-	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(12);
+	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
 	// khung đen sau HUD
 	_Game->Draw(CamX, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
 	//_Game->Draw(-50, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);

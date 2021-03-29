@@ -12,21 +12,8 @@
     <Filter Include="Map">
       <UniqueIdentifier>{bfe35d19-5f15-4d8e-804d-39ea65dfc16b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Picture/Scene">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Picture/Scene\Scene">
-      <UniqueIdentifier>{951dbc83-8e5e-4977-b4ed-d89585e9a32d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Picture/Scene\Koopas/Goomba">
-      <UniqueIdentifier>{023d1485-dcf9-4064-a93d-c900c9c8ad6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PlayScene">
       <UniqueIdentifier>{a7bda07e-7202-4f8f-9250-a5794d2960bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Picture/Scene\World1">
-      <UniqueIdentifier>{de1778f8-ab44-4103-a648-5e8a0a573af8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Opening">
       <UniqueIdentifier>{c0e16d56-f599-4064-9a03-2ce2a7d7316a}</UniqueIdentifier>
@@ -42,9 +29,6 @@
     </Filter>
     <Filter Include="World\World1">
       <UniqueIdentifier>{7ff16def-207a-4f67-83d6-d3d0aee32fa8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MarioWeapon">
-      <UniqueIdentifier>{244d3937-a7ff-4867-a6d2-062a496e46e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="HUD">
       <UniqueIdentifier>{6253e671-dc74-4a05-9375-6f9c1ff9b1dd}</UniqueIdentifier>
@@ -81,6 +65,15 @@
     </Filter>
     <Filter Include="OverWorld\Player">
       <UniqueIdentifier>{a65e8588-0002-4b2d-b6cd-0cab18bc4ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\World1\Scene1.4">
+      <UniqueIdentifier>{4f0042d2-4ab8-4455-9d76-3d04605e5eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\World1\Scene1.1">
+      <UniqueIdentifier>{729ddd3f-42b0-4d83-8137-b44d232d1765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayScene\MarioWeapon">
+      <UniqueIdentifier>{244d3937-a7ff-4867-a6d2-062a496e46e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -172,7 +165,7 @@
       <Filter>PlayScene\Ground</Filter>
     </ClCompile>
     <ClCompile Include="FireBullet.cpp">
-      <Filter>MarioWeapon</Filter>
+      <Filter>PlayScene\MarioWeapon</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
@@ -184,7 +177,7 @@
       <Filter>OverWorld\Player</Filter>
     </ClCompile>
     <ClCompile Include="MarioTail.cpp">
-      <Filter>MarioWeapon</Filter>
+      <Filter>PlayScene\MarioWeapon</Filter>
     </ClCompile>
     <ClCompile Include="BrickItem.cpp">
       <Filter>PlayScene\Object</Filter>
@@ -206,9 +199,6 @@
     </ClCompile>
     <ClCompile Include="EffectScore.cpp">
       <Filter>PlayScene\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>PlayScene\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>Source Files</Filter>
@@ -240,9 +230,6 @@
     <ClCompile Include="BreakItemBrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RedFlyKoopas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -254,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="RedGoomba.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>PlayScene\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="RedFlyKoopas.cpp">
+      <Filter>PlayScene\Enemy\Koopas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,7 +341,7 @@
       <Filter>PlayScene\Ground</Filter>
     </ClInclude>
     <ClInclude Include="FireBullet.h">
-      <Filter>MarioWeapon</Filter>
+      <Filter>PlayScene\MarioWeapon</Filter>
     </ClInclude>
     <ClInclude Include="HUD.h">
       <Filter>HUD</Filter>
@@ -369,7 +362,7 @@
       <Filter>OverWorld\Player</Filter>
     </ClInclude>
     <ClInclude Include="MarioTail.h">
-      <Filter>MarioWeapon</Filter>
+      <Filter>PlayScene\MarioWeapon</Filter>
     </ClInclude>
     <ClInclude Include="DancingTree.h">
       <Filter>Header Files</Filter>
@@ -433,60 +426,48 @@
     <Text Include="textures\map1.txt">
       <Filter>Map</Filter>
     </Text>
-    <Text Include="textures\Opening\MapOpening.txt">
-      <Filter>Picture/Scene\Scene</Filter>
-    </Text>
-    <Text Include="textures\Overworld\World2Map.txt" />
     <Text Include="textures\Overworld\World1Scene.txt">
       <Filter>OverWorld\World1</Filter>
     </Text>
-    <Text Include="textures\World\World1\SceneHidden1.1.txt" />
-    <Text Include="textures\World\World1\SceneHidden1.1Map.txt">
-      <Filter>World\World1</Filter>
+    <Text Include="textures\Effect\Effect.txt">
+      <Filter>PlayScene\Effect</Filter>
     </Text>
-    <Text Include="textures\World\World1\Scene1.1.txt" />
-    <Text Include="textures\World\World1\Scene1.1Map.txt" />
-    <Text Include="textures\World\World1\Scene1.4.txt" />
-    <Text Include="textures\World\World1\Scene1.4Map.txt" />
-    <Text Include="textures\Mario\Mario.txt" />
-    <Text Include="textures\Weapon\Weapon.txt" />
-    <Text Include="textures\Object\Object.txt" />
-    <Text Include="textures\Enemy\Enemy.txt" />
-    <Text Include="textures\Item\Item.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\misc1.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\sprites.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\Koopas.png">
-      <Filter>Picture/Scene\Koopas/Goomba</Filter>
-    </Image>
-    <Image Include="textures\Goomba_Koopas\Left.png">
-      <Filter>Picture/Scene\Koopas/Goomba</Filter>
-    </Image>
-    <Image Include="textures\Goomba_Koopas\LeftUp.png">
-      <Filter>Picture/Scene\Koopas/Goomba</Filter>
-    </Image>
-    <Image Include="textures\Goomba_Koopas\Right.png">
-      <Filter>Picture/Scene\Koopas/Goomba</Filter>
-    </Image>
-    <Image Include="textures\Goomba_Koopas\RightUp.png">
-      <Filter>Picture/Scene\Koopas/Goomba</Filter>
-    </Image>
-    <Image Include="textures\bbox.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\Opening\MapOpening.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\ScoreBoard - Copy.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
-    <Image Include="textures\World\World1\SceneHidden1.1Tile.png">
-      <Filter>Picture/Scene</Filter>
-    </Image>
+    <Text Include="textures\Enemy\Enemy.txt">
+      <Filter>PlayScene\Enemy</Filter>
+    </Text>
+    <Text Include="textures\HUD\HUD.txt">
+      <Filter>HUD</Filter>
+    </Text>
+    <Text Include="textures\Item\Item.txt">
+      <Filter>PlayScene\Item</Filter>
+    </Text>
+    <Text Include="textures\Mario\Mario.txt">
+      <Filter>PlayScene\Mario</Filter>
+    </Text>
+    <Text Include="textures\Object\Object.txt">
+      <Filter>PlayScene\Object</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.1.txt">
+      <Filter>World\World1\Scene1.1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.1Map.txt">
+      <Filter>World\World1\Scene1.1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\SceneHidden1.1Map.txt">
+      <Filter>World\World1\Scene1.1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\SceneHidden1.1.txt">
+      <Filter>World\World1\Scene1.1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.4.txt">
+      <Filter>World\World1\Scene1.4</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.4Map.txt">
+      <Filter>World\World1\Scene1.4</Filter>
+    </Text>
+    <Text Include="textures\Weapon\Weapon.txt">
+      <Filter>PlayScene\MarioWeapon</Filter>
+    </Text>
+    <Text Include="mario-sample.txt" />
   </ItemGroup>
 </Project>

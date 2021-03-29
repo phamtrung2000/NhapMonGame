@@ -17,7 +17,6 @@ void ListItemBrick::Render()
 	{
 		Bricks.at(i)->Render();
 	}
-	RenderBoundingBox();
 }
 
 void ListItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -34,7 +33,6 @@ void ListItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		Bricks.at(i)->Update(dt,coObjects);
 	}
-	
 }
 
 void ListItemBrick::DeleteBrick(int vitri)

@@ -27,6 +27,7 @@ MarioTail::MarioTail(float x, float y)
 	SetPosition(x, y);
 	Category = CATEGORY::WEAPON;
 	isInvisible = false;
+	IsMovingObject = false;
 }
 
 void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -277,7 +278,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					else if(coObjects->at(i)->ObjType == OBJECT_TYPE_KOOPAS || coObjects->at(i)->ObjType == OBJECT_TYPE_GREENKOOPAS)					
 					{
 						Koopas* koopas = dynamic_cast<Koopas*>(coObjects->at(i));
-						koopas->vy = -0.2f;
+						koopas->vy = -0.22f;
 						koopas->OnGroud = false;
 						if (_Mario->x <= koopas->x)
 						{

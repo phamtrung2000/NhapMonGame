@@ -144,8 +144,8 @@
 #define MARIO_ANI_BIG_HOLD_JUMP_RIGHT		75
 #define MARIO_ANI_BIG_HOLD_JUMP_LEFT		76
 
-#define MARIO_ANI_BIG_FALL_RIGHT	77
-#define MARIO_ANI_BIG_FALL_LEFT		78
+#define MARIO_ANI_BIG_FALLING_RIGHT		77
+#define MARIO_ANI_BIG_FALLING_LEFT		78
 
 #define MARIO_ANI_TAIL_KICK_RIGHT	79
 #define MARIO_ANI_TAIL_KICK_LEFT	80
@@ -160,6 +160,38 @@
 #define MARIO_ANI_UP_LEVEL_RIGHT_SMALL_BIG		89
 #define MARIO_ANI_UP_LEVEL_LEFT_SMALL_BIG		90
 
+#define MARIO_ANI_FIRE_KICK_RIGHT	91
+#define MARIO_ANI_FIRE_KICK_LEFT	92
+
+#define MARIO_ANI_FIRE_HOLD_IDLE_RIGHT		93
+#define MARIO_ANI_FIRE_HOLD_WALK_RIGHT		94
+
+#define MARIO_ANI_FIRE_HOLD_IDLE_LEFT		95
+#define MARIO_ANI_FIRE_HOLD_WALK_LEFT		96
+
+#define MARIO_ANI_FIRE_HOLD_JUMP_RIGHT		97
+#define MARIO_ANI_FIRE_HOLD_JUMP_LEFT		98
+
+#define MARIO_ANI_TAIL_GOHIDDENWORLD		40
+#define MARIO_ANI_SMALL_GOHIDDENWORLD		99
+#define MARIO_ANI_BIG_GOHIDDENWORLD			100
+#define MARIO_ANI_FIRE_GOHIDDENWORLD		101
+
+#define MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1	31
+#define MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_2	40
+#define MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3	32
+#define MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_4	42
+
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_1	102
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_2	103
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_3	104
+
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_1	105
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_2	106
+#define MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_3	107
+
+#define MARIO_ANI_FIRE_FALLING_RIGHT	108
+#define MARIO_ANI_FIRE_FALLING_LEFT		109
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -179,7 +211,7 @@
 
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
-#define TIME_ATTACK 3//2
+#define TIME_ATTACK 4//2
 #define TIME_FLY 200
 #define TIME_FLY_S 40
 #define MARIO_UNTOUCHABLE_TIME 5000
@@ -258,6 +290,8 @@ public:
 	int Scene;
 
 	ULONGLONG StartToDie; // khi mario chết có 1 khoảng tg mario đứng yên rồi mới nhảy lên
+
+	bool isBlocked; // kiểm tra mario có đang bị chăn bởi object để tăng level of walking
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
@@ -278,6 +312,10 @@ public:
 	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	void Xamlon()
+	{
+		
+	}
 };
 
 

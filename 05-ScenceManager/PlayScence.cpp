@@ -816,51 +816,56 @@ void CPlayScene::Update(DWORD dt)
 	{
 		_Camera->Update();
 		// Tạo đạn lửa khi _Mario bắn lửa
-		if (_Mario->level == MARIO_LEVEL_FIRE && _Mario->isAttacking == true && (_Mario->ani == MARIO_ANI_FIRE_ATTACK_RIGHT_2 || _Mario->ani == MARIO_ANI_FIRE_ATTACK_LEFT_2))
+		if (_Mario->level == MARIO_LEVEL_FIRE && _Mario->isAttacking == true)
 		{
-			if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_A)
+			if ((_Mario->OnGround == true && _Mario->time_attack > TIME_ATTACK && _Mario->time_attack <= 2 * TIME_ATTACK) 
+				|| (_Mario->OnGround == false && _Mario->time_attack <= TIME_ATTACK) )
 			{
-				// kiểm soát số đạn <=2
-				if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && _Mario->TimeUseFireBullet == 0)
+				if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_A)
 				{
-					//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
-					FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
-					fb->FireMario = true;
-					// chiều của viên đạn
+					// kiểm soát số đạn <=2
+					if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && _Mario->TimeUseFireBullet == 0)
+					{
+						//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
+						FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
+						fb->FireMario = true;
+						// chiều của viên đạn
 
-					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-					fb->SetAnimationSet(ani_set);
-					objects.push_back(fb);
-					_Mario->NumberBullet--;
-					// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-					//_Mario->isAttacking = false;
-					_Mario->TimeUseFireBullet = GetTickCount64();
-					//	DebugOut(L"Them dan lua -> objects.size = %i \n", objects.size());
+						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
+						fb->SetAnimationSet(ani_set);
+						objects.push_back(fb);
+						_Mario->NumberBullet--;
+						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
+						//_Mario->isAttacking = false;
+						_Mario->TimeUseFireBullet = GetTickCount64();
+						//	DebugOut(L"Them dan lua -> objects.size = %i \n", objects.size());
+					}
 				}
-			}
-			else if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_Z)
-			{
-				// kiểm soát số đạn <=2
-				if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && (_Mario->TimeUseFireBullet == 0 || GetTickCount64() - _Mario->TimeUseFireBullet > _Mario->TimeDelayUseFireBullet))
+				else if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_Z)
 				{
-					//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
-					FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
-					fb->FireMario = true;
-					// chiều của viên đạn
+					// kiểm soát số đạn <=2
+					if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && (_Mario->TimeUseFireBullet == 0 || GetTickCount64() - _Mario->TimeUseFireBullet > _Mario->TimeDelayUseFireBullet))
+					{
+						//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
+						FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
+						fb->FireMario = true;
+						// chiều của viên đạn
 
-					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-					LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-					fb->SetAnimationSet(ani_set);
-					objects.push_back(fb);
-					_Mario->NumberBullet--;
-					// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-					//_Mario->isAttacking = false;
-					_Mario->TimeUseFireBullet = GetTickCount64();
+						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
+						fb->SetAnimationSet(ani_set);
+						objects.push_back(fb);
+						_Mario->NumberBullet--;
+						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
+						//_Mario->isAttacking = false;
+						_Mario->TimeUseFireBullet = GetTickCount64();
 
+					}
 				}
 			}
 		}
+
 		// tạo object đuôi(MarioTail) khi _Mario quật đuôi, xóa object khi thực hiện xong hành động quật đuôi
 		else if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->render_tail == false)
 		{
@@ -944,7 +949,6 @@ void CPlayScene::Update(DWORD dt)
 				else
 					objects.erase(objects.begin() + i);
 			}
-
 		}
 
 		for (size_t i = 0; i < objects.size(); i++)
@@ -1063,14 +1067,31 @@ void CPlayScene::Update(DWORD dt)
 	else
 	{
 		//if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
+		for (size_t i = 1; i < objects.size(); i++)
+		{
+			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
+			{
+				coObjects.push_back(objects[i]);
+			}
+			else if (objects[i]->canDelete == true)
+			{
+				if (objects[i]->Category == CATEGORY::EFFECT || objects[i]->Category == CATEGORY::WEAPON)
+				{
+					objects.erase(objects.begin() + i);
+				}
+				else
+					objects.erase(objects.begin() + i);
+			}
+		}
+
 		_Mario->Update(dt, &coObjects);
 		for (size_t i = 1; i < objects.size(); i++)
 		{
-			if (objects[i]->IsMovingObject == false)
-			{
+			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
 				objects[i]->Update(dt, &coObjects);
-			}
 		}
+
+		
 	}
 }
 
@@ -1159,7 +1180,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_S:
 	{
-		DebugOut(L"Down S\n");
+		//DebugOut(L"Down S\n");
 		_Mario->pressS = true;
 		if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isFalling == true)
 		{
@@ -1192,7 +1213,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_X:
 	{
-		DebugOut(L"Down X\n");
+		//DebugOut(L"Down X\n");
 	}
 	break;
 
@@ -1202,6 +1223,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_A:
 	{
+		DebugOut(L"Down A\n");
 		_Mario->pressA = _Mario->isRunning = true;
 		if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false)
 		{

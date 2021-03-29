@@ -84,43 +84,80 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					this->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 				else
 					this->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+				vx = nx * 0.2f;
 				return;
 			}
 			// rùa đang bị cầm và nút A đang giữ
 			else
 			{
-				this->vx = _Mario->vx;
+				//this->vx = _Mario->vx;
 				this->nx = _Mario->nx;
 				if (_Mario->nx == RIGHT)
 				{
-					//koopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
-					if (_Mario->level == MARIO_LEVEL_SMALL) // chuẩn
+					if (isShell == true)
 					{
-						this->x = float(_Mario->x + MARIO_SMALL_BBOX_WIDTH + 1);
-						this->y = _Mario->y - 2;
+						if (_Mario->level == MARIO_LEVEL_SMALL) // chuẩn
+						{
+							this->x = float(_Mario->x + MARIO_SMALL_BBOX_WIDTH + 1);
+							this->y = _Mario->y - 2;
+						}
+						else if (_Mario->level == MARIO_LEVEL_TAIL) // chuẩn
+						{
+							this->x = _Mario->x + MARIO_TAIL_BBOX_WIDTH - 1.0f;
+							this->y = _Mario->y + 6;
+						}
+						else // chuẩn
+						{
+							this->x = float(_Mario->x + MARIO_BIG_BBOX_WIDTH - 1.0f);
+							this->y = _Mario->y + 6;
+						}
 					}
-					else if (_Mario->level == MARIO_LEVEL_TAIL) // chuẩn
+					else if (isShell_2 == true)
 					{
-						this->x = _Mario->x + MARIO_TAIL_BBOX_WIDTH - 1.0f;
-						this->y = _Mario->y + 6;
-					}
-					else // chuẩn
-					{
-						this->x = float(_Mario->x + MARIO_BIG_BBOX_WIDTH - 1.0f);
-						this->y = _Mario->y + 6;
+						if (_Mario->level == MARIO_LEVEL_SMALL) // chuẩn
+						{
+							this->x = float(_Mario->x + MARIO_SMALL_BBOX_WIDTH - 1);
+							this->y = float(_Mario->y - 4);
+						}
+						else if (_Mario->level == MARIO_LEVEL_TAIL) // chuẩn
+						{
+							this->x = float(_Mario->x + MARIO_TAIL_BBOX_WIDTH - 2);
+							this->y = _Mario->y + 6;
+						}
+						else // chuẩn
+						{
+							this->x = float(_Mario->x + MARIO_BIG_BBOX_WIDTH - 2);
+							this->y = _Mario->y + 6;
+						}
 					}
 				}
 				else
 				{
-					if (_Mario->level == MARIO_LEVEL_SMALL)
+					if (isShell == true)
 					{
-						this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 1.0f);
-						this->y = _Mario->y - 2;
+						if (_Mario->level == MARIO_LEVEL_SMALL)
+						{
+							this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 1.0f);
+							this->y = _Mario->y - 2;
+						}
+						else
+						{
+							this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 1.0f);
+							this->y = _Mario->y + 5;
+						}
 					}
 					else
 					{
-						this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 1.0f);
-						this->y = _Mario->y + 5;
+						if (_Mario->level == MARIO_LEVEL_SMALL)
+						{
+							this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 3.0f);
+							this->y = _Mario->y - 4;
+						}
+						else
+						{
+							this->x = float(_Mario->x - KOOPAS_BBOX_WIDTH + 2.0f);
+							this->y = _Mario->y + 5;
+						}
 					}
 				}
 
@@ -268,13 +305,13 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (isShell_2 == true)
 				{
 					vy += KOOPAS_SHELL_2_GRAVITY * dt;
-					if (vx > 0)
+					if (vx > 0 && isKicked == false)
 					{
 						vx -= 0.0005f;
 						if (vx < 0)
 							vx = 0;
 					}
-					else if (vx < 0)
+					else if (vx < 0 && isKicked == false)
 					{
 						vx += 0.0005f;
 						if (vx > 0)
@@ -529,10 +566,11 @@ void Koopas::SetState(int state)
 
 		case KOOPAS_STATE_SHELL_WALKING_RIGHT:
 		{
-			if(OnGroud == true)
+			if(OnGroud == true || isKicked == true)
 				vx = KOOPAS_SHELL_SPEED;
-			else
+			else if(isAttacked == true)
 				vx = KOOPAS_WALKING_SPEED;
+			//vx = KOOPAS_SHELL_SPEED;
 			nx = RIGHT;
 			isHold = false;
 			CountXmaxXmin = false;
@@ -540,10 +578,11 @@ void Koopas::SetState(int state)
 
 		case KOOPAS_STATE_SHELL_WALKING_LEFT:
 		{
-			if (OnGroud == true)
+			if (OnGroud == true || isKicked == true)
 				vx = -KOOPAS_SHELL_SPEED;
-			else
+			else if(isAttacked==true)
 				vx = -KOOPAS_WALKING_SPEED;
+			//vx = -KOOPAS_SHELL_SPEED;
 			nx = LEFT;
 			isHold = false;
 			CountXmaxXmin = false;

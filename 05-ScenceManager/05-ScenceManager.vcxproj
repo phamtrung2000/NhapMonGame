@@ -242,14 +242,15 @@
     <ClInclude Include="World1.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="mario-sample.txt" />
+    <Text Include="textures\Effect\Effect.txt" />
     <Text Include="textures\Enemy\Enemy.txt" />
+    <Text Include="textures\HUD\HUD.txt" />
     <Text Include="textures\Item\Item.txt" />
     <Text Include="textures\map1.txt" />
     <Text Include="textures\Mario\Mario.txt" />
     <Text Include="textures\Object\Object.txt" />
-    <Text Include="textures\Opening\MapOpening.txt" />
     <Text Include="textures\Overworld\World1Scene.txt" />
-    <Text Include="textures\Overworld\World2Map.txt" />
     <Text Include="textures\Weapon\Weapon.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
@@ -257,19 +258,6 @@
     <Text Include="textures\World\World1\Scene1.4Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\bbox.png" />
-    <Image Include="textures\Goomba_Koopas\Left.png" />
-    <Image Include="textures\Goomba_Koopas\LeftUp.png" />
-    <Image Include="textures\Goomba_Koopas\Right.png" />
-    <Image Include="textures\Goomba_Koopas\RightUp.png" />
-    <Image Include="textures\Koopas.png" />
-    <Image Include="textures\misc1.png" />
-    <Image Include="textures\Opening\MapOpening.png" />
-    <Image Include="textures\ScoreBoard - Copy.png" />
-    <Image Include="textures\sprites.png" />
-    <Image Include="textures\World\World1\SceneHidden1.1Tile.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

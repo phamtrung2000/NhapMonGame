@@ -6,10 +6,29 @@
 #include "Koopas.h"
 #include "EffectSmoke.h"
 #include "EffectHit.h"
-#include "Utils.h"
 #include "PlayScence.h"
 #include "GreenFlyKoopas.h"
 #include "BoomerangEnemy.h"
+
+FireBullet::FireBullet(float a, float b)
+{
+	FireMario = canDelete = false;
+	ObjType = OBJECT_TYPE_FIREBULLET;
+	x = a;
+	y = b;
+	this->Direction = _Mario->nx;
+	Category = CATEGORY::WEAPON;
+	SetSpeed(FIREBULLET_VX_SPEED * _Mario->nx, 0);
+	IsMovingObject = true;
+}
+
+void FireBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+	left = x;
+	top = y;
+	right = x + FIREBULLET_BBOX;
+	bottom = y + FIREBULLET_BBOX;
+}
 
 void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -203,25 +222,4 @@ void FireBullet::Render()
 		ani = ANI_BULLET_LEFT;
 	}
 	animation_set->at(ani)->Render(x, y);
-
-	//RenderBoundingBox();
-}
-
-void FireBullet::GetBoundingBox(float& left, float& top, float& right, float& bottom)
-{
-	left = x;
-	top = y;
-	right = x + FIREBULLET_BBOX;
-	bottom = y + FIREBULLET_BBOX;
-}
-
-FireBullet::FireBullet(float a, float b)
-{
-	FireMario = canDelete = false;
-	ObjType = OBJECT_TYPE_FIREBULLET;
-	x = a;
-	y = b;
-	this->Direction = _Mario->nx;
-	Category = CATEGORY::WEAPON;
-	SetSpeed(FIREBULLET_VX_SPEED * _Mario->nx, 0);
 }
