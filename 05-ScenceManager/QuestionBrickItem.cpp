@@ -21,7 +21,11 @@ QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : Item()
 	case MONEY:
 		Score = QUESTIONBRICKITEM_MONEY__SCORE; break;
 	case MUSHROOM: case LEAF:
-		Score = QUESTIONBRICKITEM__SCORE; break;
+	{
+		IsMovingObject = true;
+		Score = QUESTIONBRICKITEM__SCORE;
+	}
+	break;
 	}
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();

@@ -131,7 +131,6 @@ void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 
 	case MARIO_LEVEL_TAIL:
 	{
-
 		if (nx == LEFT)
 		{
 			left = x;
@@ -141,7 +140,7 @@ void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 		}
 		else
 		{
-			left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH;
+			left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH - 4;
 			top = y;
 			right = x + MARIO_TAIL_BBOX_WIDTH;
 			bottom = y + MARIO_TAIL_BBOX_HEIGHT;
@@ -413,7 +412,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				this->vy /= 2;
 				TimeJumpS = 0;
 			}
-			if (vy > 0)
+			if (vy > 0.0f)
 				isFalling = true;
 			if (nScore >= 9)
 				nScore = 0;
@@ -476,7 +475,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (GetState() == MARIO_STATE_WALKING_RIGHT)
 		{
 			// chưa đạt max + k bị chặn bởi vật thể thì ++
-			if (level_of_walking < MAX_LEVEL_OF_WALKING && isBlocked == false)
+			if (level_of_walking < MAX_LEVEL_OF_WALKING)
 				level_of_walking++;
 			// đi bộ
 			if (isRunning == false)
@@ -486,6 +485,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (canFlyX == false && canFlyS == false)
 						level_of_running--;
 				}
+
 				if (vx < 0)
 				{
 					ChangeDirection = true;
@@ -505,8 +505,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						ChangeDirection = false;
 						if (level_of_walking >= 4)
 							vx = level_of_walking * GIA_TOC;
-						/*if (level_of_walking < MAX_LEVEL_OF_WALKING)
-							level_of_walking++;*/
+						if (level_of_walking < MAX_LEVEL_OF_WALKING)
+							level_of_walking++;
 					}
 				}
 			}
@@ -555,9 +555,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (GetState() == MARIO_STATE_WALKING_LEFT)
 		{
 			// chưa đạt max + k bị chặn bởi vật thể thì ++
-			if (level_of_walking < MAX_LEVEL_OF_WALKING && isBlocked == false)
+			if (level_of_walking < MAX_LEVEL_OF_WALKING )
 			{
-				DebugOut(L"1111111111111111111111111111111111111111111111111111\n");
 				level_of_walking++;
 			}
 				
@@ -789,15 +788,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 
 		// No collision occured, proceed normally
-		if (coEvents.size() == 0)
+		if (coEvents.size() == 0 && isBlocked == false)
 		{
-			x += dx;
-			y += dy;
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
 				switch (coObjects->at(i)->Category)
 				{
 				case CATEGORY::ITEM:
+
 				{
 					// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
 					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
@@ -853,8 +851,20 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 				break;
+
+				case CATEGORY::OBJECT:
+				{
+					if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+					{
+						
+					}
+				}
+				break;
+
 				}
 			}
+			x += dx;
+			y += dy;
 		}
 		else
 		{
@@ -885,19 +895,15 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							this->MaxY = ground->y - this->Height;
 							if (OnGround == false)
 							{
-								/*float temp = min_ty * dy + ny * 0.1f - 0.3f;
-								if (y + temp < this->MaxY)
-									y += temp;
-								else
-									y = float(MaxY - 0.5);*/
-
 								OnGround = true; // xử lý chạm đất
 								isFalling = isFlyingLow = isFlyingHigh = false;
 							}
 						}
 						else if (e->nx != 0)
 						{
-							y += min_ty * dy + ny * 0.1f - 0.3f;
+							//y += min_ty * dy + ny * 0.1f - 0.3f;
+							y += min_ty * dy + ny * 0.2f;
+							if (nx != 0) level_of_walking = level_of_running = 0;
 
 						}
 					}
@@ -1964,6 +1970,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 //		////RenderBoundingBox();
 //	}
 //	DebugOut(L"RENDER ani = %i\n", ani);
+
 //}
 
 void Mario::Render()
@@ -2081,7 +2088,8 @@ void Mario::Render()
 				// đang đứng trên đất
 				if (OnGround == true)
 				{
-					if (isAttacking == true && endAttack == false && untouchable == false)
+					//if (isAttacking == true && endAttack == false && untouchable == false)
+					if (isAttacking == true && endAttack == false)
 					{
 						switch (level)
 						{
@@ -2584,7 +2592,7 @@ void Mario::Render()
 					}
 				}
 				// đang trên không
-				else if (isFalling == true)
+				else //if (isFalling == true)
 				{
 					if (isAttacking == true && endAttack == false)
 					{
@@ -3038,6 +3046,7 @@ void Mario::Render()
 		else
 			animation_set->at(ani)->Render(x, y, 255);
 	}
+	RenderBoundingBox();
 }
 
 void Mario::SetState(int state)
@@ -3436,6 +3445,7 @@ void Mario::DownLevel()
 		}
 		isLevelDown = true;
 		isAttacking = false;
+		endAttack = true;
 	}
 }
 
@@ -3448,7 +3458,7 @@ void Mario::UpLevel()
 	switch (level) // không xử lý level tail ở đây mà xử lý bên mario tail vì bị lỗi hiện smoke trước mà đuôi vẫn chưa xóa
 	{
 	case MARIO_LEVEL_BIG:
-	{
+	{ 
 		ChangeLevelTime = GetTickCount64();
 		auto effect = new EffectSmoke(this->x, this->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
 		_PlayScene->objects.push_back(effect);
@@ -3504,13 +3514,17 @@ void Mario::Debug()
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
 	}
 
-	if (isBlocked == true)
-		DebugOut(L"isBlocked == true\t");
+	if (isLevelUp == true)
+		DebugOut(L"isLevelUp == true\t");
 	else
-		DebugOut(L"isBlocked == false\t");
+		DebugOut(L"isLevelUp == false\t");
+	if (isLevelDown == true)
+		DebugOut(L"isLevelDown == true\t");
+	else
+		DebugOut(L"isLevelDown == false\t");
 
-	DebugOut(L"vx = %f, x= %f, level_of_walking = %i, level_of_running = %i\n", vx, x, level_of_walking, level_of_running);
-	//DebugOut(L"vx = %f, x = %f\n", vx, x);
+	//DebugOut(L"vx = %f, x= %f, level_of_walking = %i, level_of_running = %i\n", vx, x, level_of_walking, level_of_running);
+	DebugOut(L"vy = %f, ani = %i\n", vy, ani);
 }
 
 void Mario::Unload()
@@ -3533,14 +3547,14 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			else if (e->ny > 0) // dưới lên trên
 			{
 				x += min_tx * dx + nx * 0.4f;
-				isFalling = isFlyingLow = isFlyingHigh = false;
+				//isFalling = isFlyingLow = isFlyingHigh = false;
 				y += dy;
 			}
 			else if (e->ny < 0) // dưới lên trên
 			{
 				x += min_tx * dx + nx * 0.4f;
 				y += dy;
-				isFalling = isFlyingLow = isFlyingHigh = false;
+				//isFalling = isFlyingLow = isFlyingHigh = false;
 			}
 		}
 		else
@@ -3552,7 +3566,7 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			else if (e->ny < 0)
 			{
 				x += min_tx * dx + nx * 0.4f;
-				isFalling = isFlyingLow = isFlyingHigh = false;
+				
 			}
 		}
 
@@ -4081,8 +4095,19 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 	{
 		if (e->nx != 0)
 		{
+			if (nx != 0)
+			{
+				level_of_walking = 0;
+				vx = 0;
+			}
 			isBlocked = true;
 		}
+		else if (e->ny > 0)
+		{
+			isFalling = true;
+			vy = 0;
+		}
+
 		if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK)
 		{
 			if (ny != 0) vy = 0;
@@ -4198,7 +4223,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				}
 				else if (e->nx != 0)
 				{
-					//if (nx != 0) vx = 0;
+					
 					if (ny != 0)vy = 0;
 					y += min_ty * dy + ny * 0.4f;
 					
@@ -4380,9 +4405,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			}
 			else if (e->nx != 0)
 			{
-				if (ny != 0) vy = 0;
-				y += min_ty * dy + ny * 0.4f;
-
+				y += min_ty * dy + ny * 0.2f;
+				
 				isRunning = false;
 				if (level_of_walking > 10)
 					level_of_walking -= 10;
@@ -4391,6 +4415,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 
 				if (level_of_running > 0 && canFlyS == false && canFlyX == false)
 					level_of_running--;
+
+				if (nx != 0) level_of_walking = level_of_running = 0;
 			}
 		}
 		else if (e->obj->ObjType == OBJECT_TYPE_LISTQUESTIONBRICK)

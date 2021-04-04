@@ -1099,13 +1099,28 @@ void CPlayScene::Render()
 {
 	_Map->DrawMap1();
 	
-	for (unsigned int i = 0; i < objects.size(); i++)
+	if (_Mario->GoHiddenWorld == true)
 	{
-		if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
+		for (unsigned int i = 0; i < objects.size(); i++)
 		{
-			objects[i]->Render();
+			if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
+			{
+				objects[i]->Render();
+			}
 		}
 	}
+	else
+	{
+		for (unsigned int i = 0; i < objects.size(); i++)
+		{
+			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->Category != CATEGORY::PLAYER)
+			{
+				objects[i]->Render();
+			}
+		}
+		_Mario->Render();
+	}
+	
 	_HUD->Render();
 	/*if (CourseClear == true)
 	{
