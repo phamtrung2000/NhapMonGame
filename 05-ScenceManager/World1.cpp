@@ -389,6 +389,7 @@ void World1::Render()
 		}
 	}
 	_HUD->Render();
+	_Grid->RenderCell();
 }
 
 /*

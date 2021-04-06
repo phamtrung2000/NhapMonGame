@@ -248,6 +248,9 @@
     <ClCompile Include="RedFlyKoopas.cpp">
       <Filter>PlayScene\Enemy\Koopas</Filter>
     </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -421,6 +424,9 @@
     <ClInclude Include="RedGoomba.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="textures\map1.txt">
@@ -469,5 +475,8 @@
       <Filter>PlayScene\MarioWeapon</Filter>
     </Text>
     <Text Include="mario-sample.txt" />
+    <Text Include="textures\Overworld\world1_map.txt">
+      <Filter>OverWorld\World1</Filter>
+    </Text>
   </ItemGroup>
 </Project>

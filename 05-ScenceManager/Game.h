@@ -20,6 +20,7 @@
 #include "Camera.h"
 #include "PlayScence.h"
 #include "World1.h"
+#include"Grid.h"
 
 using namespace std;
 
@@ -50,7 +51,7 @@ using namespace std;
 #define _Map Map::GetInstance()
 #define _Camera Camera::GetInstance()
 #define _PlayScene CPlayScene::GetInstance()
-//#define _WorldMap World1::GetInstance()
+#define _Grid Grid::GetInstance()
 
 class CGame
 {

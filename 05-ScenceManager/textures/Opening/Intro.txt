@@ -1,6 +1,6 @@
-# MAP INFO : row	column	TileRow	TileColumn	TileWidth
+# MAP INFO: 0.number of MapRows 1.number of MapColumns	2.number of TileRows	3.Number of TileColumns	4.Tile Width 5.Tile Height  6.Grid Size Cell
 [INFO]
-14	18	1	6	16	16	1
+14	18	1	6	16	16
 [ROWS]
 1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1

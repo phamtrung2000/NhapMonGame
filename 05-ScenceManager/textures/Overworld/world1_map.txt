@@ -1,5 +1,6 @@
+# MAP INFO: 0.number of MapRows 1.number of MapColumns	2.number of TileRows	3.Number of TileColumns	4.Tile Width 5.Tile Height  6.Grid Size Cell
 [INFO]
-10	14	4	10	16
+10	14	4	10	16	16	1
 [ROWS]
 11	11	11	23	8	9	8	24	8	25	8	9	11	11
 14	11	11	7	11	11	11	7	39	39	39	7	11	11

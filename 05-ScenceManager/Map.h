@@ -21,6 +21,7 @@ public:
 	int TileRow;
 	int TileCollum;
 	int TiledID[300][300];
+	int GridCellSize;
 
 	CSprites* sprites = CSprites::GetInstance();
 	bool IsWorldMap;

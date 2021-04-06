@@ -17,7 +17,7 @@ Map* Map::GetInstance()
 Map::Map()
 {
 	texID = 0;
-	MaxColumn = column = MaxRow = row = TileWidth = TileHeight = TileRow = TileCollum = 0;
+	MaxColumn = column = MaxRow = row = TileWidth = TileHeight = TileRow = TileCollum = GridCellSize = 0;
 	IsWorldMap = false;
 }
 
@@ -25,13 +25,14 @@ void Map::_ParseSection_INFO(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() <= 5)
+	if (tokens.size() < 7) // TH map intro thì k cần grid
 	{
 		MaxRow = atoi(tokens[0].c_str());
 		MaxColumn = atoi(tokens[1].c_str());
 		TileRow = atoi(tokens[2].c_str());
 		TileCollum = atoi(tokens[3].c_str());
 		TileWidth = atoi(tokens[4].c_str());
+		TileHeight = atoi(tokens[5].c_str());
 	}
 	else
 	{
@@ -41,13 +42,17 @@ void Map::_ParseSection_INFO(string line)
 		TileCollum = atoi(tokens[3].c_str());
 		TileWidth = atoi(tokens[4].c_str());
 		TileHeight = atoi(tokens[5].c_str());
-		int A = atoi(tokens[6].c_str());
-		if (A == 1)
-		{
-			IsWorldMap = true;
-		}
+		GridCellSize = atoi(tokens[6].c_str());
+
+		int gridsizecell = GridCellSize * OBJECT_BBOX_WIDTH_HEIGHT;
+		_Grid->SetSizeCell(gridsizecell);
+		int widthmap = _Map->GetWidth();
+		int b = (widthmap % gridsizecell == 0) ? (widthmap / gridsizecell) : (widthmap / gridsizecell) + 1;
+		_Grid->cols = b;
+		int a = _Map->GetHeight() / gridsizecell;
+		_Grid->rows = a;
+		_Grid->Init();
 	}
-	
 }
 
 void Map::_ParseSection_ROWS(string line)
@@ -156,7 +161,6 @@ void Map::LoadMap1(int texid, wstring map_txt, int& MapWidth, int& MapHeight)
 			id_sprite = id_sprite + 1;
 		}
 	}
-
 }
 
 void Map::DrawMap()

@@ -1,46 +1,37 @@
 #pragma once
-#include "Game.h"
-#include"GameObject.h"
-#include "Camera.h"
-
-#define CELL_WIDTH	126
-#define CELL_HEIGHT	115
+#include "Cell.h"
+#define LOOP(x, y, z) for (int x = y; x <= z; x++)
+struct  Area
+{
+	int  TopCell, LeftCell, RightCell, BottomCell;
+};
 class Grid
 {
-
-
-	int cellWidth;
-	int cellHeight;
-
-	int numRow;
-	int numCol;
-
-	vector<vector<vector<LPGAMEOBJECT>>>Cell;
+private:
+	static Grid* __instance;
 public:
-	void UpdateGrid(vector<LPGAMEOBJECT> listObj);
+	static Grid* GetInstance();
 	Grid();
 	~Grid() {};
-	bool CheckObjPos(float Objx, float Objy)
-	{
-		return(!(Objx < 0 || Objx>2816 || Objy < 0 || Objy>624));
-	}
-	void GetListObj(vector<LPGAMEOBJECT>& listNotMoveObj, vector<LPGAMEOBJECT>& listEnemy, vector<LPGAMEOBJECT>& listObj);
-	void InsertObj(LPGAMEOBJECT Object, int Left, int Top, int Right, int Bottom)
-	{
+	//RECT rect;
+	int rows, cols;
 
-		for (int i = Left; i < Right; i++)
-		{
-			for (int j = Top; j < Bottom; j++)
-			{
-				int type = Object->ObjType;
-				Cell[i][j].push_back(Object);
-			}
-		}
-	}
-	void UnLoadGrid()
-	{
-		Cell.clear();
-	}
+	int SizeCell;
+	vector<vector<Cell*>> Cells;
+	vector<LPGAMEOBJECT> CurObjectInViewPort;
+	Area GetCell(RECT e);
+	void Init();
+	void SetSizeCell(int s) { this->SizeCell = s; }
+	void LoadObjects(LPGAMEOBJECT& obj, int Left, int Top, int Right, int Bottom);
+	void AddStaticObject(LPGAMEOBJECT obj, float x, float y);
+	void AddMovingObject(LPGAMEOBJECT obj, float x, float y);
+	void AddStaticObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom);
+	void AddMovingObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom);
+	void UpdateCellInViewPort();
+	void RenderCell();
+	void RemoveDeadObject();
 
+	void CalcObjectInViewPort();
+	vector<LPGAMEOBJECT> GetObjectInViewPort() { return CurObjectInViewPort; }
 };
 

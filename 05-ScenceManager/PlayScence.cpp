@@ -1122,10 +1122,7 @@ void CPlayScene::Render()
 	}
 	
 	_HUD->Render();
-	/*if (CourseClear == true)
-	{
-		CSprites::GetInstance()->Get(90010)->Draw(_Map->GetWidth() - 250, _Map->GetHeight() - 150);
-	}*/
+	_Grid->RenderCell();
 }
 
 void CPlayScene::Unload()

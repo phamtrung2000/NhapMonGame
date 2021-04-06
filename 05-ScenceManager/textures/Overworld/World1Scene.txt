@@ -7,7 +7,6 @@
 [HUD]
 .\textures\HUD\HUD.txt
 [MAP]
-#300	.\textures\Overworld\World2Tile.png	255	255	255	.\textures\Overworld\World2Map.txt
 300	.\textures\Overworld\WorldMap1Title.png	255	255	255	.\textures\Overworld\world1_map.txt
 [SPRITES]
 # id	left	top	right	bottom	texture_id
