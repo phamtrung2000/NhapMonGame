@@ -206,21 +206,6 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						switch (e->obj->Category)
 						{
-						case CATEGORY::GROUND:
-						{
-							if (dynamic_cast<Ground*>(e->obj))
-							{
-								if (ny != 0) vy = 0;
-								if (e->ny < 0)
-								{
-									x += min_tx * dx + nx * 0.4f;
-									y += min_ty * dy + ny * 0.1f - 0.3f;
-								}
-
-							}
-						}
-						break;
-
 						case CATEGORY::OBJECT:
 							CollisionWithObject(e, min_tx, min_ty, nx, ny);
 							break;
@@ -321,7 +306,18 @@ void BoomerangEnemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float
 {
 	if (e->obj != NULL)
 	{
-		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+	
+		if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+		{
+			if (ny != 0) vy = 0;
+			if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+				y += min_ty * dy + ny * 0.1f - 0.3f;
+			}
+
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
 

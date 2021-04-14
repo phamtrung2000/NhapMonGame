@@ -104,4 +104,5 @@ void WarpPipe::Render()
 			
 		}
 	}
+	RenderBoundingBox();
 }

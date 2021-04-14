@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "PlayScence.h"
 
 #define ENEMY_TYPE_GOOMBA 0
 #define ENEMY_TYPE_KOOPAS 1
@@ -19,9 +20,10 @@
 #define ENEMY_TIME_ISATTACKED 100
 #define ENEMY_SCORE	100
 
-#define ENEMY_DIE_DEFLECT_SPEED	0.25f
-#define ENEMY_WALKING_SPEED		0.05f
-#define	ENEMY_GRAVITY			0.0007f
+#define ENEMY_DIE_DEFLECT_SPEED	0.1f
+#define ENEMY_WALKING_SPEED		0.02f
+#define	ENEMY_GRAVITY			0.0001f
+#define	ENEMY_INIT_GRAVITY		0.0005f
 
 class Enemy : public CGameObject
 {

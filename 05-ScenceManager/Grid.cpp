@@ -106,7 +106,7 @@ void Grid::LoadObjects(LPGAMEOBJECT& obj, int Left, int Top, int Right, int Bott
 
 	switch (obj->Category)
 	{
-	case CATEGORY::GROUND:
+	case CATEGORY::OBJECT:
 	{
 		AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
 		break;

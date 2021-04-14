@@ -10,7 +10,7 @@ public:
 	int Type;
 	Brick();
 	Brick(int type);
-	
+	Brick(int type, float x = 0.0f, float y = 0.0f);
 	virtual void Render();
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 };

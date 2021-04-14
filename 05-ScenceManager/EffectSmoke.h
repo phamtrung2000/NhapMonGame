@@ -17,7 +17,7 @@ public:
 		this->SetAnimationSet(ani_set);
 		this->x = x;
 		this->y = y;
-		Category = CATEGORY::EFFECT;
+		Category = EFFECT;
 		AppearTime = GetTickCount64();
 		AmountTimeAppear = EFFECTSMOKE_APPEARTIME;
 	}

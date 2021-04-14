@@ -26,6 +26,7 @@
 #include "ListItemBrick.h"
 #include "ListQuestionBrick.h"
 #include "RedGoomba.h"
+#include "ListNormalBrick.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -151,33 +152,24 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
-	int object_type = atoi(tokens[0].c_str());
-	float x = (float) atof(tokens[1].c_str());
-	float y = (float)atof(tokens[2].c_str());
-	if (object_type == OBJECT_TYPE_BLOCK || object_type == OBJECT_TYPE_WARPPIPE || object_type == OBJECT_TYPE_GROUND)
-	{
-		width = (int)atof(tokens[4].c_str());
-		height = (int)atof(tokens[5].c_str());
-	}
-	else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK || object_type == OBJECT_TYPE_ITEMBRICK)
-	{
-		Item = (int)atof(tokens[4].c_str());
-	}
-
-	int ani_set_id = atoi(tokens[3].c_str());
+	CATEGORY object_category = static_cast<CATEGORY>(atoi(tokens[0].c_str()));
+	int object_type = atoi(tokens[1].c_str());
+	float x = (float) atof(tokens[2].c_str());
+	float y = (float)atof(tokens[3].c_str());
+	int ani_set_id = atoi(tokens[4].c_str());
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
 	CGameObject* obj = NULL;
 
-	switch (object_type)
+	switch (object_category)
 	{
-		case OBJECT_TYPE_MARIO:
+		case CATEGORY::PLAYER:
 		{
 			if (tokens.size() > 4)
 			{
-				float NewX = (float) atof(tokens[4].c_str());
-				float NewY = (float)atof(tokens[5].c_str());
+				float NewX = (float)atof(tokens[5].c_str());
+				float NewY = (float)atof(tokens[6].c_str());
 				_Mario->SetPosition(x, y);
 				_Mario->start_x = x;
 				_Mario->start_y = y;
@@ -190,132 +182,178 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				_Mario->start_x = x;
 				_Mario->start_y = y;
 			}
-		
 			obj = _Mario;
-			//_Mario = (Mario*)obj;
-			
 			DebugOut(L"[INFO] Player object created!\n");
+			// General object setup
+			obj->SetPosition(x, y);
+			obj->SetStartPosition(x, y);
+
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj->SetAnimationSet(ani_set);
+
+			objects.push_back(obj);
 		}break;
 
-		case OBJECT_TYPE_BRICK: obj = new Brick(Item); break;
-		case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
-		case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height, atoi(tokens[6].c_str()), atoi(tokens[7].c_str()));break;
-
-	case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
-	case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
-	case OBJECT_TYPE_LISTITEMBRICK:
-	{
-		int NumberBrick = (int)atof(tokens[4].c_str());
-		vector<int>ListBrickType;
-		for (int i = 0; i < NumberBrick; i++)
+		case ENEMY:
 		{
-			int BrickType = (int)atof(tokens[5 + i].c_str());
-			ListBrickType.push_back(BrickType);
-		}
-		obj = new ListItemBrick(NumberBrick,ListBrickType, x, y);\
-	}
-	break;
-	case OBJECT_TYPE_LISTQUESTIONBRICK:
-	{
-		int NumberBrick = (int)atof(tokens[4].c_str());
-		vector<int>ListBrickType;
-		for (int i = 0; i < NumberBrick; i++)
+			switch (object_type)
+			{
+			case OBJECT_TYPE_GOOMBA:
+			{
+				obj = new Goomba();
+			}break;
+			case OBJECT_TYPE_KOOPAS:
+			{
+				obj = new Koopas();
+			}break;
+			case OBJECT_TYPE_FIREPIRANHAPLANT:
+			{
+				obj = new FirePiranhaPlant();
+			}break;
+			case OBJECT_TYPE_GREENPLANT:
+			{
+				obj = new GreenPlant();
+				x += GREENPLANT_BBOX_WIDTH / 2;
+			} break;
+			case OBJECT_TYPE_GREENFIREPLANT:
+			{
+				obj = new GreenFirePlant();
+				x += GREENPLANT_BBOX_WIDTH / 2;
+			} break;
+			case OBJECT_TYPE_GREENKOOPAS:
+			{
+				obj = new GreenKoopas();
+			}
+			break;
+			case OBJECT_TYPE_GREENFLYKOOPAS:
+			{
+				obj = new GreenFlyKoopas();
+			}
+			break;
+			case OBJECT_TYPE_REDFLYKOOPAS:
+			{
+				obj = new RedFlyKoopas();
+			}
+			break;
+			case OBJECT_TYPE_REDGOOMBA:
+			{
+				obj = new RedGoomba();
+			}
+			break;
+			case OBJECT_TYPE_BOOMERANGENEMY:
+			{
+				obj = new BoomerangEnemy(x, y);
+			}break;
+			}
+			// General object setup
+			obj->SetStartPosition(x, y);
+			obj->SetPosition(x, y);
+
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj->SetAnimationSet(ani_set);
+
+			objects.push_back(obj);
+		}break;
+
+		case OBJECT:
 		{
-			int BrickType = (int)atof(tokens[5 + i].c_str());
-			ListBrickType.push_back(BrickType);
+			if (object_type == OBJECT_TYPE_BLOCK || object_type == OBJECT_TYPE_WARPPIPE || object_type == OBJECT_TYPE_GROUND)
+			{
+				width = (int)atof(tokens[5].c_str());
+				height = (int)atof(tokens[6].c_str());
+			}
+			else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK || object_type == OBJECT_TYPE_ITEMBRICK)
+			{
+				Item = (int)atof(tokens[5].c_str());
+			}
+
+			switch (object_type)
+			{
+				case OBJECT_TYPE_BRICK: obj = new Brick(Item,x,y); break;
+				case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
+				case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height, atoi(tokens[7].c_str()), atoi(tokens[8].c_str())); break;
+				case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
+				case OBJECT_TYPE_LISTITEMBRICK:
+				{
+					int NumberBrick = (int)atof(tokens[5].c_str());
+					vector<int>ListBrickType;
+					for (int i = 0; i < NumberBrick; i++)
+					{
+						int BrickType = (int)atof(tokens[6 + i].c_str());
+						ListBrickType.push_back(BrickType);
+					}
+					obj = new ListItemBrick(NumberBrick, ListBrickType, x, y); 
+				}
+				break;
+				case OBJECT_TYPE_LISTQUESTIONBRICK:
+				{
+					int NumberBrick = (int)atof(tokens[5].c_str());
+					vector<int>ListBrickType;
+					for (int i = 0; i < NumberBrick; i++)
+					{
+						int BrickType = (int)atof(tokens[6 + i].c_str());
+						ListBrickType.push_back(BrickType);
+					}
+					obj = new ListQuestionBrick(NumberBrick, ListBrickType, x, y); 
+				}
+				break;
+				case OBJECT_TYPE_LISTNORMALBRICK:
+				{
+					int NumberBrick = (int)atof(tokens[5].c_str());
+					vector<int>ListBrickType;
+					for (int i = 0; i < NumberBrick; i++)
+					{
+						int BrickType = (int)atof(tokens[6 + i].c_str());
+						ListBrickType.push_back(BrickType);
+					}
+					obj = new ListNormalBrick(NumberBrick, ListBrickType, x, y);
+				}
+				break;
+				case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
+				case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
+				case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x, y); break;
+				case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
+				case OBJECT_TYPE_PORTAL: 
+				{
+					float r = (float)atof(tokens[5].c_str());
+					float b = (float)atof(tokens[6].c_str());
+					int scene_id = (int)atoi(tokens[7].c_str());
+					obj = new CPortal(x, y, r, b, scene_id);
+				}break;
+			}
+			// General object setup
+			obj->SetPosition(x, y);
+			obj->SetStartPosition(x, y);
+
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj->SetAnimationSet(ani_set);
+
+			objects.push_back(obj);
+		}break;
+
+		case ITEM:
+		{
+			switch (object_type)
+			{
+			case OBJECT_TYPE_COIN: obj = new Coin(); break;
+			case OBJECT_TYPE_CARD: obj = new Card(); break;
+			default:
+				break;
+			}
+			// General object setup
+			obj->SetPosition(x, y);
+			obj->SetStartPosition(x, y);
+
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj->SetAnimationSet(ani_set);
+
+			objects.push_back(obj);
 		}
-		obj = new ListQuestionBrick(NumberBrick, ListBrickType, x, y); \
-	}
-	break;
-	case OBJECT_TYPE_GOOMBA:
-	{
-		obj = new Goomba();
-		obj->StartX = x;
-		obj->StartY = y;
-	}break;
-	case OBJECT_TYPE_KOOPAS:
-	{
-		obj = new Koopas();
-		obj->StartX = x;
-		obj->StartY = y;
-	}break;
-	
-	case OBJECT_TYPE_FIREPIRANHAPLANT:
-	{
-		obj = new FirePiranhaPlant();
-		obj->StartX = x;
-		obj->StartY = y;
-	}break;
-	case OBJECT_TYPE_GREENPLANT:
-	{
-		obj = new GreenPlant();
-		x += GREENPLANT_BBOX_WIDTH / 2;
-		obj->StartX = x;
-		obj->StartY = y;
-	} break;
-	case OBJECT_TYPE_GREENFIREPLANT:
-	{
-		obj = new GreenFirePlant();
-		x += GREENPLANT_BBOX_WIDTH / 2;
-		obj->StartX = x;
-		obj->StartY = y;
-	} break;
-	case OBJECT_TYPE_GREENKOOPAS:
-	{
-		obj = new GreenKoopas(); 
-		obj->StartX = x;
-		obj->StartY = y;
-	}
-	break;
-	case OBJECT_TYPE_GREENFLYKOOPAS:
-	{
-		obj = new GreenFlyKoopas();
-		obj->StartX = x;
-		obj->StartY = y;
-	}
-	break;
-	case OBJECT_TYPE_REDFLYKOOPAS:
-	{
-		obj = new RedFlyKoopas();
-		obj->StartX = x;
-		obj->StartY = y;
-	}
-	break;
-	case OBJECT_TYPE_REDGOOMBA:
-	{
-		obj = new RedGoomba();
-		obj->StartX = x;
-		obj->StartY = y;
-	}
-	break;
+		break;
 
-	case OBJECT_TYPE_COIN: obj = new Coin(); break;
-	case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
-	case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
-	case OBJECT_TYPE_CARD: obj = new Card(); break;
-	case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x,y); break;
-	case OBJECT_TYPE_BOOMERANGENEMY: obj = new BoomerangEnemy(x, y); break;
-	case OBJECT_TYPE_PORTAL:
-	{
-		float r = (float)atof(tokens[4].c_str());
-		float b = (float)atof(tokens[5].c_str());
-		int scene_id = (int)atoi(tokens[6].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
+		default:
+			break;
 	}
-	break;
-	default:
-		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
-		return;
-	}
-
-	// General object setup
-	obj->SetPosition(x, y);
-	obj->SetStartPosition(x, y);
-
-	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-	obj->SetAnimationSet(ani_set);
-
-	objects.push_back(obj);
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
@@ -335,32 +373,6 @@ void CPlayScene::_ParseSection_MAP(string line)
 
 	_Map->LoadMap1(texID, pathtxt,MapWidth,MapHeight);
 }
-
-//void CPlayScene::_ParseSection_MAP(string line)
-//{
-//
-//	vector<string> tokens = split(line);
-//
-//	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
-//
-//	if (tokens.size() < 9) return; // skip invalid lines - an object set must have at least id, x, y
-//
-//	int ID = atoi(tokens[0].c_str());
-//	wstring FilePath_data = ToWSTR(tokens[1]);
-//
-//	int Map_width = atoi(tokens[2].c_str());
-//	int Map_height = atoi(tokens[3].c_str());
-//	int Num_row_read = atoi(tokens[4].c_str());
-//	int Num_col_read = atoi(tokens[5].c_str());
-//	int Tile_width = atoi(tokens[6].c_str());
-//	int Tile_height = atoi(tokens[7].c_str());
-//	int A = atoi(tokens[8].c_str());
-//	map = new Map(ID, FilePath_data.c_str(), Map_width, Map_height, Num_row_read, Num_col_read, Tile_width, Tile_height);
-//	if (A == 1)
-//	{
-//		map->IsWorldMap = true;
-//	}
-//}
 
 void CPlayScene::_ParseSection_HUD(string line)
 {
@@ -878,7 +890,7 @@ void CPlayScene::Update(DWORD dt)
 			_Mario->render_tail = true;
 		}
 
-		for (size_t i = 1; i < objects.size(); i++)
+		for (size_t i = 0; i < objects.size(); i++)
 		{
 			if ( objects[i]->canDelete == false && objects[i]->isDisappear == false)
 			{
@@ -1067,7 +1079,7 @@ void CPlayScene::Update(DWORD dt)
 	else
 	{
 		//if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
-		for (size_t i = 1; i < objects.size(); i++)
+		for (size_t i = 0; i < objects.size(); i++)
 		{
 			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
 			{
@@ -1083,15 +1095,12 @@ void CPlayScene::Update(DWORD dt)
 					objects.erase(objects.begin() + i);
 			}
 		}
-
 		_Mario->Update(dt, &coObjects);
 		for (size_t i = 1; i < objects.size(); i++)
 		{
 			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
 				objects[i]->Update(dt, &coObjects);
 		}
-
-		
 	}
 }
 
@@ -1122,7 +1131,7 @@ void CPlayScene::Render()
 	}
 	
 	_HUD->Render();
-	_Grid->RenderCell();
+	//_Grid->RenderCell();
 }
 
 void CPlayScene::Unload()
@@ -1150,7 +1159,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		return;
 	switch (KeyCode)
 	{
-	case DIK_1:
+	case DIK_H:
 	{
 		_Mario->SetLevel(MARIO_LEVEL_SMALL);
 		_Mario->y = _Mario->y - MARIO_SMALL_BBOX_HEIGHT - 1;
@@ -1158,21 +1167,21 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	}break;
 	
 	break;
-	case DIK_2:
+	case DIK_J:
 	{
 		_Mario->SetLevel(MARIO_LEVEL_BIG);
 		_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
 		_Mario->OnGround = false;
 	}break;
 
-	case DIK_3:
+	case DIK_K:
 	{
 		_Mario->SetLevel(MARIO_LEVEL_TAIL);
 		_Mario->y = _Mario->y - MARIO_TAIL_BBOX_HEIGHT - 1;
 		_Mario->OnGround = false;
 	}break;
 
-	case DIK_4:
+	case DIK_L:
 	{
 		_Mario->SetLevel(MARIO_LEVEL_FIRE);
 		_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
@@ -1192,7 +1201,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 
 	case DIK_S:
 	{
-		//DebugOut(L"Down S\n");
+		DebugOut(L"Down S\n");
 		_Mario->pressS = true;
 		if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isFalling == true)
 		{
@@ -1213,10 +1222,15 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			if (_Mario->canFlyS == false)
 			{
 				if (_Mario->isMaxRunning == true)
+				{
 					_Mario->canFlyS = true;
+					_Mario->FlyTimePerS = 0;
+				}
+					
 			}
 			else
 			{
+				_Mario->FlyTimePerS = 0;
 				_Mario->SetState(MARIO_STATE_FLY_HIGH);
 			}
 		}
@@ -1237,6 +1251,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		DebugOut(L"Down A\n");
 		_Mario->pressA = _Mario->isRunning = true;
+		_Mario->StopRunning = false;
 		if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false)
 		{
 			_Mario->SetState(MARIO_STATE_ATTACK);
@@ -1294,8 +1309,7 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	{
 	case DIK_A:
 	{
-		//DebugOut(L"Up A\n");
-		_Mario->isRunning = false;
+		DebugOut(L"Up A\n");
 		_Mario->pressA = false;
 		/*if (_Mario->isHolding == true)
 			_Mario->isHolding = false;*/
@@ -1316,25 +1330,13 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	{
 		//DebugOut(L"Up S\n");
 		_Mario->pressS = false;
-		_Mario->isFlyingHigh = false;
 	}break;
 
 	case DIK_X:
 	{
 		//DebugOut(L"Up X\n");
-		/*if (_Mario->isFlyingHigh == true)
-		{
-			_Mario->isFlyingHigh = false;
-		}*/
 		_Mario->isFlyingHigh = _Mario->isFlyingLow = false;
 	}break;
-
-
-	case DIK_RIGHT:
-	{
-		//DebugOut(L"UP DIK_RIGHT\n");
-	}
-	break;
 
 	case DIK_P:
 		if (_PlayScene->Stop == false)

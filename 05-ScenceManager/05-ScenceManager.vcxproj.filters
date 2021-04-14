@@ -75,6 +75,12 @@
     <Filter Include="PlayScene\MarioWeapon">
       <UniqueIdentifier>{244d3937-a7ff-4867-a6d2-062a496e46e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PlayScene\Enemy\BoomerangEnemy">
+      <UniqueIdentifier>{2b5ed4e3-b63b-406d-b56f-4f98f968c810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayScene\Enemy\EnemyWeapon">
+      <UniqueIdentifier>{3de54c42-075a-4627-84f3-40f2967c00bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -212,9 +218,6 @@
     <ClCompile Include="FlyWood.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoomerangEnemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoomerangWeapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -249,6 +252,12 @@
       <Filter>PlayScene\Enemy\Koopas</Filter>
     </ClCompile>
     <ClCompile Include="Cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoomerangEnemy.cpp">
+      <Filter>PlayScene\Enemy\BoomerangEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="ListNormalBrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -379,25 +388,7 @@
     <ClInclude Include="Enemy.h">
       <Filter>PlayScene\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Card.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Notification.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlyWood.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoomerangEnemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoomerangWeapon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Curtain.h">
@@ -406,25 +397,46 @@
     <ClInclude Include="IntroScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BreakItemBrick.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RedFlyKoopas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListItemBrick.h">
+    <ClInclude Include="Cell.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoomerangEnemy.h">
+      <Filter>PlayScene\Enemy\BoomerangEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BreakItemBrick.h">
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="BoomerangWeapon.h">
+      <Filter>PlayScene\Enemy\EnemyWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Card.h">
+      <Filter>PlayScene\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyWood.h">
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ListItemBrick.h">
+      <Filter>PlayScene\Object</Filter>
     </ClInclude>
     <ClInclude Include="ListQuestionBrick.h">
-      <Filter>Header Files</Filter>
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>PlayScene\MarioWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="RedFlyKoopas.h">
+      <Filter>PlayScene\Enemy\Koopas</Filter>
     </ClInclude>
     <ClInclude Include="RedGoomba.h">
-      <Filter>Header Files</Filter>
+      <Filter>PlayScene\Enemy\Goomba</Filter>
     </ClInclude>
-    <ClInclude Include="Cell.h">
+    <ClInclude Include="Item.h">
+      <Filter>PlayScene\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ListNormalBrick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -478,5 +490,6 @@
     <Text Include="textures\Overworld\world1_map.txt">
       <Filter>OverWorld\World1</Filter>
     </Text>
+    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
   </ItemGroup>
 </Project>

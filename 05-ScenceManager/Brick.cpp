@@ -15,7 +15,17 @@ Brick::Brick()
 Brick::Brick(int type)
 {
 	ObjType = OBJECT_TYPE_BRICK;
-	vx = vy = 0.f;
+	Type = type;
+	Category = CATEGORY::OBJECT;
+	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+}
+
+Brick::Brick(int type, float x, float y)
+{
+	this->x = x;
+	this->y = y;
+
+	ObjType = OBJECT_TYPE_BRICK;
 	Type = type;
 	Category = CATEGORY::OBJECT;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
@@ -27,7 +37,6 @@ void Brick::Render()
 	if (Type == BRICK_CLOUD)
 		ani = BRICK_CLOUD_ANI;
 	animation_set->at(ani)->Render(x, y);
-	//RenderBoundingBox();
 }
 
 void Brick::GetBoundingBox(float &l, float &t, float &r, float &b)

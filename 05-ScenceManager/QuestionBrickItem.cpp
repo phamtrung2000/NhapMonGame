@@ -98,44 +98,20 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							switch (e->obj->Category)
 							{
-							case CATEGORY::GROUND:
-							{
-								if (ny != 0) vy = 0;
-								if (e->ny < 0)
-								{
-									x += min_tx * dx + nx * 0.4f;
-									if (OnGround == false)
-									{
-										y += min_ty * dy + ny * 0.1f - 0.3f;
-										OnGround = true; // xử lý chạm đất
-									}
-								}
-								else if (e->nx != 0)
-								{
-									y += min_ty * dy + ny * 0.1f - 0.3f;
-									if (GetState() == QUESTIONBRICKITEM_STATE_MOVE_RIGHT)
-										SetState(QUESTIONBRICKITEM_STATE_MOVE_LEFT);
-									else
-										SetState(QUESTIONBRICKITEM_STATE_MOVE_RIGHT);
-								}
-							}
-							break;
+								case CATEGORY::OBJECT:
+									CollisionWithObject(e, min_tx, min_ty, nx, ny);
+									break;
+								case CATEGORY::ENEMY:
+									CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::OBJECT:
-								CollisionWithObject(e, min_tx, min_ty, nx, ny);
-								break;
-							case CATEGORY::ENEMY:
-								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-								break;
+								case CATEGORY::ITEM:
+									CollisionWithItem(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::ITEM:
-								CollisionWithItem(e, min_tx, min_ty, nx, ny);
-								break;
-
-							case CATEGORY::WEAPON:
-								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-								break;
-
+								case CATEGORY::WEAPON:
+									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+									break;
 							}
 						}
 					}

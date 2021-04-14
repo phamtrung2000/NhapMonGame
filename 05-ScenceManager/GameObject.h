@@ -44,16 +44,14 @@ struct CCollisionEvent
 	}
 };
 
-enum class CATEGORY
+extern enum CATEGORY
 {
 	PLAYER,
-	ENEMY,
-	WEAPON,
-	ITEM,
-	GROUND,
 	OBJECT,
-	EFFECT,
-	PORTAL
+	ENEMY,
+	ITEM,
+	WEAPON,
+	EFFECT
 };
 
 class CGameObject

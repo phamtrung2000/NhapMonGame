@@ -12,7 +12,6 @@ Goomba::Goomba() : Enemy()
 {
 	ObjType = OBJECT_TYPE_GOOMBA;
 	EnemyType = ENEMY_TYPE_GOOMBA;
-	SetState(ENEMY_STATE_WALKING_LEFT);
 }
 
 void Goomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -35,7 +34,7 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	Enemy::Update(dt, coObjects);
 
 	if (GetState() != ENEMY_STATE_DIE_IS_JUMPED)
-		vy += GOOMBA_GRAVITY * dt;
+		vy += ENEMY_GRAVITY * dt;
 
 	if (state == ENEMY_STATE_DIE_IS_JUMPED)
 	{
@@ -86,47 +85,25 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				switch (e->obj->Category)
 				{
-				case CATEGORY::GROUND:
-				{
-					if (dynamic_cast<Ground*>(e->obj))
-					{
-						if (ny != 0) vy = 0;
-						if (e->ny < 0)
-						{
-							x += min_tx * dx + nx * 0.4f;
-						}
-						else if (e->nx != 0)
-						{
-							//y += min_ty * dy + ny * 0.4f;
-							if (GetState() == ENEMY_STATE_WALKING_RIGHT)
-								SetState(ENEMY_STATE_WALKING_LEFT);
-							else
-								SetState(ENEMY_STATE_WALKING_RIGHT);
-						}
-					}
-				}
-				break;
+					case CATEGORY::OBJECT:
+						CollisionWithObject(e, min_tx, min_ty, nx, ny);
+						break;
 
-				case CATEGORY::OBJECT:
-					CollisionWithObject(e, min_tx, min_ty, nx, ny);
+					case CATEGORY::ENEMY:
+						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+						break;
+
+					case CATEGORY::ITEM:
+						CollisionWithItem(e, min_tx, min_ty, nx, ny);
+						break;
+
+					case CATEGORY::WEAPON:
+						CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 					break;
 
-				case CATEGORY::ENEMY:
-					CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-					break;
-
-				case CATEGORY::ITEM:
-					CollisionWithItem(e, min_tx, min_ty, nx, ny);
-					break;
-
-				case CATEGORY::WEAPON:
-					CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-				break;
-
-				case CATEGORY::PLAYER:
-					CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
-					break;
-				
+					case CATEGORY::PLAYER:
+						CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
+						break;
 				}
 			}
 		}
@@ -160,24 +137,6 @@ void Goomba::SetState(int state)
 			y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
 		}
 		break;
-
-		case ENEMY_STATE_DIE_IS_ATTACKED:
-		{
-			vy = -GOOMBA_DIE_DEFLECT_SPEED;
-		}
-		break;
-
-		case ENEMY_STATE_WALKING_RIGHT:
-		{
-			vx = GOOMBA_WALKING_SPEED;
-		}
-		break;
-
-		case ENEMY_STATE_WALKING_LEFT:
-		{
-			vx = -GOOMBA_WALKING_SPEED;
-		}
-		break;
 	}
 }
 
@@ -187,28 +146,6 @@ void Goomba::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 	this->y += min_ty * dy + ny * 0.1f - 0.5f;
 }
 
-void Goomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
-{
-	if (dynamic_cast<Block*>(e->obj))
-	{
-		this->vx = this->nx * GOOMBA_WALKING_SPEED;
-		x += dx;
-	}
-	else
-	{
-		if (e->nx != 0)
-		{
-			this->nx = -this->nx;
-			this->vx = this->nx * GOOMBA_WALKING_SPEED;
-			x += dx;
-		}
-		else
-		{
-			x += dx;
-			this->y += min_ty * dy + ny * 0.1f - 0.5f;
-		}
-	}
-}
 
 void Goomba::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {

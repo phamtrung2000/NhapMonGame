@@ -85,7 +85,6 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 					
-
 						switch (enemy->EnemyType)
 						{
 
@@ -117,7 +116,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									koopas->Health--;
 								}
 								koopas->nx = this->Direction;
-								koopas->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+								koopas->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 								this->canDelete = true;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
 								_PlayScene->objects.push_back(hit);
@@ -160,7 +159,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}break;
 
-					case CATEGORY::OBJECT: case CATEGORY::GROUND:
+					case CATEGORY::OBJECT:
 					{
 					
 						if (e->nx != 0)

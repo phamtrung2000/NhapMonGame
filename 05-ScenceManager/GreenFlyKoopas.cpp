@@ -157,25 +157,6 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							isInit = true;
 							switch (e->obj->Category)
 							{
-							case CATEGORY::GROUND:
-							{
-								if (dynamic_cast<Ground*>(e->obj))
-								{
-									X_min = MIN;
-									X_max = MAX;
-									if (ny != 0) vy = 0;
-									if (e->ny < 0)
-									{
-										x += min_tx * dx + nx * 0.4f;
-									}
-									else if (e->nx != 0)
-									{
-										y += min_ty * dy + ny * 0.1f - 0.3f;
-									}
-								}
-							}
-							break;
-
 							case CATEGORY::OBJECT:
 								CollisionWithObject(e, min_tx, min_ty, nx, ny);
 								break;
@@ -190,14 +171,6 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							case CATEGORY::WEAPON:
 								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 								break;
-
-							case CATEGORY::PORTAL:
-							{
-								x += dx;
-								y += dy;
-							}
-							break;
-
 							}
 						}
 					}
@@ -227,20 +200,20 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			canRevive = false;
 			if (isShell == false && isShell_2 == false)
 			{
-				vy += KOOPAS_GRAVITY * dt;
+				vy += ENEMY_GRAVITY * dt;
 			}
 			else if (GetState() != KOOPAS_STATE_SHELL_HOLD)
 			{
 				if (isShell == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (this->vx == 0)
 						this->SetState(KOOPAS_STATE_SHELL);
 				}
 				// vẫy đuôi -> rùa lật ngửa rớt từ trên xuống
 				else if (isShell_2 == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (vx > 0)
 					{
 						vx -= 0.0005f;
@@ -323,48 +296,21 @@ void GreenFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						switch (e->obj->Category)
 						{
-						case CATEGORY::GROUND:
-						{
-							if (ny != 0) vy = 0;
-							if (e->ny < 0 && Health == 2)
-								vy = -0.2f;
-							if (dynamic_cast<Ground*>(e->obj))
-							{
-								if (e->ny < 0)
-								{
-									x += min_tx * dx + nx * 0.4f;
-								}
-								else if (e->nx != 0)
-								{
-									y += min_ty * dy + ny * 0.1f - 0.3f;
-								}
-							}
-						}
-						break;
+							case CATEGORY::OBJECT:
+								CollisionWithObject(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::OBJECT:
-							CollisionWithObject(e, min_tx, min_ty, nx, ny);
-							break;
+							case CATEGORY::ENEMY:
+								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::ENEMY:
-							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-							break;
+							case CATEGORY::ITEM:
+								CollisionWithItem(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::ITEM:
-							CollisionWithItem(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::WEAPON:
-							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::PORTAL:
-						{
-							x += dx;
-							y += dy;
-						}
-						break;
-
+							case CATEGORY::WEAPON:
+								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+								break;
 						}
 					}
 				}
@@ -504,10 +450,21 @@ void GreenFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float
 	if (Health == 2)
 	{
 		if (e->ny < 0)
-			vy = -0.2f;
+			vy = -ENEMY_DIE_DEFLECT_SPEED;
 		if (e->obj != NULL)
 		{
-			if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+			if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+			{
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
+				else if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.1f - 0.3f;
+				}
+			}
+			else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 			{
 				if (e->nx != 0)
 				{

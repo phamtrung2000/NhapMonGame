@@ -13,6 +13,8 @@ GreenKoopas::GreenKoopas() : Koopas()
 {
 	ObjType = OBJECT_TYPE_GREENKOOPAS;
 	SetState(ENEMY_STATE_WALKING_LEFT);
+	X_min = MIN;
+	X_max = MAX;
 }
 
 GreenKoopas::~GreenKoopas()
@@ -107,48 +109,20 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 						{
 							switch (e->obj->Category)
 							{
-							case CATEGORY::GROUND:
-							{
-								if (dynamic_cast<Ground*>(e->obj))
-								{
-									X_min = MIN;
-									X_max = MAX;
-									if (ny != 0) vy = 0;
-									if (e->ny < 0)
-									{
-										x += min_tx * dx + nx * 0.4f;
-										OnGroud = true;
-									}
-									else if (e->nx != 0)
-									{
-										y += min_ty * dy + ny * 0.1f - 0.3f;
-									}
-								}
-							}
-							break;
+								case CATEGORY::OBJECT:
+									CollisionWithObject(e, min_tx, min_ty, nx, ny);
+									break;
+								case CATEGORY::ENEMY:
+									CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::OBJECT:
-								CollisionWithObject(e, min_tx, min_ty, nx, ny);
-								break;
-							case CATEGORY::ENEMY:
-								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-								break;
+								case CATEGORY::ITEM:
+									CollisionWithItem(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::ITEM:
-								CollisionWithItem(e, min_tx, min_ty, nx, ny);
-								break;
-
-							case CATEGORY::WEAPON:
-								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-								break;
-
-							case CATEGORY::PORTAL:
-							{
-								x += dx;
-								y += dy;
-							}
-							break;
-
+								case CATEGORY::WEAPON:
+									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+									break;
 							}
 						}
 					}
@@ -179,20 +153,20 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 			canRevive = false;
 			if (isShell == false && isShell_2 == false)
 			{
-				vy += KOOPAS_GRAVITY * dt;
+				vy += ENEMY_GRAVITY * dt;
 			}
 			else if (GetState() != KOOPAS_STATE_SHELL_HOLD)
 			{
 				if (isShell == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (this->vx == 0)
 						this->SetState(KOOPAS_STATE_SHELL);
 				}
 				// vẫy đuôi -> rùa lật ngửa rớt từ trên xuống
 				else if (isShell_2 == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (vx > 0)
 					{
 						vx -= 0.0005f;
@@ -282,46 +256,20 @@ void GreenKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) // k dùng h
 					{
 						switch (e->obj->Category)
 						{
-						case CATEGORY::GROUND:
-						{
-							if (dynamic_cast<Ground*>(e->obj))
-							{
-								if (ny != 0) vy = 0;
-								if (e->ny < 0)
-								{
-									x += min_tx * dx + nx * 0.4f;
-									OnGroud = true;
-								}
-								else if (e->nx != 0)
-								{
-									y += min_ty * dy + ny * 0.1f - 0.3f;
-								}
-							}
-						}
-						break;
+							case CATEGORY::OBJECT:
+								CollisionWithObject(e, min_tx, min_ty, nx, ny);
+								break;
+							case CATEGORY::ENEMY:
+								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::OBJECT:
-							CollisionWithObject(e, min_tx, min_ty, nx, ny);
-							break;
-						case CATEGORY::ENEMY:
-							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-							break;
+							case CATEGORY::ITEM:
+								CollisionWithItem(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::ITEM:
-							CollisionWithItem(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::WEAPON:
-							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::PORTAL:
-						{
-							x += dx;
-							y += dy;
-						}
-						break;
-
+							case CATEGORY::WEAPON:
+								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+								break;
 						}
 					}
 				}
@@ -352,7 +300,20 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 	{
 		if (e->ny < 0)
 			OnGroud = true;
-		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+		if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+		{
+			if (ny != 0) vy = 0;
+			if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+				OnGroud = true;
+			}
+			else if (e->nx != 0)
+			{
+				y += min_ty * dy + ny * 0.1f - 0.3f;
+			}
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
 

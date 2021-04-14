@@ -1,12 +1,11 @@
 ﻿#pragma once
 #include "GameObject.h"
 
-#define MARIO_WALKING_SPEED		0.12f//0.1f 
-#define MARIO_RUNNING_MAX_SPEED	0.21f 
 #define MARIO_FLY_MOVING_SPEED	0.1f 
-#define GIA_TOC					0.003f//0.003125f // gia tốc
-#define MAX_LEVEL_OF_WALKING	32
-#define MAX_LEVEL_OF_RUNNING	91//98
+#define GIA_TOC					0.0019f//0.003f // gia tốc
+#define GIA_TOC_RUNNING			0.0008f//0.003f // gia tốc
+#define MAX_LEVEL_OF_WALKING	54
+#define MAX_LEVEL_OF_RUNNING	98//91
 
 #define MARIO_JUMP_SPEED_FAST		0.27f	//0.25f // chuẩn
 #define MARIO_JUMP_SPEED_SLOW		0.18f // chuẩn
@@ -193,6 +192,15 @@
 #define MARIO_ANI_FIRE_FALLING_RIGHT	108
 #define MARIO_ANI_FIRE_FALLING_LEFT		109
 
+#define MARIO_ANI_SMALL_JUMP_MAX_SPEED_RIGHT	110
+#define MARIO_ANI_SMALL_JUMP_MAX_SPEED_LEFT		111
+
+#define MARIO_ANI_BIG_JUMP_MAX_SPEED_RIGHT		112
+#define MARIO_ANI_BIG_JUMP_MAX_SPEED_LEFT		113
+
+#define MARIO_ANI_FIRE_JUMP_MAX_SPEED_RIGHT		114
+#define MARIO_ANI_FIRE_JUMP_MAX_SPEED_LEFT		115
+
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_TAIL	3
@@ -212,8 +220,9 @@
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
 #define TIME_ATTACK 4//2
-#define TIME_FLY 200
-#define TIME_FLY_S 40
+#define TIME_FLY_X 200
+#define TIME_FLY_S 200
+#define TIME_FLY_PER_S 30
 #define MARIO_UNTOUCHABLE_TIME 5000
 #define TIME_LEVEL_UP 3000
 #define ITIME_LEVEL_UP 100//180
@@ -240,9 +249,9 @@ public:
 
 	bool OnGround; // chạm đất
 	bool isRunning; 
-	int	 level_of_running;
+	int	 level_of_walking, level_of_running; // phải chia ra làm 2 bởi vì sẽ bị TH sau khi thả nút A thì thanh speed của HUD giảm dần nhưng nếu vẫn di chuyển thì nó sẽ giảm còn 3 nấc thì k giảm nữa
 	bool ChangeDirection; // chuyển hướng, để hiện ani khựng lại quay đầu
-	int  level_of_walking;
+	bool StopRunning; // ban đầu = true, nếu vào state running thì = false, đến khi speed = 0 thì = true lại, mục đích là để xử lý vụ hiện thanh speed của HUD giảm dần sau khi thả nút A chứ không biến mất
 	bool isMaxRunning;
 	
 	bool isFalling, // đang rớt xuống
@@ -268,7 +277,7 @@ public:
 	bool canFlyX, canFlyS, // mario có thể bay khi đạt max running và bay lên thì level running không trừ cho đến hết tgian bay
 		isFlyingLow, isFlyingHigh; // biến để xác định mario đang ở state fly
 	ULONGLONG TimeDelayFly; // khoảng thời gian chờ khi bay bằng S
-	int time_fly, FlyTimePer1; // thời gian bay, hết thời gian thì rớt xuống
+	int time_fly, FlyTimePerS; // thời gian bay, hết thời gian thì rớt xuống
 		 
 	// TĂNG CẤP (UP LEVEL)
 	ULONGLONG ChangeLevelTime; // thời điểm bắt đầu tăng cấp
@@ -312,10 +321,5 @@ public:
 	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
-	void Xamlon()
-	{
-		
-	}
 };
-
 

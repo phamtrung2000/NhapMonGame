@@ -13,7 +13,7 @@ public:
 		Height = H;
 		ObjType = 7;
 		BehindGate = -1;
-		Category = CATEGORY::GROUND;
+		Category = CATEGORY::OBJECT;
 	}
 	Ground(int W, int H,int behindgate)
 	{
@@ -21,7 +21,7 @@ public:
 		Height = H;
 		ObjType = 7;
 		BehindGate = behindgate;
-		Category = CATEGORY::GROUND;
+		Category = CATEGORY::OBJECT;
 	}
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

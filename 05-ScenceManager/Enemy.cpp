@@ -13,8 +13,8 @@ Enemy::Enemy() : CGameObject()
 	Health = 1;
 	OnGroud = false;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
-	SetState(ENEMY_STATE_INIT);
 	IsMovingObject = true;
+	SetState(ENEMY_STATE_INIT);
 }
 
 Enemy::~Enemy()
@@ -80,7 +80,7 @@ void Enemy::SetState(int state)
 
 		case ENEMY_STATE_DIE_IS_ATTACKED:
 		{
-			vy = -0.1f;
+			vy = -ENEMY_DIE_DEFLECT_SPEED;
 			vx = nx * abs(vx);
 			isDie = true;
 		}
@@ -88,8 +88,7 @@ void Enemy::SetState(int state)
 
 		case ENEMY_STATE_INIT:
 		{
-			vx = 0.0f;
-			vy = 0.1f;
+			vy = ENEMY_INIT_GRAVITY;
 		}
 		break;
 
@@ -112,8 +111,43 @@ void Enemy::SetState(int state)
 
 void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
-	if (e->ny < 0)
-		OnGroud = true;
+	if (e->obj != NULL)
+	{
+		if (e->ny < 0)
+		{
+			OnGroud = true;
+			if (GetState() == ENEMY_STATE_INIT)
+				SetState(ENEMY_STATE_WALKING_LEFT);
+		}
+			
+		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+		{
+			if (e->nx != 0)
+			{
+				x += dx;
+			}
+			else if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+			}
+			if (ny != 0) vy = 0;
+		}
+		else
+		{
+			if (e->nx != 0)
+			{
+				if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+					SetState(ENEMY_STATE_WALKING_LEFT);
+				else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+					SetState(ENEMY_STATE_WALKING_RIGHT);
+			}
+			else
+			{
+				x += min_tx * dx + nx * 0.4f;
+			}
+			if (ny != 0) vy = 0;
+		}
+	}
 }
 
 void Enemy::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
@@ -155,5 +189,10 @@ void Enemy::CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		{
 			x += dx;
 		}
+		else
+		{
+			mario->DownLevel();
+		}
+		if (ny != 0) vy = 0;
 	}
 }

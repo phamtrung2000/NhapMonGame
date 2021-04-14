@@ -63,7 +63,6 @@ public:
 		}
 
 		animation_set->at(ani)->Render(x, y);
-		DebugOut(L"EFFECT score = %i\n", score);
 	}
 	void GetBoundingBox(float& l, float& t, float& r, float& b) {}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

@@ -82,7 +82,7 @@ void RedGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 
 		UpdatePosition(dt);
-		vy += GOOMBA_GRAVITY * dt;
+		vy += ENEMY_GRAVITY * dt;
 		
 		
 		vector<LPCOLLISIONEVENT> coEvents;
@@ -114,85 +114,21 @@ void RedGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					switch (e->obj->Category)
 					{
-					case CATEGORY::GROUND:
-					{
-						if (ny != 0) vy = 0;
-						if (e->ny < 0 && Health == 2)
-						{
-							if (TimeMoving != 0 && GetTickCount64() - TimeMoving > REDGOOMBA_MOVINGTIME) // hết thời gian đi bộ thì chuyển state nhảy
-							{
-								TimeMoving = 0;
-								if (this->nx == LEFT)
-									SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
-								else
-									SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
-								JumpCount++;
-							}
-							else
-							{
-								if (JumpCount < 3 && JumpCount > 0)
-								{
-									if (this->nx == LEFT)
-										SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
-									else
-										SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
-									JumpCount++;
-								}
-								else if (JumpCount == 3)
-								{
-									if (this->nx == LEFT)
-										SetState(ENEMY_STATE_JUMPING_HIGH_LEFT);
-									else
-										SetState(ENEMY_STATE_JUMPING_HIGH_RIGHT);
-									JumpCount = 0;
-								}
-								else if (JumpCount == 0 && TimeMoving == 0)
-								{
-									TimeMoving = GetTickCount64();
-									if (this->nx == LEFT)
-										SetState(ENEMY_STATE_WALKING_LEFT);
-									else
-										SetState(ENEMY_STATE_WALKING_RIGHT);
-								}
-							}
-						}
-						if (dynamic_cast<Ground*>(e->obj))
-						{
-							if (e->ny < 0)
-							{
-								x += min_tx * dx + nx * 0.4f;
-							}
-							else if (e->nx != 0)
-							{
-								y += min_ty * dy + ny * 0.1f - 0.3f;
-							}
-						}
-					}
-					break;
+						case CATEGORY::OBJECT:
+							CollisionWithObject(e, min_tx, min_ty, nx, ny);
+							break;
 
-					case CATEGORY::OBJECT:
-						CollisionWithObject(e, min_tx, min_ty, nx, ny);
-						break;
+						case CATEGORY::ENEMY:
+							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+							break;
 
-					case CATEGORY::ENEMY:
-						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-						break;
+						case CATEGORY::ITEM:
+							CollisionWithItem(e, min_tx, min_ty, nx, ny);
+							break;
 
-					case CATEGORY::ITEM:
-						CollisionWithItem(e, min_tx, min_ty, nx, ny);
-						break;
-
-					case CATEGORY::WEAPON:
-						CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-						break;
-
-					case CATEGORY::PORTAL:
-					{
-						x += dx;
-						y += dy;
-					}
-					break;
-
+						case CATEGORY::WEAPON:
+							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+							break;
 					}
 				}
 			}
@@ -249,7 +185,7 @@ void RedGoomba::SetState(int state)
 			case ENEMY_STATE_DIE_IS_ATTACKED:
 			{
 				Health = 0;
-				vy = -GOOMBA_DIE_DEFLECT_SPEED;
+				vy = -ENEMY_DIE_DEFLECT_SPEED;
 				vx = nx * abs(vx);
 				isDie = true;
 			}
@@ -281,7 +217,7 @@ void RedGoomba::SetState(int state)
 			case ENEMY_STATE_JUMPING_HIGH_RIGHT:
 			{
 				nx = RIGHT;
-				vx = nx * GOOMBA_WALKING_SPEED;
+				vx = nx * ENEMY_WALKING_SPEED;
 				vy = -REDGOOMBA_JUMPING_HIGH_SPEED;
 			}
 			break;
@@ -289,7 +225,7 @@ void RedGoomba::SetState(int state)
 			case ENEMY_STATE_JUMPING_HIGH_LEFT:
 			{
 				nx = LEFT;
-				vx = nx * GOOMBA_WALKING_SPEED;
+				vx = nx * ENEMY_WALKING_SPEED;
 				vy = -REDGOOMBA_JUMPING_HIGH_SPEED;
 			}
 			break;
@@ -297,7 +233,7 @@ void RedGoomba::SetState(int state)
 			case ENEMY_STATE_JUMPING_LOW_RIGHT:
 			{
 				nx = RIGHT;
-				vx = nx * GOOMBA_WALKING_SPEED;
+				vx = nx * ENEMY_WALKING_SPEED;
 				vy = -REDGOOMBA_JUMPING_LOW_SPEED;
 			}
 			break;
@@ -305,7 +241,7 @@ void RedGoomba::SetState(int state)
 			case ENEMY_STATE_JUMPING_LOW_LEFT:
 			{
 				nx = LEFT;
-				vx = nx * GOOMBA_WALKING_SPEED;
+				vx = nx * ENEMY_WALKING_SPEED;
 				vy = -REDGOOMBA_JUMPING_LOW_SPEED;
 			}
 			break;
@@ -335,4 +271,69 @@ void RedGoomba::UpdatePosition(DWORD dt)
 		else if (GetState() == ENEMY_STATE_JUMPING_LOW_RIGHT)
 			SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
 	}*/
+}
+
+void RedGoomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	Enemy::CollisionWithObject(e, min_tx, min_ty, nx, ny);
+	if (Health == 2)
+	{
+		if (e->obj != NULL)
+		{
+			if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+			{
+				if (ny != 0) vy = 0;
+				if (e->ny < 0 && Health == 2)
+				{
+					if (TimeMoving != 0 && GetTickCount64() - TimeMoving > REDGOOMBA_MOVINGTIME) // hết thời gian đi bộ thì chuyển state nhảy
+					{
+						TimeMoving = 0;
+						if (this->nx == LEFT)
+							SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
+						else
+							SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
+						JumpCount++;
+					}
+					else
+					{
+						if (JumpCount < 3 && JumpCount > 0)
+						{
+							if (this->nx == LEFT)
+								SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
+							else
+								SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
+							JumpCount++;
+						}
+						else if (JumpCount == 3)
+						{
+							if (this->nx == LEFT)
+								SetState(ENEMY_STATE_JUMPING_HIGH_LEFT);
+							else
+								SetState(ENEMY_STATE_JUMPING_HIGH_RIGHT);
+							JumpCount = 0;
+						}
+						else if (JumpCount == 0 && TimeMoving == 0)
+						{
+							TimeMoving = GetTickCount64();
+							if (this->nx == LEFT)
+								SetState(ENEMY_STATE_WALKING_LEFT);
+							else
+								SetState(ENEMY_STATE_WALKING_RIGHT);
+						}
+					}
+				}
+				if (dynamic_cast<Ground*>(e->obj))
+				{
+					if (e->ny < 0)
+					{
+						x += min_tx * dx + nx * 0.4f;
+					}
+					else if (e->nx != 0)
+					{
+						y += min_ty * dy + ny * 0.1f - 0.3f;
+					}
+				}
+			}
+		}
+	}
 }

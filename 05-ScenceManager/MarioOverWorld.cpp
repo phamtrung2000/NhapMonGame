@@ -32,31 +32,30 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		switch (coObjects->at(i)->Category)
 		{
-		case CATEGORY::PORTAL:
-		{
-			// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+			case CATEGORY::OBJECT:
 			{
-				if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
+				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
+				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 				{
-					SetState(MARIO_OVERWORLD_STATE_IN_GATE);
-					
-					Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
-					if (Scene <= gate->GateNumber)
-						Scene = gate->GateNumber;
-					else if (Scene > gate->GateNumber)
+					if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
 					{
-						x += dx;
-						y += dy;
-					}
+						SetState(MARIO_OVERWORLD_STATE_IN_GATE);
 					
+						Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
+						if (Scene <= gate->GateNumber)
+							Scene = gate->GateNumber;
+						else if (Scene > gate->GateNumber)
+						{
+							x += dx;
+							y += dy;
+						}
+					
+					}
 				}
+
+
 			}
-
-
-		}
-		break;
-
+			break;
 		}
 	}
 	vector<LPCOLLISIONEVENT> coEvents;

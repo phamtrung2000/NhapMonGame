@@ -13,7 +13,7 @@ public:
 		NumberBrick = 0;
 		Width = NumberBrick * 16;
 		Height = 16;
-		ObjType = 24;
+		ObjType = OBJECT_TYPE_LISTITEMBRICK;
 		Category = CATEGORY::OBJECT;
 	}
 	ListItemBrick(int number, vector<int>list, float startx, float starty)
@@ -21,7 +21,7 @@ public:
 		NumberBrick = number;
 		Width = NumberBrick * 16;
 		Height = 16;
-		ObjType = 24;
+		ObjType = OBJECT_TYPE_LISTITEMBRICK;
 		Category = CATEGORY::OBJECT;
 		StartX = startx;
 		StartY = starty;
@@ -41,7 +41,7 @@ public:
 		NumberBrick = vitricuoi - vitridau + 1;
 		Width = NumberBrick * 16;
 		Height = 16;
-		ObjType = 24;
+		ObjType = OBJECT_TYPE_LISTITEMBRICK;
 		Category = CATEGORY::OBJECT;
 		for (int i = vitridau; i <= vitricuoi; i++)
 		{

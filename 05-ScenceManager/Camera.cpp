@@ -206,12 +206,10 @@ void Camera::Update()
 
 			if (cy <= maxTopCam - 40)
 			{
-				DebugOut(L"TH1, cy = %f\n", cy);
 				cy = maxTopCam;
 			}
 			else if (cy >= maxBottomCam)
 			{
-				DebugOut(L"TH2\n");
 				cy = maxBottomCam;
 			}
 			else
@@ -219,19 +217,17 @@ void Camera::Update()
 				float temp = maxBottomCam - SCREEN_HEIGHT / 2;
 				if (cy < 230)
 				{
-					DebugOut(L"TH3, cy = %f\n", cy);
 					SetCamPos(cx, cy + 40);
 					//SetCamPos(cx, cy);
 					return;
 				}
 				else if (cy >= temp)
 				{
-					DebugOut(L"TH4\n");
 					cy = maxBottomCam;
 				}
 			}
 
-			DebugOut(L"cy NEW = %f, maxBottomCam = %f, maxTopCam = %f\n", cy, maxBottomCam, maxTopCam);
+			//DebugOut(L"cy NEW = %f, maxBottomCam = %f, maxTopCam = %f\n", cy, maxBottomCam, maxTopCam);
 			SetCamPos(cx, cy);
 		}
 		else

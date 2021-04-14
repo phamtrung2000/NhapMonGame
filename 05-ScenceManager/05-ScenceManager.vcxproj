@@ -157,6 +157,7 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="ListItemBrick.cpp" />
+    <ClCompile Include="ListNormalBrick.cpp" />
     <ClCompile Include="ListQuestionBrick.cpp" />
     <ClCompile Include="MarioTail.cpp" />
     <ClCompile Include="Notification.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Card.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="ListItemBrick.h" />
+    <ClInclude Include="ListNormalBrick.h" />
     <ClInclude Include="ListQuestionBrick.h" />
     <ClInclude Include="MarioTail.h" />
     <ClInclude Include="Notification.h" />
@@ -255,6 +257,7 @@
     <Text Include="textures\Overworld\World1Scene.txt" />
     <Text Include="textures\Overworld\world1_map.txt" />
     <Text Include="textures\Weapon\Weapon.txt" />
+    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />

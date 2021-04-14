@@ -131,48 +131,21 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						switch (e->obj->Category)
 						{
-						case CATEGORY::GROUND:
-						{
-							if (ny != 0) vy = 0;
-							if (e->ny < 0 && Health == 2)
-								vy = -0.2f;
-							if (dynamic_cast<Ground*>(e->obj))
-							{
-								if (e->ny < 0)
-								{
-									x += min_tx * dx + nx * 0.4f;
-								}
-								else if (e->nx != 0)
-								{
-									y += min_ty * dy + ny * 0.1f - 0.3f;
-								}
-							}
-						}
-						break;
+							case CATEGORY::OBJECT:
+								CollisionWithObject(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::OBJECT:
-							CollisionWithObject(e, min_tx, min_ty, nx, ny);
-							break;
+							case CATEGORY::ENEMY:
+								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::ENEMY:
-							CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-							break;
+							case CATEGORY::ITEM:
+								CollisionWithItem(e, min_tx, min_ty, nx, ny);
+								break;
 
-						case CATEGORY::ITEM:
-							CollisionWithItem(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::WEAPON:
-							CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-							break;
-
-						case CATEGORY::PORTAL:
-						{
-							x += dx;
-							y += dy;
-						}
-						break;
-
+							case CATEGORY::WEAPON:
+								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+								break;
 						}
 					}
 				}
@@ -258,47 +231,20 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								isInit = true;
 								switch (e->obj->Category)
 								{
-								case CATEGORY::GROUND:
-								{
-									if (dynamic_cast<Ground*>(e->obj))
-									{
-										X_min = MIN;
-										X_max = MAX;
-										if (ny != 0) vy = 0;
-										if (e->ny < 0)
-										{
-											x += min_tx * dx + nx * 0.4f;
-										}
-										else if (e->nx != 0)
-										{
-											y += min_ty * dy + ny * 0.1f - 0.3f;
-										}
-									}
-								}
-								break;
+									case CATEGORY::OBJECT:
+										CollisionWithObject(e, min_tx, min_ty, nx, ny);
+										break;
+									case CATEGORY::ENEMY:
+										CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+										break;
 
-								case CATEGORY::OBJECT:
-									CollisionWithObject(e, min_tx, min_ty, nx, ny);
-									break;
-								case CATEGORY::ENEMY:
-									CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-									break;
+									case CATEGORY::ITEM:
+										CollisionWithItem(e, min_tx, min_ty, nx, ny);
+										break;
 
-								case CATEGORY::ITEM:
-									CollisionWithItem(e, min_tx, min_ty, nx, ny);
-									break;
-
-								case CATEGORY::WEAPON:
-									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-									break;
-
-								case CATEGORY::PORTAL:
-								{
-									x += dx;
-									y += dy;
-								}
-								break;
-
+									case CATEGORY::WEAPON:
+										CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+										break;
 								}
 							}
 						}
@@ -424,48 +370,21 @@ void RedFlyKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							switch (e->obj->Category)
 							{
-							case CATEGORY::GROUND:
-							{
-								if (ny != 0) vy = 0;
-								if (e->ny < 0 && Health == 2)
-									vy = -0.2f;
-								if (dynamic_cast<Ground*>(e->obj))
-								{
-									if (e->ny < 0)
-									{
-										x += min_tx * dx + nx * 0.4f;
-									}
-									else if (e->nx != 0)
-									{
-										y += min_ty * dy + ny * 0.1f - 0.3f;
-									}
-								}
-							}
-							break;
+								case CATEGORY::OBJECT:
+									CollisionWithObject(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::OBJECT:
-								CollisionWithObject(e, min_tx, min_ty, nx, ny);
-								break;
+								case CATEGORY::ENEMY:
+									CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::ENEMY:
-								CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
-								break;
+								case CATEGORY::ITEM:
+									CollisionWithItem(e, min_tx, min_ty, nx, ny);
+									break;
 
-							case CATEGORY::ITEM:
-								CollisionWithItem(e, min_tx, min_ty, nx, ny);
-								break;
-
-							case CATEGORY::WEAPON:
-								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-								break;
-
-							case CATEGORY::PORTAL:
-							{
-								x += dx;
-								y += dy;
-							}
-							break;
-
+								case CATEGORY::WEAPON:
+									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+									break;
 							}
 						}
 					}
@@ -657,7 +576,24 @@ void RedFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float m
 			vy = -0.2f;
 		if (e->obj != NULL)
 		{
-			if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+			if(e->obj->ObjType == OBJECT_TYPE_GROUND)
+			{
+				if (ny != 0) vy = 0;
+				if (e->ny < 0 && Health == 2)
+					vy = -0.2f;
+				if (dynamic_cast<Ground*>(e->obj))
+				{
+					if (e->ny < 0)
+					{
+						x += min_tx * dx + nx * 0.4f;
+					}
+					else if (e->nx != 0)
+					{
+						y += min_ty * dy + ny * 0.1f - 0.3f;
+					}
+				}
+			}
+			else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 			{
 				if (e->nx != 0)
 				{
@@ -756,8 +692,6 @@ void RedFlyKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float m
 	{
 		Koopas::CollisionWithObject(e, min_tx, min_ty, nx, ny);
 	}
-
-
 }
 
 void RedFlyKoopas::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)

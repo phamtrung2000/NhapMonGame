@@ -35,24 +35,24 @@ void Item::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 				x += dx;
 				y += min_ty * dy + ny * 0.4f;
 			}
-			else if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE || e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK || e->obj->ObjType == OBJECT_TYPE_BRICK)
+			else //if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE || e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK || e->obj->ObjType == OBJECT_TYPE_BRICK)
 			{
+				y += min_ty * dy + ny * 0.2f;
 				if (GetState() == ITEM_STATE_MOVE_RIGHT)
 					SetState(ITEM_STATE_MOVE_LEFT);
 				else
 					SetState(ITEM_STATE_MOVE_RIGHT);
 			}
-			else
-			{
-				x += min_tx * dx + nx * 0.4f;
-				y += min_ty * dy + ny * 0.4f;
-			}
 		}
 		else if (e->ny != 0)
 		{
+			x += min_tx * dx + nx * 0.4f;
+			if (OnGround == false)
+			{
+				y += min_ty * dy + ny * 0.1f - 0.3f;
+				OnGround = true; // xử lý chạm đất
+			}
 			if (ny != 0) vy = 0;
-			x += dx;
-			y += min_ty * dy + ny * 0.4f;
 		}
 	}
 }

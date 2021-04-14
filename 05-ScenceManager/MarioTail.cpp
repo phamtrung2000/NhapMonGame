@@ -107,7 +107,8 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (_Mario->ani == MARIO_ANI_TAIL_JUMP_LEFT)
 				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 3;
 			else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_LEFT)
-				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 5;
+				//this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 5;
+				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 4;
 			else if (_Mario->isSitDown == true)
 			{
 				this->y = _Mario->y + MARIO_TAIL_BBOX_HEIGHT - MARIO_TAIL_HEIGHT - 8;
@@ -278,17 +279,16 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					else if(coObjects->at(i)->ObjType == OBJECT_TYPE_KOOPAS || coObjects->at(i)->ObjType == OBJECT_TYPE_GREENKOOPAS)					
 					{
 						Koopas* koopas = dynamic_cast<Koopas*>(coObjects->at(i));
-						koopas->vy = -0.22f;
+						koopas->vy = -ENEMY_DIE_DEFLECT_SPEED;
 						koopas->OnGroud = false;
+						koopas->isKicked = false; // reset lại biến iskicked để tránh TH k giảm tốc sau khi đá (iskicked = true)
 						if (_Mario->x <= koopas->x)
 						{
-							koopas->SetState(KOOPAS_STATE_SHELL_2);
-							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+							koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
 						}
 						else
 						{
-							koopas->SetState(KOOPAS_STATE_SHELL_2);
-							koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+							koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
 						}
 						koopas->ReviveTime = GetTickCount64();
 					}
@@ -463,7 +463,7 @@ void MarioTail::Render()
 				if (_Mario->OnGround == true)
 				{
 					// đứng yên
-					if (_Mario->level_of_walking == 0 && _Mario->level_of_running == 0 || vx == 0)
+					if ( _Mario->vx == 0)
 					{
 						// phải 
 						if (_Mario->nx == RIGHT)
@@ -477,7 +477,7 @@ void MarioTail::Render()
 						}
 					}
 					// đi bộ qua phải
-					else if ((_Mario->level_of_walking > 0 || _Mario->level_of_running > 0) && _Mario->nx == RIGHT)
+					else if (_Mario->nx == RIGHT)
 					{
 						if (_Mario->ChangeDirection == false)
 						{
@@ -487,7 +487,7 @@ void MarioTail::Render()
 							ani = MARIOTAIL_ANI_INVISIBLE;
 					}
 					//  đi bộ qua trái
-					else if ((_Mario->level_of_walking > 0 || _Mario->level_of_running > 0) && _Mario->nx == LEFT)
+					else if (_Mario->nx == LEFT)
 					{
 						if (_Mario->ChangeDirection == false)
 						{
@@ -634,7 +634,7 @@ void MarioTail::Render()
 				if (_Mario->_Mario->OnGround == true)
 				{
 					// đứng yên
-					if (_Mario->level_of_walking == 0 && _Mario->level_of_running == 0 || vx == 0)
+					if (_Mario->vx == 0)
 					{
 						if (_Mario->ChangeDirection == false)
 						{
@@ -670,7 +670,7 @@ void MarioTail::Render()
 
 					}
 					// đi bộ qua phải
-					else if ((_Mario->level_of_walking > 0 || _Mario->level_of_running > 0) && _Mario->nx == RIGHT)
+					else if (_Mario->nx == RIGHT)
 					{
 						if (_Mario->ChangeDirection == false)
 						{
@@ -685,7 +685,7 @@ void MarioTail::Render()
 
 					}
 					//  đi bộ qua trái
-					else if ((_Mario->level_of_walking > 0 || _Mario->level_of_running > 0) && _Mario->nx == LEFT)
+					else if ( _Mario->nx == LEFT)
 					{
 						if (_Mario->ChangeDirection == false)
 						{

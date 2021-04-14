@@ -56,7 +56,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	Enemy::Update(dt, coObjects);
 	if (isDisappear == false)
 	{
-		if (state == KOOPAS_STATE_DIE)
+		if (state == KOOPAS_STATE_DIE || state == ENEMY_STATE_DIE_IS_ATTACKED)
 		{
 			if (isDie == false)
 			{
@@ -64,7 +64,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				_HUD->UpdateScore(this, _Mario->nScore);
 				isDie = true;
 			}
-			vy += KOOPAS_SHELL_2_GRAVITY * dt;
+			vy += ENEMY_GRAVITY * dt;
 			if (y > _Map->GetHeight())
 				canDelete = true;
 			x += dx;
@@ -72,7 +72,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			return;
 		}
 
-		if (GetState() == KOOPAS_STATE_SHELL_HOLD)
+		if (isHold == true)
 		{
 			canRevive = true;
 			// Mario đang cầm mai rùa mà thả nút A ra thì đá rùa
@@ -80,11 +80,20 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				this->isHold = false;
 				this->isKicked = true;
-				if (_Mario->nx == 1)
-					this->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+				if (_Mario->nx == RIGHT)
+				{
+					if (isShell == true)
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					else
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+				}
 				else
-					this->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-				vx = nx * 0.2f;
+				{
+					if (isShell == true)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+				}
 				return;
 			}
 			// rùa đang bị cầm và nút A đang giữ
@@ -177,13 +186,6 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						switch (coObjects->at(i)->Category)
 						{
-							case CATEGORY::GROUND: 
-							{
-								if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-									canRevive = false;
-							}
-							break;
-
 							case CATEGORY::OBJECT:
 							{
 								if (coObjects->at(i)->ObjType != OBJECT_TYPE_BLOCK)
@@ -219,44 +221,17 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								switch (e->obj->Category)
 								{
-								case CATEGORY::GROUND:
-								{
-									if (dynamic_cast<Ground*>(e->obj))
-									{
-										X_min = MIN;
-										X_max = MAX;
-										if (ny != 0) vy = 0;
-										if (e->ny < 0)
-										{
-											x += min_tx * dx + nx * 0.4f;
-										}
-										else if (e->nx != 0)
-										{
-											y += min_ty * dy + ny * 0.1f - 0.3f;
-										}
-									}
-								}
-								break;
-
-								case CATEGORY::OBJECT:
-									CollisionWithObject(e, min_tx, min_ty, nx, ny);
-									break;
+									case CATEGORY::OBJECT:
+										CollisionWithObject(e, min_tx, min_ty, nx, ny);
+										break;
 								
-								case CATEGORY::ITEM:
-									CollisionWithItem(e, min_tx, min_ty, nx, ny);
-									break;
+									case CATEGORY::ITEM:
+										CollisionWithItem(e, min_tx, min_ty, nx, ny);
+										break;
 
-								case CATEGORY::WEAPON:
-									CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
-									break;
-
-								case CATEGORY::PORTAL:
-								{
-									x += dx;
-									y += dy;
-								}
-								break;
-
+									case CATEGORY::WEAPON:
+										CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
+										break;
 								}
 							}
 						}
@@ -286,34 +261,45 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 		{
-			//DebugOut(L"state=%i, vx=%f,vy=%f, nx=%i, y = %f\n", state, vx, vy, nx, y);
-		//DebugOut(L"x max %f, x min %f, x %f, state %i\n", X_max, X_min, x, state);
+			/*if(isKicked==true)
+				DebugOut(L"isKicked == true\t");
+			else
+				DebugOut(L"isKicked == false\t");
+			if (isShell == true)
+				DebugOut(L"isShell == true\t");
+			else
+				DebugOut(L"isShell == false\t");
+			if (isShell_2 == true)
+				DebugOut(L"isShell_2 == true\t");
+			else
+				DebugOut(L"isShell_2 == false\t");*/
+			//DebugOut(L"koopas state=%i, vx=%f,vy=%f, nx=%i, y = %f\n", state, vx, vy, nx, y);
 			canRevive = false;
 			if (isShell == false && isShell_2 == false)
 			{
-				vy += KOOPAS_GRAVITY * dt;
+				vy += ENEMY_GRAVITY * dt;
 			}
-			else if (GetState() != KOOPAS_STATE_SHELL_HOLD)
+			else if (isHold == false)
 			{
 				if (isShell == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (this->vx == 0)
 						this->SetState(KOOPAS_STATE_SHELL);
 				}
 				// vẫy đuôi -> rùa lật ngửa rớt từ trên xuống
 				else if (isShell_2 == true)
 				{
-					vy += KOOPAS_SHELL_2_GRAVITY * dt;
+					vy += ENEMY_GRAVITY * dt;
 					if (vx > 0 && isKicked == false)
 					{
-						vx -= 0.0005f;
+						vx -= KOOPAS_SHELL_2_ACCELERATION;
 						if (vx < 0)
 							vx = 0;
 					}
 					else if (vx < 0 && isKicked == false)
 					{
-						vx += 0.0005f;
+						vx += KOOPAS_SHELL_2_ACCELERATION;
 						if (vx > 0)
 							vx = 0;
 					}
@@ -344,7 +330,7 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					SetState(ENEMY_STATE_WALKING_RIGHT);
 				}
 			}
-			else if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || GetState() == KOOPAS_STATE_SHELL_HOLD)
+			else if ((GetState() == KOOPAS_STATE_SHELL || GetState() == KOOPAS_STATE_SHELL_2 || isHold == true)
 				&& ReviveTime != 0 && GetTickCount64() - ReviveTime > KOOPAS_START_REVIVE_TIME)
 			{
 				canRevive = true;
@@ -389,33 +375,6 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						switch (e->obj->Category)
 						{
-							case CATEGORY::GROUND:
-							{
-								if (dynamic_cast<Ground*>(e->obj))
-								{
-									X_min = MIN;
-									X_max = MAX;
-									if (ny != 0) vy = 0;
-									if (e->ny < 0)
-									{
-										x += min_tx * dx + nx * 0.4f;
-									}
-									else if (e->nx != 0)
-									{
-										y += min_ty * dy + ny * 0.1f - 0.3f;
-										if (GetState() == ENEMY_STATE_WALKING_LEFT)
-											SetState(ENEMY_STATE_WALKING_RIGHT);
-										else if (GetState() == ENEMY_STATE_WALKING_RIGHT)
-											SetState(ENEMY_STATE_WALKING_LEFT);
-										else if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-											SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-										else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-											SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-									}
-								}
-							}
-							break;
-
 							case CATEGORY::OBJECT:
 								CollisionWithObject(e, min_tx, min_ty, nx, ny);
 								break;
@@ -431,25 +390,9 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								CollisionWithWeapon(e, min_tx, min_ty, nx, ny);
 								break;
 
-							case CATEGORY::PORTAL:
-							{
-								x += dx;
-								y += dy;
-							}
-							break;
-						
 							case CATEGORY::PLAYER:
-							{
-								Mario* mario = dynamic_cast<Mario*>(e->obj);
-								if (e->nx != 0)
-								{
-									if (mario->untouchable == true)
-									{
-										x += dx;
-									}
-								}
-							}
-							break;
+								CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
+								break;
 						}
 					}
 				}
@@ -508,6 +451,26 @@ void Koopas::SetState(int state)
 	Enemy::SetState(state);
 	switch (state)
 	{
+		case ENEMY_STATE_DIE_IS_ATTACKED:
+		{
+			isShell = false;
+			isShell_2 = true;
+			vy = -ENEMY_DIE_DEFLECT_SPEED;
+			vx = nx * abs(vx);
+			isDie = true;
+		}
+		break;
+
+		case ENEMY_STATE_WALKING_RIGHT:
+		{
+			isHold = isShell = isShell_2 = false;
+		}break;
+
+		case ENEMY_STATE_WALKING_LEFT:
+		{
+			isHold = isShell = isShell_2 = false;
+		}break;
+
 		case KOOPAS_STATE_SHELL:
 		{
 			// nếu k phải mai rùa thì mới tính lại y, vì có trường hợp mai rùa di chuyển bị đạp xuống thì dừng lại
@@ -515,8 +478,8 @@ void Koopas::SetState(int state)
 				y = (INT16)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
 			isShell = true;
 			isShell_2 = false;
-			vx = 0;
 			isKicked = false;
+			vx = 0;
 		}
 		break;
 
@@ -532,60 +495,75 @@ void Koopas::SetState(int state)
 		case KOOPAS_STATE_SHELL_HOLD:
 		{
 			isHold = true;
-			y = (INT16)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
+			isShell = true;
+			isShell_2 = false;
+			y = (float)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
 			vy = 0;
 			CountXmaxXmin = false;
 		}
 		break;
 
-		case ENEMY_STATE_DIE_IS_JUMPED:
+		case KOOPAS_STATE_SHELL_2_HOLD:
 		{
+			isHold = true;
 			isShell = false;
 			isShell_2 = true;
-			y = (INT16)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
-			vx = nx * 0.05f;
-			vy = -0.2f;
-			isDie = true;
+			y = (float)(y + KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_SHELL - 1);
+			vy = 0;
+			CountXmaxXmin = false;
 		}
 		break;
 
-		case ENEMY_STATE_WALKING_RIGHT:
-		{
-			isHold = isShell = isShell_2 = false;
-			vx = KOOPAS_WALKING_SPEED;
-			nx = 1;
-		}break;
-
-		case ENEMY_STATE_WALKING_LEFT:
-		{
-			isHold = isShell = isShell_2 = false;
-			vx = -KOOPAS_WALKING_SPEED;
-			nx = -1;
-		}break;
-
-
 		case KOOPAS_STATE_SHELL_WALKING_RIGHT:
 		{
-			if(OnGroud == true || isKicked == true)
-				vx = KOOPAS_SHELL_SPEED;
-			else if(isAttacked == true)
-				vx = KOOPAS_WALKING_SPEED;
-			//vx = KOOPAS_SHELL_SPEED;
 			nx = RIGHT;
 			isHold = false;
 			CountXmaxXmin = false;
+			isShell = true;
+			isShell_2 = false;
+			if (isAttacked == true)
+				vx = ENEMY_WALKING_SPEED;
+			else
+				vx = KOOPAS_SHELL_SPEED;
 		}break;
 
 		case KOOPAS_STATE_SHELL_WALKING_LEFT:
 		{
-			if (OnGroud == true || isKicked == true)
-				vx = -KOOPAS_SHELL_SPEED;
-			else if(isAttacked==true)
-				vx = -KOOPAS_WALKING_SPEED;
-			//vx = -KOOPAS_SHELL_SPEED;
 			nx = LEFT;
 			isHold = false;
 			CountXmaxXmin = false;
+			isShell = true;
+			isShell_2 = false;
+			if (isAttacked == true)
+				vx = -ENEMY_WALKING_SPEED;
+			else
+				vx = -KOOPAS_SHELL_SPEED;
+		}break;
+
+		case KOOPAS_STATE_SHELL_2_WALKING_RIGHT:
+		{
+			nx = RIGHT;
+			isHold = false;
+			CountXmaxXmin = false;
+			isShell = false;
+			isShell_2 = true;
+			if (isAttacked == true)
+				vx = ENEMY_WALKING_SPEED;
+			else
+				vx = KOOPAS_SHELL_SPEED;
+		}break;
+
+		case KOOPAS_STATE_SHELL_2_WALKING_LEFT:
+		{
+			nx = LEFT;
+			isHold = false;
+			CountXmaxXmin = false;
+			isShell = false;
+			isShell_2 = true;
+			if (isAttacked == true)
+				vx = -ENEMY_WALKING_SPEED;
+			else
+				vx = -KOOPAS_SHELL_SPEED;
 		}break;
 
 		case KOOPAS_STATE_DIE:
@@ -767,7 +745,50 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 		if (e->ny < 0)
 			OnGroud = true;
 
-		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+		if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+		{
+			if (isHold == true)
+			{
+				X_min = MIN;
+				X_max = MAX;
+				if (ny != 0) vy = 0;
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
+				else if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.1f - 0.3f;
+				}
+			}
+			else
+			{
+				X_min = MIN;
+				X_max = MAX;
+				if (ny != 0) vy = 0;
+				if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
+				else if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.1f - 0.3f;
+					if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
+					else if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_LEFT)
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+				}
+			}
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
 			if (ny != 0) vy = 0;
 
@@ -793,33 +814,18 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 			if (e->nx != 0)
 			{
 				y += min_ty * dy + ny * 0.2f - 0.4f;
-				if (isShell == false && isShell_2 == false)
-				{
-					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
-						SetState(ENEMY_STATE_WALKING_LEFT);
-					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
-						SetState(ENEMY_STATE_WALKING_RIGHT);
-				}
-				else
-				{
-					/*if (isKicked == true || isAttacked == true)
-					{
-						if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-							SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-						else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-							SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-					}
-					else
-					{
-						this->nx = -this->nx;
-						this->vx = -this->vx;
-					}*/
-
-					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-				}
+				if (GetState() == ENEMY_STATE_WALKING_LEFT)
+					SetState(ENEMY_STATE_WALKING_RIGHT);
+				else if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+					SetState(ENEMY_STATE_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+					SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+					SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+				else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_RIGHT)
+					SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_LEFT)
+					SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
 			}
 			else if (e->ny != 0)
 			{
@@ -829,22 +835,20 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 		else if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK)
 		{
 			QuestionBrick* brick = dynamic_cast<QuestionBrick*>(e->obj);
-			if (e->nx != 0 && state != KOOPAS_STATE_SHELL_HOLD)
+			if (e->nx != 0 && isHold == false)
 			{
-				if (isShell == false && isShell_2 == false)
-				{
-					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
-						SetState(ENEMY_STATE_WALKING_LEFT);
-					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
-						SetState(ENEMY_STATE_WALKING_RIGHT);
-				}
-				else
-				{
-					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
-						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
-						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-				}
+				if (GetState() == ENEMY_STATE_WALKING_LEFT)
+					SetState(ENEMY_STATE_WALKING_RIGHT);
+				else if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+					SetState(ENEMY_STATE_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+					SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+					SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+				else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_RIGHT)
+					SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+				else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_LEFT)
+					SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
 				
 				if (brick->GetState() == BRICK_STATE_NORMAL && (isShell == true || isShell_2 == true))
 				{
@@ -953,6 +957,17 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 				X_min = listbrick->x - 4;
 				X_max = X_min + listbrick->Width - 6;
 				this->x += min_tx * dx + nx * 0.4f;
+				int vitri = listbrick->ViTriGachVaCham(this->x, this->Width);
+				if (listbrick->Bricks.at(vitri)->state == BRICK_STATE_COLLISION)
+				{
+					SetState(KOOPAS_STATE_SHELL_2);
+					if (this->nx == LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					vy = -0.07f;
+					vx = this->nx * 0.04f;
+				}
 			}
 			else if (e->nx != 0)
 			{
@@ -974,6 +989,16 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 					{
 						listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
 						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+					}
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_RIGHT) // đi phải thì đụng trái
+					{
+						listbrick->DeleteBrick(0);
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+					}
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_LEFT) // đi trái thì đụng phải
+					{
+						listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
 					}
 				}
 			}
@@ -1020,6 +1045,16 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 						listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
 						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 					}
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_RIGHT) // đi phải thì đụng trái
+					{
+						listbrick->DeleteBrick(0);
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+					}
+					else if (GetState() == KOOPAS_STATE_SHELL_2_WALKING_LEFT) // đi trái thì đụng phải
+					{
+						listbrick->DeleteBrick(listbrick->Bricks.size() - 1);
+						SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+					}
 				}
 			}
 		}
@@ -1057,7 +1092,20 @@ void Koopas::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 
 void Koopas::CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
-	Enemy::CollisionWithPlayer(e, min_tx, min_ty, nx, ny);
+	Mario* mario = dynamic_cast<Mario*>(e->obj);
+	if (e->nx != 0)
+	{
+		if (mario->untouchable == true)
+		{
+			x += dx;
+		}
+		else
+		{
+			if(isShell == false && isShell_2 == false)
+				mario->DownLevel();
+		}
+		if (ny != 0) vy = 0;
+	}
 }
 
 
