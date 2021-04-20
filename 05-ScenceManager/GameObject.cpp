@@ -147,7 +147,19 @@ void CGameObject::RenderBoundingBox()
 // hàm kiểm tra render box của obj này nằm bên trong render box của obj kia
 bool CGameObject::IsCollision(RECT rect1, RECT rect2)
 {
-	if (rect1.left > rect2.right || rect1.right < rect2.left || rect1.top > rect2.bottom || rect1.bottom < rect2.top)
+	if (rect1.left > rect2.right || rect1.right < rect2.left  || rect1.top > rect2.bottom || rect1.bottom < rect2.top)
+		return false;
+	return true;
+}
+bool CGameObject::IsCollisionNx(RECT rect1, RECT rect2)
+{
+	if (rect1.left > rect2.right || rect1.right < rect2.left)
+		return false;
+	return true;
+}
+bool CGameObject::IsCollisionNy(RECT rect1, RECT rect2)
+{
+	if (rect1.top > rect2.bottom || rect1.bottom < rect2.top)
 		return false;
 	return true;
 }

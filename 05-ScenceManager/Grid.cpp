@@ -5,10 +5,12 @@
 #include <unordered_set>
 
 Grid* Grid::__instance = NULL;
+
 Grid::Grid()
 {
-
+	rows = cols = SizeCell = 0;
 }
+
 Area Grid::GetCell(RECT e)
 {
 	return {
@@ -43,45 +45,15 @@ void Grid::AddMovingObject(LPGAMEOBJECT obj, float x, float y)
 	obj->GetRect();
 	auto area = GetCell(e);
 	LOOP(r, area.TopCell, area.BottomCell)
-		LOOP(c, area.LeftCell, area.RightCell) {
-		Cells[r][c]->movingObjects.insert(obj);
-		DebugOut(L"[INFO] object Moving TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
+	{
+		LOOP(c, area.LeftCell, area.RightCell)
+		{
+			Cells[r][c]->movingObjects.insert(obj);
+			DebugOut(L"[INFO] object Moving TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
+		}
 	}
 	obj->SetPosition(x, y);
-}
-
-void Grid::AddStaticObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom)
-{
-	RECT e;
-	e.top = Left;
-	e.left = Top;
-	e.right = Right;
-	e.bottom = Bottom;
-	auto area = GetCell(e);
-	LOOP(r, Top, Bottom) {
-		LOOP(c, Left, Right)
-		{
-			DebugOut(L"[INFO] object Static TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
-			Cells[r][c]->staticObjects.insert(obj);
-		}
-	}
-}
-
-void Grid::AddMovingObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom)
-{
-	RECT e;
-	e.top = Left;
-	e.left = Top;
-	e.right = Right;
-	e.bottom = Bottom;
-	auto area = GetCell(e);
-	LOOP(r, Top, Bottom) {
-		LOOP(c, Left, Right)
-		{
-			DebugOut(L"[INFO] object Static TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
-			Cells[r][c]->movingObjects.insert(obj);
-		}
-	}
+	obj->SetStartPosition(x, y);
 }
 
 void Grid::AddStaticObject(LPGAMEOBJECT obj, float x, float y)
@@ -92,45 +64,17 @@ void Grid::AddStaticObject(LPGAMEOBJECT obj, float x, float y)
 	e.right = x + obj->Width;
 	e.bottom = y + obj->Height;
 	auto area = GetCell(e);
-	LOOP(r, area.TopCell, area.BottomCell) {
+	LOOP(r, area.TopCell, area.BottomCell) 
+	{
 		LOOP(c, area.LeftCell, area.RightCell)
 		{
-			//DebugOut(L"[INFO] object Static TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
+			DebugOut(L"[INFO] object Static TYPE: %d is add in Cell [%d] [%d]\n", obj->ObjType, r, c);
 			Cells[r][c]->staticObjects.insert(obj);
 		}
 	}
 	obj->SetPosition(x, y);
+	obj->SetStartPosition(x, y);
 }
-void Grid::LoadObjects(LPGAMEOBJECT& obj, int Left, int Top, int Right, int Bottom)
-{
-
-	switch (obj->Category)
-	{
-	case CATEGORY::OBJECT:
-	{
-		AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
-		break;
-	}
-	case CATEGORY::ENEMY:
-	{
-		AddMovingObjectByFile(obj, Left, Top, Right, Bottom);
-		break;
-	}
-	case CATEGORY::ITEM:
-		AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
-		break;
-	
-	case CATEGORY::EFFECT:
-	{
-		AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
-		break;
-	}
-	default:
-		DebugOut(L"[ERR] Invalid object TYPE: %d\n", obj->ObjType);
-		break;
-	}
-}
-
 
 void Grid::RenderCell()
 {
@@ -160,16 +104,18 @@ void Grid::CalcObjectInViewPort()
 {
 	auto area = GetCell(_Camera->GetBound());
 	unordered_set<CGameObject*> result;
+
 	for (int r = area.TopCell; r <= area.BottomCell; r++)
 	{
 		//DebugOut(L"[info] Cell row [%d]\n", r);
-		for (int c = area.LeftCell; c <= area.RightCell; c++)
+		for (int c = area.LeftCell ; c <= area.RightCell; c++)
 		{
 			result.insert(Cells[r][c]->movingObjects.begin(), Cells[r][c]->movingObjects.end());
 			result.insert(Cells[r][c]->staticObjects.begin(), Cells[r][c]->staticObjects.end());
-			//DebugOut(L"[info] Object in Cell  [%d]: %d\n",c,Cells[r][c]->staticObjects.size());
-			//DebugOut(L"[info] Object move in Cell  [%d]: %d\n",c,Cells[r][c]->movingObjects.size());
-			//DebugOut(L"[info] Cell column [%d]\n",c);
+		/*	DebugOut(L"[info] Object in Cell  [%d][%d]: %d\n", r, c, Cells[r][c]->staticObjects.size());
+			DebugOut(L"[info] Object move in Cell  [%d][%d]: %d\n", r, c, Cells[r][c]->movingObjects.size());
+			DebugOut(L"[info] Cell column [%d]\n",c);
+			DebugOut(L"\n");*/
 		}
 	}
 	CurObjectInViewPort = { result.begin(), result.end() };
@@ -207,16 +153,19 @@ void Grid::UpdateCellInViewPort()
 				e.right = obj->x + obj->Width;
 				e.bottom = obj->y + obj->Height;
 				auto objArea = GetCell(e);
-				if (obj->canDelete) isDeadObject = true;
+				if (obj->canDelete == true)
+					isDeadObject = true;
 				if (objArea.TopCell != r || objArea.RightCell != c)
 				{
 					//DebugOut(L"obj in cell [%d]\n", c);
 					shouldBeUpdatedObjects.emplace(obj);
+					//obj->SetPosition(obj->StartX, obj->StartY);
 					return true;
 				}
 				return false;
 			});
 	}
+	
 	LOOP(r, area.TopCell, area.BottomCell)
 		LOOP(c, area.LeftCell, area.RightCell)
 	{
@@ -230,7 +179,7 @@ void Grid::UpdateCellInViewPort()
 				e.right = obj->x + obj->Width;
 				e.bottom = obj->y + obj->Height;
 				auto objArea = GetCell(e);
-				if (obj->canDelete)
+				if (obj->canDelete && obj->ObjType != 7)
 				{
 					return true;
 					//isDeadObject = true;
@@ -249,17 +198,22 @@ void Grid::UpdateCellInViewPort()
 		LOOP(r, objArea.TopCell, objArea.BottomCell)
 			LOOP(c, objArea.LeftCell, objArea.RightCell)
 		{
-			Cells[r][c]->movingObjects.emplace(obj);
+			if (obj->IsMovingObject == false)
+				Cells[r][c]->staticObjects.emplace(obj);
+			else
+			{
+				Cells[r][c]->movingObjects.emplace(obj);
+				//obj->SetPosition(obj->StartX, obj->StartY);
+			}
+				
+			
 			//DebugOut(L"obj move to %d   \n",c);
 		}
 	}
-	if (isDeadObject) RemoveDeadObject();
+	if (isDeadObject == true) 
+		RemoveDeadObject();
 	CalcObjectInViewPort();
-
 }
-
-
-
 
 void Grid::RemoveDeadObject()
 {

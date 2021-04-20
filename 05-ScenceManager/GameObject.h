@@ -103,6 +103,8 @@ public:
 		float &rdx, 
 		float &rdy);
 	bool IsCollision(RECT rect1, RECT rect2);
+	bool IsCollisionNx(RECT rect1, RECT rect2);
+	bool IsCollisionNy(RECT rect1, RECT rect2);
 	RECT GetRect();
 	CGameObject();
 
@@ -114,7 +116,14 @@ public:
 	virtual void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
 	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
 	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) {};
+	bool CheckAABB(LPGAMEOBJECT obj)
+	{
 
+		float b1left, b1top, b1right, b1bottom, b2left, b2top, b2right, b2bottom;
+		this->GetBoundingBox(b1left, b1top, b1right, b1bottom);
+		obj->GetBoundingBox(b2left, b2top, b2right, b2bottom);
+		return !(b1right < b2left || b1left > b2right || b1top > b2bottom || b1bottom < b2top);
+	}
 	~CGameObject();
 };
 

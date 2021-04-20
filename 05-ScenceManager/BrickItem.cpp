@@ -159,7 +159,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 								auto smoke = new EffectSmoke(itembrick->x, itembrick->y);
 								smoke->AmountTimeAppear = 2 * EFFECTSMOKE_APPEARTIME;
-								_PlayScene->objects.push_back(smoke);
+								_Grid->AddStaticObject(smoke, itembrick->x, itembrick->y);
 
 								Coin* coin = new Coin();
 								coin->SetPosition(itembrick->x , itembrick->y);
@@ -168,7 +168,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 								LPANIMATION_SET ani_set = animation_sets->Get(12);
 								coin->SetAnimationSet(ani_set);
-								_PlayScene->objects.push_back(coin);
+								_Grid->AddStaticObject(coin, itembrick->x, itembrick->y);
 
 								listbrick->Bricks.erase(listbrick->Bricks.begin() + i);
 							}
@@ -193,7 +193,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 										listbrick1->Bricks.push_back(itembrick);
 									}
 								}
-								_PlayScene->objects.push_back(listbrick1);
+								_Grid->AddStaticObject(listbrick1, listbrick1->Bricks.at(0)->x, listbrick1->Bricks.at(0)->y);
 								i = j;
 							}
 						}
@@ -212,7 +212,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				canDelete = true;
 				EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
-				_PlayScene->objects.push_back(Score);
+				_Grid->AddMovingObject(Score, this->x, this->y);
 				_HUD->UpdateScore(this, 0);
 			}
 			y += dy;

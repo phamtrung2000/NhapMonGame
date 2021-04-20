@@ -1,6 +1,6 @@
 # MAP INFO : row	column	TileRow	TileColumn	TileWidth
 [INFO]
-12	32	2	9	16	16	1	2	9
+12	32	2	9	16	16	6
 [ROWS]
 # Row 2
 1	1	1	1	1	1	1	1	2	3	1	1	1	1	1	1	1	1	1	1	1	1	2	3	1	1	1	1	1	1	1	1

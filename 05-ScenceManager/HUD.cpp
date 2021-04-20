@@ -114,7 +114,7 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 					if (qbitem->Item != MONEY)
 					{
 						EffectScore* effectscore = new EffectScore(_Mario->x - 2, _Mario->y - 20, score);
-						_PlayScene->objects.push_back(effectscore);
+						_Grid->AddMovingObject(effectscore, _Mario->x - 2, _Mario->y - 20);
 					}
 				}
 				break;
@@ -128,7 +128,7 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 						{
 							this->MarioLife++;
 							EffectScore* effectscore = new EffectScore(_Mario->x, _Mario->y - 10, 10000);
-							_PlayScene->objects.push_back(effectscore);
+							_Grid->AddMovingObject(effectscore, _Mario->x, _Mario->y - 10);
 						}
 					break;
 						case MONEY:
@@ -202,7 +202,7 @@ void HUD::UpdateScore(LPGAMEOBJECT e, int _nScore)
 			}
 			
 			EffectScore* effectscore = new EffectScore(enemy->x, enemy->y - 10, score);
-			_PlayScene->objects.push_back(effectscore);
+			_Grid->AddMovingObject(effectscore, enemy->x, enemy->y - 10);
 		}
 		break;
 	
@@ -361,7 +361,7 @@ void HUD::Update(DWORD dt)
 	else if (money.size() == 2)
 		information += "                                   " + money + "\n";
 
-	information += life + "   " + scoregame + "	            " + timeString + "\n";
+	information += life + "   " + scoregame + "	             " + timeString + "\n";
 
 	if (TypeItem[0] == 0)
 	{

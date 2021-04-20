@@ -93,9 +93,40 @@ void GreenFirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		canAttack = isAttacking = false;
 		CalcAtkTime = 0;
 	}
+
+	if (state == FIREPIRANHAPLANT_STATE_ATTACK)
+	{
+		if (this->NumberBullet == 1)
+		{
+			FireBullet* fb = new FireBullet(this->x, this->y);
+			fb->SetSpeed(this->VxBullet, this->VyBullet);
+			// chiều của viên đạn
+			if (this->nx == 1)
+				fb->nx = 1;
+			else
+				fb->nx = -1;
+
+			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+			LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
+			fb->SetAnimationSet(ani_set);
+			_Grid->AddMovingObject(fb, this->x, this->y);
+			// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
+			this->NumberBullet--;
+		}
+	}
+
 	// bắn ra đạn thì cây núp xuống
 	if (NumberBullet == 0)
 		SetState(GREENFIREPLANT_STATE_HIDE);
+
+	this->GetEnemyPos(_Mario->x, _Mario->y);
+	if (abs(_Mario->x - this->x) <= 20 && this->Stop == true)
+		this->SetState(FIREPIRANHAPLANT_STATE_STOP);
+	else if (this->Stop == true)
+	{
+		this->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
+		this->Stop = false;
+	}
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;

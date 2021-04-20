@@ -39,7 +39,11 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// ra khỏi camera -> delete
 	if (x > cam_x + static_cast<float>(cam_w) || x < cam_x)
+	{
 		canDelete = true;
+		if(_Mario->NumberBullet < 2)
+			_Mario->NumberBullet++;
+	}
 
 	CGameObject::Update(dt);
 
@@ -98,8 +102,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									goomba->nx = this->Direction;
 									goomba->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 									this->canDelete = true;
+									if (_Mario->NumberBullet < 2)
+										_Mario->NumberBullet++;
 									auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
-									_PlayScene->objects.push_back(hit);
+									_Grid->AddStaticObject(hit, e->obj->x, e->obj->y);
 									_HUD->UpdateScore(goomba, 1);
 								}
 							}
@@ -108,7 +114,7 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						case ENEMY_TYPE_KOOPAS:
 						{
 							Koopas* koopas = dynamic_cast<Koopas*>(e->obj);
-							if (koopas->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
+							if (koopas->GetState() != ENEMY_STATE_DIE_IS_JUMPED && koopas->GetState() != ENEMY_STATE_DIE_IS_ATTACKED)
 							{
 								if (e->obj->ObjType == OBJECT_TYPE_GREENFLYKOOPAS)
 								{
@@ -118,8 +124,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								koopas->nx = this->Direction;
 								koopas->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 								this->canDelete = true;
+								if (_Mario->NumberBullet < 2)
+									_Mario->NumberBullet++;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
-								_PlayScene->objects.push_back(hit);
+								_Grid->AddStaticObject(hit, e->obj->x, e->obj->y);
 								_HUD->UpdateScore(koopas, 1);
 								
 							}
@@ -132,10 +140,12 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (boom->isDie == false)
 							{
 								boom->nx = this->Direction;
-								boom->SetState(BOOMERANGENEMY_STATE_DIE_2);
+								boom->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 								this->canDelete = true;
+								if (_Mario->NumberBullet < 2)
+									_Mario->NumberBullet++;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
-								_PlayScene->objects.push_back(hit);
+								_Grid->AddStaticObject(hit, e->obj->x, e->obj->y);
 								_HUD->UpdateScore(boom, 1);
 							}
 						}
@@ -147,8 +157,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								e->obj->canDelete = true;
 								this->canDelete = true;
+								if (_Mario->NumberBullet < 2)
+									_Mario->NumberBullet++;
 								auto hit = new EffectHit(e->obj->x, e->obj->y, TYPE_FIREBULLET);
-								_PlayScene->objects.push_back(hit);
+								_Grid->AddStaticObject(hit, e->obj->x, e->obj->y);
 								_HUD->UpdateScore(e->obj, 1);
 							}
 						}break;
@@ -172,8 +184,10 @@ void FireBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							else
 							{
 								this->canDelete = true;
+								if (_Mario->NumberBullet < 2)
+									_Mario->NumberBullet++;
 								auto effect = new EffectSmoke(this->x, this->y);
-								_PlayScene->objects.push_back(effect);
+								_Grid->AddStaticObject(effect, this->x, this->y);
 							}
 						}
 						else if (e->ny < 0)

@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #define EFFECTSCORE_APPEARTIME 800
-#define EFFECTSCORE_ANI_SET_ID 1102
+#define EFFECTSCORE_ANI_SET_ID 1103
 #define EFFECTSCORE_SPEED_Y		0.04f
 
 #define EFFECTSCORE_ANI_100		0
@@ -28,7 +28,7 @@ public:
 		this->SetAnimationSet(ani_set);
 		this->x = x;
 		this->y = y;
-		Category = CATEGORY::EFFECT;
+		Category = EFFECT;
 		AppearTime = GetTickCount64();
 		vy = -EFFECTSCORE_SPEED_Y;
 		score = Score;

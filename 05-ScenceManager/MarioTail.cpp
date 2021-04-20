@@ -27,7 +27,7 @@ MarioTail::MarioTail(float x, float y)
 	SetPosition(x, y);
 	Category = CATEGORY::WEAPON;
 	isInvisible = false;
-	IsMovingObject = false;
+	IsMovingObject = true;
 }
 
 void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -36,7 +36,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		_Mario->ChangeLevelTime = GetTickCount64();
 		auto effect = new EffectSmoke(_Mario->x, _Mario->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
-		_PlayScene->objects.push_back(effect);
+		_Grid->AddStaticObject(effect, _Mario->x, _Mario->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
 		this->canDelete = true;
 		_PlayScene->Stop = true;
 		return;
@@ -45,7 +45,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		_Mario->ChangeLevelTime = GetTickCount64();
 		auto effect = new EffectSmoke(_Mario->x, _Mario->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
-		_PlayScene->objects.push_back(effect);
+		_Grid->AddStaticObject(effect, _Mario->x, _Mario->y + (MARIO_TAIL_BBOX_HEIGHT / 5));
 		this->canDelete = true;
 		_PlayScene->Stop = true;
 		return;
@@ -153,14 +153,14 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (brick->Item == BUTTONP)
 							{
 								BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
-								_PlayScene->objects.push_back(brickitem);
+								_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
 								auto effect = new EffectSmoke(brick->x, brick->y - 16);
-								_PlayScene->objects.push_back(effect);
+								_Grid->AddStaticObject(effect, brick->x, brick->y - 16);
 							}
 							else
 							{
 								BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
-								_PlayScene->objects.push_back(brickitem);
+								_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
 							}
 						}
 					}
@@ -186,7 +186,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								}
 							}
 							QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
-							_PlayScene->objects.push_back(questionbrickitem);
+							_Grid->AddMovingObject(questionbrickitem, brick->x, brick->y - 3);
 						}
 					}
 					else if (coObjects->at(i)->ObjType == OBJECT_TYPE_LISTITEMBRICK)
@@ -246,7 +246,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (enemy->isAttacked == false && enemy->EnemyType!= ENEMY_TYPE_PLANT)
 					{
 						auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-						_PlayScene->objects.push_back(hit);
+						_Grid->AddMovingObject(hit, enemy->x, enemy->y);
 						enemy->isAttacked = true;
 						enemy->Time_isAttacked = GetTickCount64();
 						if (enemy->EnemyType != ENEMY_TYPE_KOOPAS)
@@ -335,7 +335,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							boom->nx = _Mario->nx;
 							boom->vy = -0.2f;
-							boom->SetState(BOOMERANGENEMY_STATE_DIE_2);
+							boom->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 							
 						}
 					}
@@ -345,7 +345,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (plant->GetState() != FIREPIRANHAPLANT_STATE_HIDE)
 						{
 							auto hit = new EffectHit(plant->x, plant->y, TYPE_TAIL);
-							_PlayScene->objects.push_back(hit);
+							_Grid->AddStaticObject(hit, plant->x, plant->y);
 							plant->isAttacked = true;
 							plant->Time_isAttacked = GetTickCount64();
 							_Mario->nScore++;
@@ -360,90 +360,6 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 }
-
-//void MarioTail::Render()
-//{
-//	int ani = 16;
-//	if (isInvisible == true)
-//	{
-//		ani = MARIOTAIL_ANI_INVISIBLE;
-//	}
-//	else
-//	{
-//		if (_Mario->nx == RIGHT)
-//		{
-//			if (_Mario->isAttacking == true)
-//			{
-//				ani = MARIOTAIL_ANI_7_RIGHT;
-//				if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_1)
-//					ani = MARIOTAIL_ANI_7_RIGHT;
-//				else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_2 || _Mario->ani == MARIO_ANI_TAIL_ATTACK_4)
-//					ani = MARIOTAIL_ANI_INVISIBLE;
-//				else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
-//					ani = MARIOTAIL_ANI_7_LEFT;
-//			}
-//			else
-//			{
-//				//if (_Mario->canFlyX == false)
-//				{
-//					ani = MARIOTAIL_ANI_6_RIGHT;
-//					if (_Mario->ani == MARIO_ANI_TAIL_IDLE_RIGHT)
-//						ani = MARIOTAIL_ANI_6_RIGHT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_WALKING_RIGHT || _Mario->isHolding == true)
-//						ani = MARIOTAIL_ANI_WALKING_RIGHT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_JUMP_RIGHT)
-//						ani = MARIOTAIL_ANI_7_RIGHT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_RIGHT)
-//						ani = MARIOTAIL_ANI_1_RIGHT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_SITDOWN_RIGHT)
-//						ani = MARIOTAIL_ANI_0_RIGHT;
-//					else if (_Mario->isFlyingLow == true)
-//						ani = MARIOTAIL_ANI_FLYINGLOW_RIGHT;
-//					bool a = _Mario->canFlyS;
-//					if ((_Mario->canFlyS == true && _Mario->isFlyingHigh == true) || _Mario->ani == MARIO_ANI_TAIL_STOP_RIGHT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_RIGHT || _Mario->ani == MARIO_ANI_TAIL_KICK_RIGHT)
-//						ani = MARIOTAIL_ANI_INVISIBLE;
-//				}
-//				//else
-//			}
-//		}
-//		else
-//		{
-//			if (_Mario->isAttacking == true)
-//			{
-//				ani = MARIOTAIL_ANI_7_LEFT;
-//				if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_1)
-//					ani = MARIOTAIL_ANI_7_RIGHT;
-//				else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_2 || _Mario->ani == MARIO_ANI_TAIL_ATTACK_4)
-//					ani = MARIOTAIL_ANI_INVISIBLE;
-//				else if (_Mario->ani == MARIO_ANI_TAIL_ATTACK_3)
-//					ani = MARIOTAIL_ANI_7_LEFT;
-//			}
-//			else
-//			{
-//				//if (_Mario->canFlyX == false)
-//				{
-//					ani = MARIOTAIL_ANI_6_LEFT;
-//					if (_Mario->ani == MARIO_ANI_TAIL_IDLE_LEFT)
-//						ani = MARIOTAIL_ANI_6_LEFT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_WALKING_LEFT || _Mario->isHolding == true)
-//						ani = MARIOTAIL_ANI_WALKING_LEFT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_JUMP_LEFT)
-//						ani = MARIOTAIL_ANI_7_LEFT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_FALLING_LEFT)
-//						ani = MARIOTAIL_ANI_1_LEFT;
-//					else if (_Mario->ani == MARIO_ANI_TAIL_SITDOWN_LEFT)
-//						ani = MARIOTAIL_ANI_0_LEFT;
-//					else if (_Mario->isFlyingLow == true)
-//						ani = MARIOTAIL_ANI_FLYINGLOW_LEFT;
-//					if (_Mario->canFlyS == true || _Mario->ani == MARIO_ANI_TAIL_STOP_LEFT || _Mario->ani == MARIO_ANI_TAIL_RUNNING_LEFT || _Mario->ani == MARIO_ANI_TAIL_KICK_LEFT)
-//						ani = MARIOTAIL_ANI_INVISIBLE;
-//				}
-//			}
-//		}
-//	}
-//	DebugOut(L"RENDER ani = %i\n", ani);
-//	animation_set->at(ani)->Render(x, y, 255);
-//}
 
 void MarioTail::Render()
 {

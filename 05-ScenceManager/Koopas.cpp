@@ -583,7 +583,8 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 {
 	if (e->obj != NULL)
 	{
-		if (GetState() != KOOPAS_STATE_SHELL_WALKING_RIGHT && GetState() != KOOPAS_STATE_SHELL_WALKING_LEFT) // Rùa đi bộ bình thường, k ở trạng thái mai rùa
+		if (GetState() != KOOPAS_STATE_SHELL_WALKING_RIGHT && GetState() != KOOPAS_STATE_SHELL_WALKING_LEFT
+		&& GetState() != KOOPAS_STATE_SHELL_2_WALKING_RIGHT && GetState() != KOOPAS_STATE_SHELL_2_WALKING_LEFT) // Rùa đi bộ bình thường, k ở trạng thái mai rùa
 		{
 			if (this->isHold == false)
 			{
@@ -609,7 +610,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					{
 						enemy->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 						auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-						_PlayScene->objects.push_back(hit);
+						_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 						_Mario->nScore++;
 						_HUD->UpdateScore(enemy, _Mario->nScore);
 					}
@@ -625,7 +626,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 							enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 							enemy->nx = this->nx;
 							auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-							_PlayScene->objects.push_back(hit);
+							_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 							_Mario->nScore++;
 							_HUD->UpdateScore(enemy, _Mario->nScore);
 						}
@@ -635,7 +636,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 							enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 							enemy->nx = this->nx;
 							auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-							_PlayScene->objects.push_back(hit);
+							_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 							_Mario->nScore++;
 							_HUD->UpdateScore(enemy, _Mario->nScore);
 						}
@@ -648,7 +649,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				{
 					enemy->canDelete = true;
 					auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-					_PlayScene->objects.push_back(hit);
+					_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 					_Mario->nScore++;
 					_HUD->UpdateScore(enemy, _Mario->nScore);
 				}
@@ -671,7 +672,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					enemy->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
 
 					auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-					_PlayScene->objects.push_back(hit);
+					_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 					_Mario->nScore++;
 					_HUD->UpdateScore(enemy, _Mario->nScore);
 				}
@@ -687,7 +688,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 						enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 						enemy->nx = this->nx;
 						auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-						_PlayScene->objects.push_back(hit);
+						_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 						_Mario->nScore++;
 						_HUD->UpdateScore(enemy, _Mario->nScore);
 					}
@@ -697,7 +698,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 						enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
 						enemy->nx = this->nx;
 						auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-						_PlayScene->objects.push_back(hit);
+						_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 						_Mario->nScore++;
 						_HUD->UpdateScore(enemy, _Mario->nScore);
 					}
@@ -710,7 +711,7 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			{
 				enemy->canDelete = true;
 				auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
-				_PlayScene->objects.push_back(hit);
+				_Grid->AddStaticObject(hit, enemy->x, enemy->y);
 				_Mario->nScore++;
 				_HUD->UpdateScore(enemy, _Mario->nScore);
 			}
@@ -869,7 +870,7 @@ void Koopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty,
 						}
 					}
 					QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
-					_PlayScene->objects.push_back(questionbrickitem);
+					_Grid->AddMovingObject(questionbrickitem, brick->x, brick->y - 3);
 				}
 			}
 			else if (e->ny < 0)

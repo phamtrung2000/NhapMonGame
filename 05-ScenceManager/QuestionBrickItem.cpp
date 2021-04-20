@@ -46,7 +46,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				canDelete = true;
 				EffectScore* Score = new EffectScore(this->x, this->y, this->Score);
-				_PlayScene->objects.push_back(Score);
+				_Grid->AddMovingObject(Score, this->x, this->y);
 				_HUD->UpdateScore(this, 0);
 			}
 			y += dy;

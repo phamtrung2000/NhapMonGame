@@ -50,7 +50,7 @@ void Coin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(ITEMBRICK_ANISET_ID);
 		itembrick->SetAnimationSet(ani_set);
-		_PlayScene->objects.push_back(itembrick);
+		_Grid->AddStaticObject(itembrick, this->x, this->y);
 
 		this->canDelete = true;
 	}

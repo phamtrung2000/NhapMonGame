@@ -1,11 +1,9 @@
 ﻿#pragma once
-
 #include "Enemy.h"
 
-#define KOOPAS_SHELL_SPEED					0.07f
+#define KOOPAS_SHELL_SPEED					0.12f
 #define KOOPAS_SHELL_GRAVITY				0.0002f
-//#define KOOPAS_SHELL_2_GRAVITY				0.0001f
-#define KOOPAS_SHELL_2_ACCELERATION			0.0001f
+#define KOOPAS_SHELL_2_ACCELERATION			0.0005f
 
 #define KOOPAS_BBOX_WIDTH					16
 #define KOOPAS_BBOX_HEIGHT					24

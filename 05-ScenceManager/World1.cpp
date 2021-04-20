@@ -196,7 +196,16 @@ void World1::_ParseSection_OBJECTS(string line)
 		}
 		
 	}break;
-	case OBJECT_TYPE_GATE: obj = new Gate(GateNumber); break;
+	case OBJECT_TYPE_GATE: 
+	{
+		obj = new Gate(GateNumber);
+		Gate* portal = dynamic_cast<Gate*>(obj);
+		portal->MarioCanGo[0] = atoi(tokens[5].c_str());
+		portal->MarioCanGo[1] = atoi(tokens[6].c_str());
+		portal->MarioCanGo[2] = atoi(tokens[7].c_str());
+		portal->MarioCanGo[3] = atoi(tokens[8].c_str());
+	}
+	break;
 	case OBJECT_TYPE_DANCINGTREE: obj = new DancingTree(); break;
 
 	default:
@@ -389,7 +398,7 @@ void World1::Render()
 		}
 	}
 	_HUD->Render();
-	_Grid->RenderCell();
+	//_Grid->RenderCell();
 }
 
 /*
@@ -427,9 +436,9 @@ void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_DOWN);
 	}
-	else if (game->IsKeyDown(DIK_RETURN))
+	else if (game->IsKeyDown(DIK_RETURN) || game->IsKeyDown(DIK_S))
 	{
-		if (mario->Scene > 0 && mario->GetState() == MARIO_OVERWORLD_STATE_IN_GATE && mario->Scene % 2 == 0)
+		if (mario->InGate == true)
 		{
 			if (mario->Scene == 10)
 			{
@@ -439,7 +448,6 @@ void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 			{
 				CGame::GetInstance()->SwitchScene2(mario->Scene);
 			}
-			
 		}
 		
 			
@@ -455,4 +463,13 @@ void World1ScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 	MarioOverWorld* mario = ((World1*)scence)->GetPlayer();
+
+	/*if (game->IsKeyDown(DIK_RIGHT))
+		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_RIGHT);
+	else if (game->IsKeyDown(DIK_LEFT))
+		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_LEFT);
+	else if (game->IsKeyDown(DIK_DOWN))
+		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_DOWN);
+	else if (game->IsKeyDown(DIK_UP))
+		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_UP);*/
 }

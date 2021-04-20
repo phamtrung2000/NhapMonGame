@@ -80,7 +80,8 @@ public:
 	bool CourseClear;
 	int MarioLevel;
 	static CPlayScene* __instance;
-	vector<LPGAMEOBJECT> objects;
+	//vector<LPGAMEOBJECT> objects;
+	vector<LPGAMEOBJECT> listGround;
 	CPlayScene();
 	CPlayScene(int id, LPCWSTR filePath);
 	CPlayScene(int id, LPCWSTR filePath, int mariolv);
@@ -102,7 +103,7 @@ public:
 	void _ParseSection_SETTINGS(string line);
 
 	virtual void Load();
-	virtual void Load2(float, float); // load cảnh + tọa độ mới của mario
+	virtual void Load2(float, float) {};
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();

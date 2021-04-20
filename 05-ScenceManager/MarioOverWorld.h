@@ -43,6 +43,11 @@ public:
 	int Scene;
 	bool InGate; // mario đang đứng trên cổng thì mới cho phép chuyển cảnh
 
+	int CanGoLeft,
+		CanGoRight,
+		CanGoUp,
+		CanGoDown;
+
 	//static MarioOverWorld* GetInstance();
 	MarioOverWorld(float x = 0.0f, float y = 0.0f);
 	

@@ -26,8 +26,7 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
-	InGate = false;
-
+	
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		switch (coObjects->at(i)->Category)
@@ -35,25 +34,73 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			case CATEGORY::OBJECT:
 			{
 				// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+				if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true
+					&& coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
 				{
-					if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
+					Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
+
+					CanGoLeft = gate->MarioCanGo[0];
+					CanGoUp = gate->MarioCanGo[1];
+					CanGoRight = gate->MarioCanGo[2];
+					CanGoDown = gate->MarioCanGo[3];
+
+					if (gate->GateNumber > 0 && gate->GateNumber % 2 == 0 && gate->isComplete == false)
 					{
 						SetState(MARIO_OVERWORLD_STATE_IN_GATE);
-					
-						Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
-						if (Scene <= gate->GateNumber)
-							Scene = gate->GateNumber;
-						else if (Scene > gate->GateNumber)
+					}
+					else
+						InGate = false;
+
+					if (Scene <= gate->GateNumber) // xong màn +1 lên = 11, nếu k có thì gán lại = 10
+						Scene = gate->GateNumber;
+					else
+					{
+						gate->isComplete = true;
+						if (Scene > 10 && gate->GateNumber == 10)
 						{
-							x += dx;
-							y += dy;
+							CanGoRight = 1;
 						}
-					
+					}
+
+					if (vx != 0)
+					{
+						int a = (int)x;
+						int b = int(gate->x);
+						if (vx >= 0)
+						{
+							if ( a == b + 1)
+							{
+								vx = vy = 0;
+							}
+						}
+						else
+						{
+							if (a == b + 2)
+							{
+								vx = vy = 0;
+							}
+						}
+					}
+					else if (vy != 0)
+					{
+						int a = (int)y;
+						int b = int(gate->y);
+						if (vy >= 0)
+						{
+							if (a - 1 == b)
+							{
+								vy = 0;
+							}
+						}
+						else
+						{
+							if (a + 1 == b)
+							{
+								vy = 0;
+							}
+						}
 					}
 				}
-
-
 			}
 			break;
 		}
@@ -111,7 +158,6 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				Gate* gate = dynamic_cast<Gate*>(e->obj);
 				SetState(MARIO_OVERWORLD_STATE_IN_GATE);
-				
 				{
 					this->x = gate->x + 1;
 					this->y = gate->y;
@@ -127,19 +173,6 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
-	//for (UINT i = 0; i < coObjects->size(); i++)
-	//{
-	//	if (coObjects->at(i)->ObjType == OBJECT_TYPE_GATE)
-	//	{
-	//		Gate* gate = dynamic_cast<Gate*>(coObjects->at(i));
-	//		// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-	//		if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-	//		{
-	//			/*if (gate->isComplete == false && this->vx > 0)
-	//				this->vx = 0;*/
-	//		}
-	//	}
-	//}
 	/*if(InGate==true)
 		DebugOut(L"InGate==true\n");
 	else
@@ -150,7 +183,9 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetPosition(x, 0);
 		vy = 0;
 	}
-	//DebugOut(L"x = %f, y = %f, state %i\n", x, y, state); 
+	
+	DebugOut(L"Scene = %i\t", Scene);
+	DebugOut(L" CanGoLeft == %i, CanGoUp == %i, CanGoRight == %i, CanGoDown == %i\n", CanGoLeft, CanGoUp, CanGoRight, CanGoDown);
 }
 
 void MarioOverWorld::Render()
@@ -194,25 +229,41 @@ void MarioOverWorld::SetState(int state)
 	switch (state)
 	{
 	case MARIO_OVERWORLD_STATE_WALKING_RIGHT:
-		vx = MARIO_OVERWORLD_WALKING_SPEED;
-		vy = 0;
-		nx = 1;
+		if (CanGoRight == 1 && vx == 0.0f && vy == 0.0f)
+		{
+			x += 2;
+			vx = MARIO_OVERWORLD_WALKING_SPEED;
+			vy = 0;
+			nx = 1;
+		}
 		break;
 	case MARIO_OVERWORLD_STATE_WALKING_LEFT:
-		vx = -MARIO_OVERWORLD_WALKING_SPEED;
-		vy = 0;
-		nx = -1;
+		if (CanGoLeft == 1 && vx == 0.0f && vy == 0.0f)
+		{
+			x -= 2;
+			vx = -MARIO_OVERWORLD_WALKING_SPEED;
+			vy = 0;
+			nx = -1;
+		}
 		break;
 	case MARIO_OVERWORLD_STATE_IDLE:
 		vx = vy = 0;
 		break;
 	case MARIO_OVERWORLD_STATE_WALKING_UP:
-		vy = -MARIO_OVERWORLD_WALKING_SPEED;
-		vx = 0;
+		if (CanGoUp == 1 && vx == 0.0f && vy == 0.0f)
+		{
+			y -= 2;
+			vy = -MARIO_OVERWORLD_WALKING_SPEED;
+			vx = 0;
+		}
 		break;
 	case MARIO_OVERWORLD_STATE_WALKING_DOWN:
-		vy = MARIO_OVERWORLD_WALKING_SPEED;
-		vx = 0;
+		if (CanGoDown == 1 && vx == 0.0f && vy == 0.0f)
+		{
+			y += 2;
+			vy = MARIO_OVERWORLD_WALKING_SPEED;
+			vx = 0;
+		}
 		break;
 	case MARIO_OVERWORLD_STATE_IN_GATE:
 		InGate = true;

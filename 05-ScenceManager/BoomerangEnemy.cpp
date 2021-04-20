@@ -31,7 +31,6 @@ BoomerangEnemy::BoomerangEnemy() : Enemy()
 	CanThrow = false;
 	Width = BOOMERANGENEMY_WIDTH_BBOX;
 	Height = BOOMERANGENEMY_HEIGHT_BBOX;
-	SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
 	TimeToMove = GetTickCount64();
 	TimeToJump = GetTickCount64();
 	TimeToThrow = 0;
@@ -48,7 +47,6 @@ BoomerangEnemy::BoomerangEnemy(float x, float y) : Enemy()
 	CanThrow = false;
 	Width = BOOMERANGENEMY_WIDTH_BBOX;
 	Height = BOOMERANGENEMY_HEIGHT_BBOX;
-	SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
 	StartX = x;
 	StartY = y;
 	TimeToMove = GetTickCount64();
@@ -78,7 +76,7 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			//if (GetState() != BOOMERANGENEMY_STATE_DIE)
 			vy += BOOMERANGENEMY_GRAVITY * dt;
 
-			if (state == BOOMERANGENEMY_STATE_DIE)
+			if (state == ENEMY_STATE_DIE_IS_JUMPED || state == ENEMY_STATE_DIE_IS_ATTACKED)
 			{
 				x += dx;
 				y += dy;
@@ -89,17 +87,7 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				return;
 			}
-			else if (state == BOOMERANGENEMY_STATE_DIE_2)
-			{
-				x += dx;
-				y += dy;
-				weapon->canDelete = true;
-				if (y > _Map->GetHeight() + 50)
-				{
-					canDelete = true;
-				}
-				return;
-			}
+
 			if (vx < 0 && x < 0)
 			{
 				x = 0;
@@ -118,7 +106,7 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
 				{
-					SetState(BOOMERANGENEMY_STATE_JUMPING_RIGHT);
+					SetState(ENEMY_STATE_JUMPING_HIGH_RIGHT);
 					TimeToJump = GetTickCount64();
 				}
 
@@ -140,7 +128,7 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				if (TimeToJump != 0 && GetTickCount64() - TimeToJump > 3000)
 				{
-					SetState(BOOMERANGENEMY_STATE_JUMPING_LEFT);
+					SetState(ENEMY_STATE_JUMPING_HIGH_LEFT);
 					TimeToJump = GetTickCount64();
 				}
 
@@ -170,9 +158,9 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						isThrow = true;
 						TimeStartThrow = 0;
 						if (nx == RIGHT)
-							SetState(BOOMERANGENEMY_STATE_WALKING_RIGHT);
+							SetState(ENEMY_STATE_WALKING_RIGHT);
 						else
-							SetState(BOOMERANGENEMY_STATE_WALKING_LEFT);
+							SetState(ENEMY_STATE_WALKING_LEFT);
 						CanThrow = isThrow = false;
 
 					}
@@ -237,64 +225,20 @@ void BoomerangEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void BoomerangEnemy::SetState(int state)
 {
-	CGameObject::SetState(state);
+	Enemy::SetState(state);
 	switch (state)
 	{
-	case BOOMERANGENEMY_STATE_WALKING_RIGHT:
-	{
-		vx = BOOMERANGENEMY_WALKING_SPEED;
-		nx = 1;
-	}
-	break;
+		case BOOMERANGENEMY_STATE_THROWING_RIGHT:
+		{
+			CanThrow = true;
+			nx = RIGHT;
+		}break;
 
-	case BOOMERANGENEMY_STATE_WALKING_LEFT:
-	{
-		vx = -BOOMERANGENEMY_WALKING_SPEED;
-		nx = -1;
-	}
-	break;
-
-	case BOOMERANGENEMY_STATE_JUMPING_RIGHT:
-	{
-		vy = -0.2f;
-		nx = 1;
-	}
-	break;
-
-	case BOOMERANGENEMY_STATE_JUMPING_LEFT:
-	{
-		vy = -0.2f;
-		nx = -1;
-	}
-	break;
-
-	case BOOMERANGENEMY_STATE_THROWING_RIGHT:
-	{
-		CanThrow = true;
-		nx = 1;
-	}break;
-
-	case BOOMERANGENEMY_STATE_THROWING_LEFT:
-	{
-		CanThrow = true;
-		nx = -1;
-	}break;
-
-
-	case BOOMERANGENEMY_STATE_DIE:
-	{
-		vx = 0.0f;
-		vy = BOOMERANGENEMY_GRAVITY;
-		isDie = true;
-	}break;
-
-	case BOOMERANGENEMY_STATE_DIE_2:
-	{
-		vx = this->nx * abs(vx);
-		vy = -BOOMERANGENEMY_DIE_DEFLECT_SPEED;
-		isDie = true;
-	}break;
-
+		case BOOMERANGENEMY_STATE_THROWING_LEFT:
+		{
+			CanThrow = true;
+			nx = LEFT;
+		}break;
 	}
 
 }
@@ -306,21 +250,15 @@ void BoomerangEnemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float
 {
 	if (e->obj != NULL)
 	{
-	
-		if (e->obj->ObjType == OBJECT_TYPE_GROUND)
+		if (e->ny < 0)
 		{
-			if (ny != 0) vy = 0;
-			if (e->ny < 0)
-			{
-				x += min_tx * dx + nx * 0.4f;
-				y += min_ty * dy + ny * 0.1f - 0.3f;
-			}
-
+			OnGroud = true;
+			if (GetState() == ENEMY_STATE_INIT)
+				SetState(ENEMY_STATE_WALKING_RIGHT);
 		}
-		else if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
-		{
-			if (ny != 0) vy = 0;
 
+		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
+		{
 			if (e->nx != 0)
 			{
 				x += dx;
@@ -329,15 +267,22 @@ void BoomerangEnemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float
 			{
 				x += min_tx * dx + nx * 0.4f;
 			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE)
-		{
 			if (ny != 0) vy = 0;
+		}
+		else
+		{
 			if (e->nx != 0)
 			{
-				y += min_ty * dy + ny * 0.2f;
-				vx = -vx;
+				if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+					SetState(ENEMY_STATE_WALKING_LEFT);
+				else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+					SetState(ENEMY_STATE_WALKING_RIGHT);
 			}
+			else
+			{
+				x += min_tx * dx + nx * 0.4f;
+			}
+			if (ny != 0) vy = 0;
 		}
 	}
 }
@@ -372,7 +317,7 @@ void BoomerangEnemy::CreateBoomerang()
 	weapon = new BoomerangWeapon(this->nx, this->x, this->y);
 	weapon->SetSpeed(0, 0);
 	weapon->Time = TimeToThrow;
-	_PlayScene->objects.push_back(weapon);
+	_Grid->AddMovingObject(weapon, this->x, this->y);
 }
 
 

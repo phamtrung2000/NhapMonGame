@@ -87,6 +87,15 @@ void GreenPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else // cây đã được khởi tạo, bắt đầu tính toán vùng tấn công
 		CalcAttackZone();
 
+	this->GetEnemyPos(_Mario->x, _Mario->y);
+	if (abs(_Mario->x - this->x) <= 20 && this->isBlocked == true)
+		this->SetState(GREENPLANT_STATE_STOP);
+	else if (this->isBlocked == true)
+	{
+		this->SetState(GREENPLANT_STATE_APPEAR);
+		this->isBlocked = false;
+	}
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 

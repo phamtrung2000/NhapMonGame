@@ -301,6 +301,7 @@ public:
 	ULONGLONG StartToDie; // khi mario chết có 1 khoảng tg mario đứng yên rồi mới nhảy lên
 
 	bool isBlocked; // kiểm tra mario có đang bị chăn bởi object để tăng level of walking
+	float RightOld; // lưu lại giá trị right trước khi up level để sau khi up level right k bị tăng lên dẫn đến lỗi đi xuyên vật thể
 public: 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
@@ -321,5 +322,6 @@ public:
 	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	float GetWidth(int level);
 };
 

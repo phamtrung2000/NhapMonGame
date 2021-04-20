@@ -4,8 +4,6 @@ class Ground :
 	public CGameObject
 {
 public:
-	int Width;
-	int Height;
 	int BehindGate; // nằm sau cổng số mấy -> xóa obj sau khi cổng đó hoàn thành
 	Ground(int W, int H)
 	{
@@ -13,7 +11,7 @@ public:
 		Height = H;
 		ObjType = 7;
 		BehindGate = -1;
-		Category = CATEGORY::OBJECT;
+		Category = OBJECT;
 	}
 	Ground(int W, int H,int behindgate)
 	{
@@ -21,7 +19,7 @@ public:
 		Height = H;
 		ObjType = 7;
 		BehindGate = behindgate;
-		Category = CATEGORY::OBJECT;
+		Category = OBJECT;
 	}
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

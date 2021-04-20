@@ -554,7 +554,10 @@ void CGame::SwitchScene2(int scene_id)
 		_PlayScene->__instance = (CPlayScene*)s;
 		_Camera->SetCamPos(0.0f, 0.0f);
 		s->Load();
-		_Mario->SetLevel(MarioLevel);
+		if(MarioLevel != 0)
+			_Mario->SetLevel(MarioLevel);
+		else 
+			_Mario->SetLevel(MARIO_LEVEL_SMALL);
 		_HUD->Init(300);
 	}
 	else if (current_scene >= Scene1_1ID)

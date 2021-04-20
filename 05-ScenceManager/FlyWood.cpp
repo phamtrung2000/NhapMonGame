@@ -54,6 +54,7 @@ void FlyWood::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isDisappear = false;
 		}
 	}
+
 	if (isDisappear == false)
 	{
 		CGameObject::Update(dt);

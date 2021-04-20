@@ -184,14 +184,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			}
 			obj = _Mario;
 			DebugOut(L"[INFO] Player object created!\n");
-			// General object setup
-			obj->SetPosition(x, y);
-			obj->SetStartPosition(x, y);
-
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
 
-			objects.push_back(obj);
+			obj->SetPosition(x, y);
 		}break;
 
 		case ENEMY:
@@ -245,14 +241,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				obj = new BoomerangEnemy(x, y);
 			}break;
 			}
-			// General object setup
-			obj->SetStartPosition(x, y);
-			obj->SetPosition(x, y);
-
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
 
-			objects.push_back(obj);
+			_Grid->AddMovingObject(obj, x, y);
 		}break;
 
 		case OBJECT:
@@ -312,7 +304,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
 				case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
 				case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x, y); break;
-				case OBJECT_TYPE_GROUND: obj = new Ground(width, height); break;
+				case OBJECT_TYPE_GROUND:
+				{
+					obj = new Ground(width, height); break;
+					listGround.push_back(obj);
+				}
 				case OBJECT_TYPE_PORTAL: 
 				{
 					float r = (float)atof(tokens[5].c_str());
@@ -321,14 +317,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 					obj = new CPortal(x, y, r, b, scene_id);
 				}break;
 			}
-			// General object setup
-			obj->SetPosition(x, y);
-			obj->SetStartPosition(x, y);
-
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
 
-			objects.push_back(obj);
+			_Grid->AddStaticObject(obj, x, y);
 		}break;
 
 		case ITEM:
@@ -340,14 +332,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			default:
 				break;
 			}
-			// General object setup
-			obj->SetPosition(x, y);
-			obj->SetStartPosition(x, y);
-
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
 
-			objects.push_back(obj);
+			_Grid->AddStaticObject(obj, x, y);
 		}
 		break;
 
@@ -766,309 +754,29 @@ void CPlayScene::Load()
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
-void CPlayScene::Load2(float x, float y)
-{
-	//	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
-	//
-	//	ifstream f;
-	//	f.open(sceneFilePath);
-	//
-	//	// current resource section flag
-	//	int section = SCENE_SECTION_UNKNOWN;
-	//
-	//	char str[MAX_SCENE_LINE];
-	//	while (f.getline(str, MAX_SCENE_LINE))
-	//	{
-	//		string line(str);
-	//
-	//		if (line[0] == '#') continue;	// skip comment lines	
-	//
-	//		if (line == "[TEXTURES]") {
-	//			section = SCENE_SECTION_TEXTURES; continue;
-	//		}
-	//
-	//		if (line == "[MAP]") {
-	//			section = SCENE_SECTION_MAP; continue;
-	//		}
-	//		if (line == "[SPRITES]") {
-	//			section = SCENE_SECTION_SPRITES; continue;
-	//		}
-	//		if (line == "[ANIMATIONS]") {
-	//			section = SCENE_SECTION_ANIMATIONS; continue;
-	//		}
-	//		if (line == "[ANIMATION_SETS]") {
-	//			section = SCENE_SECTION_ANIMATION_SETS; continue;
-	//		}
-	//		if (line == "[OBJECTS]") {
-	//			section = SCENE_SECTION_OBJECTS; continue;
-	//		}
-	//		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
-	//
-	//		switch (section)
-	//		{
-	//		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
-	//		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
-	//		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
-	//		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
-	//		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
-	//		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
-	//		}
-	//	}
-	//
-	//	f.close();
-	//	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(0, 255, 255));
-	//	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
-}
 
 void CPlayScene::Update(DWORD dt)
 {
 	vector<LPGAMEOBJECT> coObjects;
+	coObjects.clear();
+	_Grid->UpdateCellInViewPort();
 
 	if (this->Stop == false)
 	{
 		_Camera->Update();
-		// Tạo đạn lửa khi _Mario bắn lửa
-		if (_Mario->level == MARIO_LEVEL_FIRE && _Mario->isAttacking == true)
-		{
-			if ((_Mario->OnGround == true && _Mario->time_attack > TIME_ATTACK && _Mario->time_attack <= 2 * TIME_ATTACK) 
-				|| (_Mario->OnGround == false && _Mario->time_attack <= TIME_ATTACK) )
-			{
-				if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_A)
-				{
-					// kiểm soát số đạn <=2
-					if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && _Mario->TimeUseFireBullet == 0)
-					{
-						//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
-						FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
-						fb->FireMario = true;
-						// chiều của viên đạn
-
-						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-						fb->SetAnimationSet(ani_set);
-						objects.push_back(fb);
-						_Mario->NumberBullet--;
-						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-						//_Mario->isAttacking = false;
-						_Mario->TimeUseFireBullet = GetTickCount64();
-						//	DebugOut(L"Them dan lua -> objects.size = %i \n", objects.size());
-					}
-				}
-				else if (_Mario->TimeDelayUseFireBullet == TIMEDELAYUSEBFIREBULLET_Z)
-				{
-					// kiểm soát số đạn <=2
-					if (_Mario->NumberBullet <= 2 && _Mario->NumberBullet > 0 && (_Mario->TimeUseFireBullet == 0 || GetTickCount64() - _Mario->TimeUseFireBullet > _Mario->TimeDelayUseFireBullet))
-					{
-						//DebugOut(L"level=%i , number = %i \n", _Mario->level, _Mario->NumberBullet);
-						FireBullet* fb = new FireBullet(_Mario->x + 5, _Mario->y);
-						fb->FireMario = true;
-						// chiều của viên đạn
-
-						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-						fb->SetAnimationSet(ani_set);
-						objects.push_back(fb);
-						_Mario->NumberBullet--;
-						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-						//_Mario->isAttacking = false;
-						_Mario->TimeUseFireBullet = GetTickCount64();
-
-					}
-				}
-			}
+		
+		/*for (auto& obj : listGround) {
+			coObjects.push_back(obj);
+		}*/
+		for (auto& obj : _Grid->GetObjectInViewPort()) {
+			coObjects.push_back(obj);
 		}
-
-		// tạo object đuôi(MarioTail) khi _Mario quật đuôi, xóa object khi thực hiện xong hành động quật đuôi
-		else if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->render_tail == false)
+		
+		_Mario->Update(dt, &coObjects);
+		for (auto& obj : _Grid->GetObjectInViewPort())
 		{
-			//DebugOut(L" ani = %i, time %i\n", _Mario->ani, _Mario->time_attack);
-			MarioTail* tail = new MarioTail(_Mario->x, _Mario->y + 18);
-			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(MARIOTAIL_ANI_SET_ID);
-			tail->SetAnimationSet(ani_set);
-			objects.push_back(tail);
-			_Mario->render_tail = true;
+			obj->Update(dt, &coObjects);
 		}
-
-		for (size_t i = 0; i < objects.size(); i++)
-		{
-			if ( objects[i]->canDelete == false && objects[i]->isDisappear == false)
-			{
-				coObjects.push_back(objects[i]);
-				if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
-				{
-					FirePiranhaPlant* a = (FirePiranhaPlant*)objects[i];
-
-					if (a->NumberBullet == 1)
-					{
-						FireBullet* fb = new FireBullet(a->x, a->y);
-						fb->SetSpeed(a->VxBullet, a->VyBullet);
-						// chiều của viên đạn
-						if (a->nx == 1)
-							fb->nx = 1;
-						else
-							fb->nx = -1;
-
-						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-						fb->SetAnimationSet(ani_set);
-						objects.push_back(fb);
-						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-						a->NumberBullet--;
-
-						//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
-					}
-				}
-				else if (objects[i]->ObjType == OBJECT_TYPE_GREENFIREPLANT && objects[i]->state == FIREPIRANHAPLANT_STATE_ATTACK)
-				{
-					GreenFirePlant* a = (GreenFirePlant*)objects[i];
-
-					if (a->NumberBullet == 1)
-					{
-						FireBullet* fb = new FireBullet(a->x, a->y);
-						fb->SetSpeed(a->VxBullet, a->VyBullet);
-						// chiều của viên đạn
-						if (a->nx == 1)
-							fb->nx = 1;
-						else
-							fb->nx = -1;
-
-						CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-						LPANIMATION_SET ani_set = animation_sets->Get(FIREBULLET_ANISET_ID);
-						fb->SetAnimationSet(ani_set);
-						objects.push_back(fb);
-						// điều kiện dừng vòng lặp, nếu không có thì nó sẽ quăng 2 viên cùng 1 lúc
-						a->NumberBullet--;
-
-						//a->SetState(FIREPIRANHAPLANT_STATE_HIDE);
-					}
-				}
-
-			}
-			else if(objects[i]->canDelete == true)
-			{
-				if (objects[i]->ObjType == OBJECT_TYPE_FIREBULLET)
-				{
-					FireBullet* fb = (FireBullet*)objects[i];
-					if (fb->FireMario == true)
-						_Mario->NumberBullet++;
-					objects.erase(objects.begin() + i);
-				}
-				else if (objects[i]->Category == CATEGORY::EFFECT || objects[i]->Category == CATEGORY::WEAPON)
-				{
-					objects.erase(objects.begin() + i);
-				}
-				else
-					objects.erase(objects.begin() + i);
-			}
-		}
-
-		for (size_t i = 0; i < objects.size(); i++)
-		{
-			if (objects[i]->ObjType == OBJECT_TYPE_FIREPIRANHAPLANT)
-			{
-				FirePiranhaPlant* fireplant = (FirePiranhaPlant*)objects[i];
-				fireplant->GetEnemyPos(_Mario->x, _Mario->y);
-				if (abs(_Mario->x - fireplant->x) <= 20 && fireplant->Stop == true)
-					fireplant->SetState(FIREPIRANHAPLANT_STATE_STOP);
-				else if (fireplant->Stop == true)
-				{
-					fireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
-					fireplant->Stop = false;
-				}
-			}
-			else if (objects[i]->ObjType == OBJECT_TYPE_GREENPLANT)
-			{
-				GreenPlant* greenplant = (GreenPlant*)objects[i];
-				greenplant->GetEnemyPos(_Mario->x, _Mario->y);
-				if (abs(_Mario->x - greenplant->x) <= 20 && greenplant->isBlocked == true)
-					greenplant->SetState(GREENPLANT_STATE_STOP);
-				else if (greenplant->isBlocked == true)
-				{
-					greenplant->SetState(GREENPLANT_STATE_APPEAR);
-					greenplant->isBlocked = false;
-				}
-				//DebugOut(L"_Mario x = %f, _Mario y = %f, plant x = %f, plant y =%f\n", _Mario->x, _Mario->y, fireplant->x, fireplant->y);
-			}
-			else if (objects[i]->ObjType == OBJECT_TYPE_GREENFIREPLANT)
-			{
-				GreenFirePlant* greenfireplant = (GreenFirePlant*)objects[i];
-				greenfireplant->GetEnemyPos(_Mario->x, _Mario->y);
-				if (abs(_Mario->x - greenfireplant->x) <= 20 && greenfireplant->Stop == true)
-					greenfireplant->SetState(FIREPIRANHAPLANT_STATE_STOP);
-				else if (greenfireplant->Stop == true)
-				{
-					greenfireplant->SetState(FIREPIRANHAPLANT_STATE_APPEAR);
-					greenfireplant->Stop = false;
-				}
-				//DebugOut(L"_Mario x = %f, _Mario y = %f, plant x = %f, plant y =%f\n", _Mario->x, _Mario->y, fireplant->x, fireplant->y);
-			}
-			else if (objects[i]->ObjType == OBJECT_TYPE_GREENKOOPAS && objects[i]->GetState() == KOOPAS_STATE_SHELL_HOLD)
-			{
-				GreenKoopas* greenkoopas = (GreenKoopas*)objects[i];
-				if (_Mario->pressA == false)
-				{
-					greenkoopas->isHold = false;
-					if (_Mario->nx == 1)
-						greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-					else
-						greenkoopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-				}
-				else
-				{
-					if (_Mario->nx == RIGHT)
-					{
-						if (_Mario->level == MARIO_LEVEL_SMALL)
-						{
-							//greenkoopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
-							greenkoopas->x = _Mario->x + MARIO_SMALL_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y - 2;
-						}
-						else if (_Mario->level == MARIO_LEVEL_TAIL)
-						{
-							greenkoopas->x = _Mario->x + MARIO_TAIL_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y + 7;
-						}
-						else
-						{
-							greenkoopas->x = _Mario->x + MARIO_BIG_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y + 6;
-						}
-						greenkoopas->dx = _Mario->dx;
-						greenkoopas->nx = _Mario->nx;
-						//	DebugOut(L"_Mario x = %f, greenkoopas x = %f, _Mario right = %f\n", _Mario->x, greenkoopas->x);
-					}
-					else
-					{
-
-						//greenkoopas->x = _Mario->x - GREENKOOPAS_BBOX_WIDTH - 1;
-						//DebugOut(L"vao day, vx=%f\n", _Mario->vx);
-						if (_Mario->level == MARIO_LEVEL_SMALL)
-						{
-							greenkoopas->x = _Mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y - 2;
-						}
-						else if (_Mario->level == MARIO_LEVEL_TAIL)
-						{
-							greenkoopas->x = _Mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y + 7;
-						}
-						else
-						{
-							greenkoopas->x = _Mario->x - GREENKOOPAS_BBOX_WIDTH + 1;
-							greenkoopas->y = _Mario->y + 6;
-						}
-						greenkoopas->dx = _Mario->dx;
-						greenkoopas->nx = _Mario->nx;
-
-					}
-				}
-
-			}
-
-			objects[i]->Update(dt, &coObjects);
-		}
-		//_Mario->Update(dt, &coObjects);
 		
 		_HUD->Update(dt);
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -1078,28 +786,17 @@ void CPlayScene::Update(DWORD dt)
 	}
 	else
 	{
-		//if(_Mario->isLevelUp == true || _Mario->isLevelDown==true)
-		for (size_t i = 0; i < objects.size(); i++)
+		for (auto& obj : _Grid->GetObjectInViewPort()) 
 		{
-			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
-			{
-				coObjects.push_back(objects[i]);
-			}
-			else if (objects[i]->canDelete == true)
-			{
-				if (objects[i]->Category == CATEGORY::EFFECT || objects[i]->Category == CATEGORY::WEAPON)
-				{
-					objects.erase(objects.begin() + i);
-				}
-				else
-					objects.erase(objects.begin() + i);
-			}
+			if (obj->IsMovingObject == false)
+				coObjects.push_back(obj);
 		}
+
 		_Mario->Update(dt, &coObjects);
-		for (size_t i = 1; i < objects.size(); i++)
+		for (auto& obj : _Grid->GetObjectInViewPort())
 		{
-			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->IsMovingObject == false)
-				objects[i]->Update(dt, &coObjects);
+			if(obj->IsMovingObject == false)
+				obj->Update(dt, &coObjects);
 		}
 	}
 }
@@ -1110,24 +807,33 @@ void CPlayScene::Render()
 	
 	if (_Mario->GoHiddenWorld == true)
 	{
-		for (unsigned int i = 0; i < objects.size(); i++)
+		_Mario->Render();
+
+		for (auto& obj : _Grid->GetObjectInViewPort())
 		{
-			if (objects[i]->canDelete == false && objects[i]->isDisappear == false)
-			{
-				objects[i]->Render();
-			}
+			if (obj->IsMovingObject == true)
+				obj->Render();
+		}
+		for (auto& obj : _Grid->GetObjectInViewPort())
+		{
+			if (obj->IsMovingObject == false)
+				obj->Render();
 		}
 	}
 	else
 	{
-		for (unsigned int i = 0; i < objects.size(); i++)
-		{
-			if (objects[i]->canDelete == false && objects[i]->isDisappear == false && objects[i]->Category != CATEGORY::PLAYER)
-			{
-				objects[i]->Render();
-			}
-		}
 		_Mario->Render();
+	
+		for (auto& obj : _Grid->GetObjectInViewPort())
+		{
+			if(obj->IsMovingObject == true)
+				obj->Render();
+		}
+		for (auto& obj : _Grid->GetObjectInViewPort())
+		{
+			if (obj->IsMovingObject == false)
+				obj->Render();
+		}
 	}
 	
 	_HUD->Render();
@@ -1136,10 +842,13 @@ void CPlayScene::Render()
 
 void CPlayScene::Unload()
 {
-	for (unsigned int i = 0; i < objects.size(); i++)
-		delete objects[i];
-
-	objects.clear();
+	for (auto& obj : listGround)
+		delete obj;
+	/*for (auto& obj : _Grid->GetObjectInViewPort())
+	{
+		delete obj;
+	}*/
+	listGround.clear();
 	_Mario->Unload();
 	_Map->UnLoad();
 	//_HUD->Unload();
@@ -1210,7 +919,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 		else
 		{
-			if (_Mario->isFalling == false)
+			if (_Mario->isFalling == false && _Mario->OnGround == true)
 			{
 				_Mario->SetState(MARIO_STATE_JUMP);
 				_Mario->TimeJumpS = GetTickCount64();

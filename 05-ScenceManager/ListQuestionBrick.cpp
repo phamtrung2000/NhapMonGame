@@ -54,12 +54,12 @@ void ListQuestionBrick::DeleteBrick(int vitri)
 				break;
 			}
 			QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
-			_PlayScene->objects.push_back(questionbrickitem);
+			_Grid->AddMovingObject(questionbrickitem, brick->x, brick->y - 3);
 		}
 		else
 		{
 			QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x + 1, brick->y - 3);
-			_PlayScene->objects.push_back(questionbrickitem);
+			_Grid->AddMovingObject(questionbrickitem, brick->x + 1, brick->y - 3);
 		}
 	}
 }

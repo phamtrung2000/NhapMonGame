@@ -16,7 +16,7 @@
 #define GOOMBA_SCORE	100
 #define GOOMBA_TIMETODIE	20
 
-extern class Goomba : public Enemy
+class Goomba : public Enemy
 {
 public:
 	Goomba();
@@ -26,7 +26,7 @@ public:
 	virtual void SetState(int state);
 	virtual void Revival() {};
 	virtual void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
-	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny) ;
+	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	virtual void CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 };

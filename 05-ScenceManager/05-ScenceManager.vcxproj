@@ -259,11 +259,13 @@
     <Text Include="textures\Weapon\Weapon.txt" />
     <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
     <Text Include="textures\World\World1\Scene1.1.txt" />
+    <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />
     <Text Include="textures\World\World1\Scene1.4Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />
-    <Text Include="textures\World\World1\SceneHidden1.1.txt" />
+    <Text Include="textures\World\World1\SceneHidden1.4.txt" />
+    <Text Include="textures\World\World1\SceneHidden1.4Map.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

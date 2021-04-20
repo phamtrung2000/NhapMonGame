@@ -46,29 +46,29 @@ void ListItemBrick::DeleteBrick(int vitri)
 			case BUTTONP:
 			{
 				BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
-				_PlayScene->objects.push_back(brickitem);
+				_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
 				auto effect = new EffectSmoke(brick->x, brick->y - 16);
-				_PlayScene->objects.push_back(effect);
+				_Grid->AddStaticObject(effect, brick->x, brick->y - 16);
 			}
 			break;
 
 			case MUSHROOM:
 			{
 				BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
-				_PlayScene->objects.push_back(brickitem);
+				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
 			}
 			break;
 
 			case NORMAL:
 			{
 				BreakItemBrick* breakbrick1 = new BreakItemBrick(RIGHT, brick->x, brick->y, 0.1f, -0.3f);
-				_PlayScene->objects.push_back(breakbrick1);
+				_Grid->AddMovingObject(breakbrick1, brick->x, brick->y);
 				BreakItemBrick* breakbrick2 = new BreakItemBrick(RIGHT, brick->x, brick->y, 0.15f, -0.02f);
-				_PlayScene->objects.push_back(breakbrick2);
+				_Grid->AddMovingObject(breakbrick2, brick->x, brick->y);
 				BreakItemBrick* breakbrick3 = new BreakItemBrick(LEFT, brick->x, brick->y, 0.1f, -0.3f);
-				_PlayScene->objects.push_back(breakbrick3);
+				_Grid->AddMovingObject(breakbrick3, brick->x, brick->y);
 				BreakItemBrick* breakbrick4 = new BreakItemBrick(LEFT, brick->x, brick->y, 0.15f, -0.02f);
-				_PlayScene->objects.push_back(breakbrick4);
+				_Grid->AddMovingObject(breakbrick4, brick->x, brick->y);
 				Bricks.erase(Bricks.begin() + vitri);
 			}
 			break;
@@ -76,7 +76,7 @@ void ListItemBrick::DeleteBrick(int vitri)
 			case MONEYX10:
 			{
 				BrickItem* brickitem = new BrickItem(MONEYX10, brick->x, brick->y - 3);
-				_PlayScene->objects.push_back(brickitem);
+				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
 				brick->CountMoney--;
 			}
 		}

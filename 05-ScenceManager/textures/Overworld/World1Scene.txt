@@ -62,12 +62,29 @@
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # MARIO
-0	15	33	0
+0	16	33	0
 #0	0	0	0
 # ======== GATE =========
-# type	x	y	ani_set_id	gatenumber
-2	48	0	2	10
-2	144	32	2	12
+# type	x	y	ani_set_id	gatenumber left	top	right	bottom
+#2	144	32	2	12
+#start
+2	16	32	2	0	0	0	1	0
+
+2	48	32	2	0	1	1	0	0
+# gate 1
+2	48	0	2	10	0	0	1	1
+
+2	80	0	2	9	1	0	1	0
+#gate 2
+2	112	0	2	9	1	0	1	1
+#gate 3
+2	144	0	2	9	1	0	1	0
+2	112	32	2	9	0	1	1	0
+#gate 4
+2	144	32	2	12	1	0	1	0
+2	176	0	2	9	1	0	0	1
+# mush room yellow
+2	176	32	2	9	1	1	0	0
 # ======== GROUND =========
 # type	x	y	ani_set_id	width height	BehindGate
 1	0	32	1	16	16	20

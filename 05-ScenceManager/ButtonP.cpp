@@ -64,7 +64,7 @@ void ButtonP::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 					LPANIMATION_SET ani_set = animation_sets->Get(12);
 					coin->SetAnimationSet(ani_set);
-					_PlayScene->objects.push_back(coin);
+					_Grid->AddStaticObject(coin, temp_x, temp_y);
 				}
 			}
 		}

@@ -13,10 +13,10 @@ public:
 	static Grid* GetInstance();
 	Grid();
 	~Grid() {};
-	//RECT rect;
-	int rows, cols;
 
+	int rows, cols;
 	int SizeCell;
+
 	vector<vector<Cell*>> Cells;
 	vector<LPGAMEOBJECT> CurObjectInViewPort;
 	Area GetCell(RECT e);
