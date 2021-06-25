@@ -1,5 +1,5 @@
 ﻿#include "PlayScence.h"
-#include "Goomba.h"
+#include "FlyGoomba.h"
 #include "Koopas.h"
 #include "FirePiranhaPlant.h"
 #include "GreenPlant.h"
@@ -27,6 +27,7 @@
 #include "ListQuestionBrick.h"
 #include "RedGoomba.h"
 #include "ListNormalBrick.h"
+#include "HiddenMusicBrick.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 
@@ -190,7 +191,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			obj->SetPosition(x, y);
 		}break;
 
-		case ENEMY:
+		case CATEGORY::ENEMY:
 		{
 			switch (object_type)
 			{
@@ -240,6 +241,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			{
 				obj = new BoomerangEnemy(x, y);
 			}break;
+
+			case OBJECT_TYPE_FLYGOOMBA:
+			{
+				obj = new FlyGoomba();
+			}
 			}
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
@@ -247,7 +253,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			_Grid->AddMovingObject(obj, x, y);
 		}break;
 
-		case OBJECT:
+		case CATEGORY::OBJECT:
 		{
 			if (object_type == OBJECT_TYPE_BLOCK || object_type == OBJECT_TYPE_WARPPIPE || object_type == OBJECT_TYPE_GROUND)
 			{
@@ -316,6 +322,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 					int scene_id = (int)atoi(tokens[7].c_str());
 					obj = new CPortal(x, y, r, b, scene_id);
 				}break;
+				case OBJECT_TYPE_MUSICBRICK: obj = new MusicBrick(x, y); break;
+				case OBJECT_TYPE_HIDDENMUSICBRICK: obj = new HiddenMusicBrick(x, y); break;
 			}
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
@@ -323,7 +331,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			_Grid->AddStaticObject(obj, x, y);
 		}break;
 
-		case ITEM:
+		case CATEGORY::ITEM:
 		{
 			switch (object_type)
 			{

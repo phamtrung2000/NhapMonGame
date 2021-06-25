@@ -11,7 +11,7 @@ void ListQuestionBrick::GetBoundingBox(float& left, float& top, float& right, fl
 
 void ListQuestionBrick::Render()
 {
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Render();
 	}
@@ -27,7 +27,7 @@ void ListQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	QuestionBrick* firstbrick = Bricks.front();
 	x = firstbrick->x;
 	Width = Bricks.size() * 16;
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Update(dt, coObjects);
 	}
@@ -64,7 +64,7 @@ void ListQuestionBrick::DeleteBrick(int vitri)
 	}
 }
 
-int ListQuestionBrick::ViTriGachVaCham(float Obj_x, float width)
+int ListQuestionBrick::ViTriGachVaCham(float Obj_x, int width)
 {
 	if (Bricks.size() == 1)
 	{
@@ -94,8 +94,8 @@ int ListQuestionBrick::ViTriGachVaCham(float Obj_x, float width)
 		}
 		else
 		{
-			int vitri = (Obj_x + width - Bricks.at(0)->x) / 16;
-			int tempx = Bricks.at(vitri)->x;
+			int vitri = int(Obj_x + width - Bricks.at(0)->x) / 16;
+			float tempx = Bricks.at(vitri)->x;
 			if (Obj_x < Bricks.at(vitri)->x && tempx - Obj_x > 8)
 				vitri--;
 			return vitri;

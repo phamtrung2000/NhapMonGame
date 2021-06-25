@@ -13,7 +13,7 @@ Card::Card() : Item()
 	this->SetAnimationSet(ani_set);
 	hasItem = true;
 	SetState(CARD_STATE_NORMAL);
-	Category = ITEM;
+	Category = CATEGORY::ITEM;
 }
 
 void Card::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {

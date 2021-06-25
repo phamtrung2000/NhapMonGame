@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 #include "ItemBrick.h"
 #include "Game.h"
@@ -60,7 +60,7 @@ public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
-	void DeleteBrick(int vitri);
-	int ViTriGachVaCham(float x, float width);
+	void DeleteBrick(int vitri); // xóa gạch đồng thời tạo item (nếu có)
+	int ViTriGachVaCham(float x, int width);
 };
 

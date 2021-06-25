@@ -9,6 +9,7 @@ Brick::Brick()
 	ObjType = OBJECT_TYPE_BRICK;
 	vx = vy = 0.f;
 	Type = -1;
+	Category = CATEGORY::OBJECT;
 	Width  = Height = OBJECT_BBOX_WIDTH_HEIGHT;
 }
 

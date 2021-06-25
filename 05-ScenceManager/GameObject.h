@@ -44,7 +44,7 @@ struct CCollisionEvent
 	}
 };
 
-extern enum CATEGORY
+enum class CATEGORY
 {
 	PLAYER,
 	OBJECT,
@@ -74,7 +74,7 @@ public:
 	LPANIMATION_SET animation_set;
 	int ObjType;
 	CATEGORY Category;
-	float Width, Height;
+	int Width, Height;
 	float StartX, StartY;
 	bool IsInList;
 	bool IsMovingObject;

@@ -184,18 +184,152 @@ void Koopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y += dy;
 					for (UINT i = 0; i < coObjects->size(); i++)
 					{
-						switch (coObjects->at(i)->Category)
+						if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 						{
+							switch (coObjects->at(i)->Category)
+							{
 							case CATEGORY::OBJECT:
 							{
 								if (coObjects->at(i)->ObjType != OBJECT_TYPE_BLOCK)
 								{
-									if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
-										canRevive = false;
+									canRevive = false;
 								}
 							}
 							break;
+
+							case CATEGORY::ENEMY:
+							{
+								if (this != coObjects->at(i))
+								{
+									if (GetState() != KOOPAS_STATE_SHELL_WALKING_RIGHT && GetState() != KOOPAS_STATE_SHELL_WALKING_LEFT
+										&& GetState() != KOOPAS_STATE_SHELL_2_WALKING_RIGHT && GetState() != KOOPAS_STATE_SHELL_2_WALKING_LEFT) // Rùa đi bộ bình thường, k ở trạng thái mai rùa
+									{
+										if (this->isHold == true)
+										{
+											Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
+											switch (enemy->EnemyType)
+											{
+											case ENEMY_TYPE_GOOMBA:
+											{
+												if (enemy->Health == 1 && enemy->GetState() != ENEMY_STATE_DIE_IS_ATTACKED)
+												{
+													enemy->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
+													auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+													_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+													_Mario->nScore++;
+													_HUD->UpdateScore(enemy, _Mario->nScore);
+												}
+											}
+											break;
+
+											case ENEMY_TYPE_KOOPAS:
+											{
+												if (enemy->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
+												{
+													if (enemy->Health == 1)
+													{
+														enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+														enemy->nx = this->nx;
+														auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+														_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+														_Mario->nScore++;
+														_HUD->UpdateScore(enemy, _Mario->nScore);
+													}
+													else
+													{
+														enemy->Health--;
+														enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+														enemy->nx = this->nx;
+														auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+														_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+														_Mario->nScore++;
+														_HUD->UpdateScore(enemy, _Mario->nScore);
+													}
+												}
+
+											}
+											break;
+
+											default:
+											{
+												enemy->canDelete = true;
+												auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+												_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+												_Mario->nScore++;
+												_HUD->UpdateScore(enemy, _Mario->nScore);
+											}
+											break;
+											}
+											this->SetState(KOOPAS_STATE_DIE);
+											_Mario->isHolding = false;
+										}
+
+									}
+									else if (this->isKicked == true) // rùa ở trạng thái mai rùa và bị mario đá thì mới giết quái, tránh TH quật đuôi nhưng vẫn giết đc quái
+									{
+										Enemy* enemy = dynamic_cast<Enemy*>(coObjects->at(i));
+										switch (enemy->EnemyType)
+										{
+										case ENEMY_TYPE_GOOMBA:
+										{
+											if (enemy->Health == 1 && enemy->GetState() != ENEMY_STATE_DIE_IS_ATTACKED)
+											{
+												enemy->nx = this->nx;
+												enemy->SetState(ENEMY_STATE_DIE_IS_ATTACKED);
+
+												auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+												_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+												_Mario->nScore++;
+												_HUD->UpdateScore(enemy, _Mario->nScore);
+											}
+										}
+										break;
+
+										case ENEMY_TYPE_KOOPAS:
+										{
+											if (enemy->GetState() != ENEMY_STATE_DIE_IS_JUMPED)
+											{
+												if (enemy->Health == 1)
+												{
+													enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+													enemy->nx = this->nx;
+													auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+													_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+													_Mario->nScore++;
+													_HUD->UpdateScore(enemy, _Mario->nScore);
+												}
+												else
+												{
+													enemy->Health--;
+													enemy->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+													enemy->nx = this->nx;
+													auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+													_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+													_Mario->nScore++;
+													_HUD->UpdateScore(enemy, _Mario->nScore);
+												}
+											}
+
+										}
+										break;
+
+										default:
+										{
+											enemy->canDelete = true;
+											auto hit = new EffectHit(enemy->x, enemy->y, TYPE_TAIL);
+											_Grid->AddStaticObject(hit, enemy->x, enemy->y);
+											_Mario->nScore++;
+											_HUD->UpdateScore(enemy, _Mario->nScore);
+										}
+										break;
+										}
+									}
+								}
+							}
+							break;
+							}
 						}
+						
 					}
 				}
 				else
@@ -655,7 +789,8 @@ void Koopas::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				}
 				break;
 				}
-				this->SetState(ENEMY_STATE_DIE_IS_JUMPED);
+				this->SetState(KOOPAS_STATE_DIE);
+				_Mario->isHolding = false;
 			}
 
 		}

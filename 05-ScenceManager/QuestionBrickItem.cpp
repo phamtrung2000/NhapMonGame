@@ -147,6 +147,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 		}break;
+		
 		default:
 			break;
 	}

@@ -16,6 +16,8 @@
 #define MUSHROOM 1
 #define BUTTONP	2
 #define MONEYX10 3
+#define LEAF 4
+
 #define ITEMBRICK_WIDTH	16.0f
 #define ITEMBRICK_ANISET_ID	13
 

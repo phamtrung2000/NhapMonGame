@@ -13,7 +13,7 @@ void ListItemBrick::GetBoundingBox(float& left, float& top, float& right, float&
 
 void ListItemBrick::Render()
 {
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Render();
 	}
@@ -29,7 +29,7 @@ void ListItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	ItemBrick* firstbrick = Bricks.front();
 	x = firstbrick->x;
 	Width = Bricks.size() * 16;
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Update(dt,coObjects);
 	}
@@ -43,22 +43,6 @@ void ListItemBrick::DeleteBrick(int vitri)
 		brick->SetState(BRICK_STATE_COLLISION);
 		switch (brick->Item)
 		{
-			case BUTTONP:
-			{
-				BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
-				_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
-				auto effect = new EffectSmoke(brick->x, brick->y - 16);
-				_Grid->AddStaticObject(effect, brick->x, brick->y - 16);
-			}
-			break;
-
-			case MUSHROOM:
-			{
-				BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
-				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
-			}
-			break;
-
 			case NORMAL:
 			{
 				BreakItemBrick* breakbrick1 = new BreakItemBrick(RIGHT, brick->x, brick->y, 0.1f, -0.3f);
@@ -73,17 +57,41 @@ void ListItemBrick::DeleteBrick(int vitri)
 			}
 			break;
 
+			case MUSHROOM:
+			{
+				BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
+				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
+			}
+			break;
+
+			case BUTTONP:
+			{
+				BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
+				_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
+				auto effect = new EffectSmoke(brick->x, brick->y - 16);
+				_Grid->AddStaticObject(effect, brick->x, brick->y - 16);
+			}
+			break;
+
 			case MONEYX10:
 			{
 				BrickItem* brickitem = new BrickItem(MONEYX10, brick->x, brick->y - 3);
 				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
 				brick->CountMoney--;
 			}
+			break;
+
+			case LEAF:
+			{
+				BrickItem* brickitem = new BrickItem(LEAF, brick->x, brick->y - 3);
+				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
+			}
+			break;
 		}
 	}
 }
 
-int ListItemBrick::ViTriGachVaCham(float Obj_x,float width)
+int ListItemBrick::ViTriGachVaCham(float Obj_x,int width)
 {
 	if (Bricks.size() == 1)
 	{
@@ -113,8 +121,8 @@ int ListItemBrick::ViTriGachVaCham(float Obj_x,float width)
 		}
 		else
 		{
-			int vitri = (Obj_x + width - Bricks.at(0)->x) / 16;
-			int tempx = Bricks.at(vitri)->x;
+			int vitri = int(Obj_x + width - Bricks.at(0)->x) / 16;
+			float tempx = Bricks.at(vitri)->x;
 			if (Obj_x < Bricks.at(vitri)->x && tempx - Obj_x > 8)
 				vitri--;
 			return vitri;

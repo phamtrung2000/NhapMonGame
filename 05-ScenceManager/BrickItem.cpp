@@ -11,25 +11,6 @@
 #include "EffectScore.h"
 #include "ListItemBrick.h"
 
-#define BRICKITEM_ANISET_ID	14
-
-#define BRICKITEM_MUSHROOM_ANI	0
-#define MUSHROOM_GRAVITY				0.0007f
-#define MUSHROOM_SPEED_X				0.05f 
-#define MUSHROOM_SPEED_Y				0.02f 
-
-
-#define	BUTTONP_ANI_NORMAL		1
-#define	BUTTONP_ANI_PRESS		2
-
-#define	BUTTONP_BBOX_WIDTH	16
-#define BUTTONP_BBOX_HEIGHT	16	
-#define BUTTONP_PRESS_BBOX_HEIGHT	6
-
-#define BRICKITEM_MONEY_ANI		3
-#define MONEY_GRAVITY					0.0007f
-#define MONEY_SPEED_Y					0.3f
-
 
 BrickItem::BrickItem(int item, float x, float y) : Item()
 {
@@ -150,7 +131,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (coObjects->at(i)->Category == CATEGORY::OBJECT && coObjects->at(i)->ObjType == OBJECT_TYPE_LISTITEMBRICK)
 					{
 						ListItemBrick* listbrick = (ListItemBrick*)coObjects->at(i);
-						for (int i = 0; i < listbrick->Bricks.size();)
+						for (unsigned int i = 0; i < listbrick->Bricks.size();)
 						{
 							if (listbrick->Bricks.at(i)->Item == NORMAL)
 							{
@@ -175,7 +156,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							else
 							{
 								//i++;
-								int j = i;
+								unsigned int j = i;
 								ListItemBrick* listbrick1 = new ListItemBrick();
 								for (j; j < listbrick->Bricks.size(); j++)
 								{
@@ -218,6 +199,33 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			y += dy;
 
 		}break;
+
+		case LEAF:
+		{
+			x += dx;
+			y += dy;
+			if (isInit == false)
+			{
+				if (static_cast<float>(Start_Y - y) >= static_cast <float> (3.5 * OBJECT_BBOX_WIDTH_HEIGHT))
+				{
+					vy = 0;
+					SetState(BRICKITEM_STATE_MOVE_RIGHT);
+				}
+
+			}
+			else
+			{
+				vy += LEAF_GRAVITY * dt;
+				if (x - Start_X >= OBJECT_BBOX_WIDTH_HEIGHT)
+				{
+					SetState(BRICKITEM_STATE_MOVE_LEFT);
+				}
+				else if (x - Start_X <= 0)
+				{
+					SetState(BRICKITEM_STATE_MOVE_RIGHT);
+				}
+			}
+		}break;
 	}
 }
 
@@ -241,6 +249,15 @@ void BrickItem::Render()
 		case BRICKITEM_MONEY:
 			ani = BRICKITEM_MONEY_ANI;
 			break;
+
+		case LEAF:
+		{
+			ani = LEAF_ANI_RIGHT;
+			if (GetState() == BRICKITEM_STATE_MOVE_LEFT)
+				ani = LEAF_ANI_LEFT;
+			else if (GetState() == BRICKITEM_STATE_MOVE_RIGHT)
+				ani = LEAF_ANI_RIGHT;
+		}break;
 	}
 
 	animation_set->at(ani)->Render(x, y);
@@ -258,7 +275,6 @@ void BrickItem::SetState(int state)
 	{
 		switch (Item)
 		{
-		
 			case MUSHROOM:
 				vy = -MUSHROOM_SPEED_Y;
 				break;
@@ -269,6 +285,10 @@ void BrickItem::SetState(int state)
 
 			case BRICKITEM_MONEY:
 				vy = -MONEY_SPEED_Y;
+				break;
+
+			case LEAF:
+				vy = -LEAF_SPEED_Y;
 				break;
 		}
 
@@ -283,6 +303,10 @@ void BrickItem::SetState(int state)
 			nx = 1;
 			vx = MUSHROOM_SPEED_X;
 		}
+		else if (Item == LEAF)
+		{
+			vx = LEAF_SPEED_X;
+		}
 	}
 	break;
 
@@ -293,7 +317,10 @@ void BrickItem::SetState(int state)
 		{
 			nx = -1;
 			vx = -MUSHROOM_SPEED_X;
-
+		}
+		else if (Item == LEAF)
+		{
+			vx = -LEAF_SPEED_X;
 		}
 		
 	}
@@ -303,16 +330,15 @@ void BrickItem::SetState(int state)
 	{
 		switch (Item)
 		{
-		case BUTTONP:
-		{
-			if (isPressed == false)
+			case BUTTONP:
 			{
-				isPressed = true;
-				y = y + (BUTTONP_BBOX_HEIGHT - BUTTONP_PRESS_BBOX_HEIGHT);
+				if (isPressed == false)
+				{
+					isPressed = true;
+					y = y + (BUTTONP_BBOX_HEIGHT - BUTTONP_PRESS_BBOX_HEIGHT);
+				}
 			}
 		}
-		}
-
 	}
 	break;
 	}
@@ -325,11 +351,6 @@ void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bot
 	right = x + OBJECT_BBOX_WIDTH_HEIGHT;
 	switch (Item)
 	{
-		case MUSHROOM:
-		{
-			bottom = y + OBJECT_BBOX_WIDTH_HEIGHT;
-		}break;
-
 		case BUTTONP:
 		{
 			if (isPressed == false)
@@ -341,7 +362,11 @@ void BrickItem::GetBoundingBox(float& left, float& top, float& right, float& bot
 				bottom = y + BUTTONP_PRESS_BBOX_HEIGHT;
 			}
 		}break;
+
+		default:
+		{
+			bottom = y + OBJECT_BBOX_WIDTH_HEIGHT;
+		}break;
 	}
-	
 }
 

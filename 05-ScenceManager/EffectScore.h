@@ -28,7 +28,7 @@ public:
 		this->SetAnimationSet(ani_set);
 		this->x = x;
 		this->y = y;
-		Category = EFFECT;
+		Category = CATEGORY::EFFECT;
 		AppearTime = GetTickCount64();
 		vy = -EFFECTSCORE_SPEED_Y;
 		score = Score;

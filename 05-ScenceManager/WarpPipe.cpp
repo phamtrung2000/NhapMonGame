@@ -17,8 +17,8 @@
 
 WarpPipe::WarpPipe(int W, int H, int color,int scene)
 {
-	Width = (float)W;
-	Height = (float)H;
+	Width = W;
+	Height = H;
 	ObjType = OBJECT_TYPE_WARPPIPE;
 	Category = CATEGORY::OBJECT;
 	Color = color;

@@ -143,6 +143,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FireBullet.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
+    <ClCompile Include="FlyGoomba.cpp" />
     <ClCompile Include="FlyWood.cpp" />
     <ClCompile Include="Gate.cpp" />
     <ClCompile Include="GreenFirePlant.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="GreenKoopas.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="HiddenMusicBrick.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -160,11 +162,13 @@
     <ClCompile Include="ListNormalBrick.cpp" />
     <ClCompile Include="ListQuestionBrick.cpp" />
     <ClCompile Include="MarioTail.cpp" />
+    <ClCompile Include="MusicBrick.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="GreenPlant.cpp" />
     <ClCompile Include="MarioOverWorld.cpp" />
     <ClCompile Include="MenuOption.cpp" />
+    <ClCompile Include="PlayScence.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="QuestionBrickItem.cpp" />
@@ -176,7 +180,6 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
-    <ClCompile Include="PlayScence.cpp" />
     <ClCompile Include="Scence.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
@@ -204,6 +207,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBullet.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
+    <ClInclude Include="FlyGoomba.h" />
     <ClInclude Include="FlyWood.h" />
     <ClInclude Include="Gate.h" />
     <ClInclude Include="GreenFirePlant.h" />
@@ -211,6 +215,7 @@
     <ClInclude Include="GreenKoopas.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="HiddenMusicBrick.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="IntroScene.h" />
     <ClInclude Include="Item.h" />
@@ -221,6 +226,7 @@
     <ClInclude Include="ListNormalBrick.h" />
     <ClInclude Include="ListQuestionBrick.h" />
     <ClInclude Include="MarioTail.h" />
+    <ClInclude Include="MusicBrick.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="GreenPlant.h" />
@@ -261,6 +267,7 @@
     <Text Include="textures\World\World1\Scene1.1.txt" />
     <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />
     <Text Include="textures\World\World1\Scene1.4Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />

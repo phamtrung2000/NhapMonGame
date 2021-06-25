@@ -1,6 +1,6 @@
 #pragma once
-
 #include "GameObject.h"
+
 #define EFFECTSMOKE_APPEARTIME 250
 #define EFFECT_SMOKE_ANI_SET_ID 1100
 
@@ -17,7 +17,7 @@ public:
 		this->SetAnimationSet(ani_set);
 		this->x = x;
 		this->y = y;
-		Category = EFFECT;
+		Category = CATEGORY::EFFECT;
 		AppearTime = GetTickCount64();
 		AmountTimeAppear = EFFECTSMOKE_APPEARTIME;
 	}

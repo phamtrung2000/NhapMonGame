@@ -14,9 +14,9 @@ Camera* Camera::GetInstance()
 
 Camera::Camera()
 {
-	maxBottomCam = maxLeftCam = maxRightCam = maxTopCam
-		= ShakeTime = typeMove = 0;
+	maxBottomCam = maxLeftCam = maxRightCam = maxTopCam =
 	cam_x = cam_y = 0.0f;
+	ShakeTime = typeMove = 0;
 	this->width = SCREEN_WIDTH;
 	this->height = SCREEN_HEIGHT;
 	Shake = test = false;

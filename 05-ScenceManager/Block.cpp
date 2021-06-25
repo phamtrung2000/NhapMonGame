@@ -3,14 +3,14 @@
 
 void Block::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 Block::Block(int W, int H)
 {
 	ObjType = OBJECT_TYPE_BLOCK;
-	Width = (float) W;
-	Height = (float)H;
+	Width =  W;
+	Height = H;
 	Category = CATEGORY::OBJECT;
 }
 

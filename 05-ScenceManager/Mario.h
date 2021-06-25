@@ -223,7 +223,7 @@
 #define TIME_FLY_X 200
 #define TIME_FLY_S 200
 #define TIME_FLY_PER_S 30
-#define MARIO_UNTOUCHABLE_TIME 5000
+#define MARIO_UNTOUCHABLE_TIME 3000
 #define TIME_LEVEL_UP 3000
 #define ITIME_LEVEL_UP 100//180
 #define LEVEL_UP_DIVIDE	15
@@ -319,7 +319,7 @@ public:
 	void Debug();
 	void Unload();
 	void CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
-	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+	void CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny, float rdx, float rdy);
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	float GetWidth(int level);

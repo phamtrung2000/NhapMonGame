@@ -8,8 +8,8 @@ CPortal::CPortal(float l, float t, float r, float b, int scene_id )
 	this->scene_id = scene_id;
 	x = l; 
 	y = t;
-	Width = r;
-	Height = b;
+	Width = (int)r;
+	Height = (int)b;
 	Category = CATEGORY::OBJECT;
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();

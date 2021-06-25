@@ -172,9 +172,6 @@ void Map::DrawMap()
 			RECT r;
 
 			r.left = Id % TileCollum * TileWidth;
-			/*if (Id % TileCollum == 0)
-				r.top = (Id / TileCollum)* TileWidth;
-			else*/
 			r.top = (Id / TileCollum) * TileWidth;
 			r.right = r.left + TileWidth;
 			r.bottom = r.top + TileWidth;

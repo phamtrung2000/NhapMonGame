@@ -24,7 +24,7 @@
 
 using namespace std;
 
-#define DIRECTINPUT_VERSION 0x0800
+//#define DIRECTINPUT_VERSION 0x0800
 
 #define OpeningSceneText "OpeningScene.txt"
 #define OpeningSceneID	0

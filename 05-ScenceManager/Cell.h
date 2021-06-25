@@ -3,7 +3,7 @@
 #include <unordered_set>
 class Cell
 {
-	RECT boundingBox;
+	RECT boundingBox{};
 public:
 	int posX, posY;
 	unordered_set<LPGAMEOBJECT> movingObjects;

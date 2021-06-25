@@ -4,8 +4,9 @@ start	0
 [SCENES]
 0	.\textures\Opening\IntroScene.txt
 1	.\textures\Overworld\World1Scene.txt
+#10	.\textures\World\World1\Scene1.1.txt
+10	.\textures\World\World1\Scene1.3\Scene1.3.txt
 #10	.\textures\World\World1\Scene1.4.txt
-10	.\textures\World\World1\Scene1.1.txt
 #10	.\textures\World\World1\Scene1.1 - Copy.txt
 11	.\textures\World\World1\Scene1.1Hidden.txt
 12	.\textures\World\World1\Scene1.4.txt

@@ -1,6 +1,7 @@
 ﻿#include "RedGoomba.h"
 #include "Camera.h"
 #include "Mario.h"
+#include "ListNormalBrick.h"
 
 
 RedGoomba::RedGoomba() : Goomba()
@@ -335,11 +336,13 @@ void RedGoomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_
 				}
 				if (ny != 0) vy = 0;
 			}
-			else
+			else if (e->obj->ObjType == OBJECT_TYPE_LISTNORMALBRICK)
 			{
+				if (ny != 0) vy = 0;
+				ListNormalBrick* brick = dynamic_cast<ListNormalBrick*>(e->obj);
 				if (e->nx != 0)
 				{
-					int state = GetState();
+					y += min_ty * dy + ny * 0.2f;
 					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
 						SetState(ENEMY_STATE_WALKING_LEFT);
 					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
@@ -353,11 +356,34 @@ void RedGoomba::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_
 					else if (GetState() == ENEMY_STATE_JUMPING_LOW_LEFT)
 						SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
 				}
-				else
+				else if (e->ny < 0)
 				{
 					x += min_tx * dx + nx * 0.4f;
 				}
+			}
+			else
+			{
 				if (ny != 0) vy = 0;
+				if (e->nx != 0)
+				{
+					y += min_ty * dy + ny * 0.1f - 0.4f;
+					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
+					else if (GetState() == ENEMY_STATE_JUMPING_HIGH_RIGHT)
+						SetState(ENEMY_STATE_JUMPING_HIGH_LEFT);
+					else if (GetState() == ENEMY_STATE_JUMPING_HIGH_LEFT)
+						SetState(ENEMY_STATE_JUMPING_HIGH_RIGHT);
+					else if (GetState() == ENEMY_STATE_JUMPING_LOW_RIGHT)
+						SetState(ENEMY_STATE_JUMPING_LOW_LEFT);
+					else if (GetState() == ENEMY_STATE_JUMPING_LOW_LEFT)
+						SetState(ENEMY_STATE_JUMPING_LOW_RIGHT);
+				}
+				else if (e->ny < 0)
+				{
+					x += min_tx * dx + nx * 0.4f;
+				}
 			}
 		}
 	}

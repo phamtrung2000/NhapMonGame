@@ -131,30 +131,7 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Ground*>(e->obj))
-			{
-				/*if (nx != 0) vx = 0;
-				if (ny != 0) vy = 0;*/
-				Ground* ground = dynamic_cast<Ground*>(e->obj);
-				if (this->Scene >= ground->BehindGate)
-				{
-					x += dx;
-					y += dy;
-					//ground->BehindGate++;
-				}
-				else
-				{
-					if (e->ny < 0)
-					{
-						x += min_tx * dx + nx * 0.4f;
-
-					}
-					else
-						y += min_ty * dy + ny * 0.4f;
-				}
-				
-			}
-			else if (dynamic_cast<Gate*>(e->obj))
+			if (dynamic_cast<Gate*>(e->obj))
 			{
 				Gate* gate = dynamic_cast<Gate*>(e->obj);
 				SetState(MARIO_OVERWORLD_STATE_IN_GATE);

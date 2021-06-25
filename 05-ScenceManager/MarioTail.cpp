@@ -757,7 +757,23 @@ void MarioTail::Render()
 			}
 		}
 	}
-	animation_set->at(ani)->Render(x, y, 255);
+
+	if (_Mario->isLevelDown == true)
+	{
+		if (_Mario->untouchable == true)
+		{
+			if (_Mario->UntouchtableTime % 3 == 0)
+				animation_set->at(ani)->Render(x, y, 32);
+			else
+				animation_set->at(ani)->Render(x, y, 255);
+		}
+		else
+			animation_set->at(ani)->Render(x, y, 128);
+	}
+	else
+	{
+		animation_set->at(ani)->Render(x, y, 255);
+	}
 }
 
 void MarioTail::GetBoundingBox(float& left, float& top, float& right, float& bottom)

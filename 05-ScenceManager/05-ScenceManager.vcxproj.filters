@@ -128,9 +128,6 @@
     <ClCompile Include="Map.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="PlayScence.cpp">
-      <Filter>PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="QuestionBrickItem.cpp">
       <Filter>PlayScene\Item</Filter>
     </ClCompile>
@@ -259,6 +256,18 @@
     </ClCompile>
     <ClCompile Include="RedGoomba.cpp">
       <Filter>PlayScene\Enemy\Goomba</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HiddenMusicBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FlyGoomba.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,6 +448,15 @@
     <ClInclude Include="ListNormalBrick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MusicBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HiddenMusicBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyGoomba.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="textures\map1.txt">
@@ -491,5 +509,6 @@
     <Text Include="textures\World\World1\SceneHidden1.4.txt" />
     <Text Include="textures\World\World1\SceneHidden1.4Map.txt" />
     <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
   </ItemGroup>
 </Project>

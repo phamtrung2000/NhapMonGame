@@ -61,6 +61,6 @@ public:
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	void DeleteBrick(int vitri);
-	int ViTriGachVaCham(float x, float width);
+	int ViTriGachVaCham(float x, int width);
 };
 

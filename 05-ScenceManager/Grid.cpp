@@ -38,10 +38,10 @@ void Grid::Init()
 void Grid::AddMovingObject(LPGAMEOBJECT obj, float x, float y)
 {
 	RECT e;
-	e.top = y;
-	e.left = x;
-	e.right = x + obj->Width;
-	e.bottom = y + obj->Height;
+	e.top = (LONG)y;
+	e.left = (LONG)x;
+	e.right = (LONG)(x + obj->Width);
+	e.bottom = (LONG)(y + obj->Height);
 	obj->GetRect();
 	auto area = GetCell(e);
 	LOOP(r, area.TopCell, area.BottomCell)
@@ -59,10 +59,10 @@ void Grid::AddMovingObject(LPGAMEOBJECT obj, float x, float y)
 void Grid::AddStaticObject(LPGAMEOBJECT obj, float x, float y)
 {
 	RECT e;
-	e.top = y;
-	e.left = x;
-	e.right = x + obj->Width;
-	e.bottom = y + obj->Height;
+	e.top = (LONG)y;
+	e.left = (LONG)x;
+	e.right = (LONG)(x + obj->Width);
+	e.bottom = (LONG)(y + obj->Height);
 	auto area = GetCell(e);
 	LOOP(r, area.TopCell, area.BottomCell) 
 	{
@@ -92,8 +92,8 @@ void Grid::RenderCell()
 				Cells[r][c]->posY * SizeCell,
 				Cells[r][c]->posX * SizeCell + SizeCell,
 				Cells[r][c]->posY * SizeCell + SizeCell);
-			CGame::GetInstance()->Draw(rect.left, rect.top, bbox, rect.left, rect.top, rect.left + SizeCell, rect.top + 1, 255);
-			CGame::GetInstance()->Draw(rect.left, rect.top, bbox, rect.left, rect.top, rect.left + 1, rect.top + SizeCell, 255);
+			CGame::GetInstance()->Draw((float)rect.left, (float)rect.top, bbox, rect.left, rect.top, rect.left + SizeCell, rect.top + 1, 255);
+			CGame::GetInstance()->Draw((float)rect.left, (float)rect.top, bbox, rect.left, rect.top, rect.left + 1, rect.top + SizeCell, 255);
 
 		}
 	}
@@ -148,10 +148,10 @@ void Grid::UpdateCellInViewPort()
 		RemoveObjectIf(Cells[r][c]->movingObjects, [&](auto& obj)
 			{
 				RECT e;
-				e.left = obj->x;
-				e.top = obj->y;
-				e.right = obj->x + obj->Width;
-				e.bottom = obj->y + obj->Height;
+				e.left = (LONG)obj->x;
+				e.top = (LONG)obj->y;
+				e.right = (LONG)(obj->x + obj->Width);
+				e.bottom = (LONG)(obj->y + obj->Height);
 				auto objArea = GetCell(e);
 				if (obj->canDelete == true)
 					isDeadObject = true;
@@ -174,10 +174,10 @@ void Grid::UpdateCellInViewPort()
 		RemoveObjectIf(Cells[r][c]->staticObjects, [&](auto& obj)
 			{
 				RECT e;
-				e.left = obj->x;
-				e.top = obj->y;
-				e.right = obj->x + obj->Width;
-				e.bottom = obj->y + obj->Height;
+				e.left = (LONG)obj->x;
+				e.top = (LONG)obj->y;
+				e.right = (LONG)(obj->x + obj->Width);
+				e.bottom = (LONG)(obj->y + obj->Height);
 				auto objArea = GetCell(e);
 				if (obj->canDelete && obj->ObjType != 7)
 				{
@@ -190,10 +190,10 @@ void Grid::UpdateCellInViewPort()
 	for (auto& obj : shouldBeUpdatedObjects)
 	{
 		RECT e;
-		e.left = obj->x;
-		e.top = obj->y;
-		e.right = obj->x + obj->Width;
-		e.bottom = obj->y + obj->Height;
+		e.left = (LONG)obj->x;
+		e.top = (LONG)obj->y;
+		e.right = (LONG)(obj->x + obj->Width);
+		e.bottom = (LONG)(obj->y + obj->Height);
 		auto objArea = GetCell(e);
 		LOOP(r, objArea.TopCell, objArea.BottomCell)
 			LOOP(c, objArea.LeftCell, objArea.RightCell)

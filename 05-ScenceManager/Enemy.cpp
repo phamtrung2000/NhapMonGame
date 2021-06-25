@@ -79,6 +79,15 @@ void Enemy::SetState(int state)
 }
 
 
+void Enemy::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+{
+	x += dx;
+	if (OnGroud == true)
+		this->y += min_ty * dy + ny * 0.2f;
+	else
+		y += dy;
+}
+
 void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
 	if (e->obj != NULL)
@@ -92,6 +101,7 @@ void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			
 		if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 		{
+			if (ny != 0) vy = 0;
 			if (e->nx != 0)
 			{
 				x += dx;
@@ -100,7 +110,10 @@ void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			{
 				x += min_tx * dx + nx * 0.4f;
 			}
-			if (ny != 0) vy = 0;
+			else if (e->ny > 0)
+			{
+				y += dy;
+			}
 		}
 		else
 		{
@@ -128,7 +141,8 @@ void Enemy::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 	if (e->ny < 0)
 		y += dy;
 	else
-		this->y += min_ty * dy + ny * 0.1f - 0.5f;
+		this->y += min_ty * dy + ny * 0.2f;
+	if (ny != 0) vy = 0;
 }
 
 void Enemy::CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)

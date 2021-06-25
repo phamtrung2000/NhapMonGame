@@ -34,6 +34,7 @@
 #include "EffectSmoke.h"
 #include "FlyWood.h"
 #include "ListNormalBrick.h"
+#include "HiddenMusicBrick.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -68,7 +69,8 @@ Mario::Mario(float x, float y) : CGameObject()
 	TimeJumpS = 0;
 	ani = 0;
 	NumberBullet = 2;
-	untouchable_start = ChangeLevelTime = UntouchtableTime = StartToDie = 0;
+	untouchable_start = ChangeLevelTime = StartToDie = 0;
+	UntouchtableTime = 0;
 	MaxY = RightOld = 0.0f;
 	
 }
@@ -401,7 +403,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (OnGround == false && isMaxRunning == true)
 				{
-					vy += 0.0004 * dt;
+					vy += 0.0004f * dt;
 				}
 				else
 					vy += MARIO_GRAVITY * dt;
@@ -1212,7 +1214,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}
 						else
-							CollisionWithObject(e, min_tx, min_ty, nx, ny);
+							CollisionWithObject(e, min_tx, min_ty, nx, ny, rdx, rdy);
 						break;
 					case CATEGORY::ENEMY:
 						CollisionWithEnemy(e, min_tx, min_ty, nx, ny);
@@ -1256,7 +1258,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	
 	}
-	Debug();
+	//Debug();
 }
 
 void Mario::Render()
@@ -2439,7 +2441,6 @@ void Mario::Render()
 				animation_set->at(ani)->Render(x, y, 255);
 		}
 	}
-	DebugOut(L"ani = %i\n", ani);
 }
 
 void Mario::SetState(int state)
@@ -2743,18 +2744,8 @@ void Mario::Debug()
 	case MARIO_STATE_ENDSCENE:
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
 	}
-	
-	if (isFalling == true)
-		DebugOut(L"isFalling == true\t");
-	else
-		DebugOut(L"isFalling == false\t");
-	if (OnGround == true)
-		DebugOut(L"OnGround == true\t");
-	else
-		DebugOut(L"OnGround == false\t");
 
-	DebugOut(L"\nMario vy = %f\n", vy);
-	//DebugOut(L"ani = %i", ani);
+	DebugOut(L"\nMario vy = %f, level_of_walking = %i\n", vy, level_of_walking);
 	DebugOut(L"\n");
 	
 }
@@ -3302,19 +3293,20 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 	}
 }
 
-void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
+void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny, float rdx, float rdy)
 {
 	this->nScore = 0;
 
 	if (e->obj->ObjType == OBJECT_TYPE_BLOCK)
 	{
-		if (ny != 0) vy = 0;
 		if (e->nx != 0)
 		{
+			if (ny != 0) vy = 0;
 			x += dx;
 		}
 		else if (e->ny < 0)
 		{
+			if (ny != 0) vy = 0;
 			if (OnGround == false)
 				y += min_ty * dy + ny * 0.1f - 0.3f;
 			OnGround = true; // xử lý chạm đất
@@ -3323,8 +3315,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		}
 		else if (e->ny > 0)
 		{
-			if (isFlyingHigh == true)
-				y += dy;
+			y += dy;
 		}
 	}
 	// đi theo kiểu lên đồi ???????? -> y -= dx nx ....
@@ -3636,10 +3627,10 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					}
 					else
 					{
-						int vitri = (r - listbrick->Bricks.at(0)->x) / 16;
+						int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
 						//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
 						//	vitri--;
-						int tempx = listbrick->Bricks.at(vitri)->x;
+						float tempx = listbrick->Bricks.at(vitri)->x;
 						if (l < tempx && INT16(tempx - l) > 8)
 							vitri--;
 						if (listbrick->Bricks.at(vitri)->Item == NORMAL)
@@ -3672,7 +3663,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			}
 			else if (e->nx != 0)
 			{
-				y += min_ty * dy + ny * 0.2f;
+				y += min_ty * dy + ny * 0.4f;
+
 			}
 		}
 		else if (e->obj->ObjType == OBJECT_TYPE_LISTQUESTIONBRICK)
@@ -3724,10 +3716,10 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					}
 					else
 					{
-						int vitri = (r - listbrick->Bricks.at(0)->x) / 16;
+						int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
 						//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
 						//	vitri--;
-						int tempx = listbrick->Bricks.at(vitri)->x;
+						float tempx = listbrick->Bricks.at(vitri)->x;
 						if (l < listbrick->Bricks.at(vitri)->x && tempx - l > 8)
 							vitri--;
 						listbrick->DeleteBrick(vitri);
@@ -3785,6 +3777,83 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
 
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+			}
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_MUSICBRICK)
+		{
+			if (ny != 0) vy = 0;
+			MusicBrick* brick = dynamic_cast<MusicBrick*>(e->obj);
+		
+			if (e->nx != 0)
+			{
+				if (nx != 0) vx = 0;
+				if (ny != 0)vy = 0;
+				y += min_ty * dy + ny * 0.1f - 0.4f;
+			}
+			else if (e->ny < 0) // tren xuong duoi
+			{
+				if(brick->GetState() != MUSICBRICK_STATE_COLLISION)
+					brick->SetState(MUSICBRICK_STATE_COLLISION);
+			}
+			else if (e->ny > 0) // duoi len tren
+			{
+				if (ny != 0)vy = 0;
+				isFalling = true;
+			}
+		}
+		else if (e->obj->ObjType == OBJECT_TYPE_HIDDENMUSICBRICK)
+		{
+			HiddenMusicBrick* brick = dynamic_cast<HiddenMusicBrick*>(e->obj);
+			if (brick->isHidden == true)
+			{
+				if (e->ny > 0) // duoi len tren
+				{
+					if (ny != 0)vy = 0;
+					isFalling = true;
+					brick->SetState(MUSICBRICK_STATE_APPEAR);
+				}
+				else
+				{
+					x += dx;
+					y += dy;
+				}
+			}
+			else
+			{
+				if (e->nx != 0)
+				{
+					if (ny != 0) vy = 0;
+					y += min_ty * dy + ny * 0.1f - 0.4f;
+					if (e->nx < 0) // trai -> phai
+					{
+						brick->direction = 0;
+					}
+					else // phai -> trai
+					{
+						brick->direction = 2;
+					}
+
+					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+					{
+						brick->SetState(MUSICBRICK_STATE_COLLISION);
+						vx = -vx * 2 / 3;
+					}
+				}
+				else if (e->ny < 0) // tren xuong duoi
+				{
+					if (ny != 0) vy = 0;
+					brick->direction = 1;
+					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+						brick->SetState(MUSICBRICK_STATE_COLLISION);
+				}
+				else if (e->ny > 0) // duoi len tren
+				{
+					if (ny != 0)vy = 0;
+					isFalling = true;
+					brick->direction = 3;
+					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+						brick->SetState(MUSICBRICK_STATE_COLLISION);
+				}
 			}
 		}
 	}
@@ -3937,4 +4006,5 @@ float Mario::GetWidth(int level)
 			return MARIO_TAIL_BBOX_WIDTH;
 		}break;
 	}
+	return 0.0f;
 }

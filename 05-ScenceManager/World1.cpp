@@ -185,15 +185,7 @@ void World1::_ParseSection_OBJECTS(string line)
 	{
 		width = (int)atof(tokens[4].c_str());
 		height = (int)atof(tokens[5].c_str());
-		if (tokens.size() <= 6)
-		{
-			obj = new Ground(width, height);
-		}
-		else
-		{
-			int BehindGate = (int) atof(tokens[6].c_str());
-			obj = new Ground(width, height, BehindGate);
-		}
+		obj = new Ground(width, height);
 		
 	}break;
 	case OBJECT_TYPE_GATE: 
@@ -387,7 +379,7 @@ void World1::Render()
 {
 	// Background đen phía sau
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
-	_Game->Draw((int)(MapWidth - _Game->GetScreenWidth()) / 2, (int)(MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
+	_Game->Draw((float)(MapWidth - _Game->GetScreenWidth()) / 2, (float)(MapHeight - _Game->GetScreenHeight()), bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 255); // chuẩn
 	_Map->DrawMap();
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{

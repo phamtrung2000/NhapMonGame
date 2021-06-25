@@ -32,7 +32,7 @@ void ListNormalBrick::GetBoundingBox(float& left, float& top, float& right, floa
 
 void ListNormalBrick::Render()
 {
-	for (int i = 0; i < Bricks.size(); i++)
+	for (unsigned int i = 0; i < Bricks.size(); i++)
 	{
 		Bricks.at(i)->Render();
 	}

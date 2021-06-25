@@ -25,7 +25,7 @@ public:
 	float Mario_X;
 	float Mario_Y;
 
-	float WarpPipeHeight, WarpPipeWidth;
+	int WarpPipeHeight, WarpPipeWidth;
 
 	bool Stop, isBlocked;
 public:

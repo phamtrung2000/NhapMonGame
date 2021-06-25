@@ -140,13 +140,6 @@ void Goomba::SetState(int state)
 	}
 }
 
-void Goomba::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
-{
-	x += dx;
-	this->y += min_ty * dy + ny * 0.1f - 0.5f;
-}
-
-
 void Goomba::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
 	Enemy::CollisionWithItem(e, min_tx, min_ty, nx, ny);

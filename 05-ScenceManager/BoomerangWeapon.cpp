@@ -11,11 +11,9 @@ BoomerangWeapon::BoomerangWeapon(int nx, float x, float y) : Weapon()
 {
 	isMarioWeapon = false;
 	ObjType = OBJECT_TYPE_BOOMERANG;
-	Width = Height = 16.0f;
+	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
 	SetPosition(x, y);
 	isMarioWeapon = false;
-	//vy = -BOOMERANG_SPEED_Y;
-	//SetSpeed(BOOMERANG_SPEED_X * nx, -0.01);
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(BOOMERANG_ANI_SET_ID);
 	this->SetAnimationSet(ani_set);

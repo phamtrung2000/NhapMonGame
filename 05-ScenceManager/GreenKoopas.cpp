@@ -12,6 +12,7 @@
 #include "QuestionBrickItem.h"
 #include "ListItemBrick.h"
 #include "ListQuestionBrick.h"
+#include "ListNormalBrick.h"
 GreenKoopas::GreenKoopas() : Koopas()
 {
 	ObjType = OBJECT_TYPE_GREENKOOPAS;
@@ -356,6 +357,35 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 				}
 			}
 		}
+		else if (e->obj->ObjType == OBJECT_TYPE_LISTNORMALBRICK)
+		{
+			if (ny != 0) vy = 0;
+			ListNormalBrick* brick = dynamic_cast<ListNormalBrick*>(e->obj);
+
+			if (e->nx != 0)
+			{
+				y += min_ty * dy + ny * 0.1f - 0.4f;
+				if (isShell == false && isShell_2 == false)
+				{
+					if (GetState() == ENEMY_STATE_WALKING_RIGHT)
+						SetState(ENEMY_STATE_WALKING_LEFT);
+					else if (GetState() == ENEMY_STATE_WALKING_LEFT)
+						SetState(ENEMY_STATE_WALKING_RIGHT);
+				}
+				else
+				{
+					if (GetState() == KOOPAS_STATE_SHELL_WALKING_RIGHT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+					else if (GetState() == KOOPAS_STATE_SHELL_WALKING_LEFT)
+						SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+				}
+			}
+			else if (e->ny < 0)
+			{
+				x += min_tx * dx + nx * 0.4f;
+			}
+		}
+
 	}
 }
 

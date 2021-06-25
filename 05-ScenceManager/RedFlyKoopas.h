@@ -2,9 +2,7 @@
 #include "Koopas.h"
 
 #define KOOPAS_WALKING_SPEED				0.05f
-#define KOOPAS_SHELL_SPEED					0.15f
 #define	KOOPAS_GRAVITY						0.0007f
-#define KOOPAS_SHELL_GRAVITY				0.002f
 #define KOOPAS_SHELL_2_GRAVITY				0.0003f
 #define KOOPAS_BBOX_WIDTH					16
 #define KOOPAS_BBOX_HEIGHT					24

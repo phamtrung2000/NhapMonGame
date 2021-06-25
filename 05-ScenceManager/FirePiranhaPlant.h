@@ -44,7 +44,7 @@ public:
 	float VyBullet;
 	int NumberBullet;
 	bool canAttack,isAttacking;
-	float WarpPipeHeight;
+	int WarpPipeHeight;
 	bool Stop;
 public:
 	FirePiranhaPlant();
