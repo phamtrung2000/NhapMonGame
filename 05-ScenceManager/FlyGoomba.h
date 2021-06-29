@@ -29,6 +29,10 @@ public:
 	bool StopFlying;
 	bool Up, Down;
 	ULONGLONG DelayUpdatePosition; // thời gian đi bộ : đi bộ 1 lúc r mới nhảy
+
+	int NumberSmallGoomba; // số lượng 
+	int TotalNumberSmallGoomba; // tổng số lượng nấm nhỏ có thể thả : 6
+
 	FlyGoomba();
 	~FlyGoomba() {};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

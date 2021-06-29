@@ -258,7 +258,6 @@ public:
 		isSitDown, // đang ngồi
 		GoHiddenWorld; // đi vào map ẩn để hiện ani xuống cống
 	
-	
 	bool isAttacking, // đang ở state attack
 		endAttack; // thực hiện xong động tác quật đuôi thì mới cho phép quật đuôi tiếp
 	int time_attack; // biến đếm thời gian thực hiện động tác quật đuôi để hiện ani tương ứng
@@ -266,11 +265,9 @@ public:
 	ULONGLONG TimeUseFireBullet, // thời điểm dùng đạn lửa
 		TimeDelayUseFireBullet; // khoảng thời gian chờ khi ném đạn lửa
 	
-	
 	int ani;
 	bool isHolding = false, pressA = false, canKick = false;
 	int Height,Width;
-
 
 	bool render_tail; // Đã vẽ đuôi hay chưa để thoát vòng lặp vẽ đuôi bên playscene
 	// BAY (FLY)
@@ -302,10 +299,11 @@ public:
 
 	bool isBlocked; // kiểm tra mario có đang bị chăn bởi object để tăng level of walking
 	float RightOld; // lưu lại giá trị right trước khi up level để sau khi up level right k bị tăng lên dẫn đến lỗi đi xuyên vật thể
-public: 
+
+	int NumberSmallGoomba; // số lượng nấm nhỏ bu lên người
+
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();
-
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	virtual void Render();
 	void SetState(int state);

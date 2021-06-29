@@ -83,7 +83,7 @@ void Enemy::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 {
 	x += dx;
 	if (OnGroud == true)
-		this->y += min_ty * dy + ny * 0.2f;
+		this->y = int(this->y) + min_ty * dy + ny * 0.2f;
 	else
 		y += dy;
 }
@@ -119,7 +119,6 @@ void Enemy::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 		{
 			if (e->nx != 0)
 			{
-
 				if (GetState() == ENEMY_STATE_WALKING_RIGHT)
 					SetState(ENEMY_STATE_WALKING_LEFT);
 				else if (GetState() == ENEMY_STATE_WALKING_LEFT)

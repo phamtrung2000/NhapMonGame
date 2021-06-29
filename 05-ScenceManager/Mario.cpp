@@ -35,6 +35,7 @@
 #include "FlyWood.h"
 #include "ListNormalBrick.h"
 #include "HiddenMusicBrick.h"
+#include "SmallGoomba.h"
 
 Mario* Mario::__instance = NULL;
 
@@ -70,7 +71,7 @@ Mario::Mario(float x, float y) : CGameObject()
 	ani = 0;
 	NumberBullet = 2;
 	untouchable_start = ChangeLevelTime = StartToDie = 0;
-	UntouchtableTime = 0;
+	NumberSmallGoomba = UntouchtableTime = 0;
 	MaxY = RightOld = 0.0f;
 	
 }
@@ -342,6 +343,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				vy += MARIO_GRAVITY * dt;
 				y += dy;
+			}
+			if (y > _Map->GetHeight())
+			{
+				CGame::GetInstance()->SwitchScene2(1);
+				_HUD->MarioLife--;
+				_PlayScene->Stop = false;
 			}
 			return;
 		}
@@ -1113,6 +1120,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 										DownLevel();
 									isHolding = false;
 								}
+							}
+							else if (enemy->ObjType == OBJECT_TYPE_SMALLGOOMBA)
+							{
+								SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
+								NumberSmallGoomba++;
+								if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+									goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
 							}
 						}
 					}
@@ -2757,7 +2771,6 @@ void Mario::Unload()
 
 void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny)
 {
-	DebugOut(L"Mario va cham\n", vx, vy, ani);
 	Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 	if (enemy != NULL && enemy->isDie == false && this->state != MARIO_STATE_DIE)
 	{
@@ -2946,249 +2959,56 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 			{
 				case ENEMY_TYPE_GOOMBA: case ENEMY_TYPE_PLANT:
 				{
-					if (untouchable == false)
-						DownLevel();
-				}
-				break;
-
-			//case ENEMY_TYPE_KOOPAS:
-			//{
-			//	Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-			//	if (koopas->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
-			//	{
-			//		if (koopas->isHold == false)
-			//		{
-			//			if (koopas->isShell == true || koopas->isShell_2 == true)
-			//			{
-			//				if (koopas->OnGroud == false)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					if (this->nx == RIGHT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-			//					else if (this->nx == LEFT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-			//					koopas->vy -= 0.05f;
-			//				}
-			//				else
-			//				{
-			//					if (untouchable == false)
-			//						DownLevel();
-			//				}
-			//			}
-			//			else
-			//			{
-			//				if (untouchable == false)
-			//					DownLevel();
-			//			}
-			//			/*if (koopas->Health == 1)
-			//			{
-			//				if (koopas->OnGroud == true)
-			//				{
-			//					if (untouchable == false)
-			//						DownLevel();
-			//				}
-			//				else
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					if (this->nx == RIGHT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-			//					else if (this->nx == LEFT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-			//					koopas->vy -= 0.05f;
-			//				}
-			//			}
-			//			else
-			//			{
-			//				if (untouchable == false)
-			//					DownLevel();
-			//			}*/
-			//
-			//		}
-			//		else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
-			//		{
-			//			if (e->nx == LEFT)
-			//			{
-			//				if (pressA == true)
-			//				{
-			//					isHolding = true;
-			//					koopas->nx = 1;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-			//				}
-			//				else if (koopas->vy >= 0)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-			//				}
-			//			}
-			//			else if (e->nx == RIGHT)
-			//			{
-			//				if (pressA == true)
-			//				{
-			//					isHolding = true;
-			//					koopas->nx = -1;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-			//				}
-			//				else if (koopas->vy >= 0)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-			//				}
-			//			}
-			//		}
-			//	}
-			//	else
-			//	{
-			//		if (abs(koopas->vx) > 0 && koopas->isHold == false)
-			//		{
-			//			if (koopas->isShell == true || koopas->isShell_2 == true)
-			//			{
-			//				if (koopas->OnGroud == false)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					if (this->nx == RIGHT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-			//					else if (this->nx == LEFT)
-			//						koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-			//					koopas->vy -= 0.05f;
-			//				}
-			//				else
-			//				{
-			//					if (untouchable == false)
-			//						DownLevel();
-			//				}
-			//			}
-			//			else
-			//			{
-			//				if (untouchable == false)
-			//					DownLevel();
-			//			}
-			//		}
-			//		else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
-			//		{
-			//			if (e->nx == LEFT)
-			//			{
-			//				if (pressA == true)
-			//				{
-			//					isHolding = true;
-			//					koopas->nx = 1;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-			//				}
-			//				else if (koopas->vy >= 0)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-			//				}
-			//			}
-			//			else if (e->nx == RIGHT)
-			//			{
-			//				if (pressA == true)
-			//				{
-			//					isHolding = true;
-			//					koopas->nx = -1;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-			//				}
-			//				else if (koopas->vy >= 0)
-			//				{
-			//					this->canKick = koopas->isKicked = true;
-			//					koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-			//break;
-
-			case ENEMY_TYPE_KOOPAS:
-			{
-				if (enemy->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
-				{
-					RedFlyKoopas* koopas = dynamic_cast<RedFlyKoopas*>(enemy);
-					if (koopas->isHold == false)
+					if (e->obj->ObjType == OBJECT_TYPE_SMALLGOOMBA)
 					{
-						if (koopas->Health == 2)
-						{
-							if (untouchable == false)
-								DownLevel();
-						}
-						else
-						{
-							if (koopas->vx != 0 )
-							{
-								if (untouchable == false)
-									DownLevel();
-							}
-						}
+						SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
+						NumberSmallGoomba++;
+						if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+							goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
 					}
-					else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
-					{
-						if (e->nx == LEFT)
-						{
-							if (pressA == true)
-							{
-								isHolding = true;
-								koopas->nx = 1;
-								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-							}
-							else if (koopas->vy >= 0)
-							{
-								this->canKick = koopas->isKicked = true;
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							}
-						}
-						else if (e->nx == RIGHT)
-						{
-							if (pressA == true)
-							{
-								isHolding = true;
-								koopas->nx = -1;
-								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-							}
-							else if (koopas->vy >= 0)
-							{
-								this->canKick = koopas->isKicked = true;
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							}
-						}
-					}
-
-				}
-				else
-				{
-					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-					// k ở dạng mai rùa thì giảm cấp
-					if (koopas->isShell == false && koopas->isShell_2 == false)
+					else
 					{
 						if (untouchable == false)
 							DownLevel();
 					}
-					// ở dạng mai rùa
-					else
+				}
+				break;
+
+				case ENEMY_TYPE_KOOPAS:
+				{
+					if (enemy->ObjType == OBJECT_TYPE_REDFLYKOOPAS)
 					{
-						if (koopas->vx != 0 && koopas->isKicked == true)
+						RedFlyKoopas* koopas = dynamic_cast<RedFlyKoopas*>(enemy);
+						if (koopas->isHold == false)
 						{
-							if (untouchable == false)
-								DownLevel();
+							if (koopas->Health == 2)
+							{
+								if (untouchable == false)
+									DownLevel();
+							}
+							else
+							{
+								if (koopas->vx != 0 )
+								{
+									if (untouchable == false)
+										DownLevel();
+								}
+							}
 						}
-						else
+						else if ((koopas->GetState() == KOOPAS_STATE_SHELL || koopas->GetState() == KOOPAS_STATE_SHELL_2) && koopas->vy >= 0) // tránh trường hợp mai rùa đang trên trời vẫn đá được
 						{
 							if (e->nx == LEFT)
 							{
 								if (pressA == true)
 								{
 									isHolding = true;
-									koopas->nx = RIGHT;
-									if (koopas->isShell == true)
-										koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-									else
-										koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
+									koopas->nx = 1;
+									koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
 								}
 								else if (koopas->vy >= 0)
 								{
 									this->canKick = koopas->isKicked = true;
-									if (koopas->isShell == true)
-										koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-									else
-										koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+									koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
 								}
 							}
 							else if (e->nx == RIGHT)
@@ -3196,33 +3016,89 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 								if (pressA == true)
 								{
 									isHolding = true;
-									koopas->nx = LEFT;
-									if (koopas->isShell == true)
-										koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-									else
-										koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
+									koopas->nx = -1;
+									koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
 								}
 								else if (koopas->vy >= 0)
 								{
 									this->canKick = koopas->isKicked = true;
-									if (koopas->isShell == true)
-										koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-									else
-										koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+									koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+								}
+							}
+						}
+
+					}
+					else
+					{
+						Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+						// k ở dạng mai rùa thì giảm cấp
+						if (koopas->isShell == false && koopas->isShell_2 == false)
+						{
+							if (untouchable == false)
+								DownLevel();
+						}
+						// ở dạng mai rùa
+						else
+						{
+							if (koopas->vx != 0 && koopas->isKicked == true)
+							{
+								if (untouchable == false)
+									DownLevel();
+							}
+							else
+							{
+								if (e->nx == LEFT)
+								{
+									if (pressA == true)
+									{
+										isHolding = true;
+										koopas->nx = RIGHT;
+										if (koopas->isShell == true)
+											koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+										else
+											koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
+									}
+									else if (koopas->vy >= 0)
+									{
+										this->canKick = koopas->isKicked = true;
+										if (koopas->isShell == true)
+											koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+										else
+											koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+									}
+								}
+								else if (e->nx == RIGHT)
+								{
+									if (pressA == true)
+									{
+										isHolding = true;
+										koopas->nx = LEFT;
+										if (koopas->isShell == true)
+											koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+										else
+											koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
+									}
+									else if (koopas->vy >= 0)
+									{
+										this->canKick = koopas->isKicked = true;
+										if (koopas->isShell == true)
+											koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+										else
+											koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			break;
+				break;
 
-			default:
-			{
-				if (untouchable == false)
-					DownLevel();
-			}
-			break;
+				default:
+				{
+					if (untouchable == false)
+						DownLevel();
+				}
+				break;
 			}
 		}
 		// quái rớt lên đầu mario
@@ -3230,63 +3106,80 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 		{
 			switch (enemy->EnemyType)
 			{
-			case ENEMY_TYPE_KOOPAS:
-			{
-				Koopas* koopas = dynamic_cast<Koopas*>(enemy);
-				if (koopas->isShell == false && koopas->isShell_2 == false)
+				case ENEMY_TYPE_KOOPAS:
+				{
+					Koopas* koopas = dynamic_cast<Koopas*>(enemy);
+					if (koopas->isShell == false && koopas->isShell_2 == false)
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+					else
+					{
+						if (OnGround == false)
+						{
+							x += dx;
+							y += dy;
+						}
+						else
+						{
+							if (ny != 0) vy = 0;
+						}
+
+						if (pressA == true)
+						{
+							isHolding = true;
+							if(koopas->isShell == true)
+								koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
+							else
+								koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
+						}
+						else
+						{
+							this->canKick = koopas->isKicked = true;
+							if (this->nx == RIGHT)
+							{
+								if (koopas->isShell == true)
+									koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
+								else
+									koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
+							}
+							else if (this->nx == LEFT)
+							{
+								if (koopas->isShell == true)
+									koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
+								else
+									koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
+							}
+							koopas->vy -= 0.05f;
+						}
+					}
+				}
+				break;
+
+				case ENEMY_TYPE_GOOMBA:
+				{
+					if (e->obj->ObjType == OBJECT_TYPE_SMALLGOOMBA)
+					{
+						SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
+						NumberSmallGoomba++;
+						if(goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+							goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+					}
+					else
+					{
+						if (untouchable == false)
+							DownLevel();
+					}
+				}
+				break;
+
+				default:
 				{
 					if (untouchable == false)
 						DownLevel();
 				}
-				else
-				{
-					if (OnGround == false)
-					{
-						x += dx;
-						y += dy;
-					}
-					else
-					{
-						if (ny != 0) vy = 0;
-					}
-
-					if (pressA == true)
-					{
-						isHolding = true;
-						if(koopas->isShell == true)
-							koopas->SetState(KOOPAS_STATE_SHELL_HOLD);
-						else
-							koopas->SetState(KOOPAS_STATE_SHELL_2_HOLD);
-					}
-					else
-					{
-						this->canKick = koopas->isKicked = true;
-						if (this->nx == RIGHT)
-						{
-							if (koopas->isShell == true)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_RIGHT);
-							else
-								koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_RIGHT);
-						}
-						else if (this->nx == LEFT)
-						{
-							if (koopas->isShell == true)
-								koopas->SetState(KOOPAS_STATE_SHELL_WALKING_LEFT);
-							else
-								koopas->SetState(KOOPAS_STATE_SHELL_2_WALKING_LEFT);
-						}
-						koopas->vy -= 0.05f;
-					}
-				}
-			}
-			break;
-
-			default:
-			{
-				if (untouchable == false)
-					DownLevel();
-			}
-			break;
+				break;
 			}
 
 		}

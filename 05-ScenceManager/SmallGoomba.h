@@ -1,26 +1,20 @@
-#pragma once
+﻿#pragma once
 #include "Enemy.h"
 
-//#define GOOMBA_DIE_DEFLECT_SPEED	0.1f//0.25f
-//#define GOOMBA_WALKING_SPEED	0.02f
-//#define	GOOMBA_GRAVITY			0.0001f//0.0007f
+#define SMALLGOOMBA_ANI_FLYING	0
+#define SMALLGOOMBA_ANI_DIE		1
 
-#define GOOMBA_BBOX_WIDTH		16
-#define GOOMBA_BBOX_HEIGHT		15
-#define GOOMBA_BBOX_HEIGHT_DIE	9
+#define SMALLGOOMBA_STATE_FOLLOWMARIO		9
 
-#define GOOMBA_ANI_WALKING	0
-#define GOOMBA_ANI_DIE		1
-#define GOOMBA_ANI_DIE_2	2
-
-#define GOOMBA_SCORE	100
-#define GOOMBA_TIMETODIE	20
-
-class Goomba : public Enemy
+class SmallGoomba : public Enemy
 {
 public:
-	Goomba();
-	~Goomba() {};
+	float Start_X;
+	int TimeFollow; // tính toán thời gian bu vào mario để đi lên đi xuống
+	//bool LeftToRight; // nấm bu lên người mario , đi từ trái sang phải
+	int phase; // giai đoạn
+	SmallGoomba(float a, float b);
+	~SmallGoomba() {};
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
@@ -29,4 +23,6 @@ public:
 	virtual void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	virtual void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	virtual void CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
+
 };
+

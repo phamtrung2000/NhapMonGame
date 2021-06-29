@@ -1,5 +1,6 @@
 ﻿#include "FlyGoomba.h"
 #include "ListNormalBrick.h"
+#include "SmallGoomba.h"
 
 FlyGoomba::FlyGoomba() : Goomba()
 {
@@ -9,7 +10,8 @@ FlyGoomba::FlyGoomba() : Goomba()
 	TimeMoving = TimeFlying = DelayUpdatePosition = 0;
 	StartFlying = StopFlying = false;
 	Up = Down = false;
-
+	NumberSmallGoomba = 1;
+	TotalNumberSmallGoomba = 1;
 }
 
 void FlyGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -53,22 +55,22 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 
-		if (GetState() == FLYGOOMBA_STATE_FLYING && StopFlying == false)
+		if (GetState() == FLYGOOMBA_STATE_FLYING && StopFlying == false && StartFlying == false)
 		{
 			if (Down == true)
 			{
-				vy += FLYGOOMBA_FLYING_GRAVITY * dt;
+				vy += 0.00015f * dt;
 			}
 			else if (Up == true)
 			{
-				vy -= FLYGOOMBA_FLYING_GRAVITY * dt;
+				vy -= 0.00014f * dt;
 			}
 			else
 				vy += FLYGOOMBA_FLYING_GRAVITY * dt;
 
 			ULONGLONG a = GetTickCount64() - TimeFlying;
-			int b = a / 1000;
-			if (a > 1500) // den' luc bay len lai
+			int b = a / 500;
+			if (a > 500) // den' luc bay len lai
 			{
 				if (b % 2 == 0)
 				{
@@ -77,6 +79,17 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else
 				{
+					if (NumberSmallGoomba > 0 && Up == true)
+					{
+						SmallGoomba* goomba = new SmallGoomba(this->x, this->y + 2);
+						_Grid->AddMovingObject(goomba, this->x, this->y + 2);
+						NumberSmallGoomba--;
+						this->canDelete = true;
+					}
+					if (Down == false && Up == false)
+					{
+						vy = vy / 2;
+					}
 					Down = true;
 					Up = false;
 				}
@@ -90,7 +103,12 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 		{
-			vy += ENEMY_GRAVITY * dt;
+			if (StopFlying == true)
+			{
+				vy += 0.0002 * dt;
+			}
+			else
+				vy += ENEMY_GRAVITY * dt;
 		}
 		
 
@@ -111,14 +129,18 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					SetState(FLYGOOMBA_STATE_FLYING);
 					TimeFlying = GetTickCount64();
 					DelayUpdatePosition = GetTickCount64();
+
+					int temp = _Mario->NumberSmallGoomba;
+					NumberSmallGoomba = ((TotalNumberSmallGoomba - temp) > 4) ? 4 : (TotalNumberSmallGoomba - temp);
+					
 				}
 			}
 		}
 		else if (GetState() == FLYGOOMBA_STATE_FLYING)
 		{
 			ULONGLONG a = GetTickCount64() - TimeFlying;
-			int b = a / 1000;
-			if (a > 1500) // den' luc bay len lai
+			int b = a / 500;
+			if (a > 500) // den' luc bay len lai
 			{
 				if (b % 2 == 0)
 				{
@@ -127,7 +149,6 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						DebugOut(L"UpdatePosition\n");
 						UpdatePosition();
 						DelayUpdatePosition = GetTickCount64();
-
 					}
 				}
 			}
@@ -212,7 +233,7 @@ void FlyGoomba::Render()
 			ani = FLYGOOMBA_ANI_FLY;
 		}
 		animation_set->at(ani)->Render(x, y);
-		RenderBoundingBox();
+		
 		/*if (TimeMoving != 0)
 			DebugOut(L"TimeMoving = %u\t", GetTickCount64() - TimeMoving);
 		else
@@ -317,6 +338,7 @@ void FlyGoomba::UpdatePosition()
 		{
 			SetState(ENEMY_STATE_WALKING_LEFT);
 		}
+		Up = Down = false;
 	}
 	else
 	{

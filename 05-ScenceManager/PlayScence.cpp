@@ -28,6 +28,7 @@
 #include "RedGoomba.h"
 #include "ListNormalBrick.h"
 #include "HiddenMusicBrick.h"
+#include "SmallGoomba.h"
 
 CPlayScene* CPlayScene::__instance = NULL;
 

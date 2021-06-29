@@ -269,6 +269,9 @@
     <ClCompile Include="FlyGoomba.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SmallGoomba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -455,6 +458,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FlyGoomba.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallGoomba.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
