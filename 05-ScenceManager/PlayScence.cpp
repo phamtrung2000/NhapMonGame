@@ -846,7 +846,7 @@ void CPlayScene::Render()
 	}
 	
 	_HUD->Render();
-	//_Grid->RenderCell();
+	_Grid->RenderCell();
 }
 
 void CPlayScene::Unload()

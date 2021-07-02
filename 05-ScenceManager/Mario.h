@@ -301,6 +301,7 @@ public:
 	float RightOld; // lưu lại giá trị right trước khi up level để sau khi up level right k bị tăng lên dẫn đến lỗi đi xuyên vật thể
 
 	int NumberSmallGoomba; // số lượng nấm nhỏ bu lên người
+	int jump_count_X, jump_count_S; // đếm số lần nhảy để thoát khỏi mấy con nấm nhỏ bu lên người
 
 	Mario(float x = 0.0f, float y = 0.0f);
 	static Mario* GetInstance();

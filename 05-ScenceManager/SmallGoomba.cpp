@@ -1,6 +1,11 @@
 ﻿#include "SmallGoomba.h"
 #include "FlyGoomba.h"
 
+#define RIGHT_MARIO (_Mario->x + _Mario->Width) - 1
+#define LEFT_MARIO	 _Mario->x - 3
+#define MAX_JUMP_X	3
+#define MAX_JUMP_S	5
+
 SmallGoomba::SmallGoomba(float a, float b) : Enemy()
 {
 	ObjType = OBJECT_TYPE_SMALLGOOMBA;
@@ -12,8 +17,9 @@ SmallGoomba::SmallGoomba(float a, float b) : Enemy()
 	LPANIMATION_SET ani_set = animation_sets->Get(31);
 	this->SetAnimationSet(ani_set);
 	SetState(ENEMY_STATE_WALKING_RIGHT);
-	//LeftToRight = true;
 	phase = 0;
+	Width = 9;
+	Height = 8;
 }
 
 void SmallGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -33,16 +39,15 @@ void SmallGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (state != SMALLGOOMBA_STATE_FOLLOWMARIO)
 	{
-		if (GetState() != ENEMY_STATE_DIE_IS_JUMPED)
-			vy += (FLYGOOMBA_FLYING_GRAVITY * dt) / 2;
-
 		if (state == ENEMY_STATE_DIE_IS_ATTACKED || state == ENEMY_STATE_DIE_IS_JUMPED)
 		{
+			vy += (ENEMY_GRAVITY * dt);
 			if (y > _Map->GetHeight())
 				canDelete = true;
 		}
 		else
 		{
+			vy += (FLYGOOMBA_FLYING_GRAVITY * dt) / 2;
 			if (x - Start_X >= 8)
 			{
 				SetState(ENEMY_STATE_WALKING_LEFT);
@@ -61,136 +66,447 @@ void SmallGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
+		if (_Mario->jump_count_X >= MAX_JUMP_X || _Mario->jump_count_S >= MAX_JUMP_S)
+		{
+			SetState(ENEMY_STATE_DIE_IS_JUMPED);
+			if(_Mario->NumberSmallGoomba > 0)
+				_Mario->NumberSmallGoomba--;
+			return;
+		}
+		
 		TimeFollow++;
-		if (phase == 1) // trái qua phải, trên -> xuống
+		int level = _Mario->level;
+		switch (level)
 		{
-			float x_result = _Mario->x - 3;
-			float y_result = _Mario->y + _Mario->Height / 2;
-			x_result += vx * TimeFollow * 20;
-			y_result += vy * TimeFollow * 15;
-
-			if (x_result >= (_Mario->x + _Mario->Width) - 1)
+			case MARIO_LEVEL_SMALL:
 			{
-				TimeFollow = 0;
-				phase++;
+				if (phase == 1) // trái qua phải, trên -> xuống
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 1;
+					x_result += vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 15;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 2) // phải qua trái, trên -> xuống, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 4;
+					x_result -= vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 15;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				else if (phase == 3) // trái qua phải, dưới -> trên, trước mặt
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 7;
+					x_result += vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 10;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				//// bắt đầu đi từ nửa người lên
+				else if (phase == 4) // phải qua trái , dưới -> trên , về lại chỗ cũ , đi vòng sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 5;
+					x_result -= vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 10;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				else if (phase == 5) // trái qua phải , dưới -> trên , ở ngay giữa người, trước mặt
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 3;
+					x_result += vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 10;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 6) // phải qua trái , dưới -> trên ,từ mũi, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 1;
+					x_result -= vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 10;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				else if (phase == 7) // trái qua phải ,trên -> dưới, trên cùng, trước mặt
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height - 2;
+					x_result += vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 5;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 8) // phải qua trái , trên -> dưới ,trên giữa người, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - Height + 1;
+					x_result -= vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 5;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase = 1;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
 			}
-
-			x = x_result;
-			y = y_result;
-		}
-		else if (phase == 2) // phải qua trái, trên -> xuống, sau lưng
-		{
-			float x_result = _Mario->x + _Mario->Width - 1;
-			float y_result = (_Mario->y + _Mario->Height / 2) + 3;
-			x_result -= vx * TimeFollow * 20;
-			y_result += vy * TimeFollow * 15;
-
-			if (x_result <= _Mario->x - 3)
+			break;
+			case MARIO_LEVEL_BIG: case MARIO_LEVEL_FIRE:
 			{
-				TimeFollow = 0;
-				phase = 3;
+				if (phase == 1) // trái qua phải, trên -> xuống
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2;
+					x_result += vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 15;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 2) // phải qua trái, trên -> xuống, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = (_Mario->y + _Mario->Height / 2) + 3;
+					x_result -= vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 15;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase = 3;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				else if (phase == 3) // trái qua phải, dưới -> trên
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 + 7;
+					x_result += vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 20;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 4) // phải qua trái , dưới -> trên , về lại chỗ cũ , đi vòng sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = (_Mario->y + _Mario->Height / 2) + 3;
+					x_result -= vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 15;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				// bắt đầu đi từ nửa người lên
+				else if (phase == 5) // trái qua phải , dưới -> trên , ở ngay giữa người, trước mặt
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2;
+					x_result += vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 25;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 6) // phải qua trái , dưới -> trên ,từ mũi, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = (_Mario->y + _Mario->Height / 2) - 6;
+					x_result -= vx * TimeFollow * 20;
+					y_result -= vy * TimeFollow * 15;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
+				else if (phase == 7) // trái qua phải ,trên -> dưới, trên cùng, trước mặt
+				{
+					float x_result = LEFT_MARIO;
+					float y_result = (_Mario->y + _Mario->Height / 2) - 9;
+					x_result += vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 15;
+
+					if (x_result >= RIGHT_MARIO)
+					{
+						TimeFollow = 0;
+						phase++;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = RIGHT;
+				}
+				else if (phase == 8) // phải qua trái , trên -> dưới ,trên giữa người, sau lưng
+				{
+					float x_result = RIGHT_MARIO;
+					float y_result = _Mario->y + _Mario->Height / 2 - 6;
+					x_result -= vx * TimeFollow * 20;
+					y_result += vy * TimeFollow * 20;
+
+					if (x_result <= LEFT_MARIO)
+					{
+						TimeFollow = 0;
+						phase = 1;
+					}
+
+					x = x_result;
+					y = y_result;
+					nx = LEFT;
+				}
 			}
-
-			x = x_result;
-			y = y_result;
-		}
-		else if (phase == 3) // trái qua phải, dưới -> trên
-		{
-			float x_result = _Mario->x - 3;
-			float y_result = _Mario->y + _Mario->Height / 2 + 7;
-			x_result += vx * TimeFollow * 20;
-			y_result -= vy * TimeFollow * 20;
-
-			if (x_result >= (_Mario->x + _Mario->Width) - 1)
+			break;
+			
+			case MARIO_LEVEL_TAIL:
 			{
-				TimeFollow = 0;
-				phase = 4;
-			}
+				{
+					if (phase == 1) // trái qua phải, trên -> xuống
+					{
+						float x_result = LEFT_MARIO;
+						float y_result = _Mario->y + _Mario->Height / 2;
+						x_result += vx * TimeFollow * 20;
+						y_result += vy * TimeFollow * 15;
 
-			x = x_result;
-			y = y_result;
+						if (x_result >= RIGHT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = RIGHT;
+					}
+					else if (phase == 2) // phải qua trái, trên -> xuống, sau lưng
+					{
+						float x_result = RIGHT_MARIO;
+						float y_result = (_Mario->y + _Mario->Height / 2) + 3;
+						x_result -= vx * TimeFollow * 20;
+						y_result += vy * TimeFollow * 15;
+
+						if (x_result <= LEFT_MARIO)
+						{
+							TimeFollow = 0;
+							phase = 3;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = LEFT;
+					}
+					else if (phase == 3) // trái qua phải, dưới -> trên
+					{
+						float x_result = LEFT_MARIO;
+						float y_result = _Mario->y + _Mario->Height / 2 + 7;
+						x_result += vx * TimeFollow * 20;
+						y_result -= vy * TimeFollow * 20;
+
+						if (x_result >= RIGHT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = RIGHT;
+					}
+					else if (phase == 4) // phải qua trái , dưới -> trên , về lại chỗ cũ , đi vòng sau lưng
+					{
+						float x_result = RIGHT_MARIO;
+						float y_result = (_Mario->y + _Mario->Height / 2) + 3;
+						x_result -= vx * TimeFollow * 20;
+						y_result -= vy * TimeFollow * 15;
+
+						if (x_result <= LEFT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = LEFT;
+					}
+					// bắt đầu đi từ nửa người lên
+					else if (phase == 5) // trái qua phải , dưới -> trên , ở ngay giữa người, trước mặt
+					{
+						float x_result = LEFT_MARIO;
+						float y_result = _Mario->y + _Mario->Height / 2;
+						x_result += vx * TimeFollow * 20;
+						y_result -= vy * TimeFollow * 25;
+
+						if (x_result >= RIGHT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = RIGHT;
+					}
+					else if (phase == 6) // phải qua trái , dưới -> trên ,từ mũi, sau lưng
+					{
+						float x_result = RIGHT_MARIO;
+						float y_result = (_Mario->y + _Mario->Height / 2) - 6;
+						x_result -= vx * TimeFollow * 20;
+						y_result -= vy * TimeFollow * 15;
+
+						if (x_result <= LEFT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = LEFT;
+					}
+					else if (phase == 7) // trái qua phải ,trên -> dưới, trên cùng, trước mặt
+					{
+						float x_result = LEFT_MARIO;
+						float y_result = (_Mario->y + _Mario->Height / 2) - 9;
+						x_result += vx * TimeFollow * 20;
+						y_result += vy * TimeFollow * 15;
+
+						if (x_result >= RIGHT_MARIO)
+						{
+							TimeFollow = 0;
+							phase++;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = RIGHT;
+					}
+					else if (phase == 8) // phải qua trái , trên -> dưới ,trên giữa người, sau lưng
+					{
+						float x_result = RIGHT_MARIO;
+						float y_result = _Mario->y + _Mario->Height / 2 - 6;
+						x_result -= vx * TimeFollow * 20;
+						y_result += vy * TimeFollow * 20;
+
+						if (x_result <= LEFT_MARIO)
+						{
+							TimeFollow = 0;
+							phase = 1;
+						}
+
+						x = x_result;
+						y = y_result;
+						nx = LEFT;
+					}
+				}
+			}break;
+
+		default:
+			break;
 		}
-		else if (phase == 4) // phải qua trái , dưới -> trên , về lại chỗ cũ , đi vòng sau lưng
-		{
-			float x_result = _Mario->x + _Mario->Width - 1;
-			float y_result = (_Mario->y + _Mario->Height / 2) + 3;
-			x_result -= vx * TimeFollow * 20;
-			y_result -= vy * TimeFollow * 15;
-
-			if (x_result <= _Mario->x - 3)
-			{
-				TimeFollow = 0;
-				phase = 5;
-			}
-
-			x = x_result;
-			y = y_result;
-		}
-		// bắt đầu đi từ nửa người lên
-		else if (phase == 5) // trái qua phải , dưới -> trên , ở ngay giữa người, trước mặt
-		{
-			float x_result = _Mario->x - 3;
-			float y_result = _Mario->y + _Mario->Height / 2;
-			x_result += vx * TimeFollow * 20;
-			y_result -= vy * TimeFollow * 25;
-
-			if (x_result >= (_Mario->x + _Mario->Width) - 1)
-			{
-				TimeFollow = 0;
-				phase++;
-			}
-
-			x = x_result;
-			y = y_result;
-		}
-		else if (phase == 6) // phải qua trái , dưới -> trên ,từ mũi, sau lưng
-		{
-			float x_result = _Mario->x + _Mario->Width - 1;
-			float y_result = (_Mario->y + _Mario->Height / 2) - 6;
-			x_result -= vx * TimeFollow * 20;
-			y_result -= vy * TimeFollow * 15;
-
-			if (x_result <= _Mario->x - 3)
-			{
-				TimeFollow = 0;
-				phase++;
-			}
-
-			x = x_result;
-			y = y_result;
-		}
-		else if (phase == 7) // trái qua phải ,trên -> dưới, trên cùng, trước mặt
-		{
-			float x_result = _Mario->x - 3;
-			float y_result = (_Mario->y + _Mario->Height / 2) - 9;
-			x_result += vx * TimeFollow * 20;
-			y_result += vy * TimeFollow * 15;
-
-			if (x_result >= (_Mario->x + _Mario->Width) - 1)
-			{
-				TimeFollow = 0;
-				phase++;
-			}
-
-			x = x_result;
-			y = y_result;
-		}
-		else if (phase == 8) // phải qua trái , trên -> dưới ,trên giữa người, sau lưng
-		{
-			float x_result = _Mario->x + _Mario->Width - 1;
-			float y_result = _Mario->y + _Mario->Height / 2 - 6;
-			x_result -= vx * TimeFollow * 20;
-			y_result += vy * TimeFollow * 20;
-
-			if (x_result <= _Mario->x - 3)
-			{
-				TimeFollow = 0;
-				phase = 1;
-			}
-
-			x = x_result;
-			y = y_result;
-		}
+		
 	}
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -270,6 +586,15 @@ void SmallGoomba::Render()
 			animation_set->at(ani)->Render(x, y);
 		}
 	}
+
+	/*int ani = -1;
+	if (state == ENEMY_STATE_DIE_IS_JUMPED || state == ENEMY_STATE_DIE_IS_ATTACKED)
+	{
+		ani = SMALLGOOMBA_ANI_DIE;
+	}
+	else
+		ani = SMALLGOOMBA_ANI_FLYING;
+	animation_set->at(ani)->Render(x, y);*/
 }
 
 void SmallGoomba::SetState(int state)
@@ -280,7 +605,7 @@ void SmallGoomba::SetState(int state)
 		case ENEMY_STATE_DIE_IS_JUMPED : case ENEMY_STATE_DIE_IS_ATTACKED:
 		{
 			vy = -ENEMY_DIE_DEFLECT_SPEED;
-			vx = nx * abs(vx);
+			vx = nx * abs(0.02f);
 			isDie = true;
 		}
 		break;
@@ -341,7 +666,11 @@ void SmallGoomba::CollisionWithPlayer(LPCOLLISIONEVENT e, float min_tx, float mi
 	}
 	else if (e->ny < 0)
 	{
-		_Mario->NumberSmallGoomba++;
-		this->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+		if (this->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+		{
+			_Mario->NumberSmallGoomba++;
+			this->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+		}
+		
 	}
 }

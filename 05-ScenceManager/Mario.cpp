@@ -64,7 +64,7 @@ Mario::Mario(float x, float y) : CGameObject()
 
 	OnGround = IsMovingObject = StopRunning = true;
 
-	level_of_walking = level_of_running = 0;
+	level_of_walking = level_of_running = jump_count_X = jump_count_S = 0;
 	nScore = 0;
 	time_attack = time_fly = iChangeLevelTime = FlyTimePerS = 0;
 	TimeJumpS = 0;
@@ -1124,9 +1124,16 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							else if (enemy->ObjType == OBJECT_TYPE_SMALLGOOMBA)
 							{
 								SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
-								NumberSmallGoomba++;
-								if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
-									goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+								if (goomba->isDie != true)
+								{
+									
+									if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+									{
+										NumberSmallGoomba++;
+										goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+									}
+										
+								}
 							}
 						}
 					}
@@ -1272,7 +1279,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	
 	}
-	//Debug();
+	Debug();
 }
 
 void Mario::Render()
@@ -2487,13 +2494,14 @@ void Mario::SetState(int state)
 		{
 			if (OnGround == true)
 			{
-				//// nhảy khi đang max running thì nhảy xa hơn
-				//if (isMaxRunning == true)
-				//{
-				//	vy = -0.35f;
-				//}
-				//else
+				if(NumberSmallGoomba == 0)
 					vy = -MARIO_JUMP_SPEED_FAST;
+				else
+				{
+					vy = -0.15f;
+					jump_count_S++;
+				}
+					
 				OnGround = false;
 			}
 		}
@@ -2503,7 +2511,13 @@ void Mario::SetState(int state)
 		{
 			if (OnGround == true)
 			{
-				vy = -MARIO_JUMP_SPEED_SLOW;
+				if (NumberSmallGoomba == 0)
+					vy = -MARIO_JUMP_SPEED_SLOW;
+				else
+				{
+					vy = -0.1f;
+					jump_count_X++;
+				}
 				OnGround = false;
 			}
 		}
@@ -2721,7 +2735,7 @@ void Mario::UpLevel()
 
 void Mario::Debug()
 {
-	switch (state)
+	/*switch (state)
 	{
 	case MARIO_STATE_IDLE:
 		DebugOut(L"State = IDLE\t"); break;
@@ -2757,11 +2771,11 @@ void Mario::Debug()
 		DebugOut(L"State = FLYING_HIGH_LEFT\t"); break;
 	case MARIO_STATE_ENDSCENE:
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
-	}
+	}*/
 
-	DebugOut(L"\nMario vy = %f, level_of_walking = %i\n", vy, level_of_walking);
-	DebugOut(L"\n");
-	
+	//DebugOut(L"\nMario vy = %f, level_of_walking = %i\n", vy, level_of_walking);
+	DebugOut(L" NumberSmallGoomba = %i \n", NumberSmallGoomba);
+	//DebugOut(L"\n");
 }
 
 void Mario::Unload()
@@ -2962,9 +2976,12 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 					if (e->obj->ObjType == OBJECT_TYPE_SMALLGOOMBA)
 					{
 						SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
-						NumberSmallGoomba++;
 						if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+						{
+							NumberSmallGoomba++;
 							goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+						}
+							
 					}
 					else
 					{
@@ -3162,9 +3179,13 @@ void Mario::CollisionWithEnemy(LPCOLLISIONEVENT e, float min_tx, float min_ty, f
 					if (e->obj->ObjType == OBJECT_TYPE_SMALLGOOMBA)
 					{
 						SmallGoomba* goomba = dynamic_cast<SmallGoomba*>(enemy);
-						NumberSmallGoomba++;
-						if(goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+						
+						if (goomba->state != SMALLGOOMBA_STATE_FOLLOWMARIO)
+						{
+							NumberSmallGoomba++;
+
 							goomba->SetState(SMALLGOOMBA_STATE_FOLLOWMARIO);
+						}
 					}
 					else
 					{
@@ -3211,7 +3232,6 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 			y += dy;
 		}
 	}
-	// đi theo kiểu lên đồi ???????? -> y -= dx nx ....
 	else
 	{
 		if (e->nx != 0)

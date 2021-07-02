@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 #define BIRCK_NORMAL	0
-#define BRICK_CLOUD	1
+#define BRICK_CLOUD		1
 
 class Brick : public CGameObject
 {

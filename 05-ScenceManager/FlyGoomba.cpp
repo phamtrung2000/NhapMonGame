@@ -10,8 +10,8 @@ FlyGoomba::FlyGoomba() : Goomba()
 	TimeMoving = TimeFlying = DelayUpdatePosition = 0;
 	StartFlying = StopFlying = false;
 	Up = Down = false;
-	NumberSmallGoomba = 1;
-	TotalNumberSmallGoomba = 1;
+	NumberSmallGoomba = 4;
+	TotalNumberSmallGoomba = 6;
 }
 
 void FlyGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -84,7 +84,7 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						SmallGoomba* goomba = new SmallGoomba(this->x, this->y + 2);
 						_Grid->AddMovingObject(goomba, this->x, this->y + 2);
 						NumberSmallGoomba--;
-						this->canDelete = true;
+						//this->canDelete = true;
 					}
 					if (Down == false && Up == false)
 					{
@@ -99,7 +99,6 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					StopFlying = true;
 				}
 			}
-			//DebugOut(L"vy = %f, a = %u, b = %i\n", vy, a, b);
 		}
 		else
 		{
@@ -131,7 +130,7 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					DelayUpdatePosition = GetTickCount64();
 
 					int temp = _Mario->NumberSmallGoomba;
-					NumberSmallGoomba = ((TotalNumberSmallGoomba - temp) > 4) ? 4 : (TotalNumberSmallGoomba - temp);
+	 				NumberSmallGoomba = ((TotalNumberSmallGoomba - temp) > 4) ? 4 : (TotalNumberSmallGoomba - temp);
 					
 				}
 			}
@@ -238,10 +237,10 @@ void FlyGoomba::Render()
 			DebugOut(L"TimeMoving = %u\t", GetTickCount64() - TimeMoving);
 		else
 			DebugOut(L"TimeMoving = 0\t");*/
-		if (TimeFlying != 0)
+		/*if (TimeFlying != 0)
 			DebugOut(L"TimeFlying = %u\t", GetTickCount64() - TimeFlying);
 		else
-			DebugOut(L"TimeFlying = 0\t");
+			DebugOut(L"TimeFlying = 0\t");*/
 
 		/*if (StartFlying == true)
 			DebugOut(L"StartFlying == true\t");
@@ -251,15 +250,15 @@ void FlyGoomba::Render()
 			DebugOut(L"OnGroud == true\t");
 		else
 			DebugOut(L"OnGroud == false\t");*/
-		if (Up == true)
+		/*if (Up == true)
 			DebugOut(L"Up == true\t");
 		else
 			DebugOut(L"Up == false\t");
 		if (Down == true)
 			DebugOut(L"Down == true\t");
 		else
-			DebugOut(L"Down == false\t");
-		DebugOut(L"vx = %f ,vy = %f, state = %i, ani = %i\n",vx, vy, state, ani);
+			DebugOut(L"Down == false\t");*/
+		DebugOut(L"NumberSmallGoomba = %i\n", NumberSmallGoomba);
 	}
 	else
 	{
