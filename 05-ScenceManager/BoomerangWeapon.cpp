@@ -1,4 +1,4 @@
-#include "BoomerangWeapon.h"
+﻿#include "BoomerangWeapon.h"
 #include "Camera.h"
 #include "Mario.h"
 
@@ -18,6 +18,7 @@ BoomerangWeapon::BoomerangWeapon(int nx, float x, float y) : Weapon()
 	LPANIMATION_SET ani_set = animation_sets->Get(BOOMERANG_ANI_SET_ID);
 	this->SetAnimationSet(ani_set);
 	Time = 0;
+	this->nx = nx;
 }
 BoomerangWeapon::~BoomerangWeapon()
 {
@@ -45,14 +46,15 @@ void BoomerangWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (Time <= 200)
 		{
-			vx -= BOOMERANG_GRAVITY * dt;
+			// trái : -1  : + lên, phải : +1 : trừ đi
+			vx -= nx * BOOMERANG_GRAVITY * dt;
 			vy += BOOMERANG_GRAVITY * dt;
 			x += dx;
 			y += dy;
 		}
 		else if (Time <= 350)
 		{
-			vx -= BOOMERANG_GRAVITY * dt;
+			vx -= nx * BOOMERANG_GRAVITY * dt;
 			if (vy > 0)
 				vy -= BOOMERANG_GRAVITY * dt;
 			else
@@ -64,7 +66,7 @@ void BoomerangWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			canDelete = true;
 		
 	}
-	DebugOut(L"Time = %i\n", Time);
+	DebugOut(L"Time = %i, vx = %f\n", Time, vx);
 
 }
 

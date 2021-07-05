@@ -1,9 +1,7 @@
 #pragma once
-#include "GameObject.h"
 #include "Brick.h"
-#include "Game.h"
 
-class ListNormalBrick : public CGameObject
+class ListNormalBrick : public Brick
 {
 public:
 	int NumberBrick;

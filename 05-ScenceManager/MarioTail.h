@@ -33,6 +33,7 @@ class MarioTail:public CGameObject //mỗi khi mario quật đuôi thì tạo ob
 {
 public:
 	bool isInvisible;
+	bool attack; // biến để mario chỉ tấn công 1 vật duy nhất
 	MarioTail(float, float);
 	~MarioTail() {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

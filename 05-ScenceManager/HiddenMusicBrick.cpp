@@ -6,8 +6,7 @@ HiddenMusicBrick::HiddenMusicBrick(float x, float y) : MusicBrick(x,y)
 	isHidden = true;
 	ObjType = OBJECT_TYPE_HIDDENMUSICBRICK;
 	SetState(MUSICBRICK_STATE_HIDDEN);
-	direction = -1;
-	Start_X = x;
+	StartX = x;
 }
 
 void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -15,31 +14,31 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	CGameObject::Update(dt);
 	if (GetState() == MUSICBRICK_STATE_APPEAR)
 	{
-		if (Start_Y - y >= MAX_HIGH)
+		if (StartY - y >= MAX_HIGH)
 		{
 			vy = BRICK_SPEED_Y;
 		}
 		y += dy;
 
-		if (Start_Y < y)
+		if (StartY < y)
 		{
-			y = Start_Y;
+			y = StartY;
 			SetState(MUSICBRICK_STATE_NORMAL);
 		}
 	}
 	else if (isCollision == true)
 	{
-		if (direction == 1)
+		if (direction == TOP) // tác động từ trên xuống
 		{
 			y += dy;
 			_Mario->y = this->y - _Mario->Height;
 
-			if (Start_Y + MAX_HIGH < y)
+			if (StartY + MAX_HIGH < y)
 			{
 				vy = -BRICK_SPEED_Y;
 			}
 
-			if (int(y) == int(Start_Y) && vy == -BRICK_SPEED_Y)
+			if (int(y) == int(StartY) && vy == -BRICK_SPEED_Y)
 			{
 				SetState(MUSICBRICK_STATE_NORMAL);
 				if (_Mario->pressS == false)
@@ -48,45 +47,45 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					_Mario->vy -= 0.35f;
 			}
 		}
-		else if (direction == 3)
+		else if (direction == BOTTOM) // tác động từ dưới lên
 		{
-			if (Start_Y - y >= MAX_HIGH)
+			if (StartY - y >= MAX_HIGH)
 			{
 				vy = BRICK_SPEED_Y;
 			}
 			y += dy;
 
-			if (Start_Y < y)
+			if (StartY < y)
 			{
-				y = Start_Y;
+				y = StartY;
 				SetState(MUSICBRICK_STATE_NORMAL);
 			}
 		}
-		else if (direction == 0)
+		else if (direction == LEFT)
 		{
-			if (abs(Start_X - x) >= MAX_HIGH)
+			if (abs(StartX - x) >= MAX_HIGH)
 			{
 				vx = -BRICK_SPEED_Y;
 			}
 			x += dx;
 
-			if (x < Start_X)
+			if (x < StartX)
 			{
-				x = Start_X;
+				x = StartX;
 				SetState(MUSICBRICK_STATE_NORMAL);
 			}
 		}
-		else if (direction == 2) // phai -> trai
+		else if (direction == RIGHT) // phai -> trai
 		{
-			if (abs(Start_X - x) >= MAX_HIGH)
+			if (abs(StartX - x) >= MAX_HIGH)
 			{
 				vx = BRICK_SPEED_Y;
 			}
 			x += dx;
 
-			if (x > Start_X)
+			if (x > StartX)
 			{
-				x = Start_X;
+				x = StartX;
 				SetState(MUSICBRICK_STATE_NORMAL);
 			}
 		}
@@ -96,7 +95,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 void HiddenMusicBrick::Render()
 {
 	if (isHidden == false)
-		animation_set->at(ANI_BRICK_NORMAL)->Render(x, y);
+		animation_set->at(HIDDENMUSICBRICK_ANI_NORMAL)->Render(x, y);
 	RenderBoundingBox();
 }
 
@@ -119,28 +118,28 @@ void HiddenMusicBrick::SetState(int state)
 		{
 			switch (direction)
 			{
-				case 1: // tren -> duoi
+				case TOP: // tren -> duoi
 				{
 					vy = BRICK_SPEED_Y;
 					vx = 0;
 				}
 				break;
 
-				case 3: // duoi -> tren
+				case BOTTOM: // duoi -> tren
 				{
 					vy = -BRICK_SPEED_Y;
 					vx = 0;
 				}
 				break;
 
-				case 0: // trai -> phai
+				case LEFT: // trai -> phai
 				{
 					vx = BRICK_SPEED_Y;
 					vy = 0;
 				}
 				break;
 
-				case 2: // phai -> trai
+				case RIGHT: // phai -> trai
 				{
 					vx = -BRICK_SPEED_Y;
 					vy = 0;

@@ -58,9 +58,9 @@ Mario::Mario(float x, float y) : CGameObject()
 	this->y = y;
 
 	GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning
-	= isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking
-	= endAttack = isLevelUp = test = render_tail = pressS = isLevelDown = loseControl
-	= isBlocked = false;
+		= isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking
+		= endAttack = isLevelUp = test = render_tail = pressS = isLevelDown = loseControl
+		= isBlocked = isPushed = canPush = false;
 
 	OnGround = IsMovingObject = StopRunning = true;
 
@@ -135,23 +135,43 @@ void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 
 	case MARIO_LEVEL_TAIL:
 	{
-		if (nx == LEFT)
+		if (isPushed == true)
 		{
-			left = x;
-			top = y;
-			right = x + MARIO_BIG_BBOX_WIDTH;
-			bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+			if (nx == LEFT)
+			{
+				left = x;
+				top = y + MARIO_TAIL_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT;
+				right = x + MARIO_BIG_BBOX_WIDTH;
+				bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+			}
+			else
+			{
+				left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH;
+				top = y + MARIO_TAIL_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT;
+				right = x + MARIO_TAIL_BBOX_WIDTH;
+				bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+			}
 		}
 		else
 		{
-			left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH ;
-			top = y;
-			right = x + MARIO_TAIL_BBOX_WIDTH;
-			bottom = y + MARIO_TAIL_BBOX_HEIGHT;
-		}
-		if (isSitDown == true && GoHiddenWorld == false)
-		{
-			bottom = y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT;
+			if (nx == LEFT)
+			{
+				left = x;
+				top = y;
+				right = x + MARIO_BIG_BBOX_WIDTH;
+				bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+			}
+			else
+			{
+				left = x + MARIO_TAIL_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH;
+				top = y;
+				right = x + MARIO_TAIL_BBOX_WIDTH;
+				bottom = y + MARIO_TAIL_BBOX_HEIGHT;
+			}
+			if (isSitDown == true && GoHiddenWorld == false)
+			{
+				bottom = y + MARIO_TAIL_BBOX_SITDOWN_HEIGHT;
+			}
 		}
 	}break;
 
@@ -413,7 +433,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vy += 0.0004f * dt;
 				}
 				else
+				{
+					/*if(isPushed == false)
+						vy += MARIO_GRAVITY * dt;
+					else
+						vy += 0.001f * dt;*/
 					vy += MARIO_GRAVITY * dt;
+				}
+					
 			}
 		}
 		else
@@ -509,7 +536,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			// level walking = 0 thì vx = 0 nhưng chưa  chắc level running = 0 nên vẫn phải xét tiếp level running
 			if (level_of_walking == 0)
 			{
-				vx = 0.0f;
+				if(isPushed == false)
+					vx = 0.0f;
 				ChangeDirection = false;
 			}
 			
@@ -1141,7 +1169,27 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 					case CATEGORY::OBJECT:
 					{
-						if (coObjects->at(i)->ObjType != OBJECT_TYPE_BLOCK && OnGround == true && GoHiddenWorld == false)					
+						if (coObjects->at(i)->ObjType == OBJECT_TYPE_HIDDENMUSICBRICK)
+						{
+							if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+							{
+								HiddenMusicBrick* brick = dynamic_cast<HiddenMusicBrick*>(coObjects->at(i));
+								if (brick->isHidden == true)
+								{
+									canPush = true;
+									if (pressS == true)
+									{
+										DebugOut(L"111111111111111111111111111\n");
+										vy = 0;
+										isFalling = true;
+										brick->SetState(MUSICBRICK_STATE_APPEAR);
+										vx = 0.05f;
+										isPushed = true;
+									}
+								}
+							}
+						}
+						else if (coObjects->at(i)->ObjType != OBJECT_TYPE_BLOCK && OnGround == true && GoHiddenWorld == false)					
 						{
 							if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
 							{
@@ -1177,11 +1225,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									}
 								}
 							}
-						}
-					
+						}				
 					}
 					break;
-
 				}
 			}
 			x += dx;
@@ -1279,7 +1325,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	
 	}
-	Debug();
+	//Debug();
 }
 
 void Mario::Render()
@@ -2462,6 +2508,7 @@ void Mario::Render()
 				animation_set->at(ani)->Render(x, y, 255);
 		}
 	}
+	RenderBoundingBox();
 }
 
 void Mario::SetState(int state)
@@ -2494,8 +2541,12 @@ void Mario::SetState(int state)
 		{
 			if (OnGround == true)
 			{
-				if(NumberSmallGoomba == 0)
-					vy = -MARIO_JUMP_SPEED_FAST;
+				if (NumberSmallGoomba == 0)
+				{
+					if (canPush == false)
+						vy = -MARIO_JUMP_SPEED_FAST;
+				}
+					
 				else
 				{
 					vy = -0.15f;
@@ -2773,8 +2824,12 @@ void Mario::Debug()
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
 	}*/
 
-	//DebugOut(L"\nMario vy = %f, level_of_walking = %i\n", vy, level_of_walking);
-	DebugOut(L" NumberSmallGoomba = %i \n", NumberSmallGoomba);
+	if(isPushed == true)
+		DebugOut(L"isPushed == true\t");
+	else
+		DebugOut(L"isPushed == false\t");
+	DebugOut(L"Mario vx = %f\n", vx);
+	
 	//DebugOut(L"\n");
 }
 
@@ -3271,7 +3326,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				if (OnGround == false)
 					y += min_ty * dy + ny * 0.2f;
 				OnGround = true; // xử lý chạm đất
-				isFalling = isFlyingLow = isFlyingHigh = false;
+				isFalling = isFlyingLow = isFlyingHigh = isPushed = canPush = false;
 			}
 			else if (e->nx != 0)
 			{
@@ -3279,128 +3334,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				if (ny != 0) vy = 0;
 			}
 		}
-		else if (e->obj->ObjType == OBJECT_TYPE_QUESTIONBRICK || e->obj->ObjType == OBJECT_TYPE_ITEMBRICK)
-		{
-			if (ny != 0) vy = 0;
-			if (dynamic_cast<QuestionBrick*>(e->obj))
-			{
-				QuestionBrick* brick = dynamic_cast<QuestionBrick*>(e->obj);
-				
-				// mario nhảy từ dưới lên va chạm gạch 
-				if (e->ny > 0)
-				{
-					isFalling = true;
-					y += min_ty * dy + ny * 0.1f - 0.4f;
-					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
-					if (brick->hasItem == true)
-					{
-						brick->SetState(BRICK_STATE_COLLISION);
-						brick->hasItem = false;
-						if (brick->Item > MONEY)
-						{
-							switch (_Mario->level)
-							{
-							case MARIO_LEVEL_SMALL:
-							{
-								brick->Item = MUSHROOM;
-							}break;
-
-							default:
-								brick->Item = LEAF;
-								break;
-							}
-							QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);
-							_Grid->AddStaticObject(questionbrickitem, brick->x, brick->y - 3);
-						}
-						else
-						{
-							QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x + 1, brick->y - 3);
-							_Grid->AddStaticObject(questionbrickitem, brick->x, brick->y - 3);
-						}
-					}
-				}
-				else if (e->ny < 0) // mario đi trên gạch "?"
-				{
-					if (OnGround == false)
-						y += min_ty * dy + ny * 0.1f - 0.3f;
-					OnGround = true; // xử lý chạm đất
-					isFalling = isFlyingLow = isFlyingHigh = false;
-					this->MaxY = brick->y;
-					x += min_tx * dx + nx * 0.4f;
-				}
-				else if (e->nx != 0)
-				{
-					if (this->OnGround == true)
-						y += min_ty * dy + ny * 0.1f - 0.4f;
-					else
-						y += min_ty * dy + ny * 0.4f;
-				}
-			}
-			else if (dynamic_cast<ItemBrick*>(e->obj))
-			{
-				ItemBrick* brick = dynamic_cast<ItemBrick*>(e->obj);
-				// mario nhảy từ dưới lên va chạm gạch 
-				if (e->ny > 0)
-				{
-					vy = 0;
-					isFalling = true;
-					// nếu state normal thì xử lý va chạm, nếu không thì k xử lý
-					// cả 2 đều làm cho mario k nhảy đươc tiếp + rớt xuống
-					if (brick->hasItem == true)
-					{
-						brick->SetState(BRICK_STATE_COLLISION);
-						switch (brick->Item)
-						{
-						case BUTTONP:
-						{
-							BrickItem* brickitem = new BrickItem(BUTTONP, brick->x, brick->y - 16);
-							_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
-							auto effect = new EffectSmoke(brick->x, brick->y - 16);
-							_Grid->AddStaticObject(brickitem, brick->x, brick->y - 16);
-						}
-						break;
-
-						case MUSHROOM:
-						{
-							BrickItem* brickitem = new BrickItem(MUSHROOM, brick->x, brick->y - 3);
-							_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
-						}
-						break;
-
-						case NORMAL:
-						{
-							brick->SetState(ITEMBRICK_STATE_DIE);
-							vy = 0;
-						}
-						break;
-
-						case MONEYX10:
-						{
-							BrickItem* brickitem = new BrickItem(MONEYX10, brick->x, brick->y - 3);
-							_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
-							brick->CountMoney--;
-						}
-
-						}
-					}
-					
-				}
-				else if (e->ny < 0) // mario đi trên gạch "?"
-				{
-					OnGround = true; // xử lý chạm đất
-					isFalling = isFlyingLow = isFlyingHigh = false;
-
-					x += min_tx * dx + nx * 0.4f;
-				}
-				else if (e->nx != 0)
-				{
-					
-					if (ny != 0)vy = 0;
-					y += min_ty * dy + ny * 0.4f;
-					
-				}
-			}
-		}
+		
 		else if (e->obj->ObjType == OBJECT_TYPE_WARPPIPE)
 		{
 			if (dynamic_cast<WarpPipe*>(e->obj))
@@ -3454,235 +3388,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				}
 			}
 		}
-		else if (e->obj->ObjType == OBJECT_TYPE_BRICK)
-		{
-			if (ny != 0) vy = 0;
-			Brick* brick = dynamic_cast<Brick*>(e->obj);
-			if (brick->Type == BRICK_CLOUD) // mây
-			{
-				if (isFlyingHigh == true) // đang bay thì xuyên qua
-				{
-					x += dx;
-					y += dy;
-				}
-			}
-			if (e->nx != 0)
-			{
-				if (nx != 0) vx = 0;
-				if (ny != 0)vy = 0;
-				y += min_ty * dy + ny * 0.1f - 0.4f;
-			}
-			else if (e->ny < 0)
-			{
-				OnGround = true; // xử lý chạm đất
-				isFalling = isFlyingLow = isFlyingHigh = false;
-				x += min_tx * dx + nx * 0.4f;
-			}
-			else if (e->ny > 0)
-			{
-				if (ny != 0)vy = 0;
-				isFalling = true;
-			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_LISTITEMBRICK)
-		{
-			if (ny != 0) vy = 0;
-			int vitrilist2 = 0;
-			ListItemBrick* listbrick = dynamic_cast<ListItemBrick*>(e->obj);
-			// mario nhảy từ dưới lên va chạm gạch 
-			if (e->ny > 0)
-			{
-				vy = 0;
-				isFalling = true;
-				if (listbrick->Bricks.size() == 1)
-				{
-					listbrick->DeleteBrick(0);
-				}
-				else if (listbrick->Bricks.size() == 2)
-				{
-					float l, t, r, b;
-					int vitri = 0;
-					GetBoundingBox(l, t, r, b);
-					if ((l <= listbrick->Bricks.at(0)->x) || ( l + Width/2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
-					{
-						vitri = 0;
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin());
-					}
-					else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
-					{
-						vitri = 1;
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-					}
-				}
-				else
-				{
-					float l, t, r, b;
-					int vitri = 0;
-					GetBoundingBox(l, t, r, b);
-					float aa1 = listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x;
-					if ( l <= listbrick->Bricks.at(0)->x || 
-					(l > listbrick->Bricks.at(0)->x && r < listbrick->Bricks.at(1)->x + 8)) // sure đụng viên đầu tiên
-					{
-						vitri = 0;
-						listbrick->DeleteBrick(vitri);
-						
-						//listbrick->Bricks.erase(listbrick->Bricks.begin());
-					}
-					// sure đụng viên cuối
-					else if ((l <= aa1 && l + 8 >= aa1) ||
-							 (l >= aa1))
-					{
-						vitri = listbrick->Bricks.size() - 1;
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-					}
-					else
-					{
-						int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
-						//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
-						//	vitri--;
-						float tempx = listbrick->Bricks.at(vitri)->x;
-						if (l < tempx && INT16(tempx - l) > 8)
-							vitri--;
-						if (listbrick->Bricks.at(vitri)->Item == NORMAL)
-						{
-							int a1 = vitri + 1;
-							int a2 = listbrick->Bricks.size() - 1;
-							ListItemBrick* listbrick1 = new ListItemBrick(listbrick->Bricks, 0, vitri - 1);
-							ListItemBrick* listbrick2 = new ListItemBrick(listbrick->Bricks, a1, a2);
-							
-							listbrick->canDelete = true;
-							_Grid->AddStaticObject(listbrick1, listbrick1->Bricks.at(0)->x, listbrick1->Bricks.at(0)->y);
-							_Grid->AddStaticObject(listbrick2, listbrick2->Bricks.at(0)->x, listbrick2->Bricks.at(0)->y);
-						}
-						else
-						{
-
-						}
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-					}
-				}
-			}
-			else if (e->ny < 0) // mario đi trên gạch
-			{
-				if (OnGround == false)
-					y += min_ty * dy + ny * 0.2f;
-				OnGround = true; // xử lý chạm đất
-				isFalling = isFlyingLow = isFlyingHigh = false;
-				x += min_tx * dx + nx * 0.4f;
-			}
-			else if (e->nx != 0)
-			{
-				y += min_ty * dy + ny * 0.4f;
-
-			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_LISTQUESTIONBRICK)
-		{
-			int vitrilist2 = 0;
-			ListQuestionBrick* listbrick = dynamic_cast<ListQuestionBrick*>(e->obj);
-			// mario nhảy từ dưới lên va chạm gạch 
-			if (e->ny > 0)
-			{
-				vy = 0;
-				isFalling = true;
-				if (listbrick->Bricks.size() == 1)
-				{
-					listbrick->DeleteBrick(0);
-				}
-				else if (listbrick->Bricks.size() == 2)
-				{
-					float l, t, r, b;
-					int vitri = 0;
-					GetBoundingBox(l, t, r, b);
-					if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
-					{
-						vitri = 0;
-						listbrick->DeleteBrick(vitri);
-					}
-					else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
-					{
-						vitri = 1;
-						listbrick->DeleteBrick(vitri);
-					}
-				}
-				else
-				{
-					float l, t, r, b;
-					int vitri = 0;
-					GetBoundingBox(l, t, r, b);
-					if (l <= listbrick->Bricks.at(0)->x) // sure đụng viên đầu tiên
-					{
-						vitri = 0;
-						listbrick->DeleteBrick(vitri);
-
-						//listbrick->Bricks.erase(listbrick->Bricks.begin());
-					}
-					else if (r >= listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x + 16) // sure đụng viên cuối
-					{
-						vitri = listbrick->Bricks.size() - 1;
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-					}
-					else
-					{
-						int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
-						//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
-						//	vitri--;
-						float tempx = listbrick->Bricks.at(vitri)->x;
-						if (l < listbrick->Bricks.at(vitri)->x && tempx - l > 8)
-							vitri--;
-						listbrick->DeleteBrick(vitri);
-						//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-					}
-				}
-			}
-			else if (e->ny < 0) // mario đi trên gạch "?"
-			{
-				OnGround = true; // xử lý chạm đất
-				isFalling = isFlyingLow = isFlyingHigh = false;
-
-				x += min_tx * dx + nx * 0.4f;
-				if (ny != 0) vy = 0;
-			}
-			else if (e->nx != 0)
-			{
-				y += min_ty * dy + ny * 0.2f;
-				if (ny != 0) vy = 0;
-			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_LISTNORMALBRICK)
-		{
-			ListNormalBrick* listbrick = dynamic_cast<ListNormalBrick*>(e->obj);
-			if (listbrick->TypeListNormalBrick == BRICK_CLOUD) // mây
-			{
-				if (isFlyingHigh == true) // đang bay thì xuyên qua
-				{
-					x += dx;
-					y += dy;
-				}
-			}
-			if (e->nx != 0)
-			{
-				y += min_ty * dy + ny * 0.2f;
-				if (ny != 0)vy = 0;
-			}
-			else if (e->ny < 0)// mario đi trên gạch
-			{
-				OnGround = true; // xử lý chạm đất
-				isFalling = isFlyingLow = isFlyingHigh = false;
-				x += min_tx * dx + nx * 0.4f;
-				if (ny != 0)vy = 0;
-			}
-			else if (e->ny > 0)
-			{
-				isFalling = true;
-				if (ny != 0)vy = 0;
-			}
-		}
+		
 		else if (e->obj->ObjType == OBJECT_TYPE_PORTAL)
 		{
 			if (dynamic_cast<CPortal*>(e->obj))
@@ -3692,81 +3398,355 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
 			}
 		}
-		else if (e->obj->ObjType == OBJECT_TYPE_MUSICBRICK)
-		{
-			if (ny != 0) vy = 0;
-			MusicBrick* brick = dynamic_cast<MusicBrick*>(e->obj);
-		
-			if (e->nx != 0)
-			{
-				if (nx != 0) vx = 0;
-				if (ny != 0)vy = 0;
-				y += min_ty * dy + ny * 0.1f - 0.4f;
-			}
-			else if (e->ny < 0) // tren xuong duoi
-			{
-				if(brick->GetState() != MUSICBRICK_STATE_COLLISION)
-					brick->SetState(MUSICBRICK_STATE_COLLISION);
-			}
-			else if (e->ny > 0) // duoi len tren
-			{
-				if (ny != 0)vy = 0;
-				isFalling = true;
-			}
-		}
-		else if (e->obj->ObjType == OBJECT_TYPE_HIDDENMUSICBRICK)
-		{
-			HiddenMusicBrick* brick = dynamic_cast<HiddenMusicBrick*>(e->obj);
-			if (brick->isHidden == true)
-			{
-				if (e->ny > 0) // duoi len tren
-				{
-					if (ny != 0)vy = 0;
-					isFalling = true;
-					brick->SetState(MUSICBRICK_STATE_APPEAR);
-				}
-				else
-				{
-					x += dx;
-					y += dy;
-				}
-			}
-			else
-			{
-				if (e->nx != 0)
-				{
-					if (ny != 0) vy = 0;
-					y += min_ty * dy + ny * 0.1f - 0.4f;
-					if (e->nx < 0) // trai -> phai
-					{
-						brick->direction = 0;
-					}
-					else // phai -> trai
-					{
-						brick->direction = 2;
-					}
 
-					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+		else if (dynamic_cast<Brick*>(e->obj))
+		{
+			Brick* brick = dynamic_cast<Brick*>(e->obj);
+			switch (brick->type_of_brick)
+			{
+				case BRICK_TYPE_NORMAL:
+				{
+					if (e->obj->ObjType == OBJECT_TYPE_LISTNORMALBRICK)
 					{
-						brick->SetState(MUSICBRICK_STATE_COLLISION);
-						vx = -vx * 2 / 3;
+						ListNormalBrick* listbrick = dynamic_cast<ListNormalBrick*>(e->obj);
+						if (listbrick->TypeListNormalBrick == BRICK_CLOUD) // mây
+						{
+							if (isFlyingHigh == true) // đang bay thì xuyên qua
+							{
+								x += dx;
+								y += dy;
+							}
+						}
+						if (e->nx != 0)
+						{
+							y += min_ty * dy + ny * 0.2f;
+							if (ny != 0)vy = 0;
+						}
+						else if (e->ny < 0)// mario đi trên gạch
+						{
+							OnGround = true; // xử lý chạm đất
+							isFalling = isFlyingLow = isFlyingHigh = false;
+							x += min_tx * dx + nx * 0.4f;
+							if (ny != 0)vy = 0;
+						}
+						else if (e->ny > 0)
+						{
+							isFalling = true;
+							if (ny != 0)vy = 0;
+						}
+					}
+					else
+					{
+						if (ny != 0) vy = 0;
+						if (brick->Type == BRICK_CLOUD) // mây
+						{
+							if (isFlyingHigh == true) // đang bay thì xuyên qua
+							{
+								x += dx;
+								y += dy;
+							}
+						}
+						if (e->nx != 0)
+						{
+							if (nx != 0) vx = 0;
+							if (ny != 0)vy = 0;
+							y += min_ty * dy + ny * 0.1f - 0.4f;
+						}
+						else if (e->ny < 0)
+						{
+							OnGround = true; // xử lý chạm đất
+							isFalling = isFlyingLow = isFlyingHigh = false;
+							x += min_tx * dx + nx * 0.4f;
+						}
+						else if (e->ny > 0)
+						{
+							if (ny != 0)vy = 0;
+							isFalling = true;
+						}
 					}
 				}
-				else if (e->ny < 0) // tren xuong duoi
+				break;
+
+				case BRICK_TYPE_QUESTION:
 				{
-					if (ny != 0) vy = 0;
-					brick->direction = 1;
-					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
-						brick->SetState(MUSICBRICK_STATE_COLLISION);
+					if (e->obj->ObjType == OBJECT_TYPE_LISTQUESTIONBRICK)
+					{
+						int vitrilist2 = 0;
+						ListQuestionBrick* listbrick = dynamic_cast<ListQuestionBrick*>(e->obj);
+						// mario nhảy từ dưới lên va chạm gạch 
+						if (e->ny > 0)
+						{
+							vy = 0;
+							isFalling = true;
+							if (listbrick->Bricks.size() == 1)
+							{
+								listbrick->DeleteBrick(0);
+							}
+							else if (listbrick->Bricks.size() == 2)
+							{
+								float l, t, r, b;
+								int vitri = 0;
+								GetBoundingBox(l, t, r, b);
+								if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
+								{
+									vitri = 0;
+									listbrick->DeleteBrick(vitri);
+								}
+								else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+								{
+									vitri = 1;
+									listbrick->DeleteBrick(vitri);
+								}
+							}
+							else
+							{
+								float l, t, r, b;
+								int vitri = 0;
+								GetBoundingBox(l, t, r, b);
+								if (l <= listbrick->Bricks.at(0)->x) // sure đụng viên đầu tiên
+								{
+									vitri = 0;
+									listbrick->DeleteBrick(vitri);
+
+									//listbrick->Bricks.erase(listbrick->Bricks.begin());
+								}
+								else if (r >= listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x + 16) // sure đụng viên cuối
+								{
+									vitri = listbrick->Bricks.size() - 1;
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+								}
+								else
+								{
+									int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
+									//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
+									//	vitri--;
+									float tempx = listbrick->Bricks.at(vitri)->x;
+									if (l < listbrick->Bricks.at(vitri)->x && tempx - l > 8)
+										vitri--;
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+								}
+							}
+						}
+						else if (e->ny < 0) // mario đi trên gạch "?"
+						{
+							OnGround = true; // xử lý chạm đất
+							isFalling = isFlyingLow = isFlyingHigh = false;
+
+							x += min_tx * dx + nx * 0.4f;
+							if (ny != 0) vy = 0;
+						}
+						else if (e->nx != 0)
+						{
+							y += min_ty * dy + ny * 0.2f;
+							if (ny != 0) vy = 0;
+						}
+					}
 				}
-				else if (e->ny > 0) // duoi len tren
+				break;
+
+				case BRICK_TYPE_ITEM:
 				{
-					if (ny != 0)vy = 0;
-					isFalling = true;
-					brick->direction = 3;
-					if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
-						brick->SetState(MUSICBRICK_STATE_COLLISION);
+					if (e->obj->ObjType == OBJECT_TYPE_LISTITEMBRICK)
+					{
+						int vitrilist2 = 0;
+						ListItemBrick* listbrick = dynamic_cast<ListItemBrick*>(e->obj);
+						// mario nhảy từ dưới lên va chạm gạch 
+						if (e->ny > 0)
+						{
+							if (ny != 0) vy = 0;
+							isFalling = true;
+							if (listbrick->Bricks.size() == 1)
+							{
+								listbrick->DeleteBrick(0);
+							}
+							else if (listbrick->Bricks.size() == 2)
+							{
+								float l, t, r, b;
+								int vitri = 0;
+								GetBoundingBox(l, t, r, b);
+								if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
+								{
+									vitri = 0;
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin());
+								}
+								else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+								{
+									vitri = 1;
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+								}
+							}
+							else
+							{
+								float l, t, r, b;
+								int vitri = 0;
+								GetBoundingBox(l, t, r, b);
+								float aa1 = listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x;
+								if (l <= listbrick->Bricks.at(0)->x ||
+									(l > listbrick->Bricks.at(0)->x && r < listbrick->Bricks.at(1)->x + 8)) // sure đụng viên đầu tiên
+								{
+									vitri = 0;
+									listbrick->DeleteBrick(vitri);
+
+									//listbrick->Bricks.erase(listbrick->Bricks.begin());
+								}
+								// sure đụng viên cuối
+								else if ((l <= aa1 && l + 8 >= aa1) ||
+									(l >= aa1))
+								{
+									vitri = listbrick->Bricks.size() - 1;
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+								}
+								else
+								{
+									int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
+									//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
+									//	vitri--;
+									float tempx = listbrick->Bricks.at(vitri)->x;
+									if (l < tempx && INT16(tempx - l) > 8)
+										vitri--;
+									if (listbrick->Bricks.at(vitri)->Item == NORMAL)
+									{
+										int a1 = vitri + 1;
+										int a2 = listbrick->Bricks.size() - 1;
+										ListItemBrick* listbrick1 = new ListItemBrick(listbrick->Bricks, 0, vitri - 1);
+										ListItemBrick* listbrick2 = new ListItemBrick(listbrick->Bricks, a1, a2);
+
+										listbrick->canDelete = true;
+										_Grid->AddStaticObject(listbrick1, listbrick1->Bricks.at(0)->x, listbrick1->Bricks.at(0)->y);
+										_Grid->AddStaticObject(listbrick2, listbrick2->Bricks.at(0)->x, listbrick2->Bricks.at(0)->y);
+									}
+									else
+									{
+
+									}
+									listbrick->DeleteBrick(vitri);
+									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+								}
+							}
+						}
+						else if (e->ny < 0) // mario đi trên gạch
+						{
+							if (ny != 0) vy = 0;
+							if (OnGround == false)
+								y += min_ty * dy + ny * 0.2f;
+							OnGround = true; // xử lý chạm đất
+							isFalling = isFlyingLow = isFlyingHigh = false;
+							x += min_tx * dx + nx * 0.4f;
+						}
+						else if (e->nx != 0)
+						{
+							if (isPushed == true)
+							{
+								x += dx;
+							}
+							else
+								y += min_ty * dy + ny * 0.4f;
+						}
+					}
 				}
+				break;
+
+				case BRICK_TYPE_MUSIC:
+				{
+					if(brick->ObjType == OBJECT_TYPE_MUSICBRICK)
+					{
+						if (ny != 0) vy = 0;
+						MusicBrick* brick = dynamic_cast<MusicBrick*>(e->obj);
+
+						if (e->nx != 0)
+						{
+							if (nx != 0) vx = 0;
+							if (ny != 0)vy = 0;
+							y += min_ty * dy + ny * 0.1f - 0.4f;
+						}
+						else if (e->ny < 0) // tren xuong duoi
+						{
+							if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+							{
+								brick->direction = TOP;
+								brick->SetState(MUSICBRICK_STATE_COLLISION);
+								brick->isCollisionMario = true;
+							}
+						}
+						else if (e->ny > 0) // duoi len tren
+						{
+							if (ny != 0)vy = 0;
+							isFalling = true;
+							if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+							{
+								brick->direction = BOTTOM;
+								brick->SetState(MUSICBRICK_STATE_COLLISION);
+								brick->isCollisionMario = true;
+							}
+								
+						}
+					}
+					else if (brick->ObjType == OBJECT_TYPE_HIDDENMUSICBRICK)
+					{
+						HiddenMusicBrick* brick = dynamic_cast<HiddenMusicBrick*>(e->obj);
+						if (brick->isHidden == true)
+						{
+							if (e->ny > 0) // duoi len tren
+							{
+								if (ny != 0)vy = 0;
+								isFalling = true;
+								brick->SetState(MUSICBRICK_STATE_APPEAR);
+							}
+							else
+							{
+								x += dx;
+								y += dy;
+							}
+						}
+						else
+						{
+							if (e->nx != 0)
+							{
+								if (ny != 0) vy = 0;
+								y += min_ty * dy + ny * 0.1f - 0.4f;
+								if (e->nx < 0) // trai -> phai
+								{
+									brick->direction = LEFT;
+								}
+								else // phai -> trai
+								{
+									brick->direction = RIGHT;
+								}
+
+								if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+								{
+									brick->SetState(MUSICBRICK_STATE_COLLISION);
+									vx = -vx * 2 / 3;
+								}
+							}
+							else if (e->ny < 0) // tren xuong duoi
+							{
+								if (ny != 0) vy = 0;
+								brick->direction = TOP;
+								if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+									brick->SetState(MUSICBRICK_STATE_COLLISION);
+							}
+							else if (e->ny > 0) // duoi len tren
+							{
+								if (ny != 0)vy = 0;
+								isFalling = true;
+								brick->direction = BOTTOM;
+								if (brick->GetState() != MUSICBRICK_STATE_COLLISION)
+									brick->SetState(MUSICBRICK_STATE_COLLISION);
+							}
+						}
+					}
+				}
+				break;
+
+
+				default:
+					break;
 			}
 		}
 	}

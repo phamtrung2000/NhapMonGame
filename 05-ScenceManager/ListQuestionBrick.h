@@ -1,9 +1,8 @@
 #pragma once
-#include "GameObject.h"
 #include "QuestionBrick.h"
-#include "Game.h"
+#include "PlayScence.h"
 
-class ListQuestionBrick : public CGameObject
+class ListQuestionBrick : public QuestionBrick
 {
 public:
 	int NumberBrick;
@@ -11,26 +10,24 @@ public:
 	ListQuestionBrick()
 	{
 		NumberBrick = 0;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTQUESTIONBRICK;
-		Category = CATEGORY::OBJECT;
 	}
 	ListQuestionBrick(int number, vector<int>list, float startx, float starty)
 	{
 		NumberBrick = number;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTQUESTIONBRICK;
-		Category = CATEGORY::OBJECT;
 		StartX = startx;
 		StartY = starty;
 		for (int i = 0; i < NumberBrick; i++)
 		{
 			int type = list.at(i);
-			QuestionBrick* brick = new QuestionBrick(type, StartX + i * 16, StartY);
+			QuestionBrick* brick = new QuestionBrick(type, StartX + i * OBJECT_BBOX_WIDTH_HEIGHT, StartY);
 			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_QUESTIONBRICK);
+			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICK);
 			brick->SetAnimationSet(ani_set);
 			//_PlayScene->objects.push_back(brick);
 			Bricks.push_back(brick);
@@ -39,15 +36,14 @@ public:
 	ListQuestionBrick(vector<QuestionBrick*>list, int vitridau, int vitricuoi)
 	{
 		NumberBrick = vitricuoi - vitridau + 1;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTQUESTIONBRICK;
-		Category = CATEGORY::OBJECT;
 		for (int i = vitridau; i <= vitricuoi; i++)
 		{
 			QuestionBrick* brick = list.at(i);
 			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_QUESTIONBRICK);
+			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICK);
 			brick->SetAnimationSet(ani_set);
 			Bricks.push_back(brick);
 		}

@@ -2,18 +2,29 @@
 #include "PlayScence.h"
 #include "BreakItemBrick.h"
 
-ItemBrick::ItemBrick(int item, float x, float y) : CGameObject()
+ItemBrick::ItemBrick()
 {
 	isCollision = false;
 	hasItem = true;
-	Start_Y = y; // đúng
-	this->x = x;
-	this->y = y;
+	StartY = y;
 	ObjType = OBJECT_TYPE_ITEMBRICK;
+	type_of_brick = BRICK_TYPE_ITEM;
+	Item = 0;
+	isInit = false;
+	SetState(BRICK_STATE_NORMAL);
+	CountMoney = 0;
+}
+
+ItemBrick::ItemBrick(int item, float x, float y) : Brick(x, y)
+{
+	isCollision = false;
+	hasItem = true;
+	StartY = y;
+	ObjType = OBJECT_TYPE_ITEMBRICK;
+	type_of_brick = BRICK_TYPE_ITEM;
 	Item = item;
 	isInit = false;
 	SetState(BRICK_STATE_NORMAL);
-	Category = CATEGORY::OBJECT;
 	if (item == MONEYX10)
 		CountMoney = 10;
 	else
@@ -41,7 +52,7 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		if (isCollision == true && state != BRICK_STATE_EMPTY)
 		{
 
-			if (Start_Y - y >= MAX_HIGH)
+			if (StartY - y >= MAX_HIGH)
 			{
 				vy = ITEMBRICK_SPEED_Y;
 			}
@@ -49,17 +60,17 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Item != MONEYX10)
 			{
-				if (Start_Y < y)
+				if (StartY < y)
 				{
-					y = Start_Y;
+					y = StartY;
 					SetState(BRICK_STATE_EMPTY);
 				}
 			}
 			else
 			{
-				if (Start_Y < y)
+				if (StartY < y)
 				{
-					y = Start_Y;
+					y = StartY;
 					SetState(BRICK_STATE_NORMAL);
 				}
 				//CountMoney--;
@@ -75,18 +86,10 @@ void ItemBrick::Render()
 {
 	int ani = 0;
 	if (hasItem == true)
-		ani = ANI_BRICK_NORMAL;
+		ani = ITEMBRICK_ANI_NORMAL;
 	else
-		ani = ANI_BRICK_COLLISION;
-
-	/*	DebugOut(L"isCollision==true\n");
-	else
-		DebugOut(L"isCollision==false\n");
-	DebugOut(L"State = %i, Ani = %i, count = %i\n", state, ani, CountMoney);*/
-	
+		ani = QUESTIONBRICK_ANI_COLLISION;
 	animation_set->at(ani)->Render(x, y);
-
-	//RenderBoundingBox();
 }
 
 void ItemBrick::SetState(int state)

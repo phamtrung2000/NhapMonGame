@@ -1,5 +1,6 @@
 ﻿#include "ListQuestionBrick.h"
 #include "QuestionBrickItem.h"
+#include "PlayScence.h"
 
 void ListQuestionBrick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

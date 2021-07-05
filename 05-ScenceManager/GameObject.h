@@ -11,8 +11,10 @@ using namespace std;
 
 #define ID_TEX_BBOX -100		// special texture to draw object bounding box
 
-#define LEFT -1
-#define RIGHT 1
+#define LEFT	-1
+#define TOP		-2
+#define RIGHT	1
+#define BOTTOM	2
 
 #define OBJECT_BBOX_WIDTH_HEIGHT 16
 

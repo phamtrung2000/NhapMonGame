@@ -1,24 +1,23 @@
 #include "Brick.h"
 #include "PlayScence.h"
 
-#define BRICK_NORMAL_ANI 0
-#define BRICK_CLOUD_ANI 1
 
 Brick::Brick()
 {
 	ObjType = OBJECT_TYPE_BRICK;
-	vx = vy = 0.f;
-	Type = -1;
-	Category = CATEGORY::OBJECT;
-	Width  = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+	Type = 0;
+	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+	type_of_brick = BRICK_TYPE_NORMAL;
 }
 
-Brick::Brick(int type)
+Brick::Brick(float x, float y)
 {
+	this->x = x;
+	this->y = y;
 	ObjType = OBJECT_TYPE_BRICK;
-	Type = type;
-	Category = CATEGORY::OBJECT;
+	Type = 0;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+	type_of_brick = BRICK_TYPE_NORMAL;
 }
 
 Brick::Brick(int type, float x, float y)
@@ -28,15 +27,15 @@ Brick::Brick(int type, float x, float y)
 
 	ObjType = OBJECT_TYPE_BRICK;
 	Type = type;
-	Category = CATEGORY::OBJECT;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
+	type_of_brick = BRICK_TYPE_NORMAL;
 }
 
 void Brick::Render()
 {
-	int ani = BRICK_NORMAL_ANI;
+	int ani = NORMALBRICK_ANI_NORMAL;
 	if (Type == BRICK_CLOUD)
-		ani = BRICK_CLOUD_ANI;
+		ani = NORMALBRICK_ANI_CLOUD;
 	animation_set->at(ani)->Render(x, y);
 }
 

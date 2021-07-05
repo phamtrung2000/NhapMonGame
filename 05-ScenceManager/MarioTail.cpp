@@ -26,8 +26,9 @@ MarioTail::MarioTail(float x, float y)
 	vx = vy = 0;
 	SetPosition(x, y);
 	Category = CATEGORY::WEAPON;
-	isInvisible = false;
+	isInvisible = attack = false;
 	IsMovingObject = true;
+
 }
 
 void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -135,7 +136,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coObjects->size(); i++)
 		{
 			// lấy render box của 2 obj để kiểm tra xem chúng có nằm bên trong nhau hay không
-			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true)
+			if (IsCollision(this->GetRect(), coObjects->at(i)->GetRect()) == true && this->attack == false)
 			{
 				if (coObjects->at(i)->Category == CATEGORY::OBJECT)
 				{
@@ -239,6 +240,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 
 					}
+					attack = true;
 				}
 				else if (coObjects->at(i)->Category == CATEGORY::ENEMY)
 				{
@@ -358,6 +360,10 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 		}
+	}
+	else
+	{
+	attack = false;
 	}
 }
 

@@ -1,46 +1,90 @@
 ﻿#include "MusicBrick.h"
 #include "PlayScence.h"
 
-MusicBrick::MusicBrick(float x, float y) : CGameObject()
+MusicBrick::MusicBrick(float x, float y) : Brick(x, y)
 {
-	isCollision = false;
-	Start_Y = y; // đúng
-	this->x = x;
-	this->y = y;
+	isCollision = isCollisionMario = false;
+	StartY = y; 
 	ObjType = OBJECT_TYPE_MUSICBRICK;
-	isInit = false;
+	type_of_brick = BRICK_TYPE_MUSIC;
 	SetState(MUSICBRICK_STATE_NORMAL);
-	Category = CATEGORY::OBJECT;
+	direction = -1;
 }
 
 void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 	CGameObject::Update(dt);
 
-	if (isCollision == true)
+	if (isCollision == true && isCollisionMario == false)
 	{
-		y += dy;
-		_Mario->y = this->y - _Mario->Height;
-		
-		if (Start_Y + MAX_HIGH < y)
+		if (direction == TOP) // tác động từ trên xuống
 		{
-			vy = -BRICK_SPEED_Y;
-		}
+			y += dy;
+			if (StartY + MAX_HIGH < y)
+			{
+				vy = -BRICK_SPEED_Y;
+			}
 
-		if (int(y) == int(Start_Y) && vy == -BRICK_SPEED_Y)
+			if (int(y) == int(StartY) && vy == -BRICK_SPEED_Y)
+			{
+				SetState(MUSICBRICK_STATE_NORMAL);
+			}
+		}
+		else if (direction == BOTTOM) // tác động từ dưới lên
 		{
-			SetState(MUSICBRICK_STATE_NORMAL);
-			if(_Mario->pressS == false)
-				_Mario->vy -= 0.3f;
-			else
-				_Mario->vy -= 0.35f;
+			y += dy;
+			if (StartY - y >= MAX_HIGH)
+			{
+				vy = BRICK_SPEED_Y;
+			}
+
+			if (StartY < y)
+			{
+				y = StartY;
+				SetState(MUSICBRICK_STATE_NORMAL);
+			}
+		}
+	}
+	else if(isCollisionMario == true)
+	{
+		if (direction == TOP) // tác động từ trên xuống
+		{
+			y += dy;
+			_Mario->y = this->y - _Mario->Height;
+			if (StartY + MAX_HIGH < y)
+			{
+				vy = -BRICK_SPEED_Y;
+			}
+
+			if (int(y) == int(StartY) && vy == -BRICK_SPEED_Y)
+			{
+				SetState(MUSICBRICK_STATE_NORMAL);
+				if (_Mario->pressS == false)
+					_Mario->vy -= 0.3f;
+				else
+					_Mario->vy -= 0.35f;
+			}
+		}
+		else if (direction == BOTTOM) // tác động từ dưới lên
+		{
+			y += dy;
+			if (StartY - y >= MAX_HIGH)
+			{
+				vy = BRICK_SPEED_Y;
+			}
+
+			if (StartY < y)
+			{
+				y = StartY;
+				SetState(MUSICBRICK_STATE_NORMAL);
+			}
 		}
 	}
 }
 
 void MusicBrick::Render()
 {
-	animation_set->at(ANI_BRICK_NORMAL)->Render(x, y);
+	animation_set->at(MUSICBRICK_ANI_NORMAL)->Render(x, y);
 }
 
 void MusicBrick::SetState(int state)
@@ -52,14 +96,28 @@ void MusicBrick::SetState(int state)
 		case MUSICBRICK_STATE_NORMAL:
 		{
 			vx = vy = 0;
-			isCollision = false;
+			isCollision = isCollisionMario = false;
 		}
 		break;
 
 		case MUSICBRICK_STATE_COLLISION:
 		{
-			// viên gạch nảy xuong'
-			vy = BRICK_SPEED_Y;
+			switch (direction)
+			{
+				case TOP: // tren -> duoi
+				{
+					vy = BRICK_SPEED_Y;
+					vx = 0;
+				}
+				break;
+
+				case BOTTOM: // duoi -> tren
+				{
+					vy = -BRICK_SPEED_Y;
+					vx = 0;
+				}
+				break;
+			}
 			isCollision = true;
 		}break;
 	}
@@ -69,8 +127,8 @@ void MusicBrick::GetBoundingBox(float& left, float& top, float& right, float& bo
 {
 	left = x;
 	top = y;
-	right = x + OBJECT_BBOX_WIDTH_HEIGHT;
-	bottom = y + OBJECT_BBOX_WIDTH_HEIGHT;
+	right = x + Width;
+	bottom = y + Height;
 }
 
 

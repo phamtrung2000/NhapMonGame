@@ -303,7 +303,10 @@ public:
 	int NumberSmallGoomba; // số lượng nấm nhỏ bu lên người
 	int jump_count_X, jump_count_S; // đếm số lần nhảy để thoát khỏi mấy con nấm nhỏ bu lên người
 
+	bool isPushed, canPush; // mario bị đẩy khi cụng cục hidden music brick
+
 	Mario(float x = 0.0f, float y = 0.0f);
+
 	static Mario* GetInstance();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	virtual void Render();

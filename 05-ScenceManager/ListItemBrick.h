@@ -3,7 +3,7 @@
 #include "ItemBrick.h"
 #include "Game.h"
 
-class ListItemBrick : public CGameObject
+class ListItemBrick : public ItemBrick
 {
 public:
 	int NumberBrick;
@@ -11,18 +11,16 @@ public:
 	ListItemBrick()
 	{
 		NumberBrick = 0;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTITEMBRICK;
-		Category = CATEGORY::OBJECT;
 	}
 	ListItemBrick(int number, vector<int>list, float startx, float starty)
 	{
 		NumberBrick = number;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTITEMBRICK;
-		Category = CATEGORY::OBJECT;
 		StartX = startx;
 		StartY = starty;
 		for (int i = 0; i < NumberBrick; i++)
@@ -30,24 +28,22 @@ public:
 			int type = list.at(i);
 			ItemBrick* brick = new ItemBrick(type, StartX + i * 16, StartY);
 			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_ITEMBRICK);
+			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICK);
 			brick->SetAnimationSet(ani_set);
-			//_PlayScene->objects.push_back(brick);
 			Bricks.push_back(brick);
 		}
 	}
 	ListItemBrick(vector<ItemBrick*>list, int vitridau,int vitricuoi)
 	{
 		NumberBrick = vitricuoi - vitridau + 1;
-		Width = NumberBrick * 16;
-		Height = 16;
+		Width = NumberBrick * OBJECT_BBOX_WIDTH_HEIGHT;
+		Height = OBJECT_BBOX_WIDTH_HEIGHT;
 		ObjType = OBJECT_TYPE_LISTITEMBRICK;
-		Category = CATEGORY::OBJECT;
 		for (int i = vitridau; i <= vitricuoi; i++)
 		{
 			ItemBrick* brick = list.at(i);
 			CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_ITEMBRICK);
+			LPANIMATION_SET ani_set = animation_sets->Get(OBJECT_TYPE_BRICK);
 			brick->SetAnimationSet(ani_set);
 			Bricks.push_back(brick);
 		}
