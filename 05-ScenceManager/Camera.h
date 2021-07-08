@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include "Game.h"
 
+#define CAMERA_MODE_NORMAL	0 // chế độ bình thường, đi theo mario
+#define CAMERA_MODE_RIGHT	1 // chế độ tự động đẩy về phía trước, trái -> phải
+
+
 class Camera
 {
 private:
@@ -17,6 +21,7 @@ public:
 	float maxBottomCam;
 	bool Shake; // rung lắc màn hình khi đạp nút P
 	int ShakeTime; // thời gian rung lắc màn hình
+	float SpeedOfPush; // tốc độ đẩy, mỗi stage có 1 tốc độ đẩy khác nhau
 	Camera();
 	~Camera();
 	bool test;
@@ -33,8 +38,9 @@ public:
 	int GetHeight() { return height; }
 	int GetWidth() { return width; }
 	void Update();
-	void Update1();
 	void SetCamScene(float l, float t, float r, float b) { maxLeftCam = l; maxTopCam = t; maxRightCam = r; maxBottomCam = b; }
+	void SetSpeedOfPush(float s) { SpeedOfPush = (float)s; }
+
 
 	static Camera* GetInstance();
 

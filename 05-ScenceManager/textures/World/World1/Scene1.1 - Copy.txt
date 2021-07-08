@@ -25,7 +25,7 @@
 10000	.\textures\World\World1\Scene1.1Tile.png	255	255	255	.\textures\World\World1\Scene1.1Map.txt
 
 [SETTINGS]
-cam	0	50	2816	270	0
+cam	0	0	2816	416	0
 time	300
 scene	2
 # id	left	top	right	bottom	texture_id
@@ -35,5 +35,5 @@ scene	2
 0	0	0	350	0	2336	352
 #---- Ground-----
 1	7	0	416	-1	3000	16
-1	200	40	370	5	32	48	0	0
-1	24	100	344	13	7	0	0	0	0	0	0	0
+#1	200	40	370	5	32	48	0	0
+#1	24	100	344	13	7	0	0	0	0	0	0	0

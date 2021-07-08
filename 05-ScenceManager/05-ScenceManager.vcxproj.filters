@@ -516,5 +516,6 @@
     <Text Include="textures\World\World1\SceneHidden1.4Map.txt" />
     <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
     <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3Hidden.txt" />
   </ItemGroup>
 </Project>

@@ -669,6 +669,8 @@ void CPlayScene::_ParseSection_SETTINGS(string line)
 	{
 		_Camera->SetCamScene((float)(atoi(tokens[1].c_str())), (float)(atoi(tokens[2].c_str())), (float)(atoi(tokens[3].c_str())) - SCREEN_WIDTH, (float)(atoi(tokens[4].c_str())));
 		_Camera->SetCamMove(int(atoi(tokens[5].c_str())));
+		if(int(atoi(tokens[5].c_str())) != CAMERA_MODE_NORMAL)
+			_Camera->SetSpeedOfPush(float(atof(tokens[6].c_str())));
 	}
 	else if (tokens[0] == "scene")
 	{
@@ -845,8 +847,8 @@ void CPlayScene::Render()
 		}
 	}
 	
-	_HUD->Render();
-	_Grid->RenderCell();
+	//_HUD->Render();
+	//_Grid->RenderCell();
 }
 
 void CPlayScene::Unload()

@@ -428,12 +428,11 @@ void HUD::Render()
 	//================ Vẽ HUD ======================
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
 	// khung đen sau HUD
-	_Game->Draw(CamX, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
-	//_Game->Draw(-50, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
-	//DebugOut(L"Camera camx %f, camera camy %f\n", _Camera->cam_x, _Camera->cam_y);
-	//DebugOut(L"camx %f, camy %f\n", CamX, CamY);
-	//DebugOut(L"left = %i, top = %i, right = %i, bottom = %i\n", rect.left, rect.top, rect.right, rect.bottom);
+	//_Game->Draw(CamX, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
+	float y_temp = CamY - (SCREEN_HEIGHT / 10) - 1;
+	_Game->Draw(CamX, y_temp, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
 
+	float temp = _Camera->GetHeight(); // 111
 	// Thanh HUD
 	CamX = CamX + SCREEN_WIDTH / 30;
 	HUB->Draw(CamX, CAM_Y_HUD_ITEM1);

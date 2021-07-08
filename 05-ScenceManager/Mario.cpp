@@ -382,6 +382,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				time_fly = 0;
 				canFlyX = isFlyingHigh = false;
+				hasFly = true;
 				vy = 0;
 				SetState(MARIO_STATE_IDLE);
 			}
@@ -394,9 +395,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				time_fly = 0;
 				isMaxRunning = canFlyS = isFlyingHigh = false;
+				hasFly = true;
 				vy = 0;
 				SetState(MARIO_STATE_IDLE);
-			
 			}
 		}
 
@@ -1319,9 +1320,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (y > _Map->GetHeight())
 		{
-			CGame::GetInstance()->SwitchScene2(1);
+			/*CGame::GetInstance()->SwitchScene2(1);
 			_HUD->MarioLife--;
-			_PlayScene->Stop = false;
+			_PlayScene->Stop = false;*/
 		}
 	
 	}
@@ -2508,7 +2509,7 @@ void Mario::Render()
 				animation_set->at(ani)->Render(x, y, 255);
 		}
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Mario::SetState(int state)
@@ -2824,13 +2825,13 @@ void Mario::Debug()
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
 	}*/
 
-	if(isPushed == true)
-		DebugOut(L"isPushed == true\t");
+	if(canFlyX == true)
+		DebugOut(L"canFlyX == true\t");
 	else
-		DebugOut(L"isPushed == false\t");
-	DebugOut(L"Mario vx = %f\n", vx);
+		DebugOut(L"canFlyX == false\t");
+	//DebugOut(L"Mario x = %f\n", x);
 	
-	//DebugOut(L"\n");
+	DebugOut(L"\n");
 }
 
 void Mario::Unload()
@@ -3280,6 +3281,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 				y += min_ty * dy + ny * 0.1f - 0.3f;
 			OnGround = true; // xử lý chạm đất
 			isFalling = isFlyingLow = isFlyingHigh = false;
+			if (hasFly == true)
+				hasFly = false;
 			x += min_tx * dx + nx * 0.4f;
 		}
 		else if (e->ny > 0)
@@ -3327,6 +3330,8 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 					y += min_ty * dy + ny * 0.2f;
 				OnGround = true; // xử lý chạm đất
 				isFalling = isFlyingLow = isFlyingHigh = isPushed = canPush = false;
+				if (hasFly == true)
+					hasFly = false;
 			}
 			else if (e->nx != 0)
 			{

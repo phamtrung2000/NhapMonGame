@@ -49,7 +49,7 @@ void Map::_ParseSection_INFO(string line)
 		int widthmap = _Map->GetWidth();
 		int b = (widthmap % gridsizecell == 0) ? (widthmap / gridsizecell) : (widthmap / gridsizecell) + 1;
 		_Grid->cols = b;
-		int a = _Map->GetHeight() / gridsizecell;
+		int a = (_Map->GetHeight() % gridsizecell == 0) ? (_Map->GetHeight() / gridsizecell) : (_Map->GetHeight() / gridsizecell) + 1;
 		_Grid->rows = a;
 		_Grid->Init();
 	}

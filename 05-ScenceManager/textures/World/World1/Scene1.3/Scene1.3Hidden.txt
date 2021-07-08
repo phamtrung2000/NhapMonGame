@@ -1,0 +1,57 @@
+[EFFECT]
+.\textures\Effect\Effect.txt
+
+[ENEMY]
+.\textures\Enemy\Enemy.txt
+
+# không để dưới 2 cái này
+# HUD : 12, 13 bên file HUD.txt
+[HUD]
+.\textures\HUD\HUD.txt
+
+[ITEM]
+.\textures\Item\Item.txt
+
+[MARIO]
+.\textures\Mario\Mario.txt
+
+[OBJECT]
+.\textures\Object\Object.txt
+
+[WEAPON]
+.\textures\Weapon\Weapon.txt
+
+[MAP]
+10000	.\textures\World\World1\Scene1.3\Scene1.3HiddenTile.png	255	255	255	.\textures\World\World1\Scene1.3\Scene1.3HiddenMap.txt
+[SETTINGS]
+# left	top	right	bottom	mode	speed
+cam	0	0	1008	416	1	0.5
+time	300
+scene	2
+
+[OBJECTS]
+# 0.Category	1.ObjectType	2.x	3.y	4.ani_set_id	.................
+# Category: 0 = Player , 1 = Object, 2 = Enemy, 3 = Item, 4 = Weapon, 5.Effect
+# ObjectType: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Question Brick
+#======================================================================================================
+#=============================================== MARIO ================================================
+#======================================================================================================
+# bắt đầu
+0	0	50	10	0	2336	352
+
+#======================================================================================================
+#=============================================== OBJECTS ==============================================
+#======================================================================================================
+#----------------------------------------------- GROUND -----------------------------------------
+1	7	0	416	400	1008	16
+
+#----------------------------------------------- LIST ITEM BRICK -----------------------------------
+#0.Category	1.obj_type	2.x	3.y	4.ani_set_id	5.number of brick	6. list of type of brick
+1	24	640	176	1	1	1
+#----------------------------------------------- COIN -----------------------------------------
+3	12	1008	320	12
+3	12	1024	320	12
+3	12	1040	320	12
+3	12	1136	320	12
+3	12	1152	320	12
+3	12	1168	320	12

@@ -220,8 +220,8 @@
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
 #define TIME_ATTACK 4//2
-#define TIME_FLY_X 200
-#define TIME_FLY_S 200
+#define TIME_FLY_X 300
+#define TIME_FLY_S 300
 #define TIME_FLY_PER_S 30
 #define MARIO_UNTOUCHABLE_TIME 3000
 #define TIME_LEVEL_UP 3000
@@ -304,7 +304,7 @@ public:
 	int jump_count_X, jump_count_S; // đếm số lần nhảy để thoát khỏi mấy con nấm nhỏ bu lên người
 
 	bool isPushed, canPush; // mario bị đẩy khi cụng cục hidden music brick
-
+	bool hasFly; // vừa bay : mario vừa bay và bắt đầu rớt xuống, mục đích : xử lý bên camera vụ phân biệt khi mario rớt xuống vs nhảy tại chỗ
 	Mario(float x = 0.0f, float y = 0.0f);
 
 	static Mario* GetInstance();
