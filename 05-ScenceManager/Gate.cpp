@@ -11,4 +11,5 @@ Gate::Gate(int a)
 
 void Gate::Render()
 {
+	
 }

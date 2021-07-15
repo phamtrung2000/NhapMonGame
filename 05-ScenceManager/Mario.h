@@ -305,6 +305,7 @@ public:
 
 	bool isPushed, canPush; // mario bị đẩy khi cụng cục hidden music brick
 	bool hasFly; // vừa bay : mario vừa bay và bắt đầu rớt xuống, mục đích : xử lý bên camera vụ phân biệt khi mario rớt xuống vs nhảy tại chỗ
+	int time_switch_scene;
 	Mario(float x = 0.0f, float y = 0.0f);
 
 	static Mario* GetInstance();

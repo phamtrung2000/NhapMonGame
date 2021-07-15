@@ -44,7 +44,14 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				if (_Mario->pressS == false)
 					_Mario->vy -= 0.3f;
 				else
-					_Mario->vy -= 0.35f;
+				{
+					_Mario->vy -= 0.5f;
+					_Mario->GoHiddenWorld = true;
+					_Mario->StartGoHiddenWorld = GetTickCount64();
+					_Mario->Scene = 13;
+					_Mario->time_switch_scene = 400;
+				}
+					
 			}
 		}
 		else if (direction == BOTTOM) // tác động từ dưới lên

@@ -847,7 +847,7 @@ void CPlayScene::Render()
 		}
 	}
 	
-	//_HUD->Render();
+	_HUD->Render();
 	//_Grid->RenderCell();
 }
 
@@ -855,14 +855,17 @@ void CPlayScene::Unload()
 {
 	for (auto& obj : listGround)
 		delete obj;
-	/*for (auto& obj : _Grid->GetObjectInViewPort())
+	listGround.clear();
+
+	// xóa hết các obj trong CurObjectInViewPort để tránh lỗi k render hoặc update được khi switch scene
+	for (auto& obj : _Grid->GetObjectInViewPort())
 	{
 		delete obj;
-	}*/
-	listGround.clear();
+	}
+	_Grid->CurObjectInViewPort.clear();
+
 	_Mario->Unload();
 	_Map->UnLoad();
-	//_HUD->Unload();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

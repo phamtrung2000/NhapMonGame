@@ -5,6 +5,10 @@
 #define CAMERA_MODE_RIGHT	1 // chế độ tự động đẩy về phía trước, trái -> phải
 
 
+#define VIEN_TRANG_HEIGHT 14
+#define HUD_HEIGHT		50
+#define DISTANCE 50 // khoảng cách giữa mario mà đỉnh màn hình khi bay lên tới đỉnh
+
 class Camera
 {
 private:
@@ -22,6 +26,9 @@ public:
 	bool Shake; // rung lắc màn hình khi đạp nút P
 	int ShakeTime; // thời gian rung lắc màn hình
 	float SpeedOfPush; // tốc độ đẩy, mỗi stage có 1 tốc độ đẩy khác nhau
+	int real_height; // chiều cao thật sự của màn hình game chứ k phải chiều cao màn hình app
+	float y_mario_fly; // mức y mà camera sẽ follow mario khi mario bay lên
+	float y_first_onground; // lấy y đầu tiên khi mario đang bay mà tiếp đất để tránh 
 	Camera();
 	~Camera();
 	bool test;
@@ -37,8 +44,10 @@ public:
 
 	int GetHeight() { return height; }
 	int GetWidth() { return width; }
+
 	void Update();
-	void SetCamScene(float l, float t, float r, float b) { maxLeftCam = l; maxTopCam = t; maxRightCam = r; maxBottomCam = b; }
+	void SetCamScene(float l, float t, float r, float b);
+	
 	void SetSpeedOfPush(float s) { SpeedOfPush = (float)s; }
 
 

@@ -25,7 +25,7 @@
 10000	textures\World\World1\SceneHidden1.1Tile.png	255	255	255	textures\World\World1\SceneHidden1.1Map.txt
 
 [SETTINGS]
-cam	0	0	6176	0	0
+cam	0	0	512	158	0
 time	300
 scene	2
 # id	left	top	right	bottom	texture_id
@@ -47,9 +47,6 @@ scene	2
 1	7	384	0	1	128	64
 1	7	160	0	1	192	16
 1	7	128	160	1	384	32
-
-#1	27	0	144	1	8	0	0	0	0	0	0	0	0
-#1	7	0	160	1	496	32
 
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id

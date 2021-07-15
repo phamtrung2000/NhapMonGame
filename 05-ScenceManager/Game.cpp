@@ -63,22 +63,25 @@ void CGame::Init(HWND hWnd)
 void CGame::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
 {
 	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
+	// x = 0 , y = 132, z = 0
 	RECT r; 
 	r.left = left;
 	r.top = top;
 	r.right = right;
 	r.bottom = bottom;
 	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
+}
 
-	/*float cx, cy;
-	CGame::GetInstance()->GetCamPos(cx, cy);
-	D3DXVECTOR3 p(floor(x - cx), floor(y - cy), 0);
+void CGame::DrawHud(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
+{
+	D3DXVECTOR3 p(x, y, 0);
 	RECT r;
 	r.left = left;
 	r.top = top;
 	r.right = right;
 	r.bottom = bottom;
-	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));*/
+	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
+
 }
 
 int CGame::IsKeyDown(int KeyCode)

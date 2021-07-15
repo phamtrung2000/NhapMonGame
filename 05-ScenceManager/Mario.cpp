@@ -62,9 +62,9 @@ Mario::Mario(float x, float y) : CGameObject()
 		= endAttack = isLevelUp = test = render_tail = pressS = isLevelDown = loseControl
 		= isBlocked = isPushed = canPush = false;
 
-	OnGround = IsMovingObject = StopRunning = true;
+	OnGround = IsMovingObject = StopRunning = hasFly = true;
 
-	level_of_walking = level_of_running = jump_count_X = jump_count_S = 0;
+	level_of_walking = level_of_running = jump_count_X = jump_count_S = time_switch_scene =0;
 	nScore = 0;
 	time_attack = time_fly = iChangeLevelTime = FlyTimePerS = 0;
 	TimeJumpS = 0;
@@ -382,9 +382,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				time_fly = 0;
 				canFlyX = isFlyingHigh = false;
-				hasFly = true;
 				vy = 0;
 				SetState(MARIO_STATE_IDLE);
+				if (OnGround == false)
+					hasFly = true;
 			}
 		}
 		else if (canFlyS == true)
@@ -395,9 +396,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				time_fly = 0;
 				isMaxRunning = canFlyS = isFlyingHigh = false;
-				hasFly = true;
 				vy = 0;
 				SetState(MARIO_STATE_IDLE);
+				if (OnGround == false)
+					hasFly = true;
 			}
 		}
 
@@ -446,7 +448,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 		{
-			if (StartGoHiddenWorld != 0 && GetTickCount64() - StartGoHiddenWorld > 1000)
+			if (StartGoHiddenWorld != 0 && GetTickCount64() - StartGoHiddenWorld > time_switch_scene)
 			{
 				CGame::GetInstance()->SwitchScene(Scene);
 				return;
@@ -1433,132 +1435,134 @@ void Mario::Render()
 	}
 	else
 	{
-		ani = -1;
-		if (state == MARIO_STATE_DIE)
-			ani = MARIO_ANI_DIE;
-		else
+		if (!(GoHiddenWorld == true && GetTickCount64() - StartGoHiddenWorld > 300))
 		{
-			// chưa nhảy // đang rớt xuống
-			if (vy >= 0)
+			ani = -1;
+			if (state == MARIO_STATE_DIE)
+				ani = MARIO_ANI_DIE;
+			else
 			{
-				// đang đứng trên đất
-				if (OnGround == true)
+				// chưa nhảy // đang rớt xuống
+				if (vy >= 0)
 				{
-					//if (isAttacking == true && endAttack == false && untouchable == false)
-					if (isAttacking == true && endAttack == false)
+					// đang đứng trên đất
+					if (OnGround == true)
 					{
-						switch (level)
+						//if (isAttacking == true && endAttack == false && untouchable == false)
+						if (isAttacking == true && endAttack == false)
 						{
-						case MARIO_LEVEL_TAIL:
-						{
-							if (nx == RIGHT)
+							switch (level)
 							{
-								if (time_attack <= TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_2;
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-									ani = MARIO_ANI_TAIL_ATTACK_1;
+							case MARIO_LEVEL_TAIL:
+							{
+								if (nx == RIGHT)
+								{
+									if (time_attack <= TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_1;
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_2;
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_3;
+									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_4;
+									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_1;
+								}
+								else
+								{
+									if (time_attack <= TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_3;
+									}
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_2;
+									}
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_1;
+									}
+									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_4;
+									}
+									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_3;
+									}
+								}
 							}
-							else
+							break;
+
+							case MARIO_LEVEL_FIRE:
 							{
-								if (time_attack <= TIME_ATTACK)
+								// phải 
+								if (nx == RIGHT)
 								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
+									if (time_attack <= TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
+									}
+									else //if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
+									}
 								}
-								else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+								// trái
+								else
 								{
-									ani = MARIO_ANI_TAIL_ATTACK_2;
+									if (time_attack <= TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
+									}
+									else //if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
+									}
 								}
-								else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_1;
-								}
-								else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_4;
-								}
-								else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_TAIL_ATTACK_3;
-								}
+							}
+							break;
 							}
 						}
-						break;
-
-						case MARIO_LEVEL_FIRE:
+						else if (canKick == true)
 						{
-							// phải 
+							// phải
 							if (nx == RIGHT)
 							{
-								if (time_attack <= TIME_ATTACK)
+								switch (level)
 								{
-									ani = MARIO_ANI_FIRE_ATTACK_RIGHT_1;
-								}
-								else //if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								{
-									ani = MARIO_ANI_FIRE_ATTACK_RIGHT_2;
+								case MARIO_LEVEL_SMALL:
+									ani = MARIO_ANI_SMALL_KICK_RIGHT; break;
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_KICK_RIGHT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_KICK_RIGHT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_KICK_RIGHT; break;
 								}
 							}
 							// trái
 							else
 							{
-								if (time_attack <= TIME_ATTACK)
+								switch (level)
 								{
-									ani = MARIO_ANI_FIRE_ATTACK_LEFT_1;
+								case MARIO_LEVEL_SMALL:
+									ani = MARIO_ANI_SMALL_KICK_LEFT; break;
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_KICK_LEFT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_KICK_LEFT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_KICK_LEFT; break;
 								}
-								else //if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+							}
+						}
+						else if (isSitDown == true && GoHiddenWorld == false)
+						{
+							if (nx == RIGHT)
+							{
+								switch (level)
 								{
-									ani = MARIO_ANI_FIRE_ATTACK_LEFT_2;
-								}
-							}
-						}
-						break;
-						}
-					}
-					else if (canKick == true)
-					{
-						// phải
-						if (nx == RIGHT)
-						{
-							switch (level)
-							{
-							case MARIO_LEVEL_SMALL:
-								ani = MARIO_ANI_SMALL_KICK_RIGHT; break;
-							case MARIO_LEVEL_BIG:
-								ani = MARIO_ANI_BIG_KICK_RIGHT; break;
-							case MARIO_LEVEL_TAIL:
-								ani = MARIO_ANI_TAIL_KICK_RIGHT; break;
-							case MARIO_LEVEL_FIRE:
-								ani = MARIO_ANI_FIRE_KICK_RIGHT; break;
-							}
-						}
-						// trái
-						else
-						{
-							switch (level)
-							{
-							case MARIO_LEVEL_SMALL:
-								ani = MARIO_ANI_SMALL_KICK_LEFT; break;
-							case MARIO_LEVEL_BIG:
-								ani = MARIO_ANI_BIG_KICK_LEFT; break;
-							case MARIO_LEVEL_TAIL:
-								ani = MARIO_ANI_TAIL_KICK_LEFT; break;
-							case MARIO_LEVEL_FIRE:
-								ani = MARIO_ANI_FIRE_KICK_LEFT; break;
-							}
-						}
-					}
-					else if (isSitDown == true && GoHiddenWorld == false)
-					{
-						if (nx == RIGHT)
-						{
-							switch (level)
-							{
 								case MARIO_LEVEL_SMALL:
 									ani = MARIO_ANI_SMALL_IDLE_RIGHT; break;
 								case MARIO_LEVEL_BIG:
@@ -1567,12 +1571,12 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_SITDOWN_RIGHT; break;
 								case MARIO_LEVEL_FIRE:
 									ani = MARIO_ANI_FIRE_SITDOWN_RIGHT; break;
+								}
 							}
-						}
-						else
-						{
-							switch (level)
+							else
 							{
+								switch (level)
+								{
 								case MARIO_LEVEL_SMALL:
 									ani = MARIO_ANI_SMALL_IDLE_LEFT; break;
 								case MARIO_LEVEL_BIG:
@@ -1581,79 +1585,79 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_SITDOWN_LEFT; break;
 								case MARIO_LEVEL_FIRE:
 									ani = MARIO_ANI_FIRE_SITDOWN_LEFT; break;
+								}
 							}
 						}
-					}
-					else if (canFlyX == true || canFlyS == true)
-					{
-						// đứng yên
-						if (abs(vx) == 0.0f)
+						else if (canFlyX == true || canFlyS == true)
 						{
-							// phải 
-							if (nx == RIGHT)
+							// đứng yên
+							if (abs(vx) == 0.0f)
 							{
-								ani = MARIO_ANI_TAIL_IDLE_RIGHT;
-							}
-							// trái
-							else
-							{
-								ani = MARIO_ANI_TAIL_IDLE_LEFT;
-							}
-						}
-						// đi bộ qua phải
-						else if (nx == RIGHT)
-						{
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_TAIL_WALKING_RIGHT;
-							}
-							else if (ChangeDirection == true)
-								ani = MARIO_ANI_TAIL_STOP_RIGHT;
-						}
-						//  đi bộ qua trái
-						else if (nx == LEFT)
-						{
-							if (ChangeDirection == false)
-							{
-								ani = MARIO_ANI_TAIL_WALKING_LEFT;
-							}
-							else if (ChangeDirection == true)
-								ani = MARIO_ANI_TAIL_STOP_LEFT;
-						}
-					}
-					else if (GoHiddenWorld == true)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_SMALL:
-							ani = MARIO_ANI_SMALL_GOHIDDENWORLD; break;
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_GOHIDDENWORLD; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_GOHIDDENWORLD; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_GOHIDDENWORLD; break;
-						}
-					}
-					else
-					{
-						// đứng yên
-						if (level_of_walking == 0 && vx == 0.0f)
-						{
-							// bình thường
-							if (ChangeDirection == false)
-							{
-								if (isBlocked == true)
+								// phải 
+								if (nx == RIGHT)
 								{
-									// phải 
-									if (nx == RIGHT)
+									ani = MARIO_ANI_TAIL_IDLE_RIGHT;
+								}
+								// trái
+								else
+								{
+									ani = MARIO_ANI_TAIL_IDLE_LEFT;
+								}
+							}
+							// đi bộ qua phải
+							else if (nx == RIGHT)
+							{
+								if (ChangeDirection == false)
+								{
+									ani = MARIO_ANI_TAIL_WALKING_RIGHT;
+								}
+								else if (ChangeDirection == true)
+									ani = MARIO_ANI_TAIL_STOP_RIGHT;
+							}
+							//  đi bộ qua trái
+							else if (nx == LEFT)
+							{
+								if (ChangeDirection == false)
+								{
+									ani = MARIO_ANI_TAIL_WALKING_LEFT;
+								}
+								else if (ChangeDirection == true)
+									ani = MARIO_ANI_TAIL_STOP_LEFT;
+							}
+						}
+						else if (GoHiddenWorld == true)
+						{
+							switch (level)
+							{
+							case MARIO_LEVEL_SMALL:
+								ani = MARIO_ANI_SMALL_GOHIDDENWORLD; break;
+							case MARIO_LEVEL_BIG:
+								ani = MARIO_ANI_BIG_GOHIDDENWORLD; break;
+							case MARIO_LEVEL_TAIL:
+								ani = MARIO_ANI_TAIL_GOHIDDENWORLD; break;
+							case MARIO_LEVEL_FIRE:
+								ani = MARIO_ANI_FIRE_GOHIDDENWORLD; break;
+							}
+						}
+						else
+						{
+							// đứng yên
+							if (level_of_walking == 0 && vx == 0.0f)
+							{
+								// bình thường
+								if (ChangeDirection == false)
+								{
+									if (isBlocked == true)
 									{
-										if (isHolding == true)
+										// phải 
+										if (nx == RIGHT)
 										{
-											if (GetState() == MARIO_STATE_HOLDING_RIGHT)
+											if (isHolding == true)
 											{
-												switch (level)
+												if (GetState() == MARIO_STATE_HOLDING_RIGHT)
 												{
+													switch (level)
+													{
 													case MARIO_LEVEL_SMALL:
 														ani = MARIO_ANI_SMALL_HOLD_WALK_RIGHT; break;
 													case MARIO_LEVEL_BIG:
@@ -1662,12 +1666,12 @@ void Mario::Render()
 														ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT; break;
 													case MARIO_LEVEL_FIRE:
 														ani = MARIO_ANI_FIRE_HOLD_WALK_RIGHT; break;
+													}
 												}
-											}
-											else
-											{
-												switch (level)
+												else
 												{
+													switch (level)
+													{
 													case MARIO_LEVEL_SMALL:
 														ani = MARIO_ANI_SMALL_HOLD_IDLE_RIGHT; break;
 													case MARIO_LEVEL_BIG:
@@ -1676,44 +1680,112 @@ void Mario::Render()
 														ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT; break;
 													case MARIO_LEVEL_FIRE:
 														ani = MARIO_ANI_FIRE_HOLD_IDLE_RIGHT; break;
+													}
 												}
 											}
-										}
-										else
-										{
-											switch (level)
-											{
-											case MARIO_LEVEL_SMALL:
-												ani = MARIO_ANI_SMALL_WALKING_RIGHT; break;
-											case MARIO_LEVEL_BIG:
-												ani = MARIO_ANI_BIG_WALKING_RIGHT; break;
-											case MARIO_LEVEL_TAIL:
-												ani = MARIO_ANI_TAIL_WALKING_RIGHT; break;
-											case MARIO_LEVEL_FIRE:
-												ani = MARIO_ANI_FIRE_WALKING_RIGHT; break;
-											}
-										}
-									}
-									// trái
-									else
-									{
-										if (isHolding == true)
-										{
-											if (GetState() == MARIO_STATE_HOLDING_LEFT)
+											else
 											{
 												switch (level)
 												{
 												case MARIO_LEVEL_SMALL:
-													ani = MARIO_ANI_SMALL_HOLD_WALK_LEFT; break;
+													ani = MARIO_ANI_SMALL_WALKING_RIGHT; break;
 												case MARIO_LEVEL_BIG:
-													ani = MARIO_ANI_BIG_HOLD_WALK_LEFT; break;
+													ani = MARIO_ANI_BIG_WALKING_RIGHT; break;
 												case MARIO_LEVEL_TAIL:
-													ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT; break;
+													ani = MARIO_ANI_TAIL_WALKING_RIGHT; break;
 												case MARIO_LEVEL_FIRE:
-													ani = MARIO_ANI_FIRE_HOLD_WALK_LEFT; break;
+													ani = MARIO_ANI_FIRE_WALKING_RIGHT; break;
+												}
+											}
+										}
+										// trái
+										else
+										{
+											if (isHolding == true)
+											{
+												if (GetState() == MARIO_STATE_HOLDING_LEFT)
+												{
+													switch (level)
+													{
+													case MARIO_LEVEL_SMALL:
+														ani = MARIO_ANI_SMALL_HOLD_WALK_LEFT; break;
+													case MARIO_LEVEL_BIG:
+														ani = MARIO_ANI_BIG_HOLD_WALK_LEFT; break;
+													case MARIO_LEVEL_TAIL:
+														ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT; break;
+													case MARIO_LEVEL_FIRE:
+														ani = MARIO_ANI_FIRE_HOLD_WALK_LEFT; break;
+													}
+												}
+												else
+												{
+													switch (level)
+													{
+													case MARIO_LEVEL_SMALL:
+														ani = MARIO_ANI_SMALL_HOLD_IDLE_LEFT; break;
+													case MARIO_LEVEL_BIG:
+														ani = MARIO_ANI_BIG_HOLD_IDLE_LEFT; break;
+													case MARIO_LEVEL_TAIL:
+														ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT; break;
+													case MARIO_LEVEL_FIRE:
+														ani = MARIO_ANI_FIRE_HOLD_IDLE_LEFT; break;
+													}
 												}
 											}
 											else
+											{
+												switch (level)
+												{
+												case MARIO_LEVEL_SMALL:
+													ani = MARIO_ANI_SMALL_WALKING_LEFT; break;
+												case MARIO_LEVEL_BIG:
+													ani = MARIO_ANI_BIG_WALKING_LEFT; break;
+												case MARIO_LEVEL_TAIL:
+													ani = MARIO_ANI_TAIL_WALKING_LEFT; break;
+												case MARIO_LEVEL_FIRE:
+													ani = MARIO_ANI_FIRE_WALKING_LEFT; break;
+												}
+											}
+										}
+									}
+									else
+									{
+										// phải 
+										if (nx == RIGHT)
+										{
+											if (isHolding == true)
+											{
+												switch (level)
+												{
+												case MARIO_LEVEL_SMALL:
+													ani = MARIO_ANI_SMALL_HOLD_IDLE_RIGHT; break;
+												case MARIO_LEVEL_BIG:
+													ani = MARIO_ANI_BIG_HOLD_IDLE_RIGHT; break;
+												case MARIO_LEVEL_TAIL:
+													ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT; break;
+												case MARIO_LEVEL_FIRE:
+													ani = MARIO_ANI_FIRE_HOLD_IDLE_RIGHT; break;
+												}
+											}
+											else
+											{
+												switch (level)
+												{
+												case MARIO_LEVEL_SMALL:
+													ani = MARIO_ANI_SMALL_IDLE_RIGHT; break;
+												case MARIO_LEVEL_BIG:
+													ani = MARIO_ANI_BIG_IDLE_RIGHT; break;
+												case MARIO_LEVEL_TAIL:
+													ani = MARIO_ANI_TAIL_IDLE_RIGHT; break;
+												case MARIO_LEVEL_FIRE:
+													ani = MARIO_ANI_FIRE_IDLE_RIGHT; break;
+												}
+											}
+										}
+										// trái
+										else
+										{
+											if (isHolding == true)
 											{
 												switch (level)
 												{
@@ -1727,97 +1799,113 @@ void Mario::Render()
 													ani = MARIO_ANI_FIRE_HOLD_IDLE_LEFT; break;
 												}
 											}
-										}
-										else
-										{
-											switch (level)
+											else
 											{
-											case MARIO_LEVEL_SMALL:
-												ani = MARIO_ANI_SMALL_WALKING_LEFT; break;
-											case MARIO_LEVEL_BIG:
-												ani = MARIO_ANI_BIG_WALKING_LEFT; break;
-											case MARIO_LEVEL_TAIL:
-												ani = MARIO_ANI_TAIL_WALKING_LEFT; break;
-											case MARIO_LEVEL_FIRE:
-												ani = MARIO_ANI_FIRE_WALKING_LEFT; break;
+												switch (level)
+												{
+												case MARIO_LEVEL_SMALL:
+													ani = MARIO_ANI_SMALL_IDLE_LEFT; break;
+												case MARIO_LEVEL_BIG:
+													ani = MARIO_ANI_BIG_IDLE_LEFT; break;
+												case MARIO_LEVEL_TAIL:
+													ani = MARIO_ANI_TAIL_IDLE_LEFT; break;
+												case MARIO_LEVEL_FIRE:
+													ani = MARIO_ANI_FIRE_IDLE_LEFT; break;
+												}
 											}
 										}
 									}
+
 								}
+								// hiện hiệu ứng khựng
 								else
 								{
 									// phải 
 									if (nx == RIGHT)
 									{
-										if (isHolding == true)
+										switch (level)
 										{
-											switch (level)
-											{
-												case MARIO_LEVEL_SMALL:
-													ani = MARIO_ANI_SMALL_HOLD_IDLE_RIGHT; break;
-												case MARIO_LEVEL_BIG:
-													ani = MARIO_ANI_BIG_HOLD_IDLE_RIGHT; break;
-												case MARIO_LEVEL_TAIL:
-													ani = MARIO_ANI_TAIL_HOLD_IDLE_RIGHT; break;
-												case MARIO_LEVEL_FIRE:
-													ani = MARIO_ANI_FIRE_HOLD_IDLE_RIGHT; break;
-											}
-										}
-										else
-										{
-											switch (level)
-											{
-											case MARIO_LEVEL_SMALL:
-												ani = MARIO_ANI_SMALL_IDLE_RIGHT; break;
-											case MARIO_LEVEL_BIG:
-												ani = MARIO_ANI_BIG_IDLE_RIGHT; break;
-											case MARIO_LEVEL_TAIL:
-												ani = MARIO_ANI_TAIL_IDLE_RIGHT; break;
-											case MARIO_LEVEL_FIRE:
-												ani = MARIO_ANI_FIRE_IDLE_RIGHT; break;
-											}
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_STOP_RIGHT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_STOP_RIGHT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_STOP_RIGHT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_STOP_RIGHT; break;
 										}
 									}
 									// trái
 									else
 									{
-										if (isHolding == true)
+										switch (level)
 										{
-											switch (level)
-											{
-											case MARIO_LEVEL_SMALL:
-												ani = MARIO_ANI_SMALL_HOLD_IDLE_LEFT; break;
-											case MARIO_LEVEL_BIG:
-												ani = MARIO_ANI_BIG_HOLD_IDLE_LEFT; break;
-											case MARIO_LEVEL_TAIL:
-												ani = MARIO_ANI_TAIL_HOLD_IDLE_LEFT; break;
-											case MARIO_LEVEL_FIRE:
-												ani = MARIO_ANI_FIRE_HOLD_IDLE_LEFT; break;
-											}
-										}
-										else
-										{
-											switch (level)
-											{
-											case MARIO_LEVEL_SMALL:
-												ani = MARIO_ANI_SMALL_IDLE_LEFT; break;
-											case MARIO_LEVEL_BIG:
-												ani = MARIO_ANI_BIG_IDLE_LEFT; break;
-											case MARIO_LEVEL_TAIL:
-												ani = MARIO_ANI_TAIL_IDLE_LEFT; break;
-											case MARIO_LEVEL_FIRE:
-												ani = MARIO_ANI_FIRE_IDLE_LEFT; break;
-											}
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_STOP_LEFT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_STOP_LEFT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_STOP_LEFT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_STOP_LEFT; break;
 										}
 									}
 								}
-								
 							}
-							// hiện hiệu ứng khựng
-							else
+							// đi bộ qua phải
+							else if (nx == RIGHT)
 							{
-								// phải 
-								if (nx == RIGHT)
+								// bình thường
+								if (ChangeDirection == false)
+								{
+									// đang cầm rùa
+									if (isHolding == true)
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_HOLD_WALK_RIGHT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_HOLD_WALK_RIGHT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_HOLD_WALK_RIGHT; break;
+										}
+									}
+									// chạy nhanh tối đa
+									else if (isMaxRunning == true)
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_RUNNING_RIGHT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_RUNNING_RIGHT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_RUNNING_RIGHT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_RUNNING_RIGHT; break;
+										}
+									}
+									// đi bộ bình thường
+									else
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_WALKING_RIGHT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_WALKING_RIGHT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_WALKING_RIGHT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_WALKING_RIGHT; break;
+										}
+									}
+								}
+								// hiện hiệu ứng khựng
+								else
 								{
 									switch (level)
 									{
@@ -1831,7 +1919,60 @@ void Mario::Render()
 										ani = MARIO_ANI_FIRE_STOP_RIGHT; break;
 									}
 								}
-								// trái
+							}
+							// đi bộ qua trái
+							else if (nx == LEFT)
+							{
+								// bình thường
+								if (ChangeDirection == false)
+								{
+									// đang cầm rùa
+									if (isHolding == true)
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_HOLD_WALK_LEFT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_HOLD_WALK_LEFT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_HOLD_WALK_LEFT; break;
+										}
+									}
+									// chạy nhanh tối đa
+									else if (isMaxRunning == true)
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_RUNNING_LEFT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_RUNNING_LEFT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_RUNNING_LEFT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_RUNNING_LEFT; break;
+										}
+									}
+									// đi bộ bình thường
+									else
+									{
+										switch (level)
+										{
+										case MARIO_LEVEL_SMALL:
+											ani = MARIO_ANI_SMALL_WALKING_LEFT; break;
+										case MARIO_LEVEL_BIG:
+											ani = MARIO_ANI_BIG_WALKING_LEFT; break;
+										case MARIO_LEVEL_TAIL:
+											ani = MARIO_ANI_TAIL_WALKING_LEFT; break;
+										case MARIO_LEVEL_FIRE:
+											ani = MARIO_ANI_FIRE_WALKING_LEFT; break;
+										}
+									}
+								}
+								// hiện hiệu ứng khựng
 								else
 								{
 									switch (level)
@@ -1848,146 +1989,250 @@ void Mario::Render()
 								}
 							}
 						}
-						// đi bộ qua phải
-						else if (nx == RIGHT)
+					}
+					// đang trên không
+					else //if (isFalling == true)
+					{
+						if (isAttacking == true && endAttack == false)
 						{
-							// bình thường
-							if (ChangeDirection == false)
+							switch (level)
 							{
-								// đang cầm rùa
-								if (isHolding == true)
+							case MARIO_LEVEL_TAIL:
+							{
+								if (nx == RIGHT)
 								{
-									switch (level)
-									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_HOLD_WALK_RIGHT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_HOLD_WALK_RIGHT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_HOLD_WALK_RIGHT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_HOLD_WALK_RIGHT; break;
-									}
+									if (time_attack <= TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_2;
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
+									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_4;
+									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
 								}
-								// chạy nhanh tối đa
-								else if (isMaxRunning == true)
-								{
-									switch (level)
-									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_RUNNING_RIGHT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_RUNNING_RIGHT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_RUNNING_RIGHT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_RUNNING_RIGHT; break;
-									}
-								}
-								// đi bộ bình thường
 								else
 								{
-									switch (level)
+									if (time_attack <= TIME_ATTACK)
 									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_WALKING_RIGHT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_WALKING_RIGHT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_WALKING_RIGHT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_WALKING_RIGHT; break;
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
+									}
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_2;
+									}
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
+									}
+									else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_4;
+									}
+									else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
+									{
+										ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
 									}
 								}
 							}
-							// hiện hiệu ứng khựng
+							break;
+							case MARIO_LEVEL_FIRE:
+							{
+								// phải 
+								if (nx == RIGHT)
+								{
+									if (time_attack <= TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_1;
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_2;
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_3;
+								}
+								// trái
+								else
+								{
+									if (time_attack <= TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_1;
+									else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_2;
+									else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
+										ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_3;
+								}
+							}
+							break;
+							}
+						}
+						// đang cầm rùa
+						else if (isHolding == true)
+						{
+							if (nx == RIGHT)
+							{
+								switch (level)
+								{
+								case MARIO_LEVEL_SMALL:
+									ani = MARIO_ANI_SMALL_HOLD_JUMP_RIGHT; break;
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_HOLD_JUMP_RIGHT; break;
+								}
+							}
 							else
 							{
 								switch (level)
 								{
 								case MARIO_LEVEL_SMALL:
-									ani = MARIO_ANI_SMALL_STOP_RIGHT; break;
+									ani = MARIO_ANI_SMALL_HOLD_JUMP_LEFT; break;
 								case MARIO_LEVEL_BIG:
-									ani = MARIO_ANI_BIG_STOP_RIGHT; break;
+									ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT; break;
 								case MARIO_LEVEL_TAIL:
-									ani = MARIO_ANI_TAIL_STOP_RIGHT; break;
+									ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT; break;
 								case MARIO_LEVEL_FIRE:
-									ani = MARIO_ANI_FIRE_STOP_RIGHT; break;
+									ani = MARIO_ANI_FIRE_HOLD_JUMP_LEFT; break;
 								}
 							}
 						}
-						// đi bộ qua trái
-						else if (nx == LEFT)
+						// đá rùa
+						else if (canKick == true)
 						{
-							// bình thường
-							if (ChangeDirection == false)
+							if (nx == RIGHT)
 							{
-								// đang cầm rùa
-								if (isHolding == true)
+								switch (level)
 								{
-									switch (level)
-									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_HOLD_WALK_LEFT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_HOLD_WALK_LEFT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_HOLD_WALK_LEFT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_HOLD_WALK_LEFT; break;
-									}
-								}
-								// chạy nhanh tối đa
-								else if (isMaxRunning == true)
-								{
-									switch (level)
-									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_RUNNING_LEFT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_RUNNING_LEFT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_RUNNING_LEFT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_RUNNING_LEFT; break;
-									}
-								}
-								// đi bộ bình thường
-								else
-								{
-									switch (level)
-									{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_WALKING_LEFT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_WALKING_LEFT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_WALKING_LEFT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_WALKING_LEFT; break;
-									}
+								case MARIO_LEVEL_SMALL:
+									ani = MARIO_ANI_SMALL_KICK_RIGHT; break;
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_KICK_RIGHT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_KICK_RIGHT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_KICK_RIGHT; break;
 								}
 							}
-							// hiện hiệu ứng khựng
 							else
 							{
 								switch (level)
 								{
 								case MARIO_LEVEL_SMALL:
-									ani = MARIO_ANI_SMALL_STOP_LEFT; break;
+									ani = MARIO_ANI_SMALL_KICK_LEFT; break;
 								case MARIO_LEVEL_BIG:
-									ani = MARIO_ANI_BIG_STOP_LEFT; break;
+									ani = MARIO_ANI_BIG_KICK_LEFT; break;
 								case MARIO_LEVEL_TAIL:
-									ani = MARIO_ANI_TAIL_STOP_LEFT; break;
+									ani = MARIO_ANI_TAIL_KICK_LEFT; break;
 								case MARIO_LEVEL_FIRE:
-									ani = MARIO_ANI_FIRE_STOP_LEFT; break;
+									ani = MARIO_ANI_FIRE_KICK_LEFT; break;
+								}
+							}
+						}
+						// trạng thái bay vẫy đuôi
+						else if (canFlyX == true || canFlyS == true)
+						{
+							if (nx == RIGHT)
+							{
+								ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
+							}
+							else
+							{
+								ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+							}
+						}
+						// ngồi
+						else if (isSitDown == true && level > MARIO_LEVEL_SMALL)
+						{
+							if (nx == RIGHT)
+							{
+								switch (level)
+								{
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_SITDOWN_RIGHT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_SITDOWN_RIGHT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_SITDOWN_RIGHT; break;
+								}
+							}
+							else
+							{
+								switch (level)
+								{
+								case MARIO_LEVEL_BIG:
+									ani = MARIO_ANI_BIG_SITDOWN_LEFT; break;
+								case MARIO_LEVEL_TAIL:
+									ani = MARIO_ANI_TAIL_SITDOWN_LEFT; break;
+								case MARIO_LEVEL_FIRE:
+									ani = MARIO_ANI_FIRE_SITDOWN_LEFT; break;
+								}
+							}
+						}
+						// bình thường
+						else
+						{
+							if (nx == RIGHT)
+							{
+								if (isMaxRunning == true)
+								{
+									switch (level)
+									{
+									case MARIO_LEVEL_SMALL:
+										ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_RIGHT; break;
+									case MARIO_LEVEL_BIG:
+										ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_RIGHT; break;
+									case MARIO_LEVEL_FIRE:
+										ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_RIGHT; break;
+									}
+								}
+								else
+								{
+									switch (level)
+									{
+									case MARIO_LEVEL_SMALL:
+										ani = MARIO_ANI_SMALL_JUMP_RIGHT; break;
+									case MARIO_LEVEL_BIG:
+										ani = MARIO_ANI_BIG_FALLING_RIGHT; break;
+									case MARIO_LEVEL_TAIL:
+										ani = MARIO_ANI_TAIL_FALLING_RIGHT; break;
+									case MARIO_LEVEL_FIRE:
+										ani = MARIO_ANI_FIRE_FALLING_RIGHT; break;
+									}
+								}
+							}
+							else if (nx == LEFT)
+							{
+								if (isMaxRunning == true)
+								{
+									switch (level)
+									{
+									case MARIO_LEVEL_SMALL:
+										ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_LEFT; break;
+									case MARIO_LEVEL_BIG:
+										ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_LEFT; break;
+									case MARIO_LEVEL_FIRE:
+										ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_LEFT; break;
+									}
+								}
+								else
+								{
+									switch (level)
+									{
+									case MARIO_LEVEL_SMALL:
+										ani = MARIO_ANI_SMALL_JUMP_LEFT; break;
+									case MARIO_LEVEL_BIG:
+										ani = MARIO_ANI_BIG_FALLING_LEFT; break;
+									case MARIO_LEVEL_TAIL:
+										ani = MARIO_ANI_TAIL_FALLING_LEFT; break;
+									case MARIO_LEVEL_FIRE:
+										ani = MARIO_ANI_FIRE_FALLING_LEFT; break;
+									}
 								}
 							}
 						}
 					}
 				}
-				// đang trên không
-				else //if (isFalling == true)
+				// nhảy
+				else
 				{
 					if (isAttacking == true && endAttack == false)
 					{
@@ -2033,6 +2278,7 @@ void Mario::Render()
 							}
 						}
 						break;
+
 						case MARIO_LEVEL_FIRE:
 						{
 							// phải 
@@ -2059,9 +2305,10 @@ void Mario::Render()
 						break;
 						}
 					}
-					// đang cầm rùa
+					// cầm rùa + nhảy
 					else if (isHolding == true)
 					{
+						// phải 
 						if (nx == RIGHT)
 						{
 							switch (level)
@@ -2069,13 +2316,14 @@ void Mario::Render()
 							case MARIO_LEVEL_SMALL:
 								ani = MARIO_ANI_SMALL_HOLD_JUMP_RIGHT; break;
 							case MARIO_LEVEL_BIG:
-								ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT; break;
+								ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;; break;
 							case MARIO_LEVEL_TAIL:
 								ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT; break;
 							case MARIO_LEVEL_FIRE:
 								ani = MARIO_ANI_FIRE_HOLD_JUMP_RIGHT; break;
 							}
 						}
+						// trái
 						else
 						{
 							switch (level)
@@ -2083,7 +2331,7 @@ void Mario::Render()
 							case MARIO_LEVEL_SMALL:
 								ani = MARIO_ANI_SMALL_HOLD_JUMP_LEFT; break;
 							case MARIO_LEVEL_BIG:
-								ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT; break;
+								ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;; break;
 							case MARIO_LEVEL_TAIL:
 								ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT; break;
 							case MARIO_LEVEL_FIRE:
@@ -2094,6 +2342,7 @@ void Mario::Render()
 					// đá rùa
 					else if (canKick == true)
 					{
+						// phải 
 						if (nx == RIGHT)
 						{
 							switch (level)
@@ -2108,6 +2357,7 @@ void Mario::Render()
 								ani = MARIO_ANI_FIRE_KICK_RIGHT; break;
 							}
 						}
+						// trái
 						else
 						{
 							switch (level)
@@ -2126,326 +2376,80 @@ void Mario::Render()
 					// trạng thái bay vẫy đuôi
 					else if (canFlyX == true || canFlyS == true)
 					{
+						// phải 
 						if (nx == RIGHT)
 						{
-							ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
+							if (isMaxRunning == true)
+							{
+								if (isFlyingHigh == true)
+									ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
+								else
+									ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
+							}
 						}
+						// trái
 						else
 						{
-							ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+							if (isMaxRunning == true)
+							{
+								if (isFlyingHigh == true)
+									ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
+								else
+									ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
+							}
+							else
+								ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
 						}
 					}
 					// ngồi
 					else if (isSitDown == true && level > MARIO_LEVEL_SMALL)
 					{
-					if (nx == RIGHT)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_SITDOWN_RIGHT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_SITDOWN_RIGHT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_SITDOWN_RIGHT; break;
-						}
-					}
-					else
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_SITDOWN_LEFT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_SITDOWN_LEFT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_SITDOWN_LEFT; break;
-						}
-					}
-					}
-					// bình thường
-					else
-					{
 						if (nx == RIGHT)
 						{
-							if (isMaxRunning == true)
+							switch (level)
 							{
-								switch (level)
-								{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_RIGHT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_RIGHT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_RIGHT; break;
-								}
-							}
-							else
-							{
-								switch (level)
-								{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_JUMP_RIGHT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_FALLING_RIGHT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_FALLING_RIGHT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_FALLING_RIGHT; break;
-								}
+							case MARIO_LEVEL_BIG:
+								ani = MARIO_ANI_BIG_SITDOWN_RIGHT; break;
+							case MARIO_LEVEL_TAIL:
+								ani = MARIO_ANI_TAIL_SITDOWN_RIGHT; break;
+							case MARIO_LEVEL_FIRE:
+								ani = MARIO_ANI_FIRE_SITDOWN_RIGHT; break;
 							}
 						}
-						else if (nx == LEFT)
+						else
+						{
+							switch (level)
+							{
+							case MARIO_LEVEL_BIG:
+								ani = MARIO_ANI_BIG_SITDOWN_LEFT; break;
+							case MARIO_LEVEL_TAIL:
+								ani = MARIO_ANI_TAIL_SITDOWN_LEFT; break;
+							case MARIO_LEVEL_FIRE:
+								ani = MARIO_ANI_FIRE_SITDOWN_LEFT; break;
+							}
+						}
+					}
+					else
+					{
+						// phải 
+						if (nx == RIGHT)
 						{
 							if (isMaxRunning == true)
 							{
 								switch (level)
 								{
 								case MARIO_LEVEL_SMALL:
-									ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_LEFT; break;
+									ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_RIGHT; break;
 								case MARIO_LEVEL_BIG:
-									ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_LEFT; break;
+									ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_RIGHT; break;
 								case MARIO_LEVEL_FIRE:
-									ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_LEFT; break;
+									ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_RIGHT; break;
 								}
 							}
 							else
 							{
 								switch (level)
 								{
-									case MARIO_LEVEL_SMALL:
-										ani = MARIO_ANI_SMALL_JUMP_LEFT; break;
-									case MARIO_LEVEL_BIG:
-										ani = MARIO_ANI_BIG_FALLING_LEFT; break;
-									case MARIO_LEVEL_TAIL:
-										ani = MARIO_ANI_TAIL_FALLING_LEFT; break;
-									case MARIO_LEVEL_FIRE:
-										ani = MARIO_ANI_FIRE_FALLING_LEFT; break;
-								}
-							}
-						}
-					}
-				}
-			}
-			// nhảy
-			else
-			{
-				if (isAttacking == true && endAttack == false)
-				{
-					switch (level)
-					{
-					case MARIO_LEVEL_TAIL:
-					{
-						if (nx == RIGHT)
-						{
-							if (time_attack <= TIME_ATTACK)
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
-							else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_2;
-							else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
-							else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_4;
-							else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
-						}
-						else
-						{
-							if (time_attack <= TIME_ATTACK)
-							{
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
-							}
-							else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-							{
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_2;
-							}
-							else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-							{
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_1;
-							}
-							else if (time_attack > 3 * TIME_ATTACK && time_attack <= 4 * TIME_ATTACK)
-							{
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_4;
-							}
-							else if (time_attack > 4 * TIME_ATTACK && time_attack <= 5 * TIME_ATTACK)
-							{
-								ani = MARIO_ANI_TAIL_ATTACK_NOT_ONGROUND_3;
-							}
-						}
-					}
-					break;
-
-					case MARIO_LEVEL_FIRE:
-					{
-						// phải 
-						if (nx == RIGHT)
-						{
-							if (time_attack <= TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_1;
-							else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_2;
-							else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_RIGHT_3;
-						}
-						// trái
-						else
-						{
-							if (time_attack <= TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_1;
-							else if (time_attack > TIME_ATTACK && time_attack <= 2 * TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_2;
-							else if (time_attack > 2 * TIME_ATTACK && time_attack <= 3 * TIME_ATTACK)
-								ani = MARIO_ANI_FIRE_ATTACK_NOT_ONGROUND_LEFT_3;
-						}
-					}
-					break;
-					}
-				}
-				// cầm rùa + nhảy
-				else if (isHolding == true)
-				{
-					// phải 
-					if (nx == RIGHT)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_SMALL:
-							ani = MARIO_ANI_SMALL_HOLD_JUMP_RIGHT; break;
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_HOLD_JUMP_RIGHT;; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_HOLD_JUMP_RIGHT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_HOLD_JUMP_RIGHT; break;
-						}
-					}
-					// trái
-					else
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_SMALL:
-							ani = MARIO_ANI_SMALL_HOLD_JUMP_LEFT; break;
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_HOLD_JUMP_LEFT;; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_HOLD_JUMP_LEFT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_HOLD_JUMP_LEFT; break;
-						}
-					}
-				}
-				// đá rùa
-				else if (canKick == true)
-				{
-					// phải 
-					if (nx == RIGHT)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_SMALL:
-							ani = MARIO_ANI_SMALL_KICK_RIGHT; break;
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_KICK_RIGHT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_KICK_RIGHT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_KICK_RIGHT; break;
-						}
-					}
-					// trái
-					else
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_SMALL:
-							ani = MARIO_ANI_SMALL_KICK_LEFT; break;
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_KICK_LEFT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_KICK_LEFT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_KICK_LEFT; break;
-						}
-					}
-				}
-				// trạng thái bay vẫy đuôi
-				else if (canFlyX == true || canFlyS == true)
-				{
-					// phải 
-					if (nx == RIGHT)
-					{
-						if (isMaxRunning == true)
-						{
-							if (isFlyingHigh == true)
-								ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_RIGHT;
-							else
-								ani = MARIO_ANI_TAIL_FLY_FALL_RIGHT;
-						}
-					}
-					// trái
-					else
-					{
-						if (isMaxRunning == true)
-						{
-							if (isFlyingHigh == true)
-								ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
-							else
-								ani = MARIO_ANI_TAIL_FLY_FALL_LEFT;
-						}
-						else
-							ani = MARIO_ANI_TAIL_FLYING_MAX_RUNNING_LEFT;
-					}
-				}
-				// ngồi
-				else if (isSitDown == true && level > MARIO_LEVEL_SMALL)
-					{
-					if (nx == RIGHT)
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_SITDOWN_RIGHT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_SITDOWN_RIGHT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_SITDOWN_RIGHT; break;
-						}
-					}
-					else
-					{
-						switch (level)
-						{
-						case MARIO_LEVEL_BIG:
-							ani = MARIO_ANI_BIG_SITDOWN_LEFT; break;
-						case MARIO_LEVEL_TAIL:
-							ani = MARIO_ANI_TAIL_SITDOWN_LEFT; break;
-						case MARIO_LEVEL_FIRE:
-							ani = MARIO_ANI_FIRE_SITDOWN_LEFT; break;
-						}
-					}
-					}
-				else
-				{
-					// phải 
-					if (nx == RIGHT)
-					{
-						if (isMaxRunning == true)
-						{
-							switch (level)
-							{
-							case MARIO_LEVEL_SMALL:
-								ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_RIGHT; break;
-							case MARIO_LEVEL_BIG:
-								ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_RIGHT; break;
-							case MARIO_LEVEL_FIRE:
-								ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_RIGHT; break;
-							}
-						}
-						else
-						{
-							switch (level)
-							{
 								case MARIO_LEVEL_SMALL:
 									ani = MARIO_ANI_SMALL_JUMP_RIGHT; break;
 								case MARIO_LEVEL_BIG:
@@ -2454,28 +2458,28 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_JUMP_RIGHT; break;
 								case MARIO_LEVEL_FIRE:
 									ani = MARIO_ANI_FIRE_JUMP_RIGHT; break;
+								}
 							}
 						}
-					}
-					// trái
-					else
-					{
-						if (isMaxRunning == true)
+						// trái
+						else
 						{
-							switch (level)
+							if (isMaxRunning == true)
 							{
+								switch (level)
+								{
 								case MARIO_LEVEL_SMALL:
 									ani = MARIO_ANI_SMALL_JUMP_MAX_SPEED_LEFT; break;
 								case MARIO_LEVEL_BIG:
 									ani = MARIO_ANI_BIG_JUMP_MAX_SPEED_LEFT; break;
 								case MARIO_LEVEL_FIRE:
 									ani = MARIO_ANI_FIRE_JUMP_MAX_SPEED_LEFT; break;
+								}
 							}
-						}
-						else
-						{
-							switch (level)
+							else
 							{
+								switch (level)
+								{
 								case MARIO_LEVEL_SMALL:
 									ani = MARIO_ANI_SMALL_JUMP_LEFT; break;
 								case MARIO_LEVEL_BIG:
@@ -2484,32 +2488,32 @@ void Mario::Render()
 									ani = MARIO_ANI_TAIL_JUMP_LEFT; break;
 								case MARIO_LEVEL_FIRE:
 									ani = MARIO_ANI_FIRE_JUMP_LEFT; break;
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		if (untouchable == true)
-		{
-			if (UntouchtableTime % 3 == 0)
-				animation_set->at(ani)->Render(x, y, 32);
+			if (untouchable == true)
+			{
+				if (UntouchtableTime % 3 == 0)
+					animation_set->at(ani)->Render(x, y, 32);
+				else
+					animation_set->at(ani)->Render(x, y, 255);
+			}
 			else
-				animation_set->at(ani)->Render(x, y, 255);
-		}
-		else
-		{
-			// TH max running thì ani lùi về 1 tí vì cái tay dơ lên sẽ làm đẩy ani lên
-			if(ani == MARIO_ANI_BIG_RUNNING_RIGHT || ani == MARIO_ANI_FIRE_RUNNING_RIGHT)
-				animation_set->at(ani)->Render(x - 3, y, 255);
-			else if(ani == MARIO_ANI_TAIL_RUNNING_RIGHT)
-				animation_set->at(ani)->Render(x - 5, y, 255);
-			else
-				animation_set->at(ani)->Render(x, y, 255);
+			{
+				// TH max running thì ani lùi về 1 tí vì cái tay dơ lên sẽ làm đẩy ani lên
+				if (ani == MARIO_ANI_BIG_RUNNING_RIGHT || ani == MARIO_ANI_FIRE_RUNNING_RIGHT)
+					animation_set->at(ani)->Render(x - 3, y, 255);
+				else if (ani == MARIO_ANI_TAIL_RUNNING_RIGHT)
+					animation_set->at(ani)->Render(x - 5, y, 255);
+				else
+					animation_set->at(ani)->Render(x, y, 255);
+			}
 		}
 	}
-	//RenderBoundingBox();
 }
 
 void Mario::SetState(int state)
@@ -2713,6 +2717,7 @@ void Mario::Reset()
 	time_attack = time_fly = 0;
 	ani = 0;
 	NumberBullet = 2;
+	hasFly = true;
 }
 
 void Mario::DownLevel()
@@ -2829,7 +2834,7 @@ void Mario::Debug()
 		DebugOut(L"canFlyX == true\t");
 	else
 		DebugOut(L"canFlyX == false\t");
-	//DebugOut(L"Mario x = %f\n", x);
+	DebugOut(L"Mario vx = %f\t", vx);
 	
 	DebugOut(L"\n");
 }
@@ -3366,6 +3371,7 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 								Scene = pipe->SceneID;
 								vy = 0.03f;
 								StartGoHiddenWorld = GetTickCount64();
+								time_switch_scene = 1000;
 								y += dy;
 							}
 						}
@@ -3766,19 +3772,22 @@ void Mario::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 		if (dynamic_cast<QuestionBrickItem*>(e->obj))
 		{
 			QuestionBrickItem* questionbrickitem = dynamic_cast<QuestionBrickItem*>(e->obj);
-			questionbrickitem->canDelete = true;
-			_HUD->UpdateScore(questionbrickitem, 0);
-			if (level <= MARIO_LEVEL_BIG)
+			if (questionbrickitem->state != QUESTIONBRICKITEM_STATE_INIT)
 			{
-				if (questionbrickitem->Item >= this->level)
-					UpLevel();
-			}
-			else // level tail/fire
-			{
-				if (questionbrickitem->Item != this->level - 1)
+				questionbrickitem->canDelete = true;
+				_HUD->UpdateScore(questionbrickitem, 0);
+				if (level <= MARIO_LEVEL_BIG)
 				{
-					this->level = MARIO_LEVEL_BIG;
-					UpLevel();
+					if (questionbrickitem->Item >= this->level)
+						UpLevel();
+				}
+				else // level tail/fire
+				{
+					if (questionbrickitem->Item != this->level - 1)
+					{
+						this->level = MARIO_LEVEL_BIG;
+						UpLevel();
+					}
 				}
 			}
 		}

@@ -424,31 +424,35 @@ void HUD::Update(DWORD dt)
 void HUD::Render()
 {
 	CamX = _Game->GetCamX();
-	CamY = _Game->GetCamY() + (SCREEN_HEIGHT * 3 / 4) - 5;
+	CamY = _Game->GetCamY() + (SCREEN_HEIGHT * 3 / 4) - 5; // 458
+	float camx = _Camera->cam_x;
+	float camy = _Camera->cam_y + _Game->GetScreenHeight() - HUD_HEIGHT;; // 431 : chuẩn
 	//================ Vẽ HUD ======================
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
 	// khung đen sau HUD
-	//_Game->Draw(CamX, CamY - (SCREEN_HEIGHT / 10) - 1, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
-	float y_temp = CamY - (SCREEN_HEIGHT / 10) - 1;
-	_Game->Draw(CamX, y_temp, bbox, 0, 0, _Camera->GetWidth(), _Camera->GetHeight(), 255);
+	_Game->DrawHud(0, 174, bbox, 0, 0, _Camera->GetWidth(), HUD_HEIGHT, 255);
+	float tempy = _Mario->y; // 198
+	int a = int(CamX); // 311
+	int b = int(roundf(camy)) + 1; //342
+	//_Game->Draw(a, b, bbox, 0, 0, _Camera->GetWidth(), HUD_HEIGHT, 255);
+	//DebugOut(L"CamX = %f , camy = %f\n", CamX, camy);
 
 	float temp = _Camera->GetHeight(); // 111
 	// Thanh HUD
 	CamX = CamX + SCREEN_WIDTH / 30;
-	HUB->Draw(CamX, CAM_Y_HUD_ITEM1);
+	HUB->DrawHud(10, 185);
 	// 3 item hình thẻ bài
 
 	/*Item1->Draw(CamX + 190, CAM_Y_HUD_ITEM1);
 	Item2->Draw(CamX + 215, CAM_Y_HUD_ITEM1);
 	Item3->Draw(CamX + 240, CAM_Y_HUD_ITEM1);*/
-
-	Item1->Draw(_Game->GetCamX() + (SCREEN_WIDTH / 3) * 2, CAM_Y_HUD_ITEM1 - 1);
-	Item2->Draw(_Game->GetCamX() + ((SCREEN_WIDTH / 3) * 2) + (SCREEN_WIDTH / 10) - 5, CAM_Y_HUD_ITEM1 - 1);
-	Item3->Draw(_Game->GetCamX() + ((SCREEN_WIDTH / 3) * 2) + (SCREEN_WIDTH / 6), CAM_Y_HUD_ITEM1 - 1);
+	
+	Item1->DrawHud(200, 184);
+	Item2->DrawHud(224, 184);
+	Item3->DrawHud(248, 184);
 
 	// icon số mạng mario
-	//typePlayer->Draw(CamX + 9, CamY + 9);
-	typePlayer->Draw(CamX + (SCREEN_WIDTH / 30) - 1, CamY + (SCREEN_HEIGHT / 26) - 1);
+	typePlayer->DrawHud(16, 199);
 
 	if (_Mario->StopRunning == false)
 	{
@@ -457,16 +461,16 @@ void HUD::Render()
 		{
 			// đạt max : numspeed = 7 thì khi i = 6 vẽ push chứ k vẽ speed
 			if (i == 6)
-				push->Draw(CamX + 57 + (6 * 8), CamY + 1);
+				push->DrawHud(67 + (6 * 8), 191);
 			else
-				speed->Draw(CamX + 55 + (i * 8), CamY + 1);
+				speed->DrawHud( 66 + (i * 8), 191);
 		}
 	}
 	
 
 	LPD3DXSPRITE spriteHandler = _Game->GetSpriteHandler();
-	int a = _Game->current_scene;
-	if (a == 1)
+	int aa = _Game->current_scene;
+	if (aa == 1)
 		SetRect(&rect, (int)(_Game->GetCamX() + 80), (int)(CamY + 15), (int)(CamX + static_cast<float>(CGame::GetInstance()->GetScreenWidth())), (int)(CamY + (SCREEN_HEIGHT * 3 / 4) - 10));
 	if (font)
 		font->DrawTextA(spriteHandler, information.c_str(), -1, &rect, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
@@ -491,3 +495,4 @@ void HUD::UpdateItem(int _type)
 	else if (TypeItem[2] == 0)
 		TypeItem[2] = _type;
 }
+
