@@ -19,7 +19,7 @@ using namespace std;
 #define MAX_SCENE_LINE 1024
 #define MAP_MAX_WIDTH	2816
 
-class World1 : public CScene
+class WorldMap : public CScene
 {
 protected:
 	MarioOverWorld* player;					// A play scene has to have player, right? 
@@ -36,7 +36,7 @@ protected:
 	void _ParseSection_MAP(string line);
 	void _ParseSection_HUD(string line); // hàm đọc HUD trong file txt
 public:
-	World1(int id, LPCWSTR filePath);
+	WorldMap(int id, LPCWSTR filePath);
 
 	virtual void Load();
 	virtual void Load2(float, float);

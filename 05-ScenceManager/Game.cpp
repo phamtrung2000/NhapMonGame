@@ -1,6 +1,6 @@
 ﻿#include "Game.h"
 #include "PlayScence.h"
-#include "World1.h"
+#include "WorldMap.h"
 #include "IntroScene.h"
 CGame * CGame::__instance = NULL;
 
@@ -355,7 +355,7 @@ void CGame::_ParseSection_SCENES(string line)
 	else if (tokens[1] == World1SceneText)
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
-		scenes[id] = new World1(id, path);
+		scenes[id] = new WorldMap(id, path);
 	}
 	else 
 	{
@@ -371,7 +371,7 @@ void CGame::_ParseSection_SCENES(string line)
 	else if (id == 1)
 	{
 		LPCWSTR path = ToLPCWSTR(tokens[1]);
-		scenes[id] = new World1(id, path);
+		scenes[id] = new WorldMap(id, path);
 	}
 	else 
 	{
@@ -445,7 +445,7 @@ void CGame::SwitchScene(int scene_id)
 	else if (current_scene == World1SceneID)
 	{
 		MarioLevel = _Mario->level;
-		World1* world1 = (World1*)scenes[current_scene];
+		WorldMap* world1 = (WorldMap*)scenes[current_scene];
 		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
 		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
 		scenes[current_scene]->Unload();
@@ -477,7 +477,7 @@ void CGame::SwitchScene(int scene_id)
 			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 			s->Load();
 			_HUD->Init(0);
-			World1* world1 = (World1*)s;
+			WorldMap* world1 = (WorldMap*)s;
 			MarioOverWorld* mario = world1->GetPlayer();
 			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
 			mario->Scene = a + 1;
@@ -548,7 +548,7 @@ void CGame::SwitchScene2(int scene_id)
 	}
 	else if (current_scene == World1SceneID)
 	{
-		World1* world1 = (World1*)scenes[current_scene];
+		WorldMap* world1 = (WorldMap*)scenes[current_scene];
 		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
 		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
 		scenes[current_scene]->Unload();
@@ -582,7 +582,7 @@ void CGame::SwitchScene2(int scene_id)
 			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 			s->Load();
 			_HUD->Init(0);
-			World1* world1 = (World1*)s;
+			WorldMap* world1 = (WorldMap*)s;
 			MarioOverWorld* mario = world1->GetPlayer();
 			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
 			//mario->Scene = a + 1;
@@ -644,7 +644,7 @@ void CGame::SwitchScene3(int scene_id, int level)
 	}
 	else if (current_scene == World1SceneID)
 	{
-		World1* world1 = (World1*)scenes[current_scene];
+		WorldMap* world1 = (WorldMap*)scenes[current_scene];
 		world1->GetPlayer()->GetPosition(X_MarioOverworld, Y_MarioOverworld);
 		DebugOut(L"x %f, y %f \n", X_MarioOverworld, Y_MarioOverworld);
 		scenes[current_scene]->Unload();
@@ -674,7 +674,7 @@ void CGame::SwitchScene3(int scene_id, int level)
 			CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 			s->Load();
 			_HUD->Init(0);
-			World1* world1 = (World1*)s;
+			WorldMap* world1 = (WorldMap*)s;
 			MarioOverWorld* mario = world1->GetPlayer();
 			mario->SetPosition(X_MarioOverworld, Y_MarioOverworld);
 			mario->Scene = a + 1;

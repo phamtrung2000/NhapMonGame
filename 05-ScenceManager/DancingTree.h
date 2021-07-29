@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "World1.h"
+#include "WorldMap.h"
 
 #define DANCINGTREE_BBOX 16
 

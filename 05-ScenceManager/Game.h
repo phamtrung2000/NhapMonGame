@@ -18,7 +18,7 @@
 #include "Map.h"
 #include "Camera.h"
 #include "PlayScence.h"
-#include "World1.h"
+#include "WorldMap.h"
 #include"Grid.h"
 
 #include <iostream>
@@ -32,11 +32,11 @@ using namespace std;
 #define OpeningSceneID	0
 #define World1SceneText  ".\\textures\\Overworld\\World1Scene.txt"
 #define World1SceneID	1
-//#define Scene1_1Text  ".\\textures\World\\World1\\Scene1.1.txt"
-#define Scene1_1Text  ".\\textures\World\\World1\\Scene1.4.txt"
+//#define Scene1_1Text  ".\\textures\World\\WorldMap\\Scene1.1.txt"
+#define Scene1_1Text  ".\\textures\World\\WorldMap\\Scene1.4.txt"
 #define Scene1_1ID		10
-//#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.1.txt"
-#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.4.txt"
+//#define SceneHidden1_1Text  ".\\textures\World\\WorldMap\\SceneHidden1.1.txt"
+#define SceneHidden1_1Text  ".\\textures\World\\WorldMap\\SceneHidden1.4.txt"
 
 #define SceneHidden1_1ID	11
 

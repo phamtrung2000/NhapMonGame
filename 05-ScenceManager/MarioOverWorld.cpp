@@ -1,7 +1,7 @@
 ﻿
 #include "MarioOverWorld.h"
 #include "Gate.h"
-#include "World1.h"
+#include "WorldMap.h"
 
 
 //MarioOverWorld* MarioOverWorld::GetInstance()

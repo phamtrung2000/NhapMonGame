@@ -1,9 +1,9 @@
-﻿#include "World1.h"
+﻿#include "WorldMap.h"
 #include "Game.h"
 #include "HUD.h"
 #include "DancingTree.h"
 
-//World1::World1()
+//WorldMap::WorldMap()
 //{
 //	player = NULL;
 //	map = NULL;
@@ -11,7 +11,7 @@
 //	key_handler = new CPlayScenceKeyHandler(this);
 //}
 
-World1::World1(int id, LPCWSTR filePath) : CScene(id, filePath)
+WorldMap::WorldMap(int id, LPCWSTR filePath) : CScene(id, filePath)
 {
 	player = NULL;
 	//map = NULL;
@@ -25,7 +25,7 @@ World1::World1(int id, LPCWSTR filePath) : CScene(id, filePath)
 	See scene1.txt, scene2.txt for detail format specification
 */
 
-void World1::_ParseSection_MAP(string line)
+void WorldMap::_ParseSection_MAP(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -44,7 +44,7 @@ void World1::_ParseSection_MAP(string line)
 	_Map->LoadMap(texID, pathtxt, MapWidth, MapHeight);
 }
 
-void World1::_ParseSection_HUD(string line)
+void WorldMap::_ParseSection_HUD(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -55,7 +55,7 @@ void World1::_ParseSection_HUD(string line)
 	_HUD->LoadHUD(pathtxt);
 }
 
-void World1::_ParseSection_TEXTURES(string line)
+void WorldMap::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -70,7 +70,7 @@ void World1::_ParseSection_TEXTURES(string line)
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 }
 
-void World1::_ParseSection_SPRITES(string line)
+void WorldMap::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -93,7 +93,7 @@ void World1::_ParseSection_SPRITES(string line)
 	CSprites::GetInstance()->Add(ID, l, t, r, b, tex);
 }
 
-void World1::_ParseSection_ANIMATIONS(string line)
+void WorldMap::_ParseSection_ANIMATIONS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -114,7 +114,7 @@ void World1::_ParseSection_ANIMATIONS(string line)
 	CAnimations::GetInstance()->Add(ani_id, ani);
 }
 
-void World1::_ParseSection_ANIMATION_SETS(string line)
+void WorldMap::_ParseSection_ANIMATION_SETS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -137,7 +137,7 @@ void World1::_ParseSection_ANIMATION_SETS(string line)
 	CAnimationSets::GetInstance()->Add(ani_set_id, s);
 }
 
-void World1::_ParseSection_OBJECTS(string line)
+void WorldMap::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -215,7 +215,7 @@ void World1::_ParseSection_OBJECTS(string line)
 	
 }
 
-void World1::Load()
+void WorldMap::Load()
 {
 	if (objects.size() == 0)
 	{
@@ -277,7 +277,7 @@ void World1::Load()
 	
 }
 
-void World1::Load2(float x , float y)
+void WorldMap::Load2(float x , float y)
 {
 	if (objects.size() == 0)
 	{
@@ -335,7 +335,7 @@ void World1::Load2(float x , float y)
 	GetPlayer()->SetPosition(x, y);
 }
 
-void World1::Update(DWORD dt)
+void WorldMap::Update(DWORD dt)
 {
 	vector<LPGAMEOBJECT> coObjects;
 
@@ -375,7 +375,7 @@ void World1::Update(DWORD dt)
 	//DebugOut(L"cam y = %f\n", _Camera->cam_y);
 }
 
-void World1::Render()
+void WorldMap::Render()
 {
 	// Background đen phía sau
 	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(ID_TEX_HUB);
@@ -396,7 +396,7 @@ void World1::Render()
 /*
 	Unload current scene
 */
-void World1::Unload()
+void WorldMap::Unload()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
@@ -411,7 +411,7 @@ void World1::Unload()
 void World1ScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	CGame* game = CGame::GetInstance();
-	MarioOverWorld* mario = ((World1*)scence)->GetPlayer();
+	MarioOverWorld* mario = ((WorldMap*)scence)->GetPlayer();
 	if (game->IsKeyDown(DIK_LEFT))
 	{
 		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_LEFT);
@@ -454,7 +454,7 @@ void World1ScenceKeyHandler::OnKeyUp(int KeyCode)
 void World1ScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
-	MarioOverWorld* mario = ((World1*)scence)->GetPlayer();
+	MarioOverWorld* mario = ((WorldMap*)scence)->GetPlayer();
 
 	/*if (game->IsKeyDown(DIK_RIGHT))
 		mario->SetState(MARIO_OVERWORLD_STATE_WALKING_RIGHT);

@@ -1,5 +1,5 @@
 #include "Gate.h"
-#include "World1.h"
+#include "WorldMap.h"
 
 Gate::Gate(int a)
 {

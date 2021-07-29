@@ -15,14 +15,8 @@
     <Filter Include="PlayScene">
       <UniqueIdentifier>{a7bda07e-7202-4f8f-9250-a5794d2960bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Opening">
-      <UniqueIdentifier>{c0e16d56-f599-4064-9a03-2ce2a7d7316a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="OverWorld">
       <UniqueIdentifier>{1215cb1d-7f16-4107-a46b-7044e26a703f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="OverWorld\World1">
-      <UniqueIdentifier>{a386c9cf-df29-42e3-a7df-455ad1a54b0f}</UniqueIdentifier>
     </Filter>
     <Filter Include="World">
       <UniqueIdentifier>{5848e480-b8ed-4a4c-bf40-e05549b9e8f7}</UniqueIdentifier>
@@ -81,6 +75,18 @@
     <Filter Include="PlayScene\Enemy\EnemyWeapon">
       <UniqueIdentifier>{3de54c42-075a-4627-84f3-40f2967c00bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="OverWorld\WorldMap">
+      <UniqueIdentifier>{a386c9cf-df29-42e3-a7df-455ad1a54b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Grid">
+      <UniqueIdentifier>{6934e3af-231a-45f3-9b5c-734dcbb7ad4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Intro">
+      <UniqueIdentifier>{c0e16d56-f599-4064-9a03-2ce2a7d7316a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\World1\Scene1.3">
+      <UniqueIdentifier>{d0bd4981-030a-4a8b-98b5-c43534592557}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -105,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Portal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
@@ -156,10 +159,10 @@
       <Filter>PlayScene\Enemy\Goomba</Filter>
     </ClCompile>
     <ClCompile Include="MenuOption.cpp">
-      <Filter>Opening</Filter>
+      <Filter>Intro</Filter>
     </ClCompile>
-    <ClCompile Include="World1.cpp">
-      <Filter>OverWorld\World1</Filter>
+    <ClCompile Include="WorldMap.cpp">
+      <Filter>OverWorld\WorldMap</Filter>
     </ClCompile>
     <ClCompile Include="Coin.cpp">
       <Filter>PlayScene\Item</Filter>
@@ -169,9 +172,6 @@
     </ClCompile>
     <ClCompile Include="FireBullet.cpp">
       <Filter>PlayScene\MarioWeapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HUD.cpp">
       <Filter>HUD</Filter>
@@ -185,12 +185,6 @@
     <ClCompile Include="BrickItem.cpp">
       <Filter>PlayScene\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Gate.cpp">
-      <Filter>OverWorld</Filter>
-    </ClCompile>
-    <ClCompile Include="DancingTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EffectHit.cpp">
       <Filter>PlayScene\Effect</Filter>
     </ClCompile>
@@ -203,74 +197,86 @@
     <ClCompile Include="EffectScore.cpp">
       <Filter>PlayScene\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Card.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Notification.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlyWood.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoomerangWeapon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Weapon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Curtain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IntroScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BreakItemBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListItemBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListQuestionBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>PlayScene\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="RedFlyKoopas.cpp">
       <Filter>PlayScene\Enemy\Koopas</Filter>
     </ClCompile>
-    <ClCompile Include="Cell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoomerangEnemy.cpp">
       <Filter>PlayScene\Enemy\BoomerangEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="ListNormalBrick.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RedGoomba.cpp">
       <Filter>PlayScene\Enemy\Goomba</Filter>
     </ClCompile>
-    <ClCompile Include="MusicBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HiddenMusicBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlyGoomba.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SmallGoomba.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlayScence.cpp">
       <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="BoomerangWeapon.cpp">
+      <Filter>PlayScene\Enemy\EnemyWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="BreakItemBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>PlayScene\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Curtain.cpp">
+      <Filter>Intro</Filter>
+    </ClCompile>
+    <ClCompile Include="DancingTree.cpp">
+      <Filter>OverWorld\WorldMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Gate.cpp">
+      <Filter>OverWorld\WorldMap</Filter>
+    </ClCompile>
+    <ClCompile Include="FlyGoomba.cpp">
+      <Filter>PlayScene\Enemy\Goomba</Filter>
+    </ClCompile>
+    <ClCompile Include="FlyWood.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="HiddenMusicBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroScene.cpp">
+      <Filter>Intro</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>PlayScene\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ListItemBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ListNormalBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ListQuestionBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicBrick.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Notification.cpp">
+      <Filter>PlayScene\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>PlayScene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SmallGoomba.cpp">
+      <Filter>PlayScene\Enemy\Goomba</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>PlayScene\MarioWeapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,9 +302,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Portal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Block.h">
@@ -350,13 +353,10 @@
       <Filter>PlayScene\Enemy\Goomba</Filter>
     </ClInclude>
     <ClInclude Include="MenuOption.h">
-      <Filter>Opening</Filter>
+      <Filter>Intro</Filter>
     </ClInclude>
-    <ClInclude Include="World1.h">
-      <Filter>OverWorld\World1</Filter>
-    </ClInclude>
-    <ClInclude Include="Gate.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WorldMap.h">
+      <Filter>OverWorld\WorldMap</Filter>
     </ClInclude>
     <ClInclude Include="Coin.h">
       <Filter>PlayScene\Item</Filter>
@@ -388,9 +388,6 @@
     <ClInclude Include="MarioTail.h">
       <Filter>PlayScene\MarioWeapon</Filter>
     </ClInclude>
-    <ClInclude Include="DancingTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ButtonP.h">
       <Filter>PlayScene\Item</Filter>
     </ClInclude>
@@ -399,21 +396,6 @@
     </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>PlayScene\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Notification.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Curtain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntroScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cell.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoomerangEnemy.h">
       <Filter>PlayScene\Enemy\BoomerangEnemy</Filter>
@@ -448,20 +430,44 @@
     <ClInclude Include="Item.h">
       <Filter>PlayScene\Item</Filter>
     </ClInclude>
-    <ClInclude Include="ListNormalBrick.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Cell.h">
+      <Filter>Grid</Filter>
     </ClInclude>
-    <ClInclude Include="MusicBrick.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Curtain.h">
+      <Filter>Intro</Filter>
     </ClInclude>
-    <ClInclude Include="HiddenMusicBrick.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DancingTree.h">
+      <Filter>OverWorld\WorldMap</Filter>
     </ClInclude>
     <ClInclude Include="FlyGoomba.h">
-      <Filter>Header Files</Filter>
+      <Filter>PlayScene\Enemy\Goomba</Filter>
+    </ClInclude>
+    <ClInclude Include="Gate.h">
+      <Filter>OverWorld\WorldMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="HiddenMusicBrick.h">
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroScene.h">
+      <Filter>Intro</Filter>
+    </ClInclude>
+    <ClInclude Include="ListNormalBrick.h">
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicBrick.h">
+      <Filter>PlayScene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Notification.h">
+      <Filter>PlayScene\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Portal.h">
+      <Filter>PlayScene\Object</Filter>
     </ClInclude>
     <ClInclude Include="SmallGoomba.h">
-      <Filter>Header Files</Filter>
+      <Filter>PlayScene\Enemy\Goomba</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -469,7 +475,7 @@
       <Filter>Map</Filter>
     </Text>
     <Text Include="textures\Overworld\World1Scene.txt">
-      <Filter>OverWorld\World1</Filter>
+      <Filter>OverWorld\WorldMap</Filter>
     </Text>
     <Text Include="textures\Effect\Effect.txt">
       <Filter>PlayScene\Effect</Filter>
@@ -509,19 +515,40 @@
     </Text>
     <Text Include="mario-sample.txt" />
     <Text Include="textures\Overworld\world1_map.txt">
-      <Filter>OverWorld\World1</Filter>
+      <Filter>OverWorld\WorldMap</Filter>
     </Text>
-    <Text Include="textures\World\World1\Scene1.1 - Copy.txt" />
-    <Text Include="textures\World\World1\SceneHidden1.4.txt" />
-    <Text Include="textures\World\World1\SceneHidden1.4Map.txt" />
-    <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
-    <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
-    <Text Include="textures\World\World1\Scene1.3\Scene1.3Hidden.txt" />
-    <Text Include="gridinfo.txt" />
-    <Text Include="OutputGridScene1.1.txt" />
-    <Text Include="OutputGridScene1.3.txt" />
-    <Text Include="textures\World\World1\Scene1.3\Scene1.3Map.txt" />
-    <Text Include="OutputGridSceneHidden1.1.txt" />
-    <Text Include="OutputGridSceneHidden1.3.txt" />
+    <Text Include="OutputGridScene1.1.txt">
+      <Filter>Grid</Filter>
+    </Text>
+    <Text Include="OutputGridScene1.3.txt">
+      <Filter>Grid</Filter>
+    </Text>
+    <Text Include="OutputGridSceneHidden1.1.txt">
+      <Filter>Grid</Filter>
+    </Text>
+    <Text Include="OutputGridSceneHidden1.3.txt">
+      <Filter>Grid</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt">
+      <Filter>World\World1\Scene1.3</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.1Hidden.txt">
+      <Filter>World\World1\Scene1.1</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3Hidden.txt">
+      <Filter>World\World1\Scene1.3</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3Map.txt">
+      <Filter>World\World1\Scene1.3</Filter>
+    </Text>
+    <Text Include="textures\World\World1\SceneHidden1.4Map.txt">
+      <Filter>World\World1\Scene1.4</Filter>
+    </Text>
+    <Text Include="textures\World\World1\SceneHidden1.4.txt">
+      <Filter>World\World1\Scene1.4</Filter>
+    </Text>
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3HiddenMap.txt">
+      <Filter>World\World1\Scene1.3</Filter>
+    </Text>
   </ItemGroup>
 </Project>
