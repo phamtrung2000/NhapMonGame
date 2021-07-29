@@ -182,7 +182,7 @@ void MarioTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								}break;
 
 								default:
-									brick->Item = LEAF;
+									brick->Item = QUESTIONBRICKITEM_LEAF;
 									break;
 								}
 							}

@@ -81,9 +81,9 @@ void ListItemBrick::DeleteBrick(int vitri)
 			}
 			break;
 
-			case LEAF:
+			case ITEMBRICK_LEAF:
 			{
-				BrickItem* brickitem = new BrickItem(LEAF, brick->x, brick->y - 3);
+				BrickItem* brickitem = new BrickItem(ITEMBRICK_LEAF, brick->x, brick->y - 3);
 				_Grid->AddMovingObject(brickitem, brick->x, brick->y - 3);
 			}
 			break;

@@ -31,8 +31,8 @@ IntroScene::IntroScene(int id, LPCWSTR filePath) : CScene(id, filePath)
 #define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
-#define SCENE_SECTION_MAP	7
-#define SCENE_SECTION_HUD	8
+//#define SCENE_SECTION_MAP	7
+// #define SCENE_SECTION_HUD	8
 #define SCENE_SECTION_HUD_TIME	9
 //#define OBJECT_TYPE_MARIO			0
 //#define OBJECT_TYPE_BRICK			1

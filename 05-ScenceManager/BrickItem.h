@@ -3,7 +3,7 @@
 #define MUSHROOM						1
 #define BUTTONP							2
 #define BRICKITEM_MONEY					3
-#define LEAF							4
+#define BRICKITEM_LEAF					4
 
 #define BRICKITEM_STATE_INIT	0
 #define	BRICKITEM_STATE_MOVE_RIGHT	1
@@ -29,8 +29,8 @@
 #define MONEY_GRAVITY					0.0007f
 #define MONEY_SPEED_Y					0.3f
 
-#define LEAF_ANI_LEFT					4
-#define LEAF_ANI_RIGHT					5
+#define BRICKITEM_LEAF_ANI_LEFT					4
+#define BRICKITEM_LEAF_ANI_RIGHT					5
 #define LEAF_GRAVITY					0.00002f
 #define LEAF_SPEED_X					0.03f 
 #define LEAF_SPEED_Y					0.1f

@@ -11,7 +11,7 @@
 #define MUSHROOM_SPEED_X				0.05f 
 #define MUSHROOM_SPEED_Y				0.02f 
 
-#define LEAF							2
+#define QUESTIONBRICKITEM_LEAF							2
 #define LEAF_ANI_LEFT					2
 #define LEAF_ANI_RIGHT					3
 #define LEAF_GRAVITY					0.00002f

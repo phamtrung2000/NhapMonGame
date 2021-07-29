@@ -200,7 +200,7 @@ void BrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		}break;
 
-		case LEAF:
+		case BRICKITEM_LEAF:
 		{
 			x += dx;
 			y += dy;
@@ -250,13 +250,13 @@ void BrickItem::Render()
 			ani = BRICKITEM_MONEY_ANI;
 			break;
 
-		case LEAF:
+		case BRICKITEM_LEAF:
 		{
-			ani = LEAF_ANI_RIGHT;
+			ani = BRICKITEM_LEAF_ANI_LEFT;
 			if (GetState() == BRICKITEM_STATE_MOVE_LEFT)
-				ani = LEAF_ANI_LEFT;
+				ani = BRICKITEM_LEAF_ANI_LEFT;
 			else if (GetState() == BRICKITEM_STATE_MOVE_RIGHT)
-				ani = LEAF_ANI_RIGHT;
+				ani = BRICKITEM_LEAF_ANI_RIGHT;
 		}break;
 	}
 
@@ -285,7 +285,7 @@ void BrickItem::SetState(int state)
 				vy = -MONEY_SPEED_Y;
 				break;
 
-			case LEAF:
+			case BRICKITEM_LEAF:
 				vy = -LEAF_SPEED_Y;
 				break;
 		}
@@ -301,7 +301,7 @@ void BrickItem::SetState(int state)
 			nx = 1;
 			vx = MUSHROOM_SPEED_X;
 		}
-		else if (Item == LEAF)
+		else if (Item == BRICKITEM_LEAF)
 		{
 			vx = LEAF_SPEED_X;
 		}
@@ -316,7 +316,7 @@ void BrickItem::SetState(int state)
 			nx = -1;
 			vx = -MUSHROOM_SPEED_X;
 		}
-		else if (Item == LEAF)
+		else if (Item == BRICKITEM_LEAF)
 		{
 			vx = -LEAF_SPEED_X;
 		}

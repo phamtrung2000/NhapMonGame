@@ -437,7 +437,6 @@ void HUD::Render()
 	//_Game->Draw(a, b, bbox, 0, 0, _Camera->GetWidth(), HUD_HEIGHT, 255);
 	//DebugOut(L"CamX = %f , camy = %f\n", CamX, camy);
 
-	float temp = _Camera->GetHeight(); // 111
 	// Thanh HUD
 	CamX = CamX + SCREEN_WIDTH / 30;
 	HUB->DrawHud(10, 185);
@@ -463,7 +462,7 @@ void HUD::Render()
 			if (i == 6)
 				push->DrawHud(67 + (6 * 8), 191);
 			else
-				speed->DrawHud( 66 + (i * 8), 191);
+				speed->DrawHud(float(66 + (i * 8)), 191);
 		}
 	}
 	

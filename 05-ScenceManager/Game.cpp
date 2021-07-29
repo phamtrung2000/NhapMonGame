@@ -108,7 +108,7 @@ void CGame::InitKeyboard()
 	hr = di->CreateDevice(GUID_SysKeyboard, &didv, NULL);
 
 	// TO-DO: put in exception handling
-	if (hr != DI_OK) 
+	if (hr != DI_OK)
 	{
 		DebugOut(L"[ERROR] CreateDevice failed!\n");
 		return;

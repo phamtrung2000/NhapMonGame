@@ -69,7 +69,7 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy += FLYGOOMBA_FLYING_GRAVITY * dt;
 
 			ULONGLONG a = GetTickCount64() - TimeFlying;
-			int b = a / 500;
+			int b = int(a / 500);
 			if (a > 500) // den' luc bay len lai
 			{
 				if (b % 2 == 0)
@@ -104,7 +104,7 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (StopFlying == true)
 			{
-				vy += 0.0002 * dt;
+				vy += 0.0002f * dt;
 			}
 			else
 				vy += ENEMY_GRAVITY * dt;
@@ -138,7 +138,7 @@ void FlyGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (GetState() == FLYGOOMBA_STATE_FLYING)
 		{
 			ULONGLONG a = GetTickCount64() - TimeFlying;
-			int b = a / 500;
+			int b = int(a / 500);
 			if (a > 500) // den' luc bay len lai
 			{
 				if (b % 2 == 0)

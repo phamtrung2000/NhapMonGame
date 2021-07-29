@@ -2,7 +2,6 @@
 #include "Brick.h"
 
 #define BRICK_SPEED_Y	0.05f
-#define MAX_HIGH	8
 
 #define MUSICBRICK_STATE_NORMAL		0
 #define MUSICBRICK_STATE_COLLISION	1

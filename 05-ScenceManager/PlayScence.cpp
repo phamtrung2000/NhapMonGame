@@ -309,7 +309,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				}
 				break;
 				case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
-				case OBJECT_TYPE_BUTTONP: obj = new ButtonP(x, y); break;
 				case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x, y); break;
 				case OBJECT_TYPE_GROUND:
 				{

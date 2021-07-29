@@ -9,6 +9,7 @@ MusicBrick::MusicBrick(float x, float y) : Brick(x, y)
 	type_of_brick = BRICK_TYPE_MUSIC;
 	SetState(MUSICBRICK_STATE_NORMAL);
 	direction = -1;
+	max_high = 8;
 }
 
 void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -20,7 +21,7 @@ void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		if (direction == TOP) // tác động từ trên xuống
 		{
 			y += dy;
-			if (StartY + MAX_HIGH < y)
+			if (StartY + max_high < y)
 			{
 				vy = -BRICK_SPEED_Y;
 			}
@@ -33,7 +34,7 @@ void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		else if (direction == BOTTOM) // tác động từ dưới lên
 		{
 			y += dy;
-			if (StartY - y >= MAX_HIGH)
+			if (StartY - y >= max_high)
 			{
 				vy = BRICK_SPEED_Y;
 			}
@@ -51,7 +52,7 @@ void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		{
 			y += dy;
 			_Mario->y = this->y - _Mario->Height;
-			if (StartY + MAX_HIGH < y)
+			if (StartY + max_high < y)
 			{
 				vy = -BRICK_SPEED_Y;
 			}
@@ -68,7 +69,7 @@ void MusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		else if (direction == BOTTOM) // tác động từ dưới lên
 		{
 			y += dy;
-			if (StartY - y >= MAX_HIGH)
+			if (StartY - y >= max_high)
 			{
 				vy = BRICK_SPEED_Y;
 			}

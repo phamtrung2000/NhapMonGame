@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-//#include <unordered_map>
+#include <unordered_map>
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include <iostream>
-#include <fstream>
 
 #include "Scence.h"
 #include "Utils.h"
@@ -21,9 +21,12 @@
 #include "World1.h"
 #include"Grid.h"
 
+#include <iostream>
+#include <fstream>
+
 using namespace std;
 
-#define DIRECTINPUT_VERSION 0x0800
+#define KEYBOARD_BUFFER_SIZE 1024
 
 #define OpeningSceneText "OpeningScene.txt"
 #define OpeningSceneID	0
@@ -35,10 +38,8 @@ using namespace std;
 //#define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.1.txt"
 #define SceneHidden1_1Text  ".\\textures\World\\World1\\SceneHidden1.4.txt"
 
-
 #define SceneHidden1_1ID	11
 
-#define KEYBOARD_BUFFER_SIZE 1024
 #define SCREEN_WIDTH	300//400 
 #define SCREEN_HEIGHT	260//280
 

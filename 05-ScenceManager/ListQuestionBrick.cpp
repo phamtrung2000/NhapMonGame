@@ -51,7 +51,7 @@ void ListQuestionBrick::DeleteBrick(int vitri)
 			}break;
 
 			default:
-				brick->Item = LEAF;
+				brick->Item = QUESTIONBRICKITEM_LEAF;
 				break;
 			}
 			QuestionBrickItem* questionbrickitem = new QuestionBrickItem(brick->Item, brick->x, brick->y - 3);

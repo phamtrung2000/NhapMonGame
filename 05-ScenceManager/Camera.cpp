@@ -150,8 +150,6 @@ RECT Camera::GetBound()
 
 void Camera::Update()
 {
-	bool fly;
-
 	float cx, cy;
 	_Mario->GetPosition(cx, cy);
 

@@ -9,6 +9,7 @@ QuestionBrick::QuestionBrick()
 	StartY = y;
 	Item = 0;
 	SetState(BRICK_STATE_NORMAL);
+	max_high = 5;
 }
 
 QuestionBrick::QuestionBrick(int item,float x,float y) : Brick(x,y)
@@ -27,7 +28,7 @@ void QuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 	if (isCollision==true && state != BRICK_STATE_EMPTY)
 	{
-		if (StartY - y >= MAX_HIGH)
+		if (StartY - y >= max_high)
 		{
 			vy = BRICK_SPEED_Y;
 		}

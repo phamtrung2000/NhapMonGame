@@ -20,7 +20,7 @@ QuestionBrickItem::QuestionBrickItem(int item,float x, float y) : Item()
 	{
 	case MONEY:
 		Score = QUESTIONBRICKITEM_MONEY__SCORE; break;
-	case MUSHROOM: case LEAF:
+	case MUSHROOM: case QUESTIONBRICKITEM_LEAF:
 	{
 		IsMovingObject = true;
 		Score = QUESTIONBRICKITEM__SCORE;
@@ -121,7 +121,7 @@ void QuestionBrickItem::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}break;
 
-		case LEAF:
+		case QUESTIONBRICKITEM_LEAF:
 		{
 			x += dx;
 			y += dy;
@@ -165,7 +165,7 @@ void QuestionBrickItem::Render()
 	case MUSHROOM:
 		ani = QUESTIONBRICKITEM_MUSHROOM_ANI;
 		break;
-	case LEAF:
+	case QUESTIONBRICKITEM_LEAF:
 	{
 		ani = LEAF_ANI_RIGHT;
 		if(GetState() == QUESTIONBRICKITEM_STATE_MOVE_LEFT)
@@ -201,7 +201,7 @@ void QuestionBrickItem::SetState(int state)
 		case MUSHROOM:
 			vy = -MUSHROOM_SPEED_Y;
 			break;
-		case LEAF:
+		case QUESTIONBRICKITEM_LEAF:
 			vy = -LEAF_SPEED_Y;
 			break;
 		default:
@@ -219,7 +219,7 @@ void QuestionBrickItem::SetState(int state)
 		{
 			vx = MUSHROOM_SPEED_X;
 		}
-		else if (Item == LEAF)
+		else if (Item == QUESTIONBRICKITEM_LEAF)
 		{
 			vx = LEAF_SPEED_X;
 		}
@@ -234,7 +234,7 @@ void QuestionBrickItem::SetState(int state)
 		{
 			vx = -MUSHROOM_SPEED_X;
 		}
-		else if (Item == LEAF)
+		else if (Item == QUESTIONBRICKITEM_LEAF)
 		{
 			vx = -LEAF_SPEED_X;
 		}

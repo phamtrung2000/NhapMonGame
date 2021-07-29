@@ -13,6 +13,7 @@ ItemBrick::ItemBrick()
 	isInit = false;
 	SetState(BRICK_STATE_NORMAL);
 	CountMoney = 0;
+	max_high = 5;
 }
 
 ItemBrick::ItemBrick(int item, float x, float y) : Brick(x, y)
@@ -52,7 +53,7 @@ void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		if (isCollision == true && state != BRICK_STATE_EMPTY)
 		{
 
-			if (StartY - y >= MAX_HIGH)
+			if (StartY - y >= max_high)
 			{
 				vy = ITEMBRICK_SPEED_Y;
 			}

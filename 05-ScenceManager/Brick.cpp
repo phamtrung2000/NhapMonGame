@@ -5,7 +5,7 @@
 Brick::Brick()
 {
 	ObjType = OBJECT_TYPE_BRICK;
-	Type = 0;
+	Type = max_high = 0;
 	Width = Height = OBJECT_BBOX_WIDTH_HEIGHT;
 	type_of_brick = BRICK_TYPE_NORMAL;
 }

@@ -23,6 +23,8 @@ class Brick : public CGameObject
 public:
 	int type_of_brick; // loại gạch
 	int Type; // mỗi loại gạch lại có loại gạch nhỏ
+	int max_high; // chiều cao tối đa mà cục gạch chạy lên xong hạ xuống
+
 	Brick();
 	Brick(float x, float y);
 	Brick(int type, float x = 0.0f, float y = 0.0f);

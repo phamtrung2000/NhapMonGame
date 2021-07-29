@@ -14,7 +14,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	CGameObject::Update(dt);
 	if (GetState() == MUSICBRICK_STATE_APPEAR)
 	{
-		if (StartY - y >= MAX_HIGH)
+		if (StartY - y >= max_high)
 		{
 			vy = BRICK_SPEED_Y;
 		}
@@ -33,7 +33,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			y += dy;
 			_Mario->y = this->y - _Mario->Height;
 
-			if (StartY + MAX_HIGH < y)
+			if (StartY + max_high < y)
 			{
 				vy = -BRICK_SPEED_Y;
 			}
@@ -55,7 +55,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		}
 		else if (direction == BOTTOM) // tác động từ dưới lên
 		{
-			if (StartY - y >= MAX_HIGH)
+			if (StartY - y >= max_high)
 			{
 				vy = BRICK_SPEED_Y;
 			}
@@ -69,7 +69,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		}
 		else if (direction == LEFT)
 		{
-			if (abs(StartX - x) >= MAX_HIGH)
+			if (abs(StartX - x) >= max_high)
 			{
 				vx = -BRICK_SPEED_Y;
 			}
@@ -83,7 +83,7 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		}
 		else if (direction == RIGHT) // phai -> trai
 		{
-			if (abs(StartX - x) >= MAX_HIGH)
+			if (abs(StartX - x) >= max_high)
 			{
 				vx = BRICK_SPEED_Y;
 			}

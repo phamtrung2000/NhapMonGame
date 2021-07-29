@@ -167,7 +167,7 @@ void GreenKoopas::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float mi
 						}break;
 
 						default:
-							brick->Item = LEAF;
+							brick->Item = QUESTIONBRICKITEM_LEAF;
 							break;
 						}
 					}

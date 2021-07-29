@@ -2,7 +2,6 @@
 #include "Brick.h"
 
 #define BRICK_SPEED_Y	0.05f
-#define MAX_HIGH	5
 
 #define BRICK_STATE_NORMAL		0
 #define BRICK_STATE_COLLISION	1
