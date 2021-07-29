@@ -1328,7 +1328,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	
 	}
-	Debug();
+	//Debug();
 }
 
 void Mario::Render()

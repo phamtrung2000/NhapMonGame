@@ -325,6 +325,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				case OBJECT_TYPE_MUSICBRICK: obj = new MusicBrick(x, y); break;
 				case OBJECT_TYPE_HIDDENMUSICBRICK: obj = new HiddenMusicBrick(x, y); break;
 			}
+
+			obj->SetPosition(x, y);
+			obj->SetStartPosition(x, y);
+
 			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 			obj->SetAnimationSet(ani_set);
 
@@ -349,6 +353,223 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		default:
 			break;
+	}
+}
+
+void CPlayScene::_ParseSection_OBJECTS(string line, int Left, int Top, int Right, int Bottom)
+
+{
+	vector<string> tokens = split(line);
+
+	int width{}, height{};
+	int Item{};
+	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+
+	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
+
+	CATEGORY object_category = static_cast<CATEGORY>(atoi(tokens[0].c_str()));
+	int object_type = atoi(tokens[1].c_str());
+	float x = (float)atof(tokens[2].c_str());
+	float y = (float)atof(tokens[3].c_str());
+	int ani_set_id = atoi(tokens[4].c_str());
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+
+	CGameObject* obj = NULL;
+
+	switch (object_category)
+	{
+	case CATEGORY::PLAYER:
+	{
+		if (tokens.size() > 4)
+		{
+			float NewX = (float)atof(tokens[5].c_str());
+			float NewY = (float)atof(tokens[6].c_str());
+			_Mario->SetPosition(x, y);
+			_Mario->start_x = x;
+			_Mario->start_y = y;
+			_Mario->NewX = NewX;
+			_Mario->NewY = NewY;
+		}
+		else
+		{
+			_Mario->SetPosition(x, y);
+			_Mario->start_x = x;
+			_Mario->start_y = y;
+		}
+		obj = _Mario;
+		DebugOut(L"[INFO] Player object created!\n");
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+
+		obj->SetPosition(x, y);
+	}break;
+
+	case CATEGORY::ENEMY:
+	{
+		switch (object_type)
+		{
+		case OBJECT_TYPE_GOOMBA:
+		{
+			obj = new Goomba();
+		}break;
+		case OBJECT_TYPE_KOOPAS:
+		{
+			obj = new Koopas();
+		}break;
+		case OBJECT_TYPE_FIREPIRANHAPLANT:
+		{
+			obj = new FirePiranhaPlant();
+		}break;
+		case OBJECT_TYPE_GREENPLANT:
+		{
+			obj = new GreenPlant();
+			x += GREENPLANT_BBOX_WIDTH / 2;
+		} break;
+		case OBJECT_TYPE_GREENFIREPLANT:
+		{
+			obj = new GreenFirePlant();
+			x += GREENPLANT_BBOX_WIDTH / 2;
+		} break;
+		case OBJECT_TYPE_GREENKOOPAS:
+		{
+			obj = new GreenKoopas();
+		}
+		break;
+		case OBJECT_TYPE_GREENFLYKOOPAS:
+		{
+			obj = new GreenFlyKoopas();
+		}
+		break;
+		case OBJECT_TYPE_REDFLYKOOPAS:
+		{
+			obj = new RedFlyKoopas();
+		}
+		break;
+		case OBJECT_TYPE_REDGOOMBA:
+		{
+			obj = new RedGoomba();
+		}
+		break;
+		case OBJECT_TYPE_BOOMERANGENEMY:
+		{
+			obj = new BoomerangEnemy(x, y);
+		}break;
+
+		case OBJECT_TYPE_FLYGOOMBA:
+		{
+			obj = new FlyGoomba();
+		}
+		}
+
+		obj->SetPosition(x, y);
+		obj->SetStartPosition(x, y);
+
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+
+		_Grid->AddMovingObjectByFile(obj, Left, Top, Right, Bottom);
+	}break;
+
+	case CATEGORY::OBJECT:
+	{
+		if (object_type == OBJECT_TYPE_BLOCK || object_type == OBJECT_TYPE_WARPPIPE || object_type == OBJECT_TYPE_GROUND)
+		{
+			width = (int)atof(tokens[5].c_str());
+			height = (int)atof(tokens[6].c_str());
+		}
+		else if (object_type == OBJECT_TYPE_QUESTIONBRICK || object_type == OBJECT_TYPE_BRICK || object_type == OBJECT_TYPE_ITEMBRICK)
+		{
+			Item = (int)atof(tokens[5].c_str());
+		}
+
+		switch (object_type)
+		{
+		case OBJECT_TYPE_BRICK: obj = new Brick(Item, x, y); break;
+		case OBJECT_TYPE_QUESTIONBRICK: obj = new QuestionBrick(Item, x, y); break;
+		case OBJECT_TYPE_WARPPIPE: obj = new WarpPipe(width, height, atoi(tokens[7].c_str()), atoi(tokens[8].c_str())); break;
+		case OBJECT_TYPE_BLOCK: obj = new Block(width, height); break;
+		case OBJECT_TYPE_LISTITEMBRICK:
+		{
+			int NumberBrick = (int)atof(tokens[5].c_str());
+			vector<int>ListBrickType;
+			for (int i = 0; i < NumberBrick; i++)
+			{
+				int BrickType = (int)atof(tokens[6 + i].c_str());
+				ListBrickType.push_back(BrickType);
+			}
+			obj = new ListItemBrick(NumberBrick, ListBrickType, x, y);
+		}
+		break;
+		case OBJECT_TYPE_LISTQUESTIONBRICK:
+		{
+			int NumberBrick = (int)atof(tokens[5].c_str());
+			vector<int>ListBrickType;
+			for (int i = 0; i < NumberBrick; i++)
+			{
+				int BrickType = (int)atof(tokens[6 + i].c_str());
+				ListBrickType.push_back(BrickType);
+			}
+			obj = new ListQuestionBrick(NumberBrick, ListBrickType, x, y);
+		}
+		break;
+		case OBJECT_TYPE_LISTNORMALBRICK:
+		{
+			int NumberBrick = (int)atof(tokens[5].c_str());
+			vector<int>ListBrickType;
+			for (int i = 0; i < NumberBrick; i++)
+			{
+				int BrickType = (int)atof(tokens[6 + i].c_str());
+				ListBrickType.push_back(BrickType);
+			}
+			obj = new ListNormalBrick(NumberBrick, ListBrickType, x, y);
+		}
+		break;
+		case OBJECT_TYPE_ITEMBRICK: obj = new ItemBrick(Item, x, y); break;
+		case OBJECT_TYPE_FLYWOOD: obj = new FlyWood(x, y); break;
+		case OBJECT_TYPE_GROUND:
+		{
+			obj = new Ground(width, height); break;
+			listGround.push_back(obj);
+		}
+		case OBJECT_TYPE_PORTAL:
+		{
+			float r = (float)atof(tokens[5].c_str());
+			float b = (float)atof(tokens[6].c_str());
+			int scene_id = (int)atoi(tokens[7].c_str());
+			obj = new CPortal(x, y, r, b, scene_id);
+		}break;
+		case OBJECT_TYPE_MUSICBRICK: obj = new MusicBrick(x, y); break;
+		case OBJECT_TYPE_HIDDENMUSICBRICK: obj = new HiddenMusicBrick(x, y); break;
+		}
+
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+
+		_Grid->AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
+		obj->SetPosition(x, y);
+		obj->SetStartPosition(x, y);
+	}break;
+
+	case CATEGORY::ITEM:
+	{
+		switch (object_type)
+		{
+			case OBJECT_TYPE_COIN: obj = new Coin(); break;
+			case OBJECT_TYPE_CARD: obj = new Card(); break;
+			default:
+				break;
+		}
+
+		obj->SetPosition(x, y);
+		obj->SetStartPosition(x, y);
+
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+
+		_Grid->AddStaticObjectByFile(obj, Left, Top, Right, Bottom);
+	}
+	break;
 	}
 }
 
@@ -682,6 +903,25 @@ void CPlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
+	LPCWSTR FilePathGrid = ToLPCWSTR("");
+	if(this->SceneID == 10)
+	{
+		FilePathGrid = ToLPCWSTR(".\\OutputGridScene1.1.txt");
+	}
+	else if (this->SceneID == 11)
+	{
+		FilePathGrid = ToLPCWSTR(".\\OutputGridSceneHidden1.1.txt");
+	}
+	else if (this->SceneID == 12)
+	{
+		FilePathGrid = ToLPCWSTR(".\\OutputGridScene1.3.txt");
+	}
+	else if (this->SceneID == 13)
+	{
+		FilePathGrid = ToLPCWSTR(".\\OutputGridSceneHidden1.3.txt");
+	}
+	ifstream ifs(FilePathGrid, ios::in);
+
 	ifstream f;
 	f.open(sceneFilePath);
 
@@ -738,19 +978,30 @@ void CPlayScene::Load()
 			section = SCENE_FILE_SECTION_SETTINGS; continue;
 		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
+		if (line == "") continue;
 		switch (section)
 		{
 		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
 		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+
+		/*case SCENE_SECTION_OBJECTS: 
+		{
+			int l, t, r, b;
+			ifs >> l >> t >> r >> b;
+			_ParseSection_OBJECTS(line, l, t, r, b);
+		}
+		break;*/
 
 		case SCENE_SECTION_EFFECT: _ParseSection_EFFECT(line); break;
 		case SCENE_SECTION_ENEMY: _ParseSection_ENEMY(line); break;
 		case SCENE_SECTION_HUD: _ParseSection_HUD(line); break;
 		case SCENE_SECTION_ITEM: _ParseSection_ITEM(line); break;
 		case SCENE_SECTION_MARIO: _ParseSection_MARIO(line); break;
+
 		case SCENE_SECTION_OBJECT: _ParseSection_OBJECT(line); break;
 		case SCENE_SECTION_WEAPON: _ParseSection_WEAPON(line); break;
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
@@ -862,6 +1113,7 @@ void CPlayScene::Unload()
 		delete obj;
 	}
 	_Grid->CurObjectInViewPort.clear();
+	//_Grid->UnLoad();
 
 	_Mario->Unload();
 	_Map->UnLoad();

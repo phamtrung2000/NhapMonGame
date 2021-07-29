@@ -254,7 +254,12 @@
     <ClInclude Include="World1.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="gridinfo.txt" />
     <Text Include="mario-sample.txt" />
+    <Text Include="OutputGridScene1.1.txt" />
+    <Text Include="OutputGridScene1.3.txt" />
+    <Text Include="OutputGridSceneHidden1.1.txt" />
+    <Text Include="OutputGridSceneHidden1.3.txt" />
     <Text Include="textures\Effect\Effect.txt" />
     <Text Include="textures\Enemy\Enemy.txt" />
     <Text Include="textures\HUD\HUD.txt" />
@@ -271,6 +276,7 @@
     <Text Include="textures\World\World1\Scene1.1Map.txt" />
     <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
     <Text Include="textures\World\World1\Scene1.3\Scene1.3Hidden.txt" />
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3Map.txt" />
     <Text Include="textures\World\World1\Scene1.4.txt" />
     <Text Include="textures\World\World1\Scene1.4Map.txt" />
     <Text Include="textures\World\World1\SceneHidden1.1Map.txt" />

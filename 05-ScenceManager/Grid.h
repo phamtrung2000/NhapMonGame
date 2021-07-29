@@ -30,6 +30,7 @@ public:
 	void UpdateCellInViewPort();
 	void RenderCell();
 	void RemoveDeadObject();
+	void UnLoad();
 
 	void CalcObjectInViewPort();
 	vector<LPGAMEOBJECT> GetObjectInViewPort() { return CurObjectInViewPort; }

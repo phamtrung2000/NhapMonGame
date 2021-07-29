@@ -13,6 +13,7 @@ Grid::Grid()
 
 Area Grid::GetCell(RECT e)
 {
+	// top left right bottom
 	return {
 		int(max(0		, e.top / SizeCell)),
 		int(max(0		, e.left / SizeCell)),
@@ -56,6 +57,18 @@ void Grid::AddMovingObject(LPGAMEOBJECT obj, float x, float y)
 	obj->SetStartPosition(x, y);
 }
 
+void Grid::AddMovingObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom)
+{
+	for (int i = Top ; i <= Bottom ; i++)
+	{
+		for (int j = Left; j <= Right; j++)
+		{
+			int type = obj->ObjType;
+			Cells[i][j]->movingObjects.insert(obj);
+		}
+	}
+}
+
 void Grid::AddStaticObject(LPGAMEOBJECT obj, float x, float y)
 {
 	RECT e;
@@ -75,6 +88,20 @@ void Grid::AddStaticObject(LPGAMEOBJECT obj, float x, float y)
 	obj->SetPosition(x, y);
 	obj->SetStartPosition(x, y);
 }
+
+void Grid::AddStaticObjectByFile(LPGAMEOBJECT obj, int Left, int Top, int Right, int Bottom)
+{
+	for (int i = Top; i <= Bottom; i++)
+	{
+		for (int j = Left; j <= Right; j++)
+		{
+			int type = obj->ObjType;
+			Cells[i][j]->staticObjects.insert(obj);
+		}
+	}
+}
+
+
 
 void Grid::RenderCell()
 {
@@ -223,6 +250,11 @@ void Grid::RemoveDeadObject()
 	{
 		RemoveObjectIf(Cells[r][c]->movingObjects, [](auto obj) {return obj->canDelete; });
 	}
+}
+
+void Grid::UnLoad()
+{
+	Cells.clear();
 }
 
 Grid* Grid::GetInstance()

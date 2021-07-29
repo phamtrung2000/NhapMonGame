@@ -263,14 +263,14 @@
     <ClCompile Include="HiddenMusicBrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayScence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FlyGoomba.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SmallGoomba.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScence.cpp">
+      <Filter>PlayScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -517,5 +517,11 @@
     <Text Include="textures\World\World1\Scene1.1Hidden.txt" />
     <Text Include="textures\World\World1\Scene1.3\Scene1.3.txt" />
     <Text Include="textures\World\World1\Scene1.3\Scene1.3Hidden.txt" />
+    <Text Include="gridinfo.txt" />
+    <Text Include="OutputGridScene1.1.txt" />
+    <Text Include="OutputGridScene1.3.txt" />
+    <Text Include="textures\World\World1\Scene1.3\Scene1.3Map.txt" />
+    <Text Include="OutputGridSceneHidden1.1.txt" />
+    <Text Include="OutputGridSceneHidden1.3.txt" />
   </ItemGroup>
 </Project>
