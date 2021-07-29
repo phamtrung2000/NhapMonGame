@@ -252,17 +252,17 @@ void Camera::Update()
 		{
 			float a1 = (maxTopCam + real_height) / 2;
 			float a2 = cy + ((maxTopCam + real_height) / 2);
-			DebugOut(L"a1 = %f, a2 = %f, cy = %f\t", a1, a2, cy);
+			//DebugOut(L"a1 = %f, a2 = %f, cy = %f\t", a1, a2, cy);
 			if (cy >= a1 && a2 < maxBottomCam)
 				// khi mario vượt qua (maxTopCam + h)/2 thì khoảng (maxTopCam + h)/2 chính là khoảng cố định tiếp theo khi mario rớt xuống
 				// ép thêm dk hasFly để tránh TH mario nhảy lên thì kéo camera lên
 			{
-				DebugOut(L"1111111111111\n");
+				//DebugOut(L"1111111111111\n");
 				cy = cy - ((maxTopCam + real_height) / 2);
 			}
 			else
 			{
-				DebugOut(L"222222222222222\n");
+				//DebugOut(L"222222222222222\n");
 				// ép giới hạn bên dưới, k cho lòi phần màu vàng
 				cy = maxBottomCam;
 			}

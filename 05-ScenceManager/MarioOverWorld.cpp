@@ -44,23 +44,42 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					CanGoRight = gate->MarioCanGo[2];
 					CanGoDown = gate->MarioCanGo[3];
 
-					if (gate->GateNumber > 0 && gate->GateNumber % 2 == 0 && gate->isComplete == false)
+					// Code này áp dụng cho qua màn 1.1 mới được vào 1.2
+					
+					//if (gate->GateNumber > 0 && gate->GateNumber % 2 == 0 && gate->isComplete == false)
+					//{
+					//	SetState(MARIO_OVERWORLD_STATE_IN_GATE);
+					//}
+					//else
+					//	InGate = false;
+					//if (Scene <= gate->GateNumber) // xong màn +1 lên = 11, nếu k có thì gán lại = 10
+					//	Scene = gate->GateNumber;
+					//else
+					//{
+					//	gate->isComplete = true;
+					//	if (Scene > 10 && gate->GateNumber == 10)
+					//	{
+					//		CanGoRight = 1;
+					//	}
+					//}
+					//if (Scene <= gate->GateNumber) // xong màn +1 lên = 11, nếu k có thì gán lại = 10
+					//	Scene = gate->GateNumber;
+					//else
+					//{
+					//	gate->isComplete = true;
+					//	if (Scene > 10 && gate->GateNumber == 10)
+					//	{
+					//		CanGoRight = 1;
+					//	}
+					//}
+
+					if (gate->GateNumber > 0 && gate->GateNumber % 2 == 0)
 					{
 						SetState(MARIO_OVERWORLD_STATE_IN_GATE);
+						Scene = gate->GateNumber;
 					}
 					else
 						InGate = false;
-
-					if (Scene <= gate->GateNumber) // xong màn +1 lên = 11, nếu k có thì gán lại = 10
-						Scene = gate->GateNumber;
-					else
-					{
-						gate->isComplete = true;
-						if (Scene > 10 && gate->GateNumber == 10)
-						{
-							CanGoRight = 1;
-						}
-					}
 
 					if (vx != 0)
 					{
@@ -160,9 +179,10 @@ void MarioOverWorld::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetPosition(x, 0);
 		vy = 0;
 	}
-	
-	DebugOut(L"Scene = %i\t", Scene);
-	DebugOut(L" CanGoLeft == %i, CanGoUp == %i, CanGoRight == %i, CanGoDown == %i\n", CanGoLeft, CanGoUp, CanGoRight, CanGoDown);
+	if(InGate==true)
+		DebugOut(L"InGate==true\n");
+	else
+		DebugOut(L"InGate==false\n");
 }
 
 void MarioOverWorld::Render()
@@ -197,7 +217,6 @@ void MarioOverWorld::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y);
-	////RenderBoundingBox();
 }
 
 void MarioOverWorld::SetState(int state)

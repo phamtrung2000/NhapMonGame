@@ -882,134 +882,153 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		return;
 	switch (KeyCode)
 	{
-	case DIK_H:
-	{
-		_Mario->SetLevel(MARIO_LEVEL_SMALL);
-		_Mario->y = _Mario->y - MARIO_SMALL_BBOX_HEIGHT - 1;
-		_Mario->OnGround = false;
-	}break;
+		case DIK_H:	case DIK_1:
+		{
+			_Mario->SetLevel(MARIO_LEVEL_SMALL);
+			_Mario->y = _Mario->y - MARIO_SMALL_BBOX_HEIGHT - 1;
+			_Mario->OnGround = false;
+		}break;
 	
-	break;
-	case DIK_J:
-	{
-		_Mario->SetLevel(MARIO_LEVEL_BIG);
-		_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
-		_Mario->OnGround = false;
-	}break;
-
-	case DIK_K:
-	{
-		_Mario->SetLevel(MARIO_LEVEL_TAIL);
-		_Mario->y = _Mario->y - MARIO_TAIL_BBOX_HEIGHT - 1;
-		_Mario->OnGround = false;
-	}break;
-
-	case DIK_L:
-	{
-		_Mario->SetLevel(MARIO_LEVEL_FIRE);
-		_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
-		_Mario->OnGround = false;
-	}break;
-
-	case DIK_U:
-	{
-		_Mario->UpLevel();
-		//_Mario->untouchable = true;
-	}break;
-
-	case DIK_I:
-	{
-		_Mario->DownLevel();
-	}break;
-
-	case DIK_S:
-	{
-		DebugOut(L"Down S\n");
-		_Mario->pressS = true;
-		if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isFalling == true)
+		case DIK_J:	case DIK_2:
 		{
-			_Mario->SetState(MARIO_STATE_FLY_LOW);
-			_Mario->TimeDelayFly = GetTickCount64();
-		}
-		else
+			_Mario->SetLevel(MARIO_LEVEL_BIG);
+			_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
+			_Mario->OnGround = false;
+		}break;
+
+		case DIK_K:case DIK_3:
 		{
-			if (_Mario->isFalling == false && _Mario->OnGround == true)
+			_Mario->SetLevel(MARIO_LEVEL_TAIL);
+			_Mario->y = _Mario->y - MARIO_TAIL_BBOX_HEIGHT - 1;
+			_Mario->OnGround = false;
+		}break;
+
+		case DIK_L:case DIK_4:
+		{
+			_Mario->SetLevel(MARIO_LEVEL_FIRE);
+			_Mario->y = _Mario->y - MARIO_BIG_BBOX_HEIGHT - 1;
+			_Mario->OnGround = false;
+		}break;
+
+		case DIK_5:
+		{
+			_Mario->SetHackPosition(5);
+		}break;
+
+		case DIK_6:
+		{
+			_Mario->SetHackPosition(6);
+		}break;
+
+		case DIK_7:
+		{
+			_Mario->SetHackPosition(7);
+		}break;
+
+		case DIK_8:
+		{
+			_Mario->SetHackPosition(8);
+		}break;
+
+		case DIK_U:
+		{
+			_Mario->UpLevel();
+			//_Mario->untouchable = true;
+		}break;
+
+		case DIK_I:
+		{
+			_Mario->DownLevel();
+		}break;
+
+		case DIK_S:
+		{
+			DebugOut(L"Down S\n");
+			_Mario->pressS = true;
+			if (_Mario->level == MARIO_LEVEL_TAIL && _Mario->isFalling == true)
 			{
-				_Mario->SetState(MARIO_STATE_JUMP);
-				_Mario->TimeJumpS = GetTickCount64();
-			}
-		}
-			
-		if (_Mario->GetLevel() == MARIO_LEVEL_TAIL)
-		{
-			if (_Mario->canFlyS == false)
-			{
-				if (_Mario->isMaxRunning == true)
-				{
-					_Mario->canFlyS = true;
-					_Mario->FlyTimePerS = 0;
-				}
-					
+				_Mario->SetState(MARIO_STATE_FLY_LOW);
+				_Mario->TimeDelayFly = GetTickCount64();
 			}
 			else
 			{
-				_Mario->FlyTimePerS = 0;
-				_Mario->SetState(MARIO_STATE_FLY_HIGH);
+				if (_Mario->isFalling == false && _Mario->OnGround == true)
+				{
+					_Mario->SetState(MARIO_STATE_JUMP);
+					_Mario->TimeJumpS = GetTickCount64();
+				}
+			}
+			
+			if (_Mario->GetLevel() == MARIO_LEVEL_TAIL)
+			{
+				if (_Mario->canFlyS == false)
+				{
+					if (_Mario->isMaxRunning == true)
+					{
+						_Mario->canFlyS = true;
+						_Mario->FlyTimePerS = 0;
+					}
+					
+				}
+				else
+				{
+					_Mario->FlyTimePerS = 0;
+					_Mario->SetState(MARIO_STATE_FLY_HIGH);
+				}
 			}
 		}
-	}
-	break;
-
-	case DIK_X:
-	{
-		//DebugOut(L"Down X\n");
-	}
-	break;
-
-	case DIK_R: // reset
-		_Mario->Reset();
 		break;
 
-	case DIK_A:
-	{
-		DebugOut(L"Down A\n");
-		_Mario->pressA = _Mario->isRunning = true;
-		_Mario->StopRunning = false;
-		if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false)
+		case DIK_X:
 		{
-			_Mario->SetState(MARIO_STATE_ATTACK);
+			//DebugOut(L"Down X\n");
 		}
-		else if (_Mario->GetLevel() == MARIO_LEVEL_FIRE && _Mario->isAttacking == false)
+		break;
+
+		case DIK_R: // reset
+			_Mario->Reset();
+			break;
+
+		case DIK_A:
 		{
-			_Mario->SetState(MARIO_STATE_ATTACK);
-			_Mario->TimeDelayUseFireBullet = TIMEDELAYUSEBFIREBULLET_A;
-		}
+			DebugOut(L"Down A\n");
+			_Mario->pressA = _Mario->isRunning = true;
+			_Mario->StopRunning = false;
+			if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false)
+			{
+				_Mario->SetState(MARIO_STATE_ATTACK);
+			}
+			else if (_Mario->GetLevel() == MARIO_LEVEL_FIRE && _Mario->isAttacking == false)
+			{
+				_Mario->SetState(MARIO_STATE_ATTACK);
+				_Mario->TimeDelayUseFireBullet = TIMEDELAYUSEBFIREBULLET_A;
+			}
 		
-	}
-	break;
-
-	case DIK_Z:
-	{
-		_Mario->pressA = _Mario->isRunning = true;
-		if (_Mario->GetLevel() == MARIO_LEVEL_FIRE && _Mario->isAttacking == false)
-		{
-			_Mario->SetState(MARIO_STATE_ATTACK);
-			_Mario->TimeDelayUseFireBullet = TIMEDELAYUSEBFIREBULLET_Z;
 		}
+		break;
 
-	}
-	break;
+		case DIK_Z:
+		{
+			_Mario->pressA = _Mario->isRunning = true;
+			if (_Mario->GetLevel() == MARIO_LEVEL_FIRE && _Mario->isAttacking == false)
+			{
+				_Mario->SetState(MARIO_STATE_ATTACK);
+				_Mario->TimeDelayUseFireBullet = TIMEDELAYUSEBFIREBULLET_Z;
+			}
 
-	case DIK_LEFT:
-	{
-		//DebugOut(L"DIK_LEFT	\n");
-		//if (_Mario->GetState() == MARIO_STATE_WALKING_RIGHT)
-		//{
-		//	//_Mario->SetState(MARIO_STATE_WALKING_LEFT);
-		//	_Mario->nx = -1;
-		//}
-	}
-	break;
+		}
+		break;
+
+		case DIK_LEFT:
+		{
+			//DebugOut(L"DIK_LEFT	\n");
+			//if (_Mario->GetState() == MARIO_STATE_WALKING_RIGHT)
+			//{
+			//	//_Mario->SetState(MARIO_STATE_WALKING_LEFT);
+			//	_Mario->nx = -1;
+			//}
+		}
+		break;
 
 	case DIK_RIGHT:
 	{

@@ -1328,7 +1328,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	
 	}
-	//Debug();
+	Debug();
 }
 
 void Mario::Render()
@@ -2587,7 +2587,6 @@ void Mario::SetState(int state)
 			}
 
 			isHolding = isBlocked = false;
-			
 		}
 		break;
 
@@ -2652,54 +2651,60 @@ void Mario::SetState(int state)
 		}
 		break;
 
-	case MARIO_STATE_HOLDING_RIGHT:
-	{
-		if (nx == LEFT)
+		case MARIO_STATE_HOLDING_RIGHT:
 		{
-			x -= 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+			if (nx == LEFT)
+			{
+				x -= 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+			}
+			nx = RIGHT;
+			isHolding = true;
 		}
-		nx = RIGHT;
-		isHolding = true;
-	}
-	break;
+		break;
 
-	case MARIO_STATE_HOLDING_LEFT:
-	{
-		if (nx == RIGHT)
+		case MARIO_STATE_HOLDING_LEFT:
 		{
-			x += 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+			if (nx == RIGHT)
+			{
+				x += 2.0f; // xử lý vụ đi sát gạch thì xuyên qua
+			}
+			nx = LEFT;
+			isHolding = true;
 		}
-		nx = LEFT;
-		isHolding = true;
-	}
-	break;
+		break;
 
-	case MARIO_STATE_FLYING_HIGH_RIGHT:
-	{
-		isFlyingLow = false;
-		isFlyingHigh = true;
-		vy = -MARIO_FLY_SPEED;
-		vx = MARIO_FLY_MOVING_SPEED;
-		isRunning = false;
-	}
-	break;
+		case MARIO_STATE_FLYING_HIGH_RIGHT:
+		{
+			isFlyingLow = false;
+			isFlyingHigh = true;
+			vy = -MARIO_FLY_SPEED;
+			vx = MARIO_FLY_MOVING_SPEED;
+			isRunning = false;
+		}
+		break;
 
-	case MARIO_STATE_FLYING_HIGH_LEFT:
-	{
-		isFlyingLow = false;
-		isFlyingHigh = true;
-		vy = -MARIO_FLY_SPEED;
-		vx = -MARIO_FLY_MOVING_SPEED;
-		isRunning = false;
-	}
-	break;
+		case MARIO_STATE_FLYING_HIGH_LEFT:
+		{
+			isFlyingLow = false;
+			isFlyingHigh = true;
+			vy = -MARIO_FLY_SPEED;
+			vx = -MARIO_FLY_MOVING_SPEED;
+			isRunning = false;
+		}
+		break;
 
-	case MARIO_STATE_ENDSCENE:
-	{
-		loseControl = true;
+		case MARIO_STATE_INIT:
+		{
+			isInit = false;
+			vx = 0;
+		}
+		break;
 
-	}
-	break;
+		case MARIO_STATE_ENDSCENE:
+		{
+			loseControl = true;
+		}
+		break;
 
 	}
 }
@@ -2792,7 +2797,7 @@ void Mario::UpLevel()
 
 void Mario::Debug()
 {
-	/*switch (state)
+	switch (state)
 	{
 	case MARIO_STATE_IDLE:
 		DebugOut(L"State = IDLE\t"); break;
@@ -2828,13 +2833,13 @@ void Mario::Debug()
 		DebugOut(L"State = FLYING_HIGH_LEFT\t"); break;
 	case MARIO_STATE_ENDSCENE:
 		DebugOut(L"State = MARIO_STATE_ENDSCENE\t"); break;
-	}*/
+	}
 
-	if(canFlyX == true)
-		DebugOut(L"canFlyX == true\t");
-	else
-		DebugOut(L"canFlyX == false\t");
-	DebugOut(L"Mario vx = %f\t", vx);
+	//if(canFlyX == true)
+	//	DebugOut(L"canFlyX == true\t");
+	//else
+	//	DebugOut(L"canFlyX == false\t");
+	DebugOut(L"Mario vy = %f\t", vy);
 	
 	DebugOut(L"\n");
 }
@@ -3568,75 +3573,78 @@ void Mario::CollisionWithObject(LPCOLLISIONEVENT e, float min_tx, float min_ty, 
 						{
 							if (ny != 0) vy = 0;
 							isFalling = true;
-							if (listbrick->Bricks.size() == 1)
+							if (this->level > MARIO_LEVEL_SMALL)
 							{
-								listbrick->DeleteBrick(0);
-							}
-							else if (listbrick->Bricks.size() == 2)
-							{
-								float l, t, r, b;
-								int vitri = 0;
-								GetBoundingBox(l, t, r, b);
-								if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
+								if (listbrick->Bricks.size() == 1)
 								{
-									vitri = 0;
-									listbrick->DeleteBrick(vitri);
-									//listbrick->Bricks.erase(listbrick->Bricks.begin());
+									listbrick->DeleteBrick(0);
 								}
-								else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+								else if (listbrick->Bricks.size() == 2)
 								{
-									vitri = 1;
-									listbrick->DeleteBrick(vitri);
-									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
-								}
-							}
-							else
-							{
-								float l, t, r, b;
-								int vitri = 0;
-								GetBoundingBox(l, t, r, b);
-								float aa1 = listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x;
-								if (l <= listbrick->Bricks.at(0)->x ||
-									(l > listbrick->Bricks.at(0)->x && r < listbrick->Bricks.at(1)->x + 8)) // sure đụng viên đầu tiên
-								{
-									vitri = 0;
-									listbrick->DeleteBrick(vitri);
-
-									//listbrick->Bricks.erase(listbrick->Bricks.begin());
-								}
-								// sure đụng viên cuối
-								else if ((l <= aa1 && l + 8 >= aa1) ||
-									(l >= aa1))
-								{
-									vitri = listbrick->Bricks.size() - 1;
-									listbrick->DeleteBrick(vitri);
-									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+									float l, t, r, b;
+									int vitri = 0;
+									GetBoundingBox(l, t, r, b);
+									if ((l <= listbrick->Bricks.at(0)->x) || (l + Width / 2 <= listbrick->Bricks.at(0)->x + 16 && l + Width / 2 > listbrick->Bricks.at(0)->x))// sure đụng viên đầu tiên
+									{
+										vitri = 0;
+										listbrick->DeleteBrick(vitri);
+										//listbrick->Bricks.erase(listbrick->Bricks.begin());
+									}
+									else //if (r >= listbrick->Bricks.at(1)->x + 16) // sure đụng viên cuối
+									{
+										vitri = 1;
+										listbrick->DeleteBrick(vitri);
+										//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
+									}
 								}
 								else
 								{
-									int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
-									//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
-									//	vitri--;
-									float tempx = listbrick->Bricks.at(vitri)->x;
-									if (l < tempx && INT16(tempx - l) > 8)
-										vitri--;
-									if (listbrick->Bricks.at(vitri)->Item == NORMAL)
+									float l, t, r, b;
+									int vitri = 0;
+									GetBoundingBox(l, t, r, b);
+									float aa1 = listbrick->Bricks.at(listbrick->Bricks.size() - 1)->x;
+									if (l <= listbrick->Bricks.at(0)->x ||
+										(l > listbrick->Bricks.at(0)->x && r < listbrick->Bricks.at(1)->x + 8)) // sure đụng viên đầu tiên
 									{
-										int a1 = vitri + 1;
-										int a2 = listbrick->Bricks.size() - 1;
-										ListItemBrick* listbrick1 = new ListItemBrick(listbrick->Bricks, 0, vitri - 1);
-										ListItemBrick* listbrick2 = new ListItemBrick(listbrick->Bricks, a1, a2);
+										vitri = 0;
+										listbrick->DeleteBrick(vitri);
 
-										listbrick->canDelete = true;
-										_Grid->AddStaticObject(listbrick1, listbrick1->Bricks.at(0)->x, listbrick1->Bricks.at(0)->y);
-										_Grid->AddStaticObject(listbrick2, listbrick2->Bricks.at(0)->x, listbrick2->Bricks.at(0)->y);
+										//listbrick->Bricks.erase(listbrick->Bricks.begin());
+									}
+									// sure đụng viên cuối
+									else if ((l <= aa1 && l + 8 >= aa1) ||
+										(l >= aa1))
+									{
+										vitri = listbrick->Bricks.size() - 1;
+										listbrick->DeleteBrick(vitri);
+										//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
 									}
 									else
 									{
+										int vitri = (int)(r - listbrick->Bricks.at(0)->x) / 16;
+										//if (vitri > listbrick->Bricks.size()) // TH đặc biệt : 4 viên, 64/16 = 4 = vitri trong khi vitri = 3
+										//	vitri--;
+										float tempx = listbrick->Bricks.at(vitri)->x;
+										if (l < tempx && INT16(tempx - l) > 8)
+											vitri--;
+										if (listbrick->Bricks.at(vitri)->Item == NORMAL)
+										{
+											int a1 = vitri + 1;
+											int a2 = listbrick->Bricks.size() - 1;
+											ListItemBrick* listbrick1 = new ListItemBrick(listbrick->Bricks, 0, vitri - 1);
+											ListItemBrick* listbrick2 = new ListItemBrick(listbrick->Bricks, a1, a2);
 
+											listbrick->canDelete = true;
+											_Grid->AddStaticObject(listbrick1, listbrick1->Bricks.at(0)->x, listbrick1->Bricks.at(0)->y);
+											_Grid->AddStaticObject(listbrick2, listbrick2->Bricks.at(0)->x, listbrick2->Bricks.at(0)->y);
+										}
+										else
+										{
+
+										}
+										listbrick->DeleteBrick(vitri);
+										//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
 									}
-									listbrick->DeleteBrick(vitri);
-									//listbrick->Bricks.erase(listbrick->Bricks.begin() + vitri);
 								}
 							}
 						}
@@ -3914,4 +3922,70 @@ float Mario::GetWidth(int level)
 		}break;
 	}
 	return 0.0f;
+}
+
+void Mario::SetHackPosition(int number)
+{
+	SetSpeed(0, 0);
+	canDelete = isDie = false;
+	SetState(MARIO_STATE_IDLE);
+	SetLevel(MARIO_LEVEL_SMALL);
+	
+	render_tail = GoHiddenWorld = untouchable = ChangeDirection = isRunning = isMaxRunning = isFlyingHigh = canFlyX = canFlyS = isFalling = isSitDown = isAttacking = endAttack = false;
+	OnGround = true;
+	level_of_running = level_of_walking = 0;
+	time_attack = time_fly = 0;
+	ani = 0;
+	NumberBullet = 2;
+	hasFly = true;
+	if (_PlayScene->SceneID == 10)
+	{
+		switch (number)
+		{
+			case 5 :
+			{
+				SetPosition(10, 360);
+			}
+			break;
+			case 6 :
+			{
+				
+				SetPosition(800, 360);
+				
+			}break;
+			case 7:
+			{
+				SetPosition(2200, 350);
+
+			}break;
+			case 8:
+			{
+				SetPosition(2272, 48);
+			}break;
+		
+		}
+	}
+	else
+	{
+		switch (number)
+		{
+		case 5:
+		{
+			SetPosition(10, 360);
+		}
+		break;
+		case 6:
+		{
+
+			SetPosition(450, 360);
+
+		}break;
+		case 7:
+		{
+			SetPosition(2000, 350);
+
+		}break;
+		
+		}
+	}
 }

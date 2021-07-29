@@ -224,8 +224,6 @@ void FirePiranhaPlant::Render()
 	}
 	if (isInit == true)
 		animation_set->at(ani)->Render(x, y);
-	//DebugOut(L"5.Render	Ani: %i, State=%i\n", ani, state );
-	//RenderBoundingBox();
 }
 
 void FirePiranhaPlant::SetState(int state)

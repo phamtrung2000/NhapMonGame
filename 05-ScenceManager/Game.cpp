@@ -520,6 +520,11 @@ void CGame::SwitchScene(int scene_id)
 				s->Load();
 				_Mario->SetLevel(MarioLevel);
 				_HUD->Init(_HUD->PlayTime);
+				if(scene_id == 13)
+				{
+					_Mario->SetState(MARIO_STATE_INIT);
+					_Mario->vy = -0.25f;
+				}
 			}
 		}
 	}

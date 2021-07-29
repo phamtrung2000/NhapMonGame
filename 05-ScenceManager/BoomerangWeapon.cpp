@@ -89,7 +89,5 @@ void BoomerangWeapon::Render()
 			ani = ANI_BOOMERANG_THROW_RIGHT;
 	}
 	animation_set->at(ani)->Render(x, y);
-
-	//RenderBoundingBox();
 }
 

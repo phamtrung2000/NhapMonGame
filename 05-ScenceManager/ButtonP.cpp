@@ -83,8 +83,6 @@ void ButtonP::Render()
 		ani = BUTTONP_ANI_PRESS;
 	}
 	animation_set->at(ani)->Render(x, y);
-
-	//RenderBoundingBox();
 }
 
 void ButtonP::SetState(int state)

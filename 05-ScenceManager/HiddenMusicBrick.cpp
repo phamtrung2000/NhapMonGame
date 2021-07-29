@@ -51,7 +51,6 @@ void HiddenMusicBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					_Mario->Scene = 13;
 					_Mario->time_switch_scene = 400;
 				}
-					
 			}
 		}
 		else if (direction == BOTTOM) // tác động từ dưới lên
@@ -103,7 +102,6 @@ void HiddenMusicBrick::Render()
 {
 	if (isHidden == false)
 		animation_set->at(HIDDENMUSICBRICK_ANI_NORMAL)->Render(x, y);
-	RenderBoundingBox();
 }
 
 void HiddenMusicBrick::SetState(int state)

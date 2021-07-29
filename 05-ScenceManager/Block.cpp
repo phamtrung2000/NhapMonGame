@@ -3,7 +3,7 @@
 
 void Block::Render()
 {
-	RenderBoundingBox();
+	
 }
 
 Block::Block(int W, int H)

@@ -52,7 +52,6 @@ void GreenFlyKoopas::Render()
 		else
 			ani = GREENFLYKOOPAS_ANI_WALKING_RIGHT;
 		animation_set->at(ani)->Render(x, y);
-		//RenderBoundingBox();
 	}
 	else
 	{

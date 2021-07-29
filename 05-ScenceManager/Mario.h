@@ -32,7 +32,7 @@
 #define MARIO_STATE_FLYING_HIGH_LEFT	13
 #define MARIO_STATE_HOLDING_RIGHT		14
 #define MARIO_STATE_HOLDING_LEFT		15
-
+#define MARIO_STATE_INIT				16
 #define MARIO_STATE_ENDSCENE			100
 
 #define MARIO_ANI_BIG_IDLE_RIGHT			0
@@ -220,8 +220,8 @@
 #define MARIO_LEVEL_UP_SMALL_BIG_BBOX_HEIGHT 21//22
 
 #define TIME_ATTACK 4//2
-#define TIME_FLY_X 300
-#define TIME_FLY_S 300
+#define TIME_FLY_X 250
+#define TIME_FLY_S 250
 #define TIME_FLY_PER_S 30
 #define MARIO_UNTOUCHABLE_TIME 3000
 #define TIME_LEVEL_UP 3000
@@ -326,5 +326,6 @@ public:
 	void CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	void CollisionWithWeapon(LPCOLLISIONEVENT e, float min_tx, float min_ty, float nx, float ny);
 	float GetWidth(int level);
+	void SetHackPosition(int number);
 };
 

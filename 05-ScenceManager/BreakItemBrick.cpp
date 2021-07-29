@@ -29,7 +29,6 @@ void BreakItemBrick::Render()
 	if (nx == RIGHT)
 		ani = BREAKITEMBRICK_RIGHT_ANI;
 	animation_set->at(ani)->Render(x, y);
-	//RenderBoundingBox();
 }
 
 void BreakItemBrick::GetBoundingBox(float& l, float& t, float& r, float& b)

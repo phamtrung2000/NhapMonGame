@@ -99,5 +99,4 @@ void FlyWood::SetState(int state)
 void FlyWood::Render()
 {
 	animation_set->at(FLYWOOD_ANI)->Render(x, y);
-	//RenderBoundingBox();
 }

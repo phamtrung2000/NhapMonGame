@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <unordered_map>
+//#include <unordered_map>
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -10,7 +10,6 @@
 
 #include "Scence.h"
 #include "Utils.h"
-
 #include "Mario.h"
 #include "MarioOverWorld.h"
 #include "Game.h"
@@ -24,7 +23,7 @@
 
 using namespace std;
 
-//#define DIRECTINPUT_VERSION 0x0800
+#define DIRECTINPUT_VERSION 0x0800
 
 #define OpeningSceneText "OpeningScene.txt"
 #define OpeningSceneID	0

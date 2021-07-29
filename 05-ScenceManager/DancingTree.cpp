@@ -11,7 +11,6 @@ void DancingTree::GetBoundingBox(float& left, float& top, float& right, float& b
 void DancingTree::Render()
 {
 	animation_set->at(0)->Render(x, y);
-	////RenderBoundingBox();
 }
 
 DancingTree::DancingTree()
