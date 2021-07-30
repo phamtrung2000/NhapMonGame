@@ -1247,7 +1247,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			DebugOut(L"Down A\n");
 			_Mario->pressA = _Mario->isRunning = true;
 			_Mario->StopRunning = false;
-			if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false)
+			if (_Mario->GetLevel() == MARIO_LEVEL_TAIL && _Mario->isAttacking == false && _Mario->untouchable == false)
 			{
 				_Mario->SetState(MARIO_STATE_ATTACK);
 			}
