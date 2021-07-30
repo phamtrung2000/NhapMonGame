@@ -350,6 +350,5 @@ void BoomerangEnemy::Render()
 		}
 	}
 	animation_set->at(ani)->Render(x, y);
-	DebugOut(L"nx = %i, state = %i, ani = %i, TimeToThrow = %i \n", nx, state, ani, TimeToThrow);
 }
 

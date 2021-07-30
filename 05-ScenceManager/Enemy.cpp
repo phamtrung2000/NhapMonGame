@@ -140,7 +140,11 @@ void Enemy::CollisionWithItem(LPCOLLISIONEVENT e, float min_tx, float min_ty, fl
 	if (e->ny < 0)
 		y += dy;
 	else
-		this->y += min_ty * dy + ny * 0.2f;
+	{
+		if(OnGroud == false)
+			this->y += min_ty * dy + ny * 0.2f;
+	}
+		
 	if (ny != 0) vy = 0;
 }
 

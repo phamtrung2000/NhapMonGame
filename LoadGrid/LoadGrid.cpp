@@ -22,8 +22,8 @@ int main()
 	int left, top, right, bottom, x, y, type, cellwidth, cellheight, object_category;
 	int bboxwidth; int bboxheight;
 
-	ifstream ifs("LoadGrid.txt", ios::in);
-	ofstream ofs("gridinfo.txt", ios::out);
+	ifstream ifs("InputGridScene1.1.txt", ios::in);
+	ofstream ofs("OutputGridScene1.1.txt", ios::out);
 
 	// current resource section flag
 	int section = -1;

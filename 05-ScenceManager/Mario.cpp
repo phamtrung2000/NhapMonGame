@@ -3977,12 +3977,13 @@ void Mario::SetHackPosition(int number)
 		case 6:
 		{
 
-			SetPosition(450, 360);
+			//SetPosition(450, 360);
+			SetPosition(900, 360);
 
 		}break;
 		case 7:
 		{
-			SetPosition(2000, 350);
+			SetPosition(1900, 350);
 
 		}break;
 		

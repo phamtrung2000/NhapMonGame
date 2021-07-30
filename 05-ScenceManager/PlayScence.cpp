@@ -986,15 +986,17 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		
-		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+		//case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 
-		/*case SCENE_SECTION_OBJECTS: 
+		case SCENE_SECTION_OBJECTS: 
 		{
 			int l, t, r, b;
+			l = t = r = b = -1;
 			ifs >> l >> t >> r >> b;
-			_ParseSection_OBJECTS(line, l, t, r, b);
+			if(l != -1 && r != -1 && t != -1 && b != -1)
+				_ParseSection_OBJECTS(line, l, t, r, b);
 		}
-		break;*/
+		break;
 
 		case SCENE_SECTION_EFFECT: _ParseSection_EFFECT(line); break;
 		case SCENE_SECTION_ENEMY: _ParseSection_ENEMY(line); break;
