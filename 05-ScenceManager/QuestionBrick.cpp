@@ -20,6 +20,7 @@ QuestionBrick::QuestionBrick(int item,float x,float y) : Brick(x,y)
 	StartY = y; 
 	Item = item;
 	SetState(BRICK_STATE_NORMAL);
+	max_high = 5;
 }
 
 void QuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects) 

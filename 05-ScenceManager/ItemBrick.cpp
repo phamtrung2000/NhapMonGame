@@ -30,6 +30,7 @@ ItemBrick::ItemBrick(int item, float x, float y) : Brick(x, y)
 		CountMoney = 10;
 	else
 		CountMoney = 0;
+	max_high = 5;
 }
 
 void ItemBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
